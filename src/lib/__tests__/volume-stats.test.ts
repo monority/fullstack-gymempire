@@ -8,7 +8,7 @@
 
 import { describe, expect, it } from 'vitest';
 import { OTHER_MUSCLE, volumeByMuscle } from '../volume-stats';
-import type { Session } from '../storage';
+import type { Session } from '../storage/types';
 
 /** Fixed anchor: 2026-08-10 12:00 local. */
 const NOW = new Date(2026, 7, 10, 12, 0, 0);
@@ -19,7 +19,7 @@ let seq = 0;
 function session(
   date: string,
   entries: Array<[string, number, number, boolean?]>,
-  status: Session['status'] = 'completed',
+  status: Session['status'] = 'completed'
 ): Session {
   seq += 1;
   return {
@@ -54,7 +54,7 @@ describe('volumeByMuscle', () => {
           ['Dos', 80, 5],
         ]),
       ],
-      { period: 'all', now: NOW },
+      { period: 'all', now: NOW }
     );
 
     expect(out).toHaveLength(2);
@@ -80,7 +80,7 @@ describe('volumeByMuscle', () => {
           ['Dos', 80, 5, false], // not completed → ignored
         ]),
       ],
-      { period: 'all', now: NOW },
+      { period: 'all', now: NOW }
     );
 
     expect(out).toHaveLength(1);
@@ -94,7 +94,7 @@ describe('volumeByMuscle', () => {
         session('2026-08-01', [['Pectoraux', 100, 5]], 'in-progress'),
         session('2026-08-01', [['Dos', 80, 5]], 'planned'),
       ],
-      { period: 'all', now: NOW },
+      { period: 'all', now: NOW }
     );
 
     expect(out).toEqual([]);
@@ -106,7 +106,7 @@ describe('volumeByMuscle', () => {
         session('2026-08-04', [['Pectoraux', 100, 5]]), // cutoff day → kept
         session('2026-08-03', [['Dos', 80, 5]]), // just outside → dropped
       ],
-      { period: 'week', now: NOW },
+      { period: 'week', now: NOW }
     );
 
     expect(out).toHaveLength(1);
@@ -119,7 +119,7 @@ describe('volumeByMuscle', () => {
         session('2026-07-12', [['Pectoraux', 100, 5]]), // cutoff day → kept
         session('2026-07-11', [['Dos', 80, 5]]), // just outside → dropped
       ],
-      { period: 'month', now: NOW },
+      { period: 'month', now: NOW }
     );
 
     expect(out).toHaveLength(1);
@@ -140,18 +140,16 @@ describe('volumeByMuscle', () => {
   });
 
   it('returns [] when no volume falls in the period', () => {
-    const out = volumeByMuscle(
-      [session('2026-06-01', [['Pectoraux', 100, 5]])],
-      { period: 'month', now: NOW },
-    );
+    const out = volumeByMuscle([session('2026-06-01', [['Pectoraux', 100, 5]])], {
+      period: 'month',
+      now: NOW,
+    });
 
     expect(out).toEqual([]);
   });
 
   it('defaults to period all and a real now', () => {
-    const out = volumeByMuscle([
-      session('2000-01-01', [['Pectoraux', 100, 5]]),
-    ]);
+    const out = volumeByMuscle([session('2000-01-01', [['Pectoraux', 100, 5]])]);
 
     expect(out).toHaveLength(1);
     expect(out[0].volume).toBe(500);

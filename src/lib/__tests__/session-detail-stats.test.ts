@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import type { Session } from '../storage';
+import type { Session } from '../storage/types';
 import {
   computeRpeStats,
   computeRpeSuggestion,
@@ -23,7 +23,9 @@ function makeSession(overrides: Partial<Session> = {}): Session {
   };
 }
 
-function makeExercise(sets: Array<{ weight: number; reps: number; completed?: boolean; rpe?: number }>) {
+function makeExercise(
+  sets: Array<{ weight: number; reps: number; completed?: boolean; rpe?: number }>
+) {
   return {
     exerciseId: 'e1',
     name: 'Test exercise',
@@ -106,26 +108,40 @@ describe('computeRpeStats', () => {
 
 describe('computeRpeSuggestion', () => {
   it('returns null when count is 0', () => {
-    expect(computeRpeSuggestion({ count: 0, avg: 0, max: 0, allTen: false }, suggestionLabels)).toBeNull();
+    expect(
+      computeRpeSuggestion({ count: 0, avg: 0, max: 0, allTen: false }, suggestionLabels)
+    ).toBeNull();
   });
 
   it('returns down tone when allTen', () => {
-    const result = computeRpeSuggestion({ count: 5, avg: 10, max: 10, allTen: true }, suggestionLabels);
+    const result = computeRpeSuggestion(
+      { count: 5, avg: 10, max: 10, allTen: true },
+      suggestionLabels
+    );
     expect(result).toEqual({ headline: 'All 10', detail: 'Back off', tone: 'down' });
   });
 
   it('returns up tone when avg < 6', () => {
-    const result = computeRpeSuggestion({ count: 5, avg: 4.5, max: 6, allTen: false }, suggestionLabels);
+    const result = computeRpeSuggestion(
+      { count: 5, avg: 4.5, max: 6, allTen: false },
+      suggestionLabels
+    );
     expect(result?.tone).toBe('up');
   });
 
   it('returns maintain tone when avg > 8', () => {
-    const result = computeRpeSuggestion({ count: 5, avg: 8.5, max: 10, allTen: false }, suggestionLabels);
+    const result = computeRpeSuggestion(
+      { count: 5, avg: 8.5, max: 10, allTen: false },
+      suggestionLabels
+    );
     expect(result?.tone).toBe('maintain');
   });
 
   it('returns maintain tone for middle ground', () => {
-    const result = computeRpeSuggestion({ count: 5, avg: 7, max: 8, allTen: false }, suggestionLabels);
+    const result = computeRpeSuggestion(
+      { count: 5, avg: 7, max: 8, allTen: false },
+      suggestionLabels
+    );
     expect(result?.tone).toBe('maintain');
   });
 });
@@ -154,7 +170,10 @@ describe('computeTotalSets', () => {
   it('counts sets across exercises', () => {
     const s = makeSession({
       exercises: [
-        makeExercise([{ weight: 100, reps: 5 }, { weight: 100, reps: 5 }]),
+        makeExercise([
+          { weight: 100, reps: 5 },
+          { weight: 100, reps: 5 },
+        ]),
         makeExercise([{ weight: 80, reps: 10 }]),
       ],
     });

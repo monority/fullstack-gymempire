@@ -5,7 +5,7 @@
  * or <script> blocks.
  */
 
-import type { SessionExercise, RpeType, SetType } from './storage';
+import type { SessionExercise, RpeType, SetType } from './storage/types';
 
 // ── Type labels ────────────────────────────────────────────────
 
@@ -20,11 +20,16 @@ export interface TypeLabels {
 /** Localized label for a set type. */
 export function typeLabel(type: SetType, labels: TypeLabels): string {
   switch (type) {
-    case 'warmup':  return labels.warmup;
-    case 'work':    return labels.work;
-    case 'top':     return labels.top;
-    case 'drop':    return labels.drop;
-    case 'failure': return labels.failure;
+    case 'warmup':
+      return labels.warmup;
+    case 'work':
+      return labels.work;
+    case 'top':
+      return labels.top;
+    case 'drop':
+      return labels.drop;
+    case 'failure':
+      return labels.failure;
   }
 }
 
@@ -34,10 +39,7 @@ export function typeLabel(type: SetType, labels: TypeLabels): string {
  * Per-set RPE display label: "RPE 7.5" or "uRPE 7".
  * Sets without a value render '—'.
  */
-export function formatSetRpe(
-  rpe: number | string | null | undefined,
-  rpeType?: RpeType,
-): string {
+export function formatSetRpe(rpe: number | string | null | undefined, rpeType?: RpeType): string {
   const v = typeof rpe === 'string' ? Number(rpe) : rpe;
   if (v == null || !Number.isFinite(v)) return '—';
   return (rpeType === 'urpe' ? 'uRPE ' : 'RPE ') + v.toString();
@@ -47,8 +49,5 @@ export function formatSetRpe(
 
 /** Total volume (kg × reps) of completed sets for one exercise. */
 export function exerciseVolume(ex: SessionExercise): number {
-  return ex.sets.reduce(
-    (s, set) => s + (set.completed ? set.weight * set.reps : 0),
-    0,
-  );
+  return ex.sets.reduce((s, set) => s + (set.completed ? set.weight * set.reps : 0), 0);
 }

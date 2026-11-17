@@ -5,7 +5,7 @@
  * No DOM, no localStorage, no Alpine dependency.
  */
 
-import type { Session } from './storage';
+import type { Session } from './storage/types';
 
 // Re-export computeSessionStats from quick-session-stats for convenience
 export { computeSessionStats } from './quick-session-stats';
@@ -36,10 +36,7 @@ export function primaryMuscle(session: Session): string {
 /**
  * Filter sessions by search query (matches session name, case-insensitive).
  */
-export function filterSessions(
-  sessions: Session[],
-  query: string,
-): Session[] {
+export function filterSessions(sessions: Session[], query: string): Session[] {
   const q = query.trim().toLowerCase();
   if (!q) return sessions;
   return sessions.filter((s) => s.name.toLowerCase().includes(q));
@@ -50,9 +47,7 @@ export function filterSessions(
  * Returns a new array — does not mutate the input.
  */
 export function sortByDateDesc(sessions: Session[]): Session[] {
-  return [...sessions].sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-  );
+  return [...sessions].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 }
 
 /**
@@ -66,7 +61,7 @@ export function countLabel(
     noMatch: string;
     seanceSingular: string;
     pluralS: string;
-  },
+  }
 ): string {
   if (filteredCount === 0) {
     return totalCount === 0 ? labels.noSession : labels.noMatch;

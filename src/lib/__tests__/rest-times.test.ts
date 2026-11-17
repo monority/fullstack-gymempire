@@ -26,6 +26,7 @@ describe('getRestTime', () => {
 
   it('falls back to the default 90s for unknown exercises', () => {
     expect(getRestTime('Exercice inventé XYZ')).toBe(DEFAULT_REST);
+    expect(getRestTime('Exercice inventé XYZ', 120)).toBe(120);
     expect(DEFAULT_REST).toBe(90);
   });
 

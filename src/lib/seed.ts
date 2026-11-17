@@ -10,23 +10,21 @@
  * which lazily seeds the default library on first call.
  */
 
-import {
-  STORAGE_KEYS,
-  getExercises,
-  getSettings,
-  getStore,
-  setStore,
-  resetAllData,
-  generateId,
-  type Exercise,
-  type Session,
-  type SessionExercise,
-  type SessionSet,
-  type SessionMood,
-  type ProgressRecord,
-  type BodyRecord,
-  type Superset,
-} from './storage';
+import { STORAGE_KEYS } from './storage/defaults';
+import { getExercises } from './storage/exercises';
+import { getSettings } from './storage/settings';
+import { getStore, setStore, generateId } from './storage/store';
+import { resetAllData } from './storage/backup';
+import type {
+  Exercise,
+  Session,
+  SessionExercise,
+  SessionSet,
+  SessionMood,
+  ProgressRecord,
+  BodyRecord,
+  Superset,
+} from './storage/types';
 import { getTemplateById, type TrainingTemplate } from './templates';
 
 export interface SeedSummary {
@@ -138,7 +136,7 @@ function buildSets(
   defaultSets: number,
   defaultReps: number,
   weight: number,
-  completed: boolean,
+  completed: boolean
 ): SessionSet[] {
   const sets: SessionSet[] = [];
   for (let i = 0; i < defaultSets; i++) {
@@ -155,7 +153,7 @@ function buildSets(
     } else {
       const reps = Math.max(
         1,
-        defaultReps + (i === defaultSets - 1 ? 1 : 0) + (Math.random() < 0.3 ? -1 : 0),
+        defaultReps + (i === defaultSets - 1 ? 1 : 0) + (Math.random() < 0.3 ? -1 : 0)
       );
       sets.push({
         exerciseId,
@@ -184,7 +182,7 @@ function templateExercises(
   template: TrainingTemplate,
   byName: Map<string, Exercise>,
   t: number,
-  completed: boolean,
+  completed: boolean
 ): SessionExercise[] {
   return template.exercises
     .map((te) => {
@@ -221,7 +219,16 @@ export function generateDemoData(): SeedSummary {
   const body: BodyRecord[] = [];
 
   // ── 12-week schedule: Mon/Wed/Fri, cycling through the templates ──
-  const templateIds = ['ppl-push', 'ppl-pull', 'ppl-legs', 'upper-lower-upper', 'upper-lower-lower', 'full-body', 'bro-split-chest', 'bro-split-back'];
+  const templateIds = [
+    'ppl-push',
+    'ppl-pull',
+    'ppl-legs',
+    'upper-lower-upper',
+    'upper-lower-lower',
+    'full-body',
+    'bro-split-chest',
+    'bro-split-back',
+  ];
   const startDate = new Date(Date.now() - START_WEEKS * 7 * DAY_MS);
   const spanMs = Date.now() - startDate.getTime();
 
@@ -245,12 +252,11 @@ export function generateDemoData(): SeedSummary {
             mood: MOODS[Math.floor(Math.random() * MOODS.length)],
             rpe: 7 + Math.round(Math.random() * 2),
             fatigue: 2 + Math.floor(Math.random() * 3),
-            notes: Math.random() < 0.3 ? NOTES[Math.floor(Math.random() * NOTES.length)] : undefined,
+            notes:
+              Math.random() < 0.3 ? NOTES[Math.floor(Math.random() * NOTES.length)] : undefined,
           };
           if (Math.random() < 0.35 && ses.length >= 4) {
-            const supersets: Superset[] = [
-              { exercises: [ses[1].exerciseId, ses[2].exerciseId] },
-            ];
+            const supersets: Superset[] = [{ exercises: [ses[1].exerciseId, ses[2].exerciseId] }];
             session.supersets = supersets;
           }
           sessions.push(session);

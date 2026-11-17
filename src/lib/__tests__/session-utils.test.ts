@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import type { Session } from '../storage';
+import type { Session } from '../storage/types';
 import {
   undoLastCompletedSet,
   completedVolume,
@@ -112,7 +112,9 @@ describe('countCompletedSessionsBetween', () => {
     const inside = makeSession({ id: 'inside', date: '2026-02-03', status: 'completed' });
     const outside = makeSession({ id: 'outside', date: '2026-02-10', status: 'completed' });
     const planned = makeSession({ id: 'planned', date: '2026-02-04', status: 'planned' });
-    expect(completedVolumeBetween([inside, outside, planned], '2026-02-01', '2026-02-05')).toBe(580);
+    expect(completedVolumeBetween([inside, outside, planned], '2026-02-01', '2026-02-05')).toBe(
+      580
+    );
   });
 });
 

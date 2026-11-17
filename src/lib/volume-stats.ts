@@ -31,7 +31,7 @@
  * src/i18n/exercise-translations.ts).
  */
 
-import type { Session } from './storage';
+import type { Session } from './storage/types';
 import { completedSets } from './session-utils';
 
 export type VolumePeriod = 'week' | 'month' | 'all';
@@ -68,7 +68,7 @@ const PERIOD_DAYS: Record<Exclude<VolumePeriod, 'all'>, number> = {
  */
 export function volumeByMuscle(
   sessions: Session[],
-  options: VolumeOptions = {},
+  options: VolumeOptions = {}
 ): MuscleVolumeSlice[] {
   const period = options.period ?? 'all';
   const now = options.now ?? new Date();
@@ -89,7 +89,7 @@ export function volumeByMuscle(
     if (session.status !== 'completed') return false;
     if (!session.date) return false;
     if (minTime !== null) {
-      const t = new Date(session.date + 'T00:00:00').getTime();
+      const t = new Date(session.date.slice(0, 10) + 'T00:00:00').getTime();
       if (isNaN(t) || t < minTime) return false;
     }
     return true;

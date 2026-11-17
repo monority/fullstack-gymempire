@@ -1,30 +1,13 @@
 import fr from './fr';
 import en from './en';
 import type { Dictionary } from './types';
+import { defaultLocale, getLocale, setLocale, type Locale } from './locale';
 
 export type { Dictionary } from './types';
 
-export const locales = ['fr', 'en'] as const;
-export type Locale = (typeof locales)[number];
-export const defaultLocale: Locale = 'fr';
+export { DATE_LOCALE, defaultLocale, getLocale, setLocale, locales, type Locale } from './locale';
 
 export const dictionaries: Record<Locale, Dictionary> = { fr, en };
-
-let currentLocale: Locale = defaultLocale;
-
-export function setLocale(locale: string) {
-  if (locale === 'fr' || locale === 'en') {
-    currentLocale = locale;
-  }
-}
-
-export function getLocale(): Locale {
-  if (typeof window !== 'undefined') {
-    const l = (window as { __LOCALE__?: string }).__LOCALE__;
-    if (l === 'fr' || l === 'en') return l;
-  }
-  return currentLocale;
-}
 
 export function t(): Dictionary {
   return dictionaries[getLocale()];
@@ -35,10 +18,6 @@ export function localizedPath(path: string): string {
   if (locale === defaultLocale) return path;
   return `/${locale}${path}`;
 }
-
-/** Locale string for Intl formatting (fr-FR or en-GB). */
-export const DATE_LOCALE = () =>
-  getLocale() === 'en' ? 'en-GB' : 'fr-FR';
 
 export {
   trExercise,

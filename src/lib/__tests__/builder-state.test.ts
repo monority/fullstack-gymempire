@@ -68,8 +68,6 @@ describe('allExpanded', () => {
 });
 
 describe('openDialogById', () => {
-  const originalWindow = globalThis.window;
-
   beforeEach(() => {
     vi.unstubAllGlobals();
   });

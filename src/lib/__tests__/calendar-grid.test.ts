@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { formatISO, buildMonthDays, assignSessions, type CalendarDay } from '../calendar-grid';
-import type { Session } from '../storage';
+import { formatISO, buildMonthDays, assignSessions } from '../calendar-grid';
+import type { Session } from '../storage/types';
 
 // ============================================================================
 // formatISO
@@ -111,7 +111,7 @@ describe('buildMonthDays', () => {
     const days = buildMonthDays(2026, 7);
 
     // Should have `startDow` previous-month days
-    const prevMonthDays = days.filter((d) => !d.isCurrentMonth);
+    void days.filter((d) => !d.isCurrentMonth);
     // Some prev month days may appear at the start, some at the end
     const leadingPrevMonth = days.findIndex((d) => d.isCurrentMonth === false);
     const firstCurrentMonth = days.findIndex((d) => d.isCurrentMonth);

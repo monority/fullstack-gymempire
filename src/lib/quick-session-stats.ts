@@ -6,7 +6,7 @@
  * No DOM, no localStorage, no Alpine dependency.
  */
 
-import type { Session, SetType } from './storage';
+import type { Session, SetType } from './storage/types';
 
 // ── Types ───────────────────────────────────────────────────────
 
@@ -28,30 +28,21 @@ export interface SessionStats {
 
 // ── Formatting helpers ──────────────────────────────────────────
 
-/** Format weight for display. 0 → "0", 80.5 → "80.5", 80 → "80". */
-export function formatWeight(w: number): string {
-  if (!Number.isFinite(w) || w <= 0) return '0';
-  const rounded = Math.round(w * 10) / 10;
-  return Number.isFinite(rounded) && Number.isInteger(rounded)
-    ? String(rounded)
-    : rounded.toFixed(1).replace(/\.0$/, '');
-}
+/** Re-exported from lib/format — single implementation (B4, plan-execution.md). */
+export { formatWeightValue } from './format';
 
 /** Format seconds into duration string. */
 export function formatDuration(
   seconds: number | undefined,
-  labels: { minShort: string; hShort: string; sShort: string },
+  labels: { minShort: string; hShort: string; sShort: string }
 ): string {
-  if (!seconds || seconds <= 0 || !Number.isFinite(seconds))
-    return '0' + labels.minShort;
+  if (!seconds || seconds <= 0 || !Number.isFinite(seconds)) return '0' + labels.minShort;
   const total = Math.floor(seconds);
   const h = Math.floor(total / 3600);
   const m = Math.floor((total % 3600) / 60);
   const s = total % 60;
-  if (h > 0)
-    return `${h}${labels.hShort} ${m.toString().padStart(2, '0')}${labels.minShort}`;
-  if (m > 0)
-    return `${m}${labels.minShort} ${s.toString().padStart(2, '0')}${labels.sShort}`;
+  if (h > 0) return `${h}${labels.hShort} ${m.toString().padStart(2, '0')}${labels.minShort}`;
+  if (m > 0) return `${m}${labels.minShort} ${s.toString().padStart(2, '0')}${labels.sShort}`;
   return `${s}${labels.sShort}`;
 }
 
@@ -63,10 +54,7 @@ export function formatRestTime(totalSeconds: number): string {
 }
 
 /** Get label for set type. */
-export function typeLabel(
-  t: SetType,
-  labels: Record<string, string>,
-): string {
+export function typeLabel(t: SetType, labels: Record<string, string>): string {
   switch (t) {
     case 'warmup':
       return labels.typeWarmup;
@@ -98,17 +86,13 @@ export function computeAvailableSessions(sessions: Session[]): QuickSessionInfo[
     .filter(
       (s) =>
         (s.status === 'planned' || s.status === 'in-progress') &&
-        s.exercises.some((e) => e.sets.length > 0),
+        s.exercises.some((e) => e.sets.length > 0)
     )
     .map((s) => {
-      const totalSets = s.exercises.reduce(
-        (sum, ex) => sum + ex.sets.length,
-        0,
-      );
+      const totalSets = s.exercises.reduce((sum, ex) => sum + ex.sets.length, 0);
       const totalVolume = s.exercises.reduce(
-        (sum, ex) =>
-          sum + ex.sets.reduce((v, set) => v + set.weight * set.reps, 0),
-        0,
+        (sum, ex) => sum + ex.sets.reduce((v, set) => v + set.weight * set.reps, 0),
+        0
       );
       return {
         id: s.id,
@@ -125,26 +109,19 @@ export function computeAvailableSessions(sessions: Session[]): QuickSessionInfo[
 
 /** Compute aggregate stats for a session. */
 export function computeSessionStats(session: Session): SessionStats {
-  const totalSets = session.exercises.reduce(
-    (sum, ex) => sum + ex.sets.length,
-    0,
-  );
+  const totalSets = session.exercises.reduce((sum, ex) => sum + ex.sets.length, 0);
   const recordedSets = session.exercises.reduce(
     (sum, ex) => sum + ex.sets.filter((set) => set.completed).length,
-    0,
+    0
   );
   const totalExercises = session.exercises.length;
   const completedExercises = session.exercises.filter(
-    (ex) => ex.sets.length > 0 && ex.sets.every((set) => set.completed),
+    (ex) => ex.sets.length > 0 && ex.sets.every((set) => set.completed)
   ).length;
   const totalVolume = session.exercises.reduce(
     (sum, ex) =>
-      sum +
-      ex.sets.reduce(
-        (v, set) => (set.completed ? v + set.weight * set.reps : v),
-        0,
-      ),
-    0,
+      sum + ex.sets.reduce((v, set) => (set.completed ? v + set.weight * set.reps : v), 0),
+    0
   );
   return { totalSets, recordedSets, totalExercises, completedExercises, totalVolume };
 }
@@ -153,12 +130,9 @@ export function computeSessionStats(session: Session): SessionStats {
 export function computeProgressPercent(
   session: Session,
   currentExerciseIndex: number,
-  currentSetIndex: number,
+  currentSetIndex: number
 ): number {
-  const total = session.exercises.reduce(
-    (sum, ex) => sum + ex.sets.length,
-    0,
-  );
+  const total = session.exercises.reduce((sum, ex) => sum + ex.sets.length, 0);
   if (total === 0) return 0;
   let done = 0;
   for (let i = 0; i < session.exercises.length; i++) {
@@ -177,10 +151,7 @@ export function computeProgressPercent(
 // ── Navigation helpers ──────────────────────────────────────────
 
 /** Check if navigation to previous set is possible. */
-export function canGoPrev(
-  currentExerciseIndex: number,
-  currentSetIndex: number,
-): boolean {
+export function canGoPrev(currentExerciseIndex: number, currentSetIndex: number): boolean {
   return currentExerciseIndex > 0 || currentSetIndex > 0;
 }
 
@@ -188,13 +159,12 @@ export function canGoPrev(
 export function canGoNext(
   session: Session,
   currentExerciseIndex: number,
-  currentSetIndex: number,
+  currentSetIndex: number
 ): boolean {
   const ex = session.exercises[currentExerciseIndex];
   if (!ex) return false;
   return (
-    currentSetIndex < ex.sets.length - 1 ||
-    currentExerciseIndex < session.exercises.length - 1
+    currentSetIndex < ex.sets.length - 1 || currentExerciseIndex < session.exercises.length - 1
   );
 }
 
@@ -207,7 +177,7 @@ export function restNextLabel(
   currentSetIndex: number,
   formatWeightFn: (w: number) => string,
   unit: string,
-  nextUpLabel: string,
+  nextUpLabel: string
 ): string {
   const ex = session.exercises[currentExerciseIndex];
   if (!ex) return '';
@@ -224,7 +194,7 @@ export function completionTitle(
   recordedSets: number,
   totalSets: number,
   allDoneLabel: string,
-  endedEarlyLabel: string,
+  endedEarlyLabel: string
 ): string {
   return recordedSets >= totalSets ? allDoneLabel : endedEarlyLabel;
 }
@@ -235,7 +205,7 @@ export function completionMessage(
   totalSets: number,
   fullLabel: string,
   partialLabel: string,
-  setsShort: string,
+  setsShort: string
 ): string {
   if (recordedSets >= totalSets) return fullLabel;
   return `${partialLabel} — ${recordedSets}/${totalSets} ${setsShort}`;

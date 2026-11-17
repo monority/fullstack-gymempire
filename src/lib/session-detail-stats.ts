@@ -6,7 +6,7 @@
  * No DOM, no localStorage, no Alpine dependency.
  */
 
-import type { Session, SessionExercise } from './storage';
+import type { Session } from './storage/types';
 import { exerciseVolume } from './workout-helpers';
 
 // ── Types ───────────────────────────────────────────────────────
@@ -73,7 +73,7 @@ export interface SuggestionLabels {
  */
 export function computeRpeSuggestion(
   stats: RpeStats,
-  labels: SuggestionLabels,
+  labels: SuggestionLabels
 ): RpeSuggestion | null {
   if (stats.count === 0) return null;
 

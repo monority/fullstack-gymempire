@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { renderWeightChart, type ChartDeps } from '../body-chart';
-import type { BodyRecord } from '../storage';
+import type { BodyRecord } from '../storage/types';
 
 const deps: ChartDeps = {
   cssVar: (name: string) => `var(${name})`,
@@ -26,10 +26,7 @@ describe('renderWeightChart', () => {
   });
 
   it('returns SVG with two records', () => {
-    const svg = renderWeightChart(
-      [record('2026-01-01', 80), record('2026-02-01', 82)],
-      deps,
-    );
+    const svg = renderWeightChart([record('2026-01-01', 80), record('2026-02-01', 82)], deps);
     expect(svg).toContain('<path');
     expect(svg).toContain('<circle');
     expect(svg).toContain('80 kg');
@@ -37,19 +34,13 @@ describe('renderWeightChart', () => {
   });
 
   it('includes gradient definition', () => {
-    const svg = renderWeightChart(
-      [record('2026-01-01', 80), record('2026-02-01', 82)],
-      deps,
-    );
+    const svg = renderWeightChart([record('2026-01-01', 80), record('2026-02-01', 82)], deps);
     expect(svg).toContain('linearGradient');
     expect(svg).toContain('poids-grad');
   });
 
   it('handles identical weights (span < 1)', () => {
-    const svg = renderWeightChart(
-      [record('2026-01-01', 80), record('2026-02-01', 80)],
-      deps,
-    );
+    const svg = renderWeightChart([record('2026-01-01', 80), record('2026-02-01', 80)], deps);
     expect(svg).toContain('<svg');
     expect(svg).toContain('80 kg');
   });

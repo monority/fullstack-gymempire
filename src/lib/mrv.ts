@@ -50,7 +50,8 @@
  * ('history' | 'epley-cap' | 'none') que l'UI localise (fr/en).
  */
 
-import { calculate1RM, type Session, type SessionSet } from './storage';
+import { calculate1RM } from './storage/store';
+import type { Session, SessionSet } from './storage/types';
 import { completedSets } from './session-utils';
 
 /** Description textuelle de la formule V1 (transparence roadmap / UI). */
@@ -105,17 +106,9 @@ export const MRV_REP_FACTOR_CLAMP = 0.1;
  * terminée qui en contient au moins une. Retourne [] quand l'exercice n'a
  * aucun historique exploitable.
  */
-function mostRecentCompletedSets(
-  sessions: Session[],
-  exerciseId: string,
-): SessionSet[] {
+function mostRecentCompletedSets(sessions: Session[], exerciseId: string): SessionSet[] {
   const ordered = [...sessions]
-    .filter(
-      (s) =>
-        s.status === 'completed' &&
-        typeof s.date === 'string' &&
-        s.date.length > 0,
-    )
+    .filter((s) => s.status === 'completed' && typeof s.date === 'string' && s.date.length > 0)
     // Les dates sont stockées en ISO (YYYY-MM-DD) → tri lexicographique.
     .sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
 
@@ -147,7 +140,7 @@ function repsFactor(baseReps: number, targetReps: number | undefined): number {
   const steps = Math.trunc(Math.abs(diff) / MRV_REP_STEP) * Math.sign(diff);
   const factor = Math.min(
     1 + MRV_REP_FACTOR_CLAMP,
-    Math.max(1 - MRV_REP_FACTOR_CLAMP, 1 - MRV_REP_STEP_FACTOR * steps),
+    Math.max(1 - MRV_REP_FACTOR_CLAMP, 1 - MRV_REP_STEP_FACTOR * steps)
   );
   return factor;
 }
@@ -177,13 +170,11 @@ function roundToStep(weight: number, step: number): number {
 export function suggestLoadSuggestion(
   exerciseId: string,
   sessions: Session[],
-  options: SuggestLoadOptions = {},
+  options: SuggestLoadOptions = {}
 ): LoadSuggestion {
   const recent = mostRecentCompletedSets(sessions, exerciseId);
   const lastLoad =
-    options.lastLoad != null &&
-    Number.isFinite(options.lastLoad) &&
-    options.lastLoad > 0
+    options.lastLoad != null && Number.isFinite(options.lastLoad) && options.lastLoad > 0
       ? options.lastLoad
       : null;
 
@@ -211,13 +202,9 @@ export function suggestLoadSuggestion(
   suggested *= rpeFactor(topSet.rpe);
 
   // Plafond 1RM estimé (Epley) : jamais plus de 95 %.
-  const withReps = recent.filter(
-    (s) => Number.isFinite(s.reps) && s.reps > 0,
-  );
+  const withReps = recent.filter((s) => Number.isFinite(s.reps) && s.reps > 0);
   if (withReps.length > 0) {
-    const best1RM = Math.max(
-      ...withReps.map((s) => calculate1RM(s.weight, s.reps)),
-    );
+    const best1RM = Math.max(...withReps.map((s) => calculate1RM(s.weight, s.reps)));
     const cap = best1RM * MRV_EPLEY_CAP_RATIO;
     if (suggested > cap) {
       suggested = cap;
@@ -245,7 +232,7 @@ export function suggestLoadSuggestion(
 export function suggestLoad(
   exerciseId: string,
   sessions: Session[],
-  options: SuggestLoadOptions = {},
+  options: SuggestLoadOptions = {}
 ): number | null {
   return suggestLoadSuggestion(exerciseId, sessions, options).weight;
 }

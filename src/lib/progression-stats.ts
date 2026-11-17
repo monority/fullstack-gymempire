@@ -5,7 +5,8 @@
  * All functions are pure: data in, results out. No DOM, no localStorage.
  */
 
-import { calculate1RM, type Session, type ProgressRecord } from './storage';
+import { calculate1RM } from './storage/store';
+import type { Session, ProgressRecord } from './storage/types';
 
 // ── Types ───────────────────────────────────────────────────────
 
@@ -44,8 +45,13 @@ export function computeExerciseProgression(sessions: Session[]): ExerciseProgres
 
 function accumulateExercise(
   map: Map<string, ExerciseProgression>,
-  ex: { exerciseId: string; name: string; muscle: string; sets: { completed: boolean; weight: number; reps: number }[] },
-  sessionDate: string,
+  ex: {
+    exerciseId: string;
+    name: string;
+    muscle: string;
+    sets: { completed: boolean; weight: number; reps: number }[];
+  },
+  sessionDate: string
 ) {
   let stat = map.get(ex.exerciseId);
   if (!stat) {

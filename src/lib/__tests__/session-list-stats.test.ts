@@ -1,11 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import {
-  primaryMuscle,
-  filterSessions,
-  sortByDateDesc,
-  countLabel,
-} from '../session-list-stats';
-import type { Session, SessionSet, SessionExercise } from '../storage';
+import { primaryMuscle, filterSessions, sortByDateDesc, countLabel } from '../session-list-stats';
+import type { Session, SessionExercise } from '../storage/types';
 
 // ── Helpers ─────────────────────────────────────────────────────
 
@@ -14,7 +9,7 @@ function makeSession(
     id: 's1',
     name: 'Session 1',
     date: '2026-01-15T12:00:00Z',
-  },
+  }
 ): Session {
   return {
     exercises: [],
@@ -40,11 +35,7 @@ describe('primaryMuscle', () => {
       id: 's1',
       name: 'Session 1',
       date: '2026-01-15T12:00:00Z',
-      exercises: [
-        makeExercise('Pectoraux'),
-        makeExercise('Pectoraux'),
-        makeExercise('Dos'),
-      ],
+      exercises: [makeExercise('Pectoraux'), makeExercise('Pectoraux'), makeExercise('Dos')],
     });
     expect(primaryMuscle(s)).toBe('Pectoraux');
   });
@@ -68,10 +59,7 @@ describe('primaryMuscle', () => {
       id: 's1',
       name: 'Session 1',
       date: '2026-01-15T12:00:00Z',
-      exercises: [
-        makeExercise('Pectoraux'),
-        makeExercise('Dos'),
-      ],
+      exercises: [makeExercise('Pectoraux'), makeExercise('Dos')],
     });
     // Both have count 1; first iteration picks the first one inserted
     expect(primaryMuscle(s)).toBe('Pectoraux');

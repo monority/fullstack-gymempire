@@ -8,16 +8,14 @@
  *
  * The reads always go through `document.documentElement`, so the
  * dark/light override already on `<html data-theme="...">` (see
- * AppLayout.astro theme bootstrap + src/styles/tokens.css) is picked up
+ * AppLayout.astro theme bootstrap + src/styles/tokens/) is picked up
  * automatically.
  */
 
 /** Computed value of a CSS custom property on the root element, trimmed.
     Returns '' when the token is missing. */
 export function cssVar(name: string): string {
-  return getComputedStyle(document.documentElement)
-    .getPropertyValue(name)
-    .trim();
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 }
 
 /**
@@ -29,7 +27,5 @@ export function cssVar(name: string): string {
  */
 export function cssVarAlpha(name: string, alpha: number): string {
   const value = cssVar(name);
-  return value.endsWith(')')
-    ? value.replace(/\)$/, ` / ${alpha})`)
-    : value;
+  return value.endsWith(')') ? value.replace(/\)$/, ` / ${alpha})`) : value;
 }

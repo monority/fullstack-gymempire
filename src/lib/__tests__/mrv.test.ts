@@ -7,12 +7,8 @@
  */
 
 import { describe, expect, it } from 'vitest';
-import {
-  MRV_EPLEY_CAP_RATIO,
-  suggestLoad,
-  suggestLoadSuggestion,
-} from '../mrv';
-import type { Session, SessionSet } from '../storage';
+import { MRV_EPLEY_CAP_RATIO, suggestLoad, suggestLoadSuggestion } from '../mrv';
+import type { Session, SessionSet } from '../storage/types';
 
 let seq = 0;
 
@@ -27,7 +23,7 @@ function session(
     type?: SessionSet['type'];
   }>,
   status: Session['status'] = 'completed',
-  exerciseId = 'ex-1',
+  exerciseId = 'ex-1'
 ): Session {
   seq += 1;
   return {
@@ -60,12 +56,10 @@ const CANNED = { targetReps: undefined, lastLoad: undefined };
 describe('suggestLoad / suggestLoadSuggestion', () => {
   it('returns null (reason none) when the exercise has no history', () => {
     expect(suggestLoad('ex-x', NO_SETS)).toBeNull();
-    expect(
-      suggestLoadSuggestion('ex-x', [], CANNED).reason,
-    ).toBe('none');
+    expect(suggestLoadSuggestion('ex-x', [], CANNED).reason).toBe('none');
     // planned / in-progress sessions are not history.
     expect(
-      suggestLoad('ex-x', [session('2026-08-01', [{ weight: 100, reps: 10 }], 'planned')]),
+      suggestLoad('ex-x', [session('2026-08-01', [{ weight: 100, reps: 10 }], 'planned')])
     ).toBeNull();
   });
 
@@ -84,7 +78,10 @@ describe('suggestLoad / suggestLoadSuggestion', () => {
 
   it('skips a newer completed session whose sets have no weight', () => {
     const out = suggestLoadSuggestion('ex-1', [
-      session('2026-08-10', [{ weight: 0, reps: 10 }, { weight: 0, reps: 8, completed: false }]),
+      session('2026-08-10', [
+        { weight: 0, reps: 10 },
+        { weight: 0, reps: 8, completed: false },
+      ]),
       session('2026-08-01', [{ weight: 110, reps: 5 }]),
     ]);
     // The incomplete/zero session is skipped → base from the older one.
@@ -153,12 +150,16 @@ describe('suggestLoad / suggestLoadSuggestion', () => {
   it('caps the suggestion at 95 % of the best Epley 1RM of the recent history', () => {
     // Recent history: 100×2 (heavy top) + 60×20 ⇒ best 1RM = 106.67,
     // cap = 101.33. Base 100 @ RPE 9.5 → 102.5 → clamped to the cap.
-    const out = suggestLoadSuggestion('ex-1', [
-      session('2026-08-01', [
-        { weight: 100, reps: 2, rpe: 9.5 },
-        { weight: 60, reps: 20 },
-      ]),
-    ], { targetReps: 2 });
+    const out = suggestLoadSuggestion(
+      'ex-1',
+      [
+        session('2026-08-01', [
+          { weight: 100, reps: 2, rpe: 9.5 },
+          { weight: 60, reps: 20 },
+        ]),
+      ],
+      { targetReps: 2 }
+    );
     expect(out?.reason).toBe('epley-cap');
     expect(out?.cap).toBeCloseTo(100 * (1 + 2 / 30) * MRV_EPLEY_CAP_RATIO, 3);
     expect(out?.weight).toBe(102.5); // arrondi plaque, ~cap

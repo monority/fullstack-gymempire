@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import type { Session, SessionSet } from '../storage';
+import type { Session, SessionSet } from '../storage/types';
 import {
-  formatWeight,
+  formatWeightValue,
   formatDuration,
   formatRestTime,
   typeLabel,
@@ -57,26 +57,26 @@ const TYPE_LABELS = {
   typeFailure: 'Échec',
 };
 
-// ── formatWeight ─────────────────────────────────────────────────
+// ── formatWeightValue ─────────────────────────────────────────────────
 
-describe('formatWeight', () => {
+describe('formatWeightValue', () => {
   it('returns 0 for zero', () => {
-    expect(formatWeight(0)).toBe('0');
+    expect(formatWeightValue(0)).toBe('0');
   });
   it('returns 0 for negative', () => {
-    expect(formatWeight(-5)).toBe('0');
+    expect(formatWeightValue(-5)).toBe('0');
   });
   it('returns 0 for NaN', () => {
-    expect(formatWeight(NaN)).toBe('0');
+    expect(formatWeightValue(NaN)).toBe('0');
   });
   it('rounds to integer', () => {
-    expect(formatWeight(80)).toBe('80');
+    expect(formatWeightValue(80)).toBe('80');
   });
   it('keeps one decimal', () => {
-    expect(formatWeight(80.5)).toBe('80.5');
+    expect(formatWeightValue(80.5)).toBe('80.5');
   });
   it('rounds 80.04 to 80', () => {
-    expect(formatWeight(80.04)).toBe('80');
+    expect(formatWeightValue(80.04)).toBe('80');
   });
 });
 
@@ -236,14 +236,7 @@ describe('canGoNext', () => {
 describe('restNextLabel', () => {
   it('builds label with weight and reps', () => {
     const session = makeSession();
-    const result = restNextLabel(
-      session,
-      0,
-      0,
-      (w) => String(w),
-      'kg',
-      'Next up',
-    );
+    const result = restNextLabel(session, 0, 0, (w) => String(w), 'kg', 'Next up');
     expect(result).toBe('Next up 80 kg × 8');
   });
   it('returns empty for invalid index', () => {

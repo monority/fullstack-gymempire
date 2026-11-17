@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import type { SessionSet } from '../storage';
+import type { SessionSet } from '../storage/types';
 import {
   rpeTone,
   computeExerciseSummary,
@@ -124,10 +124,7 @@ describe('formatExerciseSummary', () => {
 
   it('formats multiple sets with top', () => {
     const ex = builderEx({
-      sets: [
-        set({ weight: 80, reps: 8 }),
-        set({ weight: 90, reps: 6 }),
-      ],
+      sets: [set({ weight: 80, reps: 8 }), set({ weight: 90, reps: 6 })],
     });
     const result = formatExerciseSummary(ex, LABELS);
     expect(result).toContain('2 séries');
@@ -185,7 +182,7 @@ describe('buildExerciseFromTemplate', () => {
   it('creates exercise with correct sets', () => {
     const result = buildExerciseFromTemplate(
       { id: 'e1', name: 'Squat', muscle: 'Jambes' },
-      { name: 'Squat', muscle: 'Jambes', defaultSets: 3, defaultReps: 10 },
+      { name: 'Squat', muscle: 'Jambes', defaultSets: 3, defaultReps: 10 }
     );
     expect(result.exerciseId).toBe('e1');
     expect(result.name).toBe('Squat');
@@ -199,7 +196,7 @@ describe('buildExerciseFromTemplate', () => {
   it('defaults to 1 set when defaultSets < 1', () => {
     const result = buildExerciseFromTemplate(
       { id: 'e1', name: 'Test', muscle: 'Test' },
-      { name: 'Test', muscle: 'Test', defaultSets: 0, defaultReps: 5 },
+      { name: 'Test', muscle: 'Test', defaultSets: 0, defaultReps: 5 }
     );
     expect(result.sets).toHaveLength(1);
   });

@@ -6,7 +6,7 @@
  * No DOM, no localStorage, no Alpine dependency.
  */
 
-import type { Exercise, Session, SetType } from './storage';
+import type { Exercise, Session, SetType } from './storage/types';
 
 // ── Types ───────────────────────────────────────────────────────
 
@@ -54,10 +54,7 @@ export const DEFAULT_MUSCLES = [
 /** Resolve form state into clean exercise data. Returns null if invalid. */
 export function resolveForm(form: FormState): ResolvedForm | null {
   const name = form.name.trim();
-  const muscle =
-    form.muscle === CUSTOM_MUSCLE
-      ? form.customMuscle.trim()
-      : form.muscle.trim();
+  const muscle = form.muscle === CUSTOM_MUSCLE ? form.customMuscle.trim() : form.muscle.trim();
   const category = form.category.trim();
   if (!name || !muscle || !category) return null;
   return { name, muscle, category };
@@ -70,8 +67,7 @@ export function computeSetCounts(sessions: Session[]): Record<string, number> {
   const counts: Record<string, number> = {};
   for (const session of sessions) {
     for (const ex of session.exercises) {
-      counts[ex.exerciseId] =
-        (counts[ex.exerciseId] ?? 0) + ex.sets.length;
+      counts[ex.exerciseId] = (counts[ex.exerciseId] ?? 0) + ex.sets.length;
     }
   }
   return counts;
@@ -82,7 +78,7 @@ export function computeSetCounts(sessions: Session[]): Record<string, number> {
 /** Filter exercises by search query, muscle group, and favorites flag. */
 export function filterExercises(
   exercises: Exercise[],
-  options: { search: string; muscle: string; favorites: boolean },
+  options: { search: string; muscle: string; favorites: boolean }
 ): Exercise[] {
   const q = options.search.trim().toLowerCase();
   const { muscle, favorites } = options;
@@ -104,7 +100,7 @@ export function computeMuscleGroups(exercises: Exercise[]): string[] {
 /** Build muscle options for <select> element. */
 export function muscleOptionsForSelect(
   muscleGroups: string[],
-  customLabel: string,
+  customLabel: string
 ): { value: string; label: string }[] {
   return [
     ...muscleGroups.map((m) => ({ value: m, label: m })),
@@ -115,10 +111,7 @@ export function muscleOptionsForSelect(
 // ── URL builder ─────────────────────────────────────────────────
 
 /** Build deep-link URL to trend chart for a specific exercise. */
-export function buildTrendUrl(
-  exerciseName: string,
-  basePath: string,
-): string {
+export function buildTrendUrl(exerciseName: string, basePath: string): string {
   const q = new URLSearchParams({ ex: exerciseName });
   return `${basePath}?${q.toString()}`;
 }
@@ -130,16 +123,12 @@ const WARMUP_REPS = [12, 8, 5] as const;
 
 /** Check if any set has working weight. */
 export function hasWorkingWeight(sets: AddSetRow[]): boolean {
-  return sets.some(
-    (s) => (s.type === 'work' || s.type === 'top') && s.weight > 0,
-  );
+  return sets.some((s) => (s.type === 'work' || s.type === 'top') && s.weight > 0);
 }
 
 /** Generate warmup rows from working sets. Returns empty array if no working weight. */
 export function generateWarmupRows(sets: AddSetRow[]): AddSetRow[] {
-  const workingSets = sets.filter(
-    (s) => (s.type === 'work' || s.type === 'top') && s.weight > 0,
-  );
+  const workingSets = sets.filter((s) => (s.type === 'work' || s.type === 'top') && s.weight > 0);
   if (workingSets.length === 0) return [];
 
   const maxWeight = Math.max(...workingSets.map((s) => s.weight));
@@ -153,10 +142,6 @@ export function generateWarmupRows(sets: AddSetRow[]): AddSetRow[] {
 // ── Count label ─────────────────────────────────────────────────
 
 /** Format exercise count label. */
-export function formatCountLabel(
-  count: number,
-  singular: string,
-  plural: string,
-): string {
+export function formatCountLabel(count: number, singular: string, plural: string): string {
   return `${count} ${count > 1 ? plural : singular}`;
 }

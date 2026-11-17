@@ -5,7 +5,7 @@
  * src/i18n/exercise-translations.ts MUSCLES_EN — Pectoraux, Dos,
  * Épaules, Biceps, Triceps, Avant-bras, Quadriceps, Ischio-jambiers,
  * Fessiers, Mollets, Jambes, Abdominaux). The design system caps the
- * color language at 6 hue families (src/styles/tokens.css
+ * color language at 6 hue families (src/styles/tokens/colors.css
  * `--color-cat-*`), so several stored groups share one family — e.g.
  * every arm group maps to the teal "arms" tone.
  *
@@ -19,14 +19,7 @@
  * muscle names) fall back to `other` → a neutral badge with no hue.
  */
 
-export type MuscleTone =
-  | 'chest'
-  | 'back'
-  | 'shoulders'
-  | 'arms'
-  | 'legs'
-  | 'core'
-  | 'other';
+export type MuscleTone = 'chest' | 'back' | 'shoulders' | 'arms' | 'legs' | 'core' | 'other';
 
 /** Canonical stored muscle key → hue family. */
 const MUSCLE_TONE: Record<string, MuscleTone> = {

@@ -6,7 +6,7 @@
  * No DOM, no localStorage, no Alpine dependency.
  */
 
-import type { SessionExercise, SessionSet, SetType } from './storage';
+import type { SessionExercise, SessionSet, SetType } from './storage/types';
 import type { TemplateExercise } from './templates';
 
 // ── Types ───────────────────────────────────────────────────────
@@ -41,13 +41,10 @@ export function rpeTone(rpe: number): RpeLevel {
 export function computeExerciseSummary(exercise: SessionExercise): ExerciseSummaryParts {
   const setCount = exercise.sets.length;
   const totalReps = exercise.sets.reduce((sum, s) => sum + (s.reps || 0), 0);
-  const totalVolume = exercise.sets.reduce(
-    (sum, s) => sum + (s.weight || 0) * (s.reps || 0),
-    0,
-  );
+  const totalVolume = exercise.sets.reduce((sum, s) => sum + (s.weight || 0) * (s.reps || 0), 0);
   const top = exercise.sets.reduce(
     (best, s) => (s.weight > (best?.weight || 0) ? s : best),
-    exercise.sets[0],
+    exercise.sets[0]
   );
   return {
     setCount,
@@ -61,17 +58,13 @@ export function computeExerciseSummary(exercise: SessionExercise): ExerciseSumma
 /** Format exercise summary string. */
 export function formatExerciseSummary(
   exercise: SessionExercise,
-  labels: { noSets: string; setsSingular: string; setsPlural: string; top: string },
+  labels: { noSets: string; setsSingular: string; setsPlural: string; top: string }
 ): string {
   if (exercise.sets.length === 0) return labels.noSets;
-  const { setCount, totalReps, totalVolume, topWeight, topReps } =
-    computeExerciseSummary(exercise);
+  const { setCount, totalReps, totalVolume, topWeight, topReps } = computeExerciseSummary(exercise);
   const setLabel = setCount > 1 ? labels.setsPlural : labels.setsSingular;
   const volume = Math.round(totalVolume);
-  const topLine =
-    topWeight > 0
-      ? ` \u2014 ${labels.top} ${topWeight} kg \u2014 ${topReps}`
-      : '';
+  const topLine = topWeight > 0 ? ` \u2014 ${labels.top} ${topWeight} kg \u2014 ${topReps}` : '';
   return `${setCount} ${setLabel} \u2014 ${totalReps} reps \u2014 ${volume} kg${topLine}`;
 }
 
@@ -81,13 +74,8 @@ const WARMUP_PERCENTS = [0.4, 0.6, 0.8] as const;
 const WARMUP_REPS = [12, 8, 5] as const;
 
 /** Generate warmup sets from working sets. Returns empty array if no working weight. */
-export function generateWarmupSets(
-  exerciseId: string,
-  sets: SessionSet[],
-): SessionSet[] {
-  const workingSets = sets.filter(
-    (s) => (s.type === 'work' || s.type === 'top') && s.weight > 0,
-  );
+export function generateWarmupSets(exerciseId: string, sets: SessionSet[]): SessionSet[] {
+  const workingSets = sets.filter((s) => (s.type === 'work' || s.type === 'top') && s.weight > 0);
   if (workingSets.length === 0) return [];
 
   const maxWeight = Math.max(...workingSets.map((s) => s.weight));
@@ -115,7 +103,7 @@ export function generateWarmupSets(
 export function buildExerciseFromTemplate(
   exercise: { id: string; name: string; muscle: string },
   template: TemplateExercise,
-  defaultSetType: SetType = 'work',
+  defaultSetType: SetType = 'work'
 ): BuilderExercise {
   const sets: SessionSet[] = [];
   const count = Math.max(1, template.defaultSets);
@@ -142,9 +130,7 @@ export function buildExerciseFromTemplate(
 
 /** Check if exercise has at least one work/top set with weight > 0. */
 export function hasWorkingWeight(exercise: SessionExercise): boolean {
-  return exercise.sets.some(
-    (s) => (s.type === 'work' || s.type === 'top') && s.weight > 0,
-  );
+  return exercise.sets.some((s) => (s.type === 'work' || s.type === 'top') && s.weight > 0);
 }
 
 /** Create a new set with values inherited from the last set. */
@@ -152,7 +138,7 @@ export function createNextSet(
   exerciseId: string,
   setNumber: number,
   lastSet: SessionSet | undefined,
-  defaultType: SetType = 'work',
+  defaultType: SetType = 'work'
 ): SessionSet {
   return {
     exerciseId,
@@ -186,7 +172,7 @@ export function getNextSupersetId(exercises: BuilderExercise[]): number {
 export function supersetChain(
   exercises: BuilderExercise[],
   groupId: number | null,
-  translate?: (name: string) => string,
+  translate?: (name: string) => string
 ): string[] {
   if (groupId == null) return [];
   return exercises

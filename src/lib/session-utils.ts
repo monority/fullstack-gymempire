@@ -4,7 +4,7 @@
  * Kept free of Alpine / DOM concerns so they stay unit-testable.
  */
 
-import type { Session, SessionSet, SessionExercise } from './storage';
+import type { Session, SessionSet, SessionExercise } from './storage/types';
 
 type SessionStatus = 'completed' | 'in-progress' | 'planned';
 
@@ -25,7 +25,7 @@ export interface CompletedSetContext {
  */
 export function* completedSets(
   sessions: Session[],
-  exerciseId?: string,
+  exerciseId?: string
 ): Generator<CompletedSetContext> {
   for (const session of sessions) {
     if (session.status !== 'completed') continue;
@@ -83,7 +83,7 @@ export function undoLastCompletedSet(session: Session): UndoLastSetResult | null
         exercises: session.exercises.map((ex, i) =>
           i === ei
             ? { ...ex, sets: ex.sets.map((s, j) => (j === si ? { ...s, completed: false } : s)) }
-            : ex,
+            : ex
         ),
       };
       return { session: copy, set, exerciseIndex: ei, setIndex: si };
@@ -98,11 +98,7 @@ export function undoLastCompletedSet(session: Session): UndoLastSetResult | null
  * attributed to exactly one interval. When no end is supplied, the count
  * covers everything from the measurement to today.
  */
-function sessionsInInterval(
-  sessions: Session[],
-  startDate: string,
-  endDate?: string,
-): Session[] {
+function sessionsInInterval(sessions: Session[], startDate: string, endDate?: string): Session[] {
   const start = startDate.slice(0, 10);
   const end = endDate ? endDate.slice(0, 10) : '';
   if (!/^\d{4}-\d{2}-\d{2}$/.test(start)) return [];
@@ -118,7 +114,7 @@ function sessionsInInterval(
 export function countCompletedSessionsBetween(
   sessions: Session[],
   startDate: string,
-  endDate?: string,
+  endDate?: string
 ): number {
   return sessionsInInterval(sessions, startDate, endDate).length;
 }
@@ -129,11 +125,11 @@ export function countCompletedSessionsBetween(
 export function completedVolumeBetween(
   sessions: Session[],
   startDate: string,
-  endDate?: string,
+  endDate?: string
 ): number {
   return sessionsInInterval(sessions, startDate, endDate).reduce(
     (total, session) => total + completedVolume(session),
-    0,
+    0
   );
 }
 
@@ -141,11 +137,7 @@ export function completedVolumeBetween(
 export function completedVolume(session: Session): number {
   return session.exercises.reduce(
     (sum, ex) =>
-      sum +
-      ex.sets.reduce(
-        (s, set) => (set.completed ? s + set.weight * set.reps : s),
-        0,
-      ),
-    0,
+      sum + ex.sets.reduce((s, set) => (set.completed ? s + set.weight * set.reps : s), 0),
+    0
   );
 }

@@ -5,7 +5,7 @@
  * session count, and duration. Fully testable, no DOM dependency.
  */
 
-import type { Session } from './storage';
+import type { Session } from './storage/types';
 
 export interface WeekBucket {
   /** Sunday (start) of the week, at 00:00 local. */
@@ -69,10 +69,7 @@ export function buildWeeks(n: number, anchor: Date = new Date()): WeekBucket[] {
  * Aggregate sessions into a pre-built set of week buckets. Sessions
  * outside the bucket range are ignored.
  */
-export function aggregateByWeek(
-  sessions: Session[],
-  buckets: WeekBucket[],
-): void {
+export function aggregateByWeek(sessions: Session[], buckets: WeekBucket[]): void {
   if (buckets.length === 0) return;
   const minKey = buckets[0].key;
   const maxKey = buckets[buckets.length - 1].key;
@@ -82,9 +79,11 @@ export function aggregateByWeek(
     if (session.status !== 'completed') continue;
     if (!session.date) continue;
 
-    const d = new Date(session.date + 'T00:00:00');
+    // `date` peut être un ISO complet ou un simple YYYY-MM-DD.
+    const d = new Date(session.date.slice(0, 10) + 'T00:00:00');
     if (isNaN(d.getTime())) continue;
-    const sessionKey = isoDate(d);
+    // Une séance en milieu de semaine appartient au bucket du dimanche.
+    const sessionKey = isoDate(startOfWeek(d));
     if (sessionKey < minKey || sessionKey > maxKey) continue;
 
     const idx = idxByKey.get(sessionKey);
@@ -106,13 +105,14 @@ export function aggregateByWeek(
   }
 }
 
-/** Top N exercises by volume, descending. */
+/** Top N exercises by volume, descending. `now` anchors the week window (tests). */
 export function topExercisesByVolume(
   sessions: Session[],
   n: number,
   weekCount: number,
+  now: Date = new Date()
 ): TopExercise[] {
-  const buckets = buildWeeks(weekCount);
+  const buckets = buildWeeks(weekCount, now);
   const minKey = buckets[0].key;
   const maxKey = buckets[buckets.length - 1].key;
   const totals = new Map<string, TopExercise>();
@@ -120,7 +120,8 @@ export function topExercisesByVolume(
   for (const session of sessions) {
     if (session.status !== 'completed') continue;
     if (!session.date) continue;
-    if (session.date < minKey || session.date > maxKey) continue;
+    const day = session.date.slice(0, 10);
+    if (day < minKey || day > maxKey) continue;
 
     for (const ex of session.exercises) {
       let total = totals.get(ex.exerciseId)?.volume ?? 0;

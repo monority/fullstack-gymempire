@@ -18,14 +18,14 @@ import {
   computeWeeklyVolumeByDay,
   computeStreak,
 } from '../dashboard-stats';
-import type { Session } from '../storage';
+import type { Session } from '../storage/types';
 
 let seq = 0;
 
 function makeSession(
   date: string,
   exercises: Array<{ muscle: string; weight: number; reps: number; completed?: boolean }> = [],
-  status: Session['status'] = 'completed',
+  status: Session['status'] = 'completed'
 ): Session {
   seq += 1;
   return {
@@ -138,16 +138,12 @@ describe('computeTotalVolume', () => {
 
 describe('computeTodayVolume', () => {
   it('sums today sessions volume', () => {
-    const sessions = [
-      makeSession(today(), [{ muscle: 'A', weight: 100, reps: 5 }]),
-    ];
+    const sessions = [makeSession(today(), [{ muscle: 'A', weight: 100, reps: 5 }])];
     expect(computeTodayVolume(sessions)).toBe(500);
   });
 
   it('excludes past sessions', () => {
-    const sessions = [
-      makeSession(daysAgo(1), [{ muscle: 'A', weight: 100, reps: 5 }]),
-    ];
+    const sessions = [makeSession(daysAgo(1), [{ muscle: 'A', weight: 100, reps: 5 }])];
     expect(computeTodayVolume(sessions)).toBe(0);
   });
 });
@@ -179,9 +175,7 @@ describe('computeTodayExercises', () => {
   });
 
   it('exercises from past days not counted', () => {
-    const sessions = [
-      makeSession(daysAgo(1), [{ muscle: 'A', weight: 50, reps: 5 }]),
-    ];
+    const sessions = [makeSession(daysAgo(1), [{ muscle: 'A', weight: 50, reps: 5 }])];
     expect(computeTodayExercises(sessions)).toBe(0);
   });
 });
@@ -201,9 +195,7 @@ describe('computeBestPRs', () => {
 
   it('exercises with no completed sets not counted', () => {
     const sessions = [
-      makeSession(today(), [
-        { muscle: 'A', weight: 100, reps: 5, completed: false },
-      ]),
+      makeSession(today(), [{ muscle: 'A', weight: 100, reps: 5, completed: false }]),
     ];
     expect(computeBestPRs(sessions)).toBe(0);
   });
@@ -225,9 +217,7 @@ describe('computeTop1RM', () => {
 
   it('returns 0 for no completed sets', () => {
     const sessions = [
-      makeSession(today(), [
-        { muscle: 'A', weight: 100, reps: 5, completed: false },
-      ]),
+      makeSession(today(), [{ muscle: 'A', weight: 100, reps: 5, completed: false }]),
     ];
     expect(computeTop1RM(sessions)).toBe(0);
   });
@@ -237,18 +227,14 @@ describe('computeTop1RM', () => {
 
 describe('computeWeeklyVolumeByDay', () => {
   it('returns 7-element array with this week volumes', () => {
-    const sessions = [
-      makeSession(today(), [{ muscle: 'A', weight: 100, reps: 5 }]),
-    ];
+    const sessions = [makeSession(today(), [{ muscle: 'A', weight: 100, reps: 5 }])];
     const arr = computeWeeklyVolumeByDay(sessions);
     expect(arr).toHaveLength(7);
     expect(arr.some((v) => v > 0)).toBe(true);
   });
 
   it('excludes sessions from before this week', () => {
-    const sessions = [
-      makeSession(daysAgo(10), [{ muscle: 'A', weight: 100, reps: 5 }]),
-    ];
+    const sessions = [makeSession(daysAgo(10), [{ muscle: 'A', weight: 100, reps: 5 }])];
     const arr = computeWeeklyVolumeByDay(sessions);
     expect(arr.every((v) => v === 0)).toBe(true);
   });
@@ -258,16 +244,12 @@ describe('computeWeeklyVolumeByDay', () => {
 
 describe('computeStreak', () => {
   it('returns 0 for no completed sessions', () => {
-    const sessions = [
-      makeSession(today(), [], 'in-progress'),
-    ];
+    const sessions = [makeSession(today(), [], 'in-progress')];
     expect(computeStreak(sessions)).toBe(0);
   });
 
   it('returns 1 when only today is completed', () => {
-    const sessions = [
-      makeSession(today(), [{ muscle: 'A', weight: 50, reps: 5 }]),
-    ];
+    const sessions = [makeSession(today(), [{ muscle: 'A', weight: 50, reps: 5 }])];
     expect(computeStreak(sessions)).toBe(1);
   });
 

@@ -13,7 +13,8 @@
  * renvoie des CODES de bande ('p50-p75', …) que l'UI localise (fr/en).
  */
 
-import { calculate1RM, type Session } from './storage';
+import { calculate1RM } from './storage/store';
+import type { Session } from './storage/types';
 import { completedSets } from './session-utils';
 
 // ============================================================================
@@ -41,12 +42,7 @@ export interface ReferenceLift {
 }
 
 /** Code de bande percentile, à localiser côté UI (fr/en). */
-export type PercentileBand =
-  | 'below-p25'
-  | 'p25-p50'
-  | 'p50-p75'
-  | 'p75-p90'
-  | 'p90+';
+export type PercentileBand = 'below-p25' | 'p25-p50' | 'p50-p75' | 'p75-p90' | 'p90+';
 
 /**
  * Ligne de sortie pour le tableau des benchmarks :
@@ -74,10 +70,7 @@ export interface BenchmarkRow {
  * séries terminées des séances terminées uniquement. `null` si aucune série
  * exploitable (aucune séance, séance non terminée, série non cochée).
  */
-export function best1RMForExercise(
-  exerciseId: string,
-  sessions: Session[],
-): number | null {
+export function best1RMForExercise(exerciseId: string, sessions: Session[]): number | null {
   let best: number | null = null;
   for (const { set } of completedSets(sessions, exerciseId)) {
     const oneRepMax = calculate1RM(set.weight, set.reps);
@@ -95,7 +88,7 @@ export function best1RMForExercise(
  */
 export function benchmarkPercentile(
   metricValue: number | null,
-  bands: ReferenceBands,
+  bands: ReferenceBands
 ): { band: PercentileBand | null; p25: number; p50: number; p75: number; p90: number } {
   const bandsOut = {
     p25: bands.p25,
@@ -123,7 +116,7 @@ export function benchmarkPercentile(
  */
 export function buildBenchmarkRows(
   sessions: Session[],
-  lifts: readonly ReferenceLift[],
+  lifts: readonly ReferenceLift[]
 ): BenchmarkRow[] {
   return lifts.map((lift) => {
     const ids = new Set<string>();

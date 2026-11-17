@@ -5,7 +5,7 @@
  * Pure canvas API — no external dependencies. Browser-only (uses DOM).
  */
 
-import type { Session } from './storage';
+import type { Session } from './storage/types';
 import { exerciseVolume } from './workout-helpers';
 import { formatDateTime, formatVolume } from './format';
 import { statusLabel as statusLabelFn, type StatusLabels } from './session-utils';
@@ -36,14 +36,11 @@ export interface ShareCardOptions {
 export function truncateForCanvas(
   ctx: CanvasRenderingContext2D,
   text: string,
-  maxWidth: number,
+  maxWidth: number
 ): string {
   if (ctx.measureText(text).width <= maxWidth) return text;
   let truncated = text;
-  while (
-    truncated.length > 0 &&
-    ctx.measureText(truncated + '\u2026').width > maxWidth
-  ) {
+  while (truncated.length > 0 && ctx.measureText(truncated + '\u2026').width > maxWidth) {
     truncated = truncated.slice(0, -1);
   }
   return truncated + '\u2026';
@@ -56,7 +53,7 @@ export function drawRoundRect(
   y: number,
   w: number,
   h: number,
-  r: number,
+  r: number
 ): void {
   const radius = Math.min(r, w / 2, h / 2);
   ctx.beginPath();
@@ -80,7 +77,7 @@ export function drawRoundRect(
  */
 export function generateSessionShareCard(
   session: Session,
-  options: ShareCardOptions,
+  options: ShareCardOptions
 ): Promise<string> {
   const { labels } = options;
 
@@ -109,9 +106,7 @@ export function generateSessionShareCard(
     .getPropertyValue('--color-accent')
     .trim();
   const border = 'rgba(255, 255, 255, 0.08)';
-  const accentSoft = accent
-    ? accent.replace(/\)$/, ' / 0.15)')
-    : 'transparent';
+  const accentSoft = accent ? accent.replace(/\)$/, ' / 0.15)') : 'transparent';
   const fontCond = '"Inter", sans-serif';
   const fontBody = '"Inter", sans-serif';
 
@@ -232,11 +227,7 @@ export function generateSessionShareCard(
     const n = ex.sets.length;
     ctx.fillStyle = muted;
     ctx.textAlign = 'right';
-    ctx.fillText(
-      `${n} ${n > 1 ? labels.setPlural : labels.setSingular}`,
-      W - PAD,
-      y,
-    );
+    ctx.fillText(`${n} ${n > 1 ? labels.setPlural : labels.setSingular}`, W - PAD, y);
     ctx.textAlign = 'left';
   });
 
@@ -247,7 +238,7 @@ export function generateSessionShareCard(
     ctx.fillText(
       `+ ${remaining} ${remaining > 1 ? labels.morePlural : labels.moreSingular}`,
       PAD,
-      y,
+      y
     );
   }
 

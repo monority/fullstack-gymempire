@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import type { Exercise, Session } from '../storage';
+import type { Exercise, Session } from '../storage/types';
 import {
   resolveForm,
   computeSetCounts,
@@ -12,8 +12,6 @@ import {
   formatCountLabel,
   CUSTOM_MUSCLE,
   DEFAULT_MUSCLES,
-  type FormState,
-  type AddSetRow,
 } from '../exercises-stats';
 
 // ── Helpers ──────────────────────────────────────────────────────
@@ -55,11 +53,15 @@ function makeSession(exercises: { exerciseId: string; setCount: number }[] = [])
 
 describe('resolveForm', () => {
   it('returns null for empty name', () => {
-    expect(resolveForm({ name: '', muscle: 'Dos', customMuscle: '', category: 'Barre' })).toBeNull();
+    expect(
+      resolveForm({ name: '', muscle: 'Dos', customMuscle: '', category: 'Barre' })
+    ).toBeNull();
   });
 
   it('returns null for empty muscle', () => {
-    expect(resolveForm({ name: 'Row', muscle: '', customMuscle: '', category: 'Barre' })).toBeNull();
+    expect(
+      resolveForm({ name: 'Row', muscle: '', customMuscle: '', category: 'Barre' })
+    ).toBeNull();
   });
 
   it('returns null for empty category', () => {
@@ -96,7 +98,10 @@ describe('computeSetCounts', () => {
 
   it('counts sets per exercise across sessions', () => {
     const sessions = [
-      makeSession([{ exerciseId: 'e1', setCount: 3 }, { exerciseId: 'e2', setCount: 2 }]),
+      makeSession([
+        { exerciseId: 'e1', setCount: 3 },
+        { exerciseId: 'e2', setCount: 2 },
+      ]),
       makeSession([{ exerciseId: 'e1', setCount: 4 }]),
     ];
     const counts = computeSetCounts(sessions);
@@ -115,7 +120,9 @@ describe('filterExercises', () => {
   ];
 
   it('returns all when no filters', () => {
-    expect(filterExercises(exercises, { search: '', muscle: '', favorites: false })).toHaveLength(3);
+    expect(filterExercises(exercises, { search: '', muscle: '', favorites: false })).toHaveLength(
+      3
+    );
   });
 
   it('filters by search', () => {
@@ -137,7 +144,11 @@ describe('filterExercises', () => {
   });
 
   it('combines filters', () => {
-    const result = filterExercises(exercises, { search: 'b', muscle: 'Pectoraux', favorites: true });
+    const result = filterExercises(exercises, {
+      search: 'b',
+      muscle: 'Pectoraux',
+      favorites: true,
+    });
     expect(result).toHaveLength(1);
     expect(result[0].id).toBe('e1');
   });
@@ -218,9 +229,7 @@ describe('generateWarmupRows', () => {
   });
 
   it('generates 3 warmup rows', () => {
-    const result = generateWarmupRows([
-      { type: 'work', weight: 100, reps: 5 },
-    ]);
+    const result = generateWarmupRows([{ type: 'work', weight: 100, reps: 5 }]);
     expect(result).toHaveLength(3);
     expect(result[0]).toEqual({ type: 'warmup', weight: 40, reps: 12 });
     expect(result[1]).toEqual({ type: 'warmup', weight: 60, reps: 8 });

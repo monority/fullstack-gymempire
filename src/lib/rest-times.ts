@@ -45,7 +45,7 @@ const REST_TIMES: Record<string, number> = {
   'Élévations frontales haltères': 60,
   'Leg curl couché': 60,
   'Leg extension': 60,
-  'Crunch': 45,
+  Crunch: 45,
   'Pec deck': 60,
   'Shrugs barre': 60,
   'Shrugs haltères': 60,
@@ -55,9 +55,9 @@ const REST_TIMES: Record<string, number> = {
  * Returns the recommended rest time in seconds for the given exercise.
  * Falls back to the default rest time when the name is unknown.
  */
-export function getRestTime(exerciseName: string): number {
-  if (!exerciseName) return DEFAULT_REST;
-  return REST_TIMES[exerciseName] ?? DEFAULT_REST;
+export function getRestTime(exerciseName: string, fallback: number = DEFAULT_REST): number {
+  if (!exerciseName) return fallback;
+  return REST_TIMES[exerciseName] ?? fallback;
 }
 
 /**

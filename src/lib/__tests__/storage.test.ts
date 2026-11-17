@@ -7,30 +7,20 @@
  */
 
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { calculate1RM, generateId } from '../storage/store';
+import { exportSessionsAsCSV, exportSessionAsCsv } from '../storage/csv';
+import { getExercises, saveExercise, toggleExerciseFavorite } from '../storage/exercises';
 import {
-  calculate1RM,
-  exportSessionsAsCSV,
-  exportSessionAsCsv,
-  generateId,
-  getExercises,
   getSessions,
-  getBodyRecords,
-  addBodyRecord,
-  deleteBodyRecord,
   getSessionsByDate,
   getSessionsByMonth,
-  getSettings,
-  saveExercise,
   saveSession,
   updateSession,
-  toggleExerciseFavorite,
-  DEFAULT_REMINDERS,
-  DEFAULT_WEBDAV,
-  type Session,
-  type SessionExercise,
-  type SessionSet,
-  type Settings,
-} from '../storage';
+} from '../storage/sessions';
+import { getBodyRecords, addBodyRecord, deleteBodyRecord } from '../storage/body';
+import { getSettings } from '../storage/settings';
+import { DEFAULT_REMINDERS, DEFAULT_WEBDAV } from '../storage/defaults';
+import type { Session, SessionExercise, SessionSet, Settings } from '../storage/types';
 
 const STORAGE_KEYS = {
   exercises: 'muscu:exercises',
@@ -210,7 +200,14 @@ describe('saveSession + getSessions', () => {
           name: 'Développé couché',
           muscle: 'Pectoraux',
           sets: [
-            { exerciseId: 'ex-1', setNumber: 1, weight: 80, reps: 8, type: 'work', completed: false },
+            {
+              exerciseId: 'ex-1',
+              setNumber: 1,
+              weight: 80,
+              reps: 8,
+              type: 'work',
+              completed: false,
+            },
           ],
         },
       ],
@@ -261,21 +258,21 @@ describe('legacy numeric payloads', () => {
             },
           ],
         },
-      ]),
+      ])
     );
 
     const [session] = getSessions();
     expect(session.exercises[0].sets[0].weight).toBe(80);
     expect(session.exercises[0].sets[0].reps).toBe(8);
-    expect(calculate1RM(session.exercises[0].sets[0].weight, session.exercises[0].sets[0].reps)).toBeCloseTo(101.33, 1);
+    expect(
+      calculate1RM(session.exercises[0].sets[0].weight, session.exercises[0].sets[0].reps)
+    ).toBeCloseTo(101.33, 1);
   });
 
   it('normalizes body measurements stored as strings', () => {
     window.localStorage.setItem(
       'muscu:body',
-      JSON.stringify([
-        { date: '2026-08-04', weight: '82.5', arm: '36.2' },
-      ]),
+      JSON.stringify([{ date: '2026-08-04', weight: '82.5', arm: '36.2' }])
     );
 
     const [record] = getBodyRecords();
@@ -289,7 +286,7 @@ describe('legacy numeric payloads', () => {
       JSON.stringify([
         { date: '2026-08-08', weight: 80 },
         { date: '2026-08-08', weight: 81 },
-      ]),
+      ])
     );
 
     const records = getBodyRecords();
@@ -352,7 +349,7 @@ describe('exportSessionsAsCSV', () => {
     const lines = csv.split('\n');
     expect(lines.length).toBe(1);
     expect(lines[0]).toBe(
-      'Date,Nom,Exercice,Série,Type,Charge (kg),Répétitions,1RM estimé,RPE,Superset',
+      'Date,Nom,Exercice,Série,Type,Charge (kg),Répétitions,1RM estimé,RPE,Superset'
     );
   });
 
@@ -409,9 +406,7 @@ describe('exportSessionsAsCSV', () => {
     saveSession({
       name: 'Push',
       date: '2026-08-05',
-      exercises: [
-        { exerciseId: 'ex-1', name: 'Développé', muscle: 'Pectoraux', sets: [set] },
-      ],
+      exercises: [{ exerciseId: 'ex-1', name: 'Développé', muscle: 'Pectoraux', sets: [set] }],
       status: 'completed',
     });
 
@@ -434,7 +429,14 @@ describe('exportSessionsAsCSV', () => {
           name: 'Développé',
           muscle: 'Pectoraux',
           sets: [
-            { exerciseId: 'ex-1', setNumber: 1, weight: 60, reps: 8, type: 'work', completed: true },
+            {
+              exerciseId: 'ex-1',
+              setNumber: 1,
+              weight: 60,
+              reps: 8,
+              type: 'work',
+              completed: true,
+            },
           ],
         },
         {
@@ -442,7 +444,14 @@ describe('exportSessionsAsCSV', () => {
           name: 'Rowing',
           muscle: 'Dos',
           sets: [
-            { exerciseId: 'ex-2', setNumber: 1, weight: 50, reps: 10, type: 'work', completed: true },
+            {
+              exerciseId: 'ex-2',
+              setNumber: 1,
+              weight: 50,
+              reps: 10,
+              type: 'work',
+              completed: true,
+            },
           ],
         },
       ],
@@ -474,8 +483,22 @@ describe('exportSessionAsCsv', () => {
           name: 'Squat',
           muscle: 'Quadriceps',
           sets: [
-            { exerciseId: 'ex-1', setNumber: 1, weight: 100, reps: 5, type: 'work', completed: true },
-            { exerciseId: 'ex-1', setNumber: 2, weight: 100, reps: 5, type: 'work', completed: true },
+            {
+              exerciseId: 'ex-1',
+              setNumber: 1,
+              weight: 100,
+              reps: 5,
+              type: 'work',
+              completed: true,
+            },
+            {
+              exerciseId: 'ex-1',
+              setNumber: 2,
+              weight: 100,
+              reps: 5,
+              type: 'work',
+              completed: true,
+            },
           ],
         },
       ],
@@ -490,7 +513,14 @@ describe('exportSessionAsCsv', () => {
           name: 'Développé',
           muscle: 'Pectoraux',
           sets: [
-            { exerciseId: 'ex-2', setNumber: 1, weight: 60, reps: 10, type: 'work', completed: true },
+            {
+              exerciseId: 'ex-2',
+              setNumber: 1,
+              weight: 60,
+              reps: 10,
+              type: 'work',
+              completed: true,
+            },
           ],
         },
       ],
@@ -519,7 +549,16 @@ describe('exportSessionAsCsv', () => {
           name: 'Développé',
           muscle: 'Pectoraux',
           sets: [
-            { exerciseId: 'ex-1', setNumber: 1, weight: 60, reps: 8, rpe: 7.5, rpeType: 'urpe', type: 'work', completed: true },
+            {
+              exerciseId: 'ex-1',
+              setNumber: 1,
+              weight: 60,
+              reps: 8,
+              rpe: 7.5,
+              rpeType: 'urpe',
+              type: 'work',
+              completed: true,
+            },
           ],
         },
       ],
@@ -532,7 +571,7 @@ describe('exportSessionAsCsv', () => {
     const rows = csv.split('\n');
 
     expect(rows[0]).toBe(
-      'Date,Nom,Exercice,Série,Type,Charge (kg),Répétitions,1RM estimé,RPE,Superset',
+      'Date,Nom,Exercice,Série,Type,Charge (kg),Répétitions,1RM estimé,RPE,Superset'
     );
     const row = rows[1].split(',');
     expect(row.length).toBe(10);
@@ -550,7 +589,14 @@ describe('exportSessionAsCsv', () => {
           name: 'Row, "Curl" test',
           muscle: 'Biceps',
           sets: [
-            { exerciseId: 'ex-1', setNumber: 1, weight: 80, reps: 8, type: 'work', completed: true },
+            {
+              exerciseId: 'ex-1',
+              setNumber: 1,
+              weight: 80,
+              reps: 8,
+              type: 'work',
+              completed: true,
+            },
           ],
         },
       ],
@@ -565,9 +611,7 @@ describe('exportSessionAsCsv', () => {
     // the field in quotes (first cell char `"`) and doubles the inner quote.
     // Row: Date,Nom,Exercice,Série,Type,Charge,Répétitions,1RM,RPE,Superset
     expect(lines.length).toBe(2);
-    expect(lines[1]).toBe(
-      '2026-08-04,CSV day,"Row, ""Curl"" test",1,work,80,8,101,,',
-    );
+    expect(lines[1]).toBe('2026-08-04,CSV day,"Row, ""Curl"" test",1,work,80,8,101,,');
     // The key assertions per the finding: opens with `"`, inner `"` doubled.
     const field = '"Row, ""Curl"" test"';
     expect(lines[1]).toContain(field);
@@ -585,7 +629,14 @@ describe('exportSessionAsCsv', () => {
           name: 'Incline "Press"',
           muscle: 'Pectoraux',
           sets: [
-            { exerciseId: 'ex-1', setNumber: 1, weight: 60, reps: 10, type: 'work', completed: true },
+            {
+              exerciseId: 'ex-1',
+              setNumber: 1,
+              weight: 60,
+              reps: 10,
+              type: 'work',
+              completed: true,
+            },
           ],
         },
       ],
@@ -597,9 +648,7 @@ describe('exportSessionAsCsv', () => {
     const lines = csv.split('\n');
 
     // 1RM for 60 × 10 via Epley = 60 × (1 + 10/30) = 80.
-    expect(lines[1]).toBe(
-      '2026-08-07,Quotes,"Incline ""Press""",1,work,60,10,80,,',
-    );
+    expect(lines[1]).toBe('2026-08-07,Quotes,"Incline ""Press""",1,work,60,10,80,,');
     expect(lines[1].includes('"Incline ""Press"""')).toBe(true);
   });
 });

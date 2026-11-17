@@ -4,7 +4,7 @@
  * Pure function: records → SVG string. No DOM dependency.
  */
 
-import type { BodyRecord } from './storage';
+import type { BodyRecord } from './storage/types';
 
 export interface ChartDeps {
   cssVar(name: string): string;
@@ -12,10 +12,7 @@ export interface ChartDeps {
   chartTitle: string;
 }
 
-export function renderWeightChart(
-  records: BodyRecord[],
-  deps: ChartDeps,
-): string {
+export function renderWeightChart(records: BodyRecord[], deps: ChartDeps): string {
   if (records.length === 0) return '';
 
   const W = 1000;
@@ -89,9 +86,7 @@ export function renderWeightChart(
 
   const areaPath =
     `M ${xAt(0).toFixed(1)} ${(H - PAD_B).toFixed(1)} ` +
-    records
-      .map((r, i) => `L ${xAt(i).toFixed(1)} ${yAt(r.weight).toFixed(1)}`)
-      .join(' ') +
+    records.map((r, i) => `L ${xAt(i).toFixed(1)} ${yAt(r.weight).toFixed(1)}`).join(' ') +
     ` L ${xAt(records.length - 1).toFixed(1)} ${(H - PAD_B).toFixed(1)} Z`;
   svg += `<defs><linearGradient id="poids-grad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${accent}" stop-opacity="0.35"/><stop offset="100%" stop-color="${accent}" stop-opacity="0"/></linearGradient></defs>`;
   svg += `<path d="${areaPath}" fill="url(#poids-grad)"/>`;

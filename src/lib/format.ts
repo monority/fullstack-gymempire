@@ -6,6 +6,19 @@
  */
 
 import { DATE_LOCALE } from '../i18n';
+import { getSettings } from './storage/settings';
+import {
+  roundForUnit,
+  toDisplayWeight,
+  unitLabel,
+  fromInputWeight,
+  type WeightUnit,
+} from './units';
+
+/** Unité préférée de l'utilisateur (kg par défaut). */
+export function currentUnit(): WeightUnit {
+  return getSettings().unit === 'lbs' ? 'lbs' : 'kg';
+}
 
 // ── Date formatters ─────────────────────────────────────────────
 
@@ -52,7 +65,7 @@ export function formatDateMedium(iso: string): string {
   });
 }
 
-/** "12 août" or "12 août 2025" — short date. */
+/** "12 août 2025" — date with short month, always includes the year. */
 export function formatDateShort(iso: string): string {
   const d = new Date(iso);
   if (isNaN(d.getTime())) return iso;
@@ -70,17 +83,6 @@ export function formatDateDayMonth(iso: string): string {
   return d.toLocaleDateString(DATE_LOCALE(), {
     day: 'numeric',
     month: 'short',
-  });
-}
-
-/** "12/08/2025" — numeric date. */
-export function formatDateNumeric(iso: string): string {
-  const d = new Date(iso);
-  if (isNaN(d.getTime())) return iso;
-  return d.toLocaleDateString(DATE_LOCALE(), {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
   });
 }
 
@@ -108,15 +110,44 @@ export function formatNumPositive(n: number): string {
   return Math.round(n).toLocaleString(DATE_LOCALE());
 }
 
-/** Volume: "1 234 kg". */
-export function formatVolume(volume: number): string {
-  if (!Number.isFinite(volume) || volume <= 0) return '0 kg';
-  return Math.round(volume).toLocaleString(DATE_LOCALE()) + ' kg';
+/**
+ * Volume stocké en kg, affiché dans l'unité courante.
+ * formatVolume(100, 'lbs') → "220 lbs".
+ */
+export function formatVolume(kg: number, unit: WeightUnit = currentUnit()): string {
+  const label = unitLabel(unit);
+  if (!Number.isFinite(kg) || kg <= 0) return `0 ${label}`;
+  const value = roundForUnit(toDisplayWeight(kg, unit), unit);
+  return (
+    value.toLocaleString(DATE_LOCALE(), {
+      minimumFractionDigits: unit === 'lbs' && !Number.isInteger(value) ? 1 : 0,
+      maximumFractionDigits: 1,
+    }) + ` ${label}`
+  );
 }
 
-/** Weight: same as volume (alias). */
-export function formatWeight(weight: number): string {
-  return formatVolume(weight);
+/** Valeur de poids sans unité, convertie pour l'affichage. */
+export function formatWeightValue(kg: number, unit: WeightUnit = currentUnit()): string {
+  if (!Number.isFinite(kg) || kg <= 0) return '0';
+  // Valeur brute de saisie/affichage : une décimale dans les deux unités.
+  const value = Math.round(toDisplayWeight(kg, unit) * 10) / 10;
+  return Number.isInteger(value) ? String(value) : value.toFixed(1).replace(/\.0$/, '');
+}
+
+/**
+ * Poids avec unité. La valeur fournie est toujours du kg stocké.
+ * formatWeight(80, 'kg') → "80 kg", formatWeight(80, 'lbs') → "176 lbs".
+ */
+export function formatWeight(kg: number, unit: WeightUnit = currentUnit()): string {
+  const label = unitLabel(unit);
+  if (!Number.isFinite(kg) || kg <= 0) return `0 ${label}`;
+  const value = roundForUnit(toDisplayWeight(kg, unit), unit);
+  return `${value.toLocaleString(DATE_LOCALE(), { maximumFractionDigits: 1 })} ${label}`;
+}
+
+/** Valeur saisie (dans l'unité affichée) → kg à persister. */
+export function weightFromInput(value: number, unit: WeightUnit = currentUnit()): number {
+  return fromInputWeight(value, unit);
 }
 
 /** Duration in seconds → "2h 15min" or "15min 30s". */
@@ -142,19 +173,13 @@ export function formatDurationShort(seconds?: number): string {
   return `${s}s`;
 }
 
-/** "12 août 2025 · 14:30" — compact datetime with short month. */
+/** "12 août 2025 · 14:30" — date with short month + time. */
 export function formatDateCompact(iso: string): string {
   const d = new Date(iso);
   if (isNaN(d.getTime())) return iso;
-  const loc = DATE_LOCALE();
-  const date = d.toLocaleDateString(loc, {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  });
-  const time = d.toLocaleTimeString(loc, {
+  const time = d.toLocaleTimeString(DATE_LOCALE(), {
     hour: '2-digit',
     minute: '2-digit',
   });
-  return date + ' \u00b7 ' + time;
+  return formatDateShort(iso) + ' \u00b7 ' + time;
 }

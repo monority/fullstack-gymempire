@@ -5,14 +5,8 @@
  */
 
 import { describe, expect, it } from 'vitest';
-import {
-  chartMax,
-  chartX,
-  chartY,
-  computeTrendPoints,
-  monthAgo,
-} from '../trends-stats';
-import type { Session } from '../storage';
+import { chartMax, chartX, chartY, computeTrendPoints, monthAgo } from '../trends-stats';
+import type { Session } from '../storage/types';
 
 const NOW = new Date(2026, 7, 10, 12, 0, 0);
 
@@ -22,7 +16,7 @@ let seq = 0;
 function session(
   date: string,
   exerciseId: string,
-  entries: Array<[number, number, boolean?]>,
+  entries: Array<[number, number, boolean?]>
 ): Session {
   seq += 1;
   return {
@@ -73,7 +67,7 @@ describe('computeTrendPoints', () => {
       [session('2026-08-01', 'ex-other', [[100, 5]])],
       'ex-1',
       'volume',
-      'all',
+      'all'
     );
     expect(pts).toEqual([]);
   });
@@ -83,7 +77,7 @@ describe('computeTrendPoints', () => {
       [session('2026-08-01', 'ex-1', [[100, 5]])],
       'ex-1',
       'volume',
-      'all',
+      'all'
     );
     expect(pts).toHaveLength(1);
     expect(pts[0].date).toBe('2026-08-01');
@@ -92,10 +86,15 @@ describe('computeTrendPoints', () => {
 
   it('computes best 1RM per day', () => {
     const pts = computeTrendPoints(
-      [session('2026-08-01', 'ex-1', [[100, 5], [80, 10]])],
+      [
+        session('2026-08-01', 'ex-1', [
+          [100, 5],
+          [80, 10],
+        ]),
+      ],
       'ex-1',
       'rm',
-      'all',
+      'all'
     );
     expect(pts).toHaveLength(1);
     // 1RM of 100×5 ≈ 116.7, 1RM of 80×10 ≈ 106.7
@@ -104,13 +103,10 @@ describe('computeTrendPoints', () => {
 
   it('aggregates multiple sessions on same day', () => {
     const pts = computeTrendPoints(
-      [
-        session('2026-08-01', 'ex-1', [[100, 5]]),
-        session('2026-08-01', 'ex-1', [[80, 10]]),
-      ],
+      [session('2026-08-01', 'ex-1', [[100, 5]]), session('2026-08-01', 'ex-1', [[80, 10]])],
       'ex-1',
       'volume',
-      'all',
+      'all'
     );
     expect(pts).toHaveLength(1);
     expect(pts[0].value).toBe(1300); // 500 + 800
@@ -118,13 +114,10 @@ describe('computeTrendPoints', () => {
 
   it('sorts chronologically', () => {
     const pts = computeTrendPoints(
-      [
-        session('2026-08-03', 'ex-1', [[100, 5]]),
-        session('2026-08-01', 'ex-1', [[80, 5]]),
-      ],
+      [session('2026-08-03', 'ex-1', [[100, 5]]), session('2026-08-01', 'ex-1', [[80, 5]])],
       'ex-1',
       'volume',
-      'all',
+      'all'
     );
     expect(pts[0].date).toBe('2026-08-01');
     expect(pts[1].date).toBe('2026-08-03');
@@ -139,7 +132,7 @@ describe('computeTrendPoints', () => {
       'ex-1',
       'volume',
       '3m',
-      NOW,
+      NOW
     );
     expect(pts).toHaveLength(1);
     expect(pts[0].date).toBe('2026-07-01');
@@ -154,7 +147,7 @@ describe('computeTrendPoints', () => {
       'ex-1',
       'volume',
       '1y',
-      NOW,
+      NOW
     );
     expect(pts).toHaveLength(1);
   });
@@ -164,7 +157,7 @@ describe('computeTrendPoints', () => {
       [session('2026-08-01', 'ex-1', [[100, 5, false]])],
       'ex-1',
       'volume',
-      'all',
+      'all'
     );
     expect(pts).toHaveLength(0);
   });
@@ -174,7 +167,7 @@ describe('computeTrendPoints', () => {
       [session('2026-08-01', 'ex-1', [[100, 5]])],
       'ex-1',
       'volume',
-      'all',
+      'all'
     );
     expect(pts[0].value).toBe(500);
   });

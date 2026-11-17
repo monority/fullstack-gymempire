@@ -5,7 +5,8 @@
  * All functions are pure: data in, results out. No DOM, no localStorage.
  */
 
-import { calculate1RM, type Session } from './storage';
+import { calculate1RM } from './storage/store';
+import type { Session } from './storage/types';
 
 // ── Types ───────────────────────────────────────────────────────
 
@@ -42,7 +43,7 @@ export function computeTrendPoints(
   exerciseId: string,
   metric: Metric,
   period: Period,
-  now = new Date(),
+  now = new Date()
 ): TrendPoint[] {
   const byDate = new Map<string, { vol: number; rm: number }>();
 
@@ -66,8 +67,7 @@ export function computeTrendPoints(
     }
   }
 
-  const minTime =
-    period === '3m' ? monthAgo(3, now) : period === '1y' ? monthAgo(12, now) : null;
+  const minTime = period === '3m' ? monthAgo(3, now) : period === '1y' ? monthAgo(12, now) : null;
 
   let pts = Array.from(byDate.entries()).map(([date, v]) => ({
     date,

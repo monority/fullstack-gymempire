@@ -5,19 +5,20 @@
  */
 
 import { describe, expect, it } from 'vitest';
-import {
-  computeExerciseProgression,
-  computeMax1RM,
-  historyBarHeight,
-} from '../progression-stats';
-import type { Session } from '../storage';
+import { computeExerciseProgression, computeMax1RM, historyBarHeight } from '../progression-stats';
+import type { Session } from '../storage/types';
 
 let seq = 0;
 
 /** Minimal session helper. */
 function session(
   date: string,
-  exercises: Array<{ id: string; name: string; muscle: string; sets: Array<[number, number, boolean?]> }>,
+  exercises: Array<{
+    id: string;
+    name: string;
+    muscle: string;
+    sets: Array<[number, number, boolean?]>;
+  }>
 ): Session {
   seq += 1;
   return {
@@ -48,7 +49,9 @@ describe('computeExerciseProgression', () => {
 
   it('returns empty when all sets incomplete', () => {
     const result = computeExerciseProgression([
-      session('2026-08-01', [{ id: 'ex-1', name: 'Bench', muscle: 'Pecs', sets: [[100, 5, false]] }]),
+      session('2026-08-01', [
+        { id: 'ex-1', name: 'Bench', muscle: 'Pecs', sets: [[100, 5, false]] },
+      ]),
     ]);
     expect(result).toEqual([]);
   });
@@ -107,7 +110,17 @@ describe('computeExerciseProgression', () => {
 
   it('skips incomplete sets but counts session if at least one completed', () => {
     const result = computeExerciseProgression([
-      session('2026-08-01', [{ id: 'ex-1', name: 'Bench', muscle: 'Pecs', sets: [[100, 5, false], [80, 10]] }]),
+      session('2026-08-01', [
+        {
+          id: 'ex-1',
+          name: 'Bench',
+          muscle: 'Pecs',
+          sets: [
+            [100, 5, false],
+            [80, 10],
+          ],
+        },
+      ]),
     ]);
     expect(result).toHaveLength(1);
     expect(result[0].sessionCount).toBe(1);
@@ -137,15 +150,27 @@ describe('historyBarHeight', () => {
   });
 
   it('returns 0 for zero value', () => {
-    expect(historyBarHeight([{ exerciseId: 'a', date: 'd', estimated1RM: 100, bestWeight: 100, bestReps: 5 }], 0)).toBe(0);
+    expect(
+      historyBarHeight(
+        [{ exerciseId: 'a', date: 'd', estimated1RM: 100, bestWeight: 100, bestReps: 5 }],
+        0
+      )
+    ).toBe(0);
   });
 
   it('returns 8 for zero max', () => {
-    expect(historyBarHeight([{ exerciseId: 'a', date: 'd', estimated1RM: 0, bestWeight: 0, bestReps: 0 }], 1)).toBe(8);
+    expect(
+      historyBarHeight(
+        [{ exerciseId: 'a', date: 'd', estimated1RM: 0, bestWeight: 0, bestReps: 0 }],
+        1
+      )
+    ).toBe(8);
   });
 
   it('returns 100 for max value', () => {
-    const history = [{ exerciseId: 'a', date: 'd', estimated1RM: 100, bestWeight: 100, bestReps: 5 }];
+    const history = [
+      { exerciseId: 'a', date: 'd', estimated1RM: 100, bestWeight: 100, bestReps: 5 },
+    ];
     expect(historyBarHeight(history, 100)).toBe(100);
   });
 

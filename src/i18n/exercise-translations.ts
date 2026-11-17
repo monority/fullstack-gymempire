@@ -12,7 +12,7 @@
  * the helper returns the input unchanged.
  */
 
-import { getLocale, defaultLocale } from './index';
+import { getLocale, defaultLocale } from './locale';
 
 /** Translate a stored exercise name for display. */
 export function trExercise(name: string): string {
@@ -69,7 +69,7 @@ const EXERCISE_NAMES_EN: Record<string, string> = {
   'Tirage horizontal poulie': 'Cable Row',
   'Tirage nuque': 'Behind-Neck Pulldown',
   'Rack pull': 'Rack Pull',
-  'Hyperextension': 'Back Extension',
+  Hyperextension: 'Back Extension',
   'Rowing T-bar': 'T-Bar Row',
 
   // ── Épaules ──
@@ -142,9 +142,9 @@ const EXERCISE_NAMES_EN: Record<string, string> = {
   'Mollets cheval': 'Donkey Calf Raise',
 
   // ── Abdominaux ──
-  'Crunch': 'Crunch',
+  Crunch: 'Crunch',
   'Crunch poulie': 'Cable Crunch',
-  'Planche': 'Plank',
+  Planche: 'Plank',
   'Russian twists': 'Russian Twists',
   'Relevé de jambes': 'Leg Raise',
   'Roue abdominale': 'Ab Wheel Rollout',

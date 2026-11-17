@@ -49,6 +49,12 @@ export default {
 
   fatigue: 'Fatigue',
   fatigueAria: 'Fatigue level',
+  moodLabel: 'Mood',
+  moodGreat: 'Great',
+  moodGood: 'Good',
+  moodOk: 'Neutral',
+  moodTired: 'Tired',
+  moodBad: 'Bad',
   notes: 'Notes',
   noExercises: 'No exercise was logged in this session.',
   noSets: 'No sets logged.',
@@ -69,13 +75,17 @@ export default {
   irreversible: 'This action is irreversible.',
   deletePermanently: 'Delete permanently',
   suggestionAllTenHeadline: 'Reduce the volume or the weight',
-  suggestionAllTenDetail: 'All your completed sets are at RPE 10 (total failure). The body probably has no more margin — reduce the volume by one set per exercise or lower the load by 5–10% before your next session.',
+  suggestionAllTenDetail:
+    'All your completed sets are at RPE 10 (total failure). The body probably has no more margin — reduce the volume by one set per exercise or lower the load by 5–10% before your next session.',
   suggestionIncreaseHeadline: 'Increase the weight by 2.5 kg',
-  suggestionIncreaseDetail: 'Your session was too easy (average RPE < 6 / 10). You have room on most sets: add 2.5 kg to the compound lifts next time to keep progressing.',
+  suggestionIncreaseDetail:
+    'Your session was too easy (average RPE < 6 / 10). You have room on most sets: add 2.5 kg to the compound lifts next time to keep progressing.',
   suggestionMaintainHeadline: 'Keep the same weight',
-  suggestionMaintainDetail: 'The perceived effort is high (average RPE > 8 / 10). Keep the same load for one or two more sessions to solidify the plateau, then increase by 2.5 kg.',
+  suggestionMaintainDetail:
+    'The perceived effort is high (average RPE > 8 / 10). Keep the same load for one or two more sessions to solidify the plateau, then increase by 2.5 kg.',
   suggestionContinueHeadline: 'Keep up the good work',
-  suggestionContinueDetail: 'You are working in the right effort zone (average RPE between 6 and 8 / 10). Keep the same load for one or two more sessions before increasing.',
+  suggestionContinueDetail:
+    'You are working in the right effort zone (average RPE between 6 and 8 / 10). Keep the same load for one or two more sessions before increasing.',
   shareFooter: 'Gym Empire — Training Log',
   shareSetsLabel: 'SETS',
   supersetLabel: 'Superset',

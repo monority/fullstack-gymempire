@@ -18,7 +18,7 @@ import {
   SYNC_FILENAME,
   SyncError,
 } from '../sync';
-import type { AppDataSnapshot } from '../storage';
+import type { AppDataSnapshot } from '../storage/backup';
 
 function snapshot(): AppDataSnapshot {
   return {
@@ -44,10 +44,10 @@ function snapshot(): AppDataSnapshot {
 }
 
 function mockFetchResponse(status: number, bodyJson?: unknown): void {
-  const res = new Response(
-    bodyJson === undefined ? null : JSON.stringify(bodyJson),
-    { status, headers: { 'Content-Type': 'application/json' } },
-  );
+  const res = new Response(bodyJson === undefined ? null : JSON.stringify(bodyJson), {
+    status,
+    headers: { 'Content-Type': 'application/json' },
+  });
   vi.stubGlobal('fetch', vi.fn().mockResolvedValue(res));
 }
 
@@ -80,26 +80,26 @@ describe('buildBasicAuthHeader', () => {
 describe('normalizeResourceUrl', () => {
   it('appends the backup filename to a directory URL (trailing slash)', () => {
     expect(normalizeResourceUrl('https://ex.com/dav/muscu/')).toBe(
-      `https://ex.com/dav/muscu/${SYNC_FILENAME}`,
+      `https://ex.com/dav/muscu/${SYNC_FILENAME}`
     );
   });
 
   it('keeps a file URL as the exact target', () => {
     expect(normalizeResourceUrl('https://ex.com/dav/muscu/backup.json')).toBe(
-      'https://ex.com/dav/muscu/backup.json',
+      'https://ex.com/dav/muscu/backup.json'
     );
   });
 
   it('trims whitespace before classifying', () => {
     expect(normalizeResourceUrl('  https://ex.com/dav/  ')).toBe(
-      `https://ex.com/dav/${SYNC_FILENAME}`,
+      `https://ex.com/dav/${SYNC_FILENAME}`
     );
   });
 
   it('rejects empty, unparsable and non-http(s) URLs', () => {
     for (const bad of ['', '   ', 'not-a-url', 'ftp://ex.com/file']) {
       expect(() => normalizeResourceUrl(bad)).toThrow(
-        expect.objectContaining({ code: 'sync-invalid-url' }),
+        expect.objectContaining({ code: 'sync-invalid-url' })
       );
     }
   });
@@ -134,16 +134,16 @@ describe('syncPush', () => {
 
   it('throws sync-unauthorized on a 401 response', async () => {
     mockFetchResponse(401);
-    await expect(
-      syncPush('https://ex.com/dav/', 'u', 'p', snapshot()),
-    ).rejects.toMatchObject({ code: 'sync-unauthorized' });
+    await expect(syncPush('https://ex.com/dav/', 'u', 'p', snapshot())).rejects.toMatchObject({
+      code: 'sync-unauthorized',
+    });
   });
 
   it('throws sync-network when fetch rejects (CORS/DNS)', async () => {
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('Failed to fetch')));
-    await expect(
-      syncPush('https://ex.com/dav/', 'u', 'p', snapshot()),
-    ).rejects.toMatchObject({ code: 'sync-network' });
+    await expect(syncPush('https://ex.com/dav/', 'u', 'p', snapshot())).rejects.toMatchObject({
+      code: 'sync-network',
+    });
   });
 });
 
@@ -157,23 +157,23 @@ describe('syncPull', () => {
 
   it('maps a missing remote file to sync-notfound', async () => {
     mockFetchResponse(404);
-    await expect(
-      syncPull('https://ex.com/dav/file.json', 'u', 'p'),
-    ).rejects.toMatchObject({ code: 'sync-notfound' });
+    await expect(syncPull('https://ex.com/dav/file.json', 'u', 'p')).rejects.toMatchObject({
+      code: 'sync-notfound',
+    });
   });
 
   it('maps a non-snapshot JSON payload to sync-invalid', async () => {
     mockFetchResponse(200, { hello: 'world' });
-    await expect(
-      syncPull('https://ex.com/dav/backup.json', 'u', 'p'),
-    ).rejects.toMatchObject({ code: 'sync-invalid' });
+    await expect(syncPull('https://ex.com/dav/backup.json', 'u', 'p')).rejects.toMatchObject({
+      code: 'sync-invalid',
+    });
   });
 
   it('maps an array body (JSON-valid, not an object) to sync-invalid', async () => {
     mockFetchResponse(200, [1, 2, 3]);
-    await expect(
-      syncPull('https://ex.com/dav/backup.json', 'u', 'p'),
-    ).rejects.toMatchObject({ code: 'sync-invalid' });
+    await expect(syncPull('https://ex.com/dav/backup.json', 'u', 'p')).rejects.toMatchObject({
+      code: 'sync-invalid',
+    });
   });
 
   it('maps unparsable payloads to sync-invalid', async () => {
@@ -183,18 +183,19 @@ describe('syncPull', () => {
         ok: true,
         status: 200,
         json: vi.fn().mockRejectedValue(new Error('bad json')),
-      }),
+      })
     );
-    await expect(
-      syncPull('https://ex.com/dav/backup.json', 'u', 'p'),
-    ).rejects.toMatchObject({ code: 'sync-invalid' });
+    await expect(syncPull('https://ex.com/dav/backup.json', 'u', 'p')).rejects.toMatchObject({
+      code: 'sync-invalid',
+    });
   });
 
   it('throws sync-http with the status for a 500', async () => {
     mockFetchResponse(500);
-    await expect(
-      syncPull('https://ex.com/dav/backup.json', 'u', 'p'),
-    ).rejects.toMatchObject({ code: 'sync-http', status: 500 });
+    await expect(syncPull('https://ex.com/dav/backup.json', 'u', 'p')).rejects.toMatchObject({
+      code: 'sync-http',
+      status: 500,
+    });
   });
 });
 

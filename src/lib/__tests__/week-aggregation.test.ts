@@ -5,9 +5,8 @@ import {
   buildWeeks,
   aggregateByWeek,
   topExercisesByVolume,
-  type WeekBucket,
 } from '../week-aggregation';
-import type { Session } from '../storage';
+import type { Session } from '../storage/types';
 
 describe('startOfWeek', () => {
   it('returns the preceding Sunday at 00:00', () => {
@@ -43,11 +42,7 @@ describe('buildWeeks', () => {
   });
 });
 
-function completedSession(
-  date: string,
-  volume: number,
-  duration?: number,
-): Session {
+function completedSession(date: string, volume: number, duration?: number): Session {
   return {
     id: date,
     name: 'S',
@@ -60,7 +55,14 @@ function completedSession(
         name: 'Bench',
         muscle: 'Pectoraux',
         sets: [
-          { exerciseId: 'e1', setNumber: 1, weight: volume, reps: 1, type: 'work', completed: true },
+          {
+            exerciseId: 'e1',
+            setNumber: 1,
+            weight: volume,
+            reps: 1,
+            type: 'work',
+            completed: true,
+          },
         ],
       },
     ],
@@ -87,6 +89,15 @@ describe('aggregateByWeek', () => {
     expect(buckets[1].sessionCount).toBe(1);
   });
 
+  it('accepts full ISO dates (regression: stats page showed 0)', () => {
+    const buckets = buildWeeks(1, new Date(2026, 10, 17));
+    aggregateByWeek([completedSession('2026-11-17T10:00:00.000Z', 100, 1200)], buckets);
+    // 17 novembre 2026 = mardi → bucket du dimanche 15 novembre.
+    expect(buckets[0].key).toBe('2026-11-15');
+    expect(buckets[0].volume).toBe(100);
+    expect(buckets[0].sessionCount).toBe(1);
+  });
+
   it('ignores sessions outside range and non-completed', () => {
     const buckets = buildWeeks(1, new Date(2026, 7, 26));
     aggregateByWeek([completedSession('2026-08-01', 999)], buckets);
@@ -100,12 +111,40 @@ describe('topExercisesByVolume', () => {
       {
         ...completedSession('2026-08-23', 100),
         exercises: [
-          { exerciseId: 'a', name: 'A', muscle: 'Pectoraux', sets: [{ exerciseId: 'a', setNumber: 1, weight: 100, reps: 3, type: 'work', completed: true }] },
-          { exerciseId: 'b', name: 'B', muscle: 'Dos', sets: [{ exerciseId: 'b', setNumber: 1, weight: 100, reps: 5, type: 'work', completed: true }] },
+          {
+            exerciseId: 'a',
+            name: 'A',
+            muscle: 'Pectoraux',
+            sets: [
+              {
+                exerciseId: 'a',
+                setNumber: 1,
+                weight: 100,
+                reps: 3,
+                type: 'work',
+                completed: true,
+              },
+            ],
+          },
+          {
+            exerciseId: 'b',
+            name: 'B',
+            muscle: 'Dos',
+            sets: [
+              {
+                exerciseId: 'b',
+                setNumber: 1,
+                weight: 100,
+                reps: 5,
+                type: 'work',
+                completed: true,
+              },
+            ],
+          },
         ],
       } as Session,
     ];
-    const top = topExercisesByVolume(sessions, 1, 12);
+    const top = topExercisesByVolume(sessions, 1, 12, new Date(2026, 7, 24));
     expect(top).toHaveLength(1);
     expect(top[0].exerciseId).toBe('b'); // 500 > 300
   });

@@ -15,7 +15,7 @@ import {
   type ReferenceBands,
   type ReferenceLift,
 } from '../benchmarks';
-import type { Session, SessionSet } from '../storage';
+import type { Session, SessionSet } from '../storage/types';
 
 let seq = 0;
 
@@ -39,7 +39,7 @@ function session(
   date: string,
   name: string,
   sets: SessionSet[],
-  status: Session['status'] = 'completed',
+  status: Session['status'] = 'completed'
 ): Session {
   seq += 1;
   const exerciseId = `ex-${name}`;
@@ -108,13 +108,23 @@ describe('best1RMForExercise', () => {
 
   it('ignores uncompleted sets and non-completed sessions', () => {
     const sessions = [
-      session('2026-08-01', 'Développé couché barre', [
-        set(100, 10, false), // non cochée → ignorée
-        set(60, 10, true), // 80
-      ], 'completed'),
-      session('2026-08-02', 'Développé couché barre', [
-        set(90, 10, true), // 120 mais séance en cours → ignorée
-      ], 'in-progress'),
+      session(
+        '2026-08-01',
+        'Développé couché barre',
+        [
+          set(100, 10, false), // non cochée → ignorée
+          set(60, 10, true), // 80
+        ],
+        'completed'
+      ),
+      session(
+        '2026-08-02',
+        'Développé couché barre',
+        [
+          set(90, 10, true), // 120 mais séance en cours → ignorée
+        ],
+        'in-progress'
+      ),
     ];
     expect(best1RMForExercise('ex-Développé couché barre', sessions)).toBeCloseTo(80, 5);
   });
@@ -124,7 +134,7 @@ describe('best1RMForExercise', () => {
     expect(
       best1RMForExercise('ex-Développé couché barre', [
         session('2026-08-01', 'Développé couché barre', [set(60, 10, false)]),
-      ]),
+      ])
     ).toBeNull();
   });
 });
@@ -150,20 +160,14 @@ describe('buildBenchmarkRows', () => {
   });
 
   it('no band when the user never logged the lift (name matched, no value)', () => {
-    const sessions = [
-      session('2026-08-01', 'Développé couché barre', [set(60, 10, false)]),
-    ];
+    const sessions = [session('2026-08-01', 'Développé couché barre', [set(60, 10, false)])];
     const rows = buildBenchmarkRows(sessions, [BENCH_LIFT]);
     expect(rows[0].userValue).toBeNull();
     expect(rows[0].band).toBeNull();
   });
 
   it('exercise absent from the reference table produces no row (no band)', () => {
-    const sessions = [
-      session('2026-08-01', 'Curl barre EZ', [
-        set(30, 10, true),
-      ]),
-    ];
+    const sessions = [session('2026-08-01', 'Curl barre EZ', [set(30, 10, true)])];
     const rows = buildBenchmarkRows(sessions, [BENCH_LIFT]);
     expect(rows).toHaveLength(1); // seul le lift de la table de référence
     expect(rows[0].exercise).toBe('Développé couché barre');

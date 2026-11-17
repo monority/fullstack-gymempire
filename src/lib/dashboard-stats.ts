@@ -6,7 +6,8 @@
  * No DOM, no localStorage, no Alpine dependency.
  */
 
-import { calculate1RM, type Session } from './storage';
+import { calculate1RM } from './storage/store';
+import type { Session } from './storage/types';
 
 // ── Date helpers ───────────────────────────────────────────────
 
@@ -114,7 +115,7 @@ export function computeTop1RM(sessions: Session[]): number {
 
 /** Per-day volume sums (index = getDay(), 0 = Sunday), this week. */
 export function computeWeeklyVolumeByDay(sessions: Session[]): number[] {
-  const arr = new Array(7).fill(0);
+  const arr = Array.from({ length: 7 }, () => 0);
   const now = new Date();
   const startOfWeek = new Date(now);
   startOfWeek.setDate(now.getDate() - now.getDay());
@@ -136,9 +137,7 @@ export function computeWeeklyVolumeByDay(sessions: Session[]): number[] {
  */
 export function computeStreak(sessions: Session[]): number {
   const completedDays = new Set(
-    sessions
-      .filter((s) => s.status === 'completed')
-      .map((s) => dateKey(new Date(s.date))),
+    sessions.filter((s) => s.status === 'completed').map((s) => dateKey(new Date(s.date)))
   );
   if (completedDays.size === 0) return 0;
 

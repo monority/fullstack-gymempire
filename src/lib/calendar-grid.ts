@@ -4,7 +4,7 @@
  * No DOM or Alpine dependencies — safe for unit testing and reuse.
  */
 
-import type { Session } from './storage';
+import type { Session } from './storage/types';
 
 // ============================================================================
 // Types
@@ -41,11 +41,7 @@ export function formatISO(d: Date): string {
  * @param month Zero-indexed month (0 = January)
  * @param today Optional reference date for `isToday` (defaults to `new Date()`)
  */
-export function buildMonthDays(
-  year: number,
-  month: number,
-  today?: Date,
-): CalendarDay[] {
+export function buildMonthDays(year: number, month: number, today?: Date): CalendarDay[] {
   const now = today ?? new Date();
   const todayStr = formatISO(now);
 
@@ -59,8 +55,7 @@ export function buildMonthDays(
     const d = new Date(startDate);
     d.setDate(startDate.getDate() + i);
     const dateStr = formatISO(d);
-    const isCurrentMonth =
-      d.getMonth() === month && d.getFullYear() === year;
+    const isCurrentMonth = d.getMonth() === month && d.getFullYear() === year;
     days.push({
       date: dateStr,
       dayNum: d.getDate(),
@@ -78,10 +73,7 @@ export function buildMonthDays(
  *
  * Returns a new array — the input is not mutated.
  */
-export function assignSessions(
-  days: CalendarDay[],
-  sessions: Session[],
-): CalendarDay[] {
+export function assignSessions(days: CalendarDay[], sessions: Session[]): CalendarDay[] {
   return days.map((day) => ({
     ...day,
     sessions: sessions.filter((s) => s.date === day.date),

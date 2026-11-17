@@ -1,0 +1,155 @@
+/**
+ * Domain types shared across the storage layer.
+ * Moved verbatim from `src/lib/storage.ts` (C1, plan-execution.md).
+ */
+
+export interface Exercise {
+  id: string;
+  name: string;
+  muscle: string; // e.g. "Pectoraux", "Dos", "Jambes"
+  category: string; // e.g. "Barre", "Haltère", "Machine", "Poids du corps"
+  createdAt: string; // ISO date
+  // ── User preference (added 2026-08-06) ──
+  favorite?: boolean;
+}
+
+export type SetType = 'warmup' | 'work' | 'top' | 'drop' | 'failure';
+
+export type RpeType = 'rpe' | 'urpe';
+
+/** Selectable per-set RPE values (10 → 4 by 0.5 steps). */
+export const RPE_OPTIONS: number[] = [10, 9.5, 9, 8.5, 8, 7.5, 7, 6.5, 6, 5.5, 5, 4.5, 4];
+
+export interface SessionSet {
+  exerciseId: string;
+  setNumber: number;
+  weight: number;
+  reps: number;
+  /**
+   * Perceived effort for this set, 0-10 in 0.5 steps (e.g. 7.5).
+   * Optional + nullable so sessions saved before the per-set RPE feature
+   * stay parseable — callers must treat null/undefined as "not logged".
+   */
+  rpe?: number | null;
+  /** Whether `rpe` is an RPE or uRPE value. Absent ⇒ treat as 'rpe'. */
+  rpeType?: RpeType;
+  type: SetType;
+  completed: boolean;
+}
+
+export type SessionStatus = 'in-progress' | 'completed' | 'planned';
+
+export type SessionMood = 'great' | 'good' | 'ok' | 'tired' | 'bad';
+
+/**
+ * A superset groups 2+ exercises that are performed back-to-back
+ * without rest. Stored on the session as an array of groups; each
+ * group references the `exerciseId` of the participating exercises.
+ */
+export interface Superset {
+  exercises: string[]; // exerciseIds
+}
+
+export interface SessionExercise {
+  exerciseId: string;
+  name: string;
+  muscle: string;
+  sets: SessionSet[];
+}
+
+export interface Session {
+  id: string;
+  sourceSessionId?: string;
+  name: string;
+  date: string; // ISO date
+  duration?: number; // seconds
+  exercises: SessionExercise[];
+  status: SessionStatus;
+  // ── Optional post-session notes (added 2026-08-04) ──
+  notes?: string;
+  rpe?: number; // session-level RPE, 1-10
+  fatigue?: number; // fatigue level, 1-5
+  mood?: SessionMood;
+  // ── Superset groups (added 2026-08-04) ──
+  // Optional to keep older sessions clean. Each entry lists 2+ exerciseIds
+  // that the user has grouped into a superset/circuit.
+  supersets?: Superset[];
+}
+
+export interface ProgressRecord {
+  exerciseId: string;
+  date: string;
+  estimated1RM: number;
+  bestWeight: number;
+  bestReps: number;
+}
+
+/**
+ * Body composition snapshot. Stored under `muscu:body` and used by
+ * the /progression/poids page to chart weight + measurements over time.
+ * All measurements are optional except `date` and `weight`.
+ */
+export interface BodyRecord {
+  date: string; // ISO date (YYYY-MM-DD)
+  weight: number; // kg
+  arm?: number; // cm
+  chest?: number; // cm
+  waist?: number; // cm
+  hips?: number; // cm
+}
+
+export type WeightUnit = 'kg' | 'lbs';
+export type RepsFormat = 'simple' | 'range';
+
+/**
+ * Session reminder configuration (added 2026-08-09).
+ * `days` uses JavaScript `Date#getDay()` indexing: 0 = Sunday …
+ * 6 = Saturday. `time` is a "HH:MM" string in 24h local time.
+ */
+export interface ReminderSettings {
+  enabled: boolean;
+  days: number[];
+  time: string; // "HH:MM"
+}
+
+export interface Settings {
+  pseudo: string;
+  email: string;
+  unit: WeightUnit;
+  repsFormat: RepsFormat;
+  defaultRestTime: number; // seconds
+  soundAlerts: boolean;
+  weeklyGoal: number; // sessions per week (1-7)
+  // ── Latest known body weight (added 2026-08-04) ──
+  // Mirrored from the most recent BodyRecord so the settings
+  // page can show a quick "current weight" without reading
+  // the body store separately.
+  bodyWeight?: number;
+  // ── Session reminders (added 2026-08-09) ──
+  // Nested object so older localStorage payloads merge safely
+  // through the DEFAULT_SETTINGS fallback in `getSettings()`.
+  reminders: ReminderSettings;
+  // ── WebDAV sync (added 2026-08-10) ──
+  // Credentials live in localStorage only (never sent anywhere but the
+  // user-configured WebDAV host). `lastSyncAt` drives the "last sync"
+  // status line on the settings page.
+  webdav: WebdavSettings;
+  // ── Community benchmarks opt-in (added 2026-08-10) ──
+  // Records INTENT only: no server exists yet, so enabling this never
+  // triggers a network request. It is the flag a future anonymized
+  // cohort upload will read once Supabase sync ships.
+  benchmarksOptIn: boolean;
+}
+
+/**
+ * WebDAV account for the manual sync section on the settings page.
+ * The password is stored in plain localStorage — a deliberate tradeoff
+ * documented in the UI (this app is 100% offline/local-first).
+ */
+export interface WebdavSettings {
+  url: string;
+  username: string;
+  password: string;
+  /** ISO timestamp of the last successful push/pull ('' when never). */
+  lastSyncAt?: string;
+}

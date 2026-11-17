@@ -17,7 +17,7 @@
  * future merge strategy can use — v1 deliberately does not merge.
  */
 
-import type { AppDataSnapshot } from './storage';
+import type { AppDataSnapshot } from './storage/backup';
 
 /** Filename appended when the configured URL points at a directory. */
 export const SYNC_FILENAME = 'muscu-backup.json';
@@ -114,7 +114,7 @@ async function fetchResource(
   resource: string,
   username: string,
   password: string,
-  init: { method: string; headers?: Record<string, string>; body?: string },
+  init: { method: string; headers?: Record<string, string>; body?: string }
 ): Promise<Response> {
   if (!syncAvailable()) throw new SyncError('sync-unavailable');
   try {
@@ -140,7 +140,7 @@ export async function syncPush(
   url: string,
   username: string,
   password: string,
-  snapshot: AppDataSnapshot,
+  snapshot: AppDataSnapshot
 ): Promise<void> {
   const resource = normalizeResourceUrl(url);
   const res = await fetchResource(resource, username, password, {
@@ -160,7 +160,7 @@ export async function syncPush(
 export async function syncPull(
   url: string,
   username: string,
-  password: string,
+  password: string
 ): Promise<AppDataSnapshot> {
   const resource = normalizeResourceUrl(url);
   const res = await fetchResource(resource, username, password, {
@@ -188,7 +188,7 @@ export async function syncPull(
 export async function syncTest(
   url: string,
   username: string,
-  password: string,
+  password: string
 ): Promise<SyncTestResult> {
   const resource = normalizeResourceUrl(url);
   const res = await fetchResource(resource, username, password, {
