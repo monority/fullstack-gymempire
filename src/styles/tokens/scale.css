@@ -1,0 +1,52 @@
+/**
+ * Design tokens — échelle, typographie, mouvement, layout.
+ * Couche CSS : `tokens`. Aucune couleur ici : voir `tokens/colors.css`.
+ */
+@layer tokens {
+  :root {
+    /* Espacements (base 0.4rem = 4px avec html à 62.5%) */
+    --spacing-1: 0.4rem;
+    --spacing-2: 0.8rem;
+    --spacing-3: 1.2rem;
+    --spacing-4: 1.6rem;
+    --spacing-5: 2rem;
+    --spacing-6: 2.4rem;
+    --spacing-8: 3.2rem;
+
+    /* Rayons */
+    --radius-sm: 4px;
+    --radius-md: 6px;
+    --radius-lg: 10px;
+    --radius-xl: 14px;
+    --radius-pill: 999px;
+
+    /* Typographie */
+    --font-display: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --text-page-title: clamp(2.4rem, 4vw, 3.6rem);
+    --text-page-title-leading: 1.02;
+    --text-page-title-tracking: -0.03em;
+
+    /* Focus et transitions */
+    --focus-ring: 0 0 0 3px hsl(30 92% 58% / 0.42);
+    --transition-fast: 140ms ease;
+    --transition-base: 200ms ease;
+    --transition-normal: 240ms ease;
+
+    /* Layout */
+    --sidebar-width: 22rem;
+    --bottom-nav-height: 5.6rem;
+    --topbar-height: 6.4rem;
+    --page-max-w: 96rem;
+    --page-padding-desktop: 5.6rem;
+    --page-padding-tablet: 3.2rem;
+    --page-padding-mobile: 1.6rem;
+    --gap-card: 1.2rem;
+    --gap-section: 1.6rem;
+
+    /* Surfaces dérivées (ne varient pas avec le thème) */
+    --color-scrim: #000000; /* voile des overlays, identique en dark et light */
+    --surface-panel: color-mix(in srgb, var(--color-surface) 88%, transparent);
+    --surface-panel-elevated: color-mix(in srgb, var(--color-surface-2) 90%, transparent);
+  }
+}

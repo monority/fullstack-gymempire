@@ -1,0 +1,15 @@
+/**
+ * Règles racine et primitives globales.
+ * Couche CSS : `base`.
+ */
+@layer base {
+  html {
+    font-size: 62.5%; /* 1rem = 10px */
+  }
+
+  /* Le composant <Icon> injecte sa taille via --icon-size. */
+  svg[style*='--icon-size'] {
+    width: var(--icon-size) !important;
+    height: var(--icon-size) !important;
+  }
+}
