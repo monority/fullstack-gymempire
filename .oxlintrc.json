@@ -1,0 +1,22 @@
+// A4 — Lint ciblé, règles minimales non bruyantes.
+// Le style est géré par Prettier ; pas de règles stylistiques ici.
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "categories": {
+    "correctness": "error"
+  },
+  "rules": {
+    "no-console": "warn",
+    "eqeqeq": ["error", "smart"],
+    "prefer-const": "error",
+    "no-explicit-any": "warn"
+  },
+  "ignorePatterns": [
+    "dist/**",
+    ".astro/**",
+    "node_modules/**",
+    "public/vendor/**",
+    "scripts/**",
+    "src/layouts/AppLayout.astro"
+  ]
+}

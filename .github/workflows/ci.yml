@@ -33,14 +33,29 @@ jobs:
       - name: Install Playwright browser
         run: pnpm exec playwright install --with-deps chromium
 
-      - name: Run tests
-        run: pnpm test
+      - name: Run tests with coverage thresholds
+        run: pnpm test:coverage
 
-      - name: Type-check Astro project
-        run: pnpm check
+      - name: Check formatting of changed files
+        run: pnpm format:check
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Tokens de couleur
+        run: pnpm check:colors
+
+      - name: Contraste WCAG des tokens
+        run: pnpm check:contrast
+
+      - name: Type-check Astro project (strict, fails on hints)
+        run: pnpm check:strict
 
       - name: Build production site
         run: pnpm build
+
+      - name: Bundle budget
+        run: pnpm check:budget
 
       - name: Smoke-test critical routes
         run: pnpm test:smoke
