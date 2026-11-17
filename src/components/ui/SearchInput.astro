@@ -50,14 +50,12 @@ const { placeholder, label, class: className = '', ...rest } = Astro.props;
     font-size: 1.4rem;
     font-family: var(--font-body);
     outline: none;
-    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    transition:
+      border-color var(--transition-fast),
+      box-shadow var(--transition-fast);
   }
   .search-input__field::placeholder {
     color: var(--color-muted);
     opacity: 0.6;
-  }
-  .search-input__field:focus {
-    border-color: var(--color-accent);
-    box-shadow: var(--focus-ring);
   }
 </style>

@@ -26,7 +26,8 @@ const title = `${L.detail.title} — Gym Empire`;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="robots" content="noindex" />
-    <meta name="theme-color" content="#F59A3D" /><!-- --color-accent (hsl(30 92% 58%)) — meta can't read CSS vars -->
+    <meta name="theme-color" content="#F59A3D" />
+    <!-- --color-accent (hsl(30 92% 58%)) — meta can't read CSS vars -->
 
     {/* Locale bootstrap — same convention as AppLayout so `t()` resolves
         the same language as the <html lang> attribute on the client. */}
@@ -36,12 +37,17 @@ const title = `${L.detail.title} — Gym Empire`;
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
 
     <style is:inline>
       /* Keep the very first paint light so the browser's print snapshot
          never flashes a dark frame around the sheet. */
-      html { background-color: #ffffff; }
+      html {
+        background-color: #ffffff;
+      }
     </style>
   </head>
   <body>
@@ -168,186 +174,47 @@ const title = `${L.detail.title} — Gym Empire`;
     </main>
 
     <script>
-      import {
-        getSessionById,
-        type Session,
-        type SessionExercise,
-        type SessionStatus,
-        type RpeType,
-        type SetType,
-      } from '../../lib/storage';
+      import { createPrintSheetApp } from '../../components/session-detail/printSheetApp';
       import { getAuth } from '../../lib/auth';
       import { t, getLocale, localizedPath, trExercise } from '../../i18n';
-      import { statusLabel as statusLabelFn, type StatusLabels } from '../../lib/session-utils';
-      import { typeLabel as typeLabelFn } from '../../lib/workout-helpers';
-      import { formatDateLong, formatDurationShort, formatVolume, formatWeight } from '../../lib/format';
 
       const LABELS = t();
 
-      // Same translation helper every other page gets from AppLayout.
+      // Helper de traduction identique aux autres pages (celle-ci est autonome).
       (window as any).trExercise = trExercise;
 
-      // Auth gate — mirrors the AppShell behaviour for standalone pages.
       if (!getAuth()) {
         window.location.replace(localizedPath('/login'));
       }
 
-      // ── Pure helpers ─────────────────────────────────────
-      const isEn = (): boolean => getLocale() === 'en';
-
-      const statusLabels: StatusLabels = { completed: LABELS.detail.completed, inProgress: LABELS.detail.inProgress, planned: LABELS.detail.planned };
-
-      function statusLabelLocal(s: SessionStatus): string {
-        return statusLabelFn(s, statusLabels);
-      }
-
-      function typeLabelLocal(t: SetType): string {
-        return typeLabelFn(t, {
-          warmup: LABELS.detail.typeWarmup,
-          work: LABELS.detail.typeWork,
-          top: LABELS.detail.typeTop,
-          drop: LABELS.detail.typeDrop,
-          failure: LABELS.detail.typeFailure,
-        });
-      }
-
-      function formatDateTimeLocal(iso: string): string {
-        const base = formatDateLong(iso);
-        const hasTime = /\d{2}:\d{2}/.test(iso);
-        if (hasTime) {
-          const d = new Date(iso);
-          const loc = isEn() ? 'en-GB' : 'fr-FR';
-          const time = d.toLocaleTimeString(loc, { hour: '2-digit', minute: '2-digit' });
-          return `${base} ${LABELS.detail.at} ${time}`;
-        }
-        return base;
-      }
-
-      function formatSetRpeFn(
-        rpe: number | string | null | undefined,
-        rpeType?: RpeType,
-      ): string {
-        const v = typeof rpe === 'string' ? Number(rpe) : rpe;
-        if (v == null || !Number.isFinite(v)) return '—';
-        return (rpeType === 'urpe' ? 'uRPE ' : 'RPE ') + v.toString();
-      }
-
-      function exerciseVolumeFn(ex: SessionExercise): number {
-        return ex.sets.reduce(
-          (s, set) => s + (set.completed ? set.weight * set.reps : 0),
-          0,
-        );
-      }
-
-      document.addEventListener('alpine:init', () => {
+      const register = () => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const Alpine = (window as any).Alpine;
+        const sheet = window as Window & { __SHEET_PRINTED__?: boolean };
 
-        Alpine.data('printSheetApp', () => ({
-          labels: {
-            date: LABELS.common.date,
-            duration: LABELS.detail.duration,
-            volume: LABELS.detail.totalVolume,
-            totalVolume: LABELS.detail.totalVolume,
-            exercises: LABELS.detail.exercises,
-            sets: LABELS.detail.sets,
-            notes: LABELS.detail.notes,
-            statusLabel: LABELS.detail.statusLabel,
-            colWeight: LABELS.detail.colWeight,
-            colReps: LABELS.detail.colReps,
-            colType: LABELS.detail.colType,
-            footer: LABELS.detail.printFooter,
-            notFoundTitle: LABELS.detail.printNotFoundTitle,
-            notFoundDesc: LABELS.detail.printNotFoundDesc,
-            notFoundBack: LABELS.detail.printNotFoundBack,
-            backHref: localizedPath('/sessions'),
-          },
+        Alpine.data('printSheetApp', () =>
+          createPrintSheetApp({
+            search: window.location.search,
+            labels: {
+              common: LABELS.common,
+              detail: LABELS.detail,
+              locale: getLocale,
+              backHref: localizedPath('/sessions'),
+            },
+            ui: {
+              alreadyPrinted: () => Boolean(sheet.__SHEET_PRINTED__),
+              markPrinted: () => {
+                sheet.__SHEET_PRINTED__ = true;
+              },
+              print: () => window.print(),
+              schedule: (fn, ms) => window.setTimeout(fn, ms),
+            },
+          })
+        );
+      };
 
-          session: null as Session | null,
-          notFound: false,
-
-          init() {
-            const id = new URLSearchParams(window.location.search).get('id') || '';
-            const session = id ? getSessionById(id) : undefined;
-            if (!session) {
-              this.notFound = true;
-              return;
-            }
-            this.session = session;
-            this.schedulePrint();
-          },
-
-          /**
-           * Opens the print dialog once the sheet has rendered. Fires once per
-           * tab so a manual re-print (toolbar button / Ctrl+P) never re-triggers
-           * the dialog loop. The toolbar button is the fallback for browsers
-           * that block programmatic printing.
-           */
-          schedulePrint() {
-            const w = window as unknown as { __SHEET_PRINTED__?: boolean };
-            if (w.__SHEET_PRINTED__) return;
-            w.__SHEET_PRINTED__ = true;
-            window.setTimeout(() => window.print(), 400);
-          },
-
-          // ── Computed ──
-          get totalVolume(): number {
-            if (!this.session) return 0;
-            return this.session.exercises.reduce(
-              (sum, ex) => sum + exerciseVolumeFn(ex),
-              0,
-            );
-          },
-
-          get totalSets(): number {
-            if (!this.session) return 0;
-            return this.session.exercises.reduce(
-              (sum, ex) => sum + ex.sets.length,
-              0,
-            );
-          },
-
-          // ── Supersets ──
-          groupFor(ex: SessionExercise): { n: number } | null {
-            if (!this.session?.supersets) return null;
-            const idx = this.session.supersets.findIndex((g) =>
-              g.exercises.includes(ex.exerciseId),
-            );
-            return idx === -1 ? null : { n: idx + 1 };
-          },
-
-          supersetLabelFor(ex: SessionExercise): string {
-            const g = this.groupFor(ex);
-            return g ? `${LABELS.detail.supersetLabel} ${g.n}` : '';
-          },
-
-          // ── Template wrappers ──
-          statusLabel(s: SessionStatus): string {
-            return statusLabelLocal(s);
-          },
-          typeLabel(t: SetType): string {
-            return typeLabelLocal(t);
-          },
-          formatDateTime(iso: string): string {
-            return formatDateTimeLocal(iso);
-          },
-          formatDuration(seconds?: number): string {
-            return formatDurationShort(seconds);
-          },
-          formatVolume(v: number): string {
-            return formatVolume(v);
-          },
-          formatWeight(w: number): string {
-            return formatWeight(w);
-          },
-          formatSetRpe(set: { rpe?: number | null; rpeType?: RpeType }): string {
-            return formatSetRpeFn(set.rpe, set.rpeType);
-          },
-          exerciseVolume(ex: SessionExercise): number {
-            return exerciseVolumeFn(ex);
-          },
-        }));
-      });
+      document.addEventListener('alpine:init', register);
+      if ((window as any).Alpine) register();
     </script>
 
     {/* Alpine.js CDN — MUST be AFTER the app script (type="module" runs before defer) */}
@@ -371,14 +238,19 @@ const title = `${L.detail.title} — Gym Empire`;
       body {
         background-color: #050505;
         color: #f6f6f6;
-        font-family: "Inter", ui-sans-serif, system-ui, -apple-system,
-          "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        font-family:
+          'Inter',
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          'Segoe UI',
+          Roboto,
+          Helvetica,
+          Arial,
+          sans-serif;
         -webkit-font-smoothing: antialiased;
       }
 
-      /* ═══════════════════════════════════════════
-         SCREEN-ONLY TOOLBAR
-         ═══════════════════════════════════════════ */
       .print-toolbar {
         display: flex;
         align-items: center;
@@ -409,7 +281,9 @@ const title = `${L.detail.title} — Gym Empire`;
         font-size: 1.3rem;
         font-weight: 700;
         cursor: pointer;
-        transition: background-color 0.2s ease, border-color 0.2s ease;
+        transition:
+          background-color 0.2s ease,
+          border-color 0.2s ease;
       }
 
       .print-toolbar__btn:hover {
@@ -417,9 +291,6 @@ const title = `${L.detail.title} — Gym Empire`;
         border-color: #f59a3d;
       }
 
-      /* ═══════════════════════════════════════════
-         SHEET LAYOUT
-         ═══════════════════════════════════════════ */
       .sheet-wrap {
         max-width: 90rem;
         margin: 0 auto;
@@ -485,13 +356,13 @@ const title = `${L.detail.title} — Gym Empire`;
       .sheet__badge--completed {
         background-color: hsl(142 70% 45% / 0.12);
         color: #4ade80;
-        border-color: hsl(142 70% 45% / 0.30);
+        border-color: hsl(142 70% 45% / 0.3);
       }
 
       .sheet__badge--in-progress {
         background-color: hsl(217 80% 55% / 0.12);
         color: #60a5fa;
-        border-color: hsl(217 80% 55% / 0.30);
+        border-color: hsl(217 80% 55% / 0.3);
       }
 
       .sheet__badge--planned {
@@ -622,9 +493,9 @@ const title = `${L.detail.title} — Gym Empire`;
         align-items: center;
         height: 2.4rem;
         padding: 0 1rem;
-        border: 1px solid hsl(271 80% 66% / 0.40);
+        border: 1px solid hsl(271 80% 66% / 0.4);
         border-radius: 999px;
-        background-color: hsl(271 80% 66% / 0.10);
+        background-color: hsl(271 80% 66% / 0.1);
         color: #d8b4fe;
         font-size: 1rem;
         font-weight: 700;
@@ -759,9 +630,6 @@ const title = `${L.detail.title} — Gym Empire`;
         text-decoration: none;
       }
 
-      /* ═══════════════════════════════════════════
-         PRINT — ink-friendly sheet
-         ═══════════════════════════════════════════ */
       @page {
         size: A4;
         margin: 1.4cm 1.6cm;
@@ -806,9 +674,21 @@ const title = `${L.detail.title} — Gym Empire`;
           background: #ffffff;
           border: 1px solid #999999;
         }
-        .sheet__badge--completed { color: #15803d; border-color: #15803d; background: #ffffff; }
-        .sheet__badge--in-progress { color: #1d4ed8; border-color: #1d4ed8; background: #ffffff; }
-        .sheet__badge--planned { color: #555555; border-color: #999999; background: #ffffff; }
+        .sheet__badge--completed {
+          color: #15803d;
+          border-color: #15803d;
+          background: #ffffff;
+        }
+        .sheet__badge--in-progress {
+          color: #1d4ed8;
+          border-color: #1d4ed8;
+          background: #ffffff;
+        }
+        .sheet__badge--planned {
+          color: #555555;
+          border-color: #999999;
+          background: #ffffff;
+        }
 
         .sheet__meta-label {
           color: #555555;

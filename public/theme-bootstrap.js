@@ -18,12 +18,11 @@
     var script = document.currentScript;
     var metaVar = script && script.getAttribute('data-meta-var');
     if (metaVar) {
-      var value = getComputedStyle(document.documentElement)
-        .getPropertyValue(metaVar).trim();
+      var value = getComputedStyle(document.documentElement).getPropertyValue(metaVar).trim();
       var meta = document.querySelector('meta[name="theme-color"]');
       if (meta && value) meta.setAttribute('content', value);
     }
-  } catch (e) {
+  } catch {
     /* localStorage unavailable (SSR / private mode) */
   }
 })();

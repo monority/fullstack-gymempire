@@ -1,20 +1,16 @@
 ---
 /**
- * QuickSearch â€” shadcn-style command palette / quick-search modal.
  *
  * Global search overlay (native <dialog>) that searches across:
  *   - Pages (static list, localized nav labels)
  *   - Exercises (from localStorage via getExercises(); display names +
  *     muscles translated on the EN locale via trExercise/trMuscle)
- *   - Sessions (from getSessions(), by name â†’ /sessions/detail?id=â€¦)
  *
  * Pages always win, then exercises, then sessions, each under a small
- * group header. Clicking a row (or pressing â†µ on the highlighted one)
  * navigates via window.location.
  *
  * Triggers:
  *   - Any element with `data-quick-search-trigger` (e.g. the Sidebar
- *     search field) â€” clicked via event delegation
  *   - "/" key (ignored while typing in an input/textarea/contenteditable)
  *   - Ctrl/Cmd+K (always)
  *   - window.quickSearch.open() / close() from any script
@@ -22,8 +18,8 @@
  * Escape closes via the native <dialog> behaviour; clicking the
  * backdrop closes too (see the click handler in the script below).
  */
-import { t } from "../../i18n";
-import Icon from "../ui/Icon.astro";
+import { t } from '../../i18n';
+import Icon from '../ui/Icon.astro';
 
 const L = t();
 ---
@@ -35,7 +31,6 @@ const L = t();
   x-data="commandMenu()"
 >
   <div class="quick-search__panel">
-    {/* â”€â”€ Input â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
     <div class="quick-search__input">
       <Icon name="search" size={18} class="quick-search__input-icon" />
       <input
@@ -54,10 +49,11 @@ const L = t();
         autocapitalize="off"
         spellcheck="false"
       />
-      <kbd class="quick-search__esc" aria-hidden="true">esc</kbd>
+      <kbd class="quick-search__esc" aria-hidden="true">
+        esc
+      </kbd>
     </div>
 
-    {/* â”€â”€ Results â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
     <div
       class="quick-search__list"
       @keydown.down.prevent="move(1)"
@@ -86,11 +82,7 @@ const L = t();
               @click="selectItem(item)"
             >
               <span class="quick-search__item-label" x-text="item.label"></span>
-              <span
-                class="quick-search__item-sub"
-                x-show="item.sub"
-                x-text="item.sub"
-              ></span>
+              <span class="quick-search__item-sub" x-show="item.sub" x-text="item.sub"></span>
             </button>
           </template>
         </section>
@@ -105,7 +97,6 @@ const L = t();
       </div>
     </div>
 
-    {/* â”€â”€ Footer hints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
     <footer class="quick-search__footer" id="quick-search-hints">
       <div class="quick-search__hint">
         <span class="quick-search__keys">
@@ -116,11 +107,11 @@ const L = t();
         <span x-text="hintOpen"></span>
       </div>
       <div class="quick-search__hint">
-        <kbd aria-hidden="true">â†‘â†“</kbd>
+        <kbd aria-hidden="true">↑↓</kbd>
         <span x-text="hintNav"></span>
       </div>
       <div class="quick-search__hint">
-        <kbd aria-hidden="true">â†µ</kbd>
+        <kbd aria-hidden="true">↵</kbd>
         <span x-text="hintSelect"></span>
       </div>
       <div class="quick-search__hint">
@@ -146,7 +137,7 @@ const L = t();
     width: min(58rem, calc(100vw - 1.6rem));
     max-height: calc(100vh - 6rem);
     overflow: hidden;
-    box-shadow: 0 24px 48px color-mix(in srgb, #000 45%, transparent);
+    box-shadow: 0 24px 48px color-mix(in srgb, var(--color-scrim) 45%, transparent);
   }
 
   /* Short viewports (e.g. mobile + virtual keyboard): clamp to the
@@ -158,12 +149,18 @@ const L = t();
   }
 
   .quick-search::backdrop {
-    background-color: color-mix(in srgb, #000 60%, transparent);
+    background-color: color-mix(in srgb, var(--color-scrim) 60%, transparent);
   }
 
   @keyframes quick-search-in {
-    from { opacity: 0; transform: scale(0.97) translateY(6px); }
-    to   { opacity: 1; transform: scale(1) translateY(0); }
+    from {
+      opacity: 0;
+      transform: scale(0.97) translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
   }
 
   .quick-search[open] {
@@ -175,7 +172,6 @@ const L = t();
     flex-direction: column;
   }
 
-  /* â”€â”€ Input â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   .quick-search__input {
     display: flex;
     align-items: center;
@@ -224,7 +220,6 @@ const L = t();
     flex-shrink: 0;
   }
 
-  /* â”€â”€ Results list â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   .quick-search__list {
     max-height: min(44rem, 55vh);
     overflow-y: auto;
@@ -283,7 +278,6 @@ const L = t();
     flex-shrink: 0;
   }
 
-  /* â”€â”€ Empty state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   .quick-search__empty {
     display: flex;
     flex-direction: column;
@@ -314,7 +308,6 @@ const L = t();
     margin: 0;
   }
 
-  /* â”€â”€ Footer hints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   .quick-search__footer {
     display: flex;
     align-items: center;
@@ -343,7 +336,6 @@ const L = t();
     line-height: 1.2;
   }
 
-  /* Key-combo chips (Ctrl + K + /) sit tighter than the hintâ†’label gap. */
   .quick-search__keys {
     display: inline-flex;
     align-items: center;
@@ -352,10 +344,11 @@ const L = t();
 </style>
 
 <script>
-  import { t, getLocale, localizedPath, trExercise, trMuscle } from "../../i18n";
-  import { getExercises, getSessions } from "../../lib/storage";
-  import { normalize } from "../../lib/text";
-  import type { Exercise, Session } from "../../lib/storage";
+  import { t, getLocale, localizedPath, trExercise, trMuscle } from '../../i18n';
+  import { getExercises } from '../../lib/storage/exercises';
+  import { getSessions } from '../../lib/storage/sessions';
+  import { normalize } from '../../lib/text';
+  import type { Exercise, Session } from '../../lib/storage/types';
 
   declare global {
     interface Window {
@@ -363,7 +356,7 @@ const L = t();
     }
   }
 
-  type QKind = "page" | "exercise" | "session";
+  type QKind = 'page' | 'exercise' | 'session';
   interface QItem {
     index: number;
     key: string;
@@ -378,48 +371,111 @@ const L = t();
     items: QItem[];
   }
 
-  const matches = (label: string, q: string): boolean =>
-    normalize(label).includes(q);
+  const matches = (label: string, q: string): boolean => normalize(label).includes(q);
 
   /** Prefix hits rank above substring hits (0 < 1). */
-  const rankScore = (name: string, q: string): number =>
-    normalize(name).startsWith(q) ? 0 : 1;
+  const rankScore = (name: string, q: string): number => (normalize(name).startsWith(q) ? 0 : 1);
 
-  // â”€â”€â”€ Alpine component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-  document.addEventListener("alpine:init", () => {
+  document.addEventListener('alpine:init', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const Alpine = (window as any).Alpine;
 
-    Alpine.data("commandMenu", () => {
+    Alpine.data('commandMenu', () => {
       const L = t();
       const locale = getLocale();
       const base = (p: string) => localizedPath(p);
 
       // Static page catalogue (labels localized at init).
       const pages: QItem[] = [
-        { index: 0, key: "page:/", kind: "page", label: L.nav.dashboard, href: base("/") },
-        { index: 0, key: "page:/sessions/quick", kind: "page", label: L.nav.rapide, href: base("/sessions/quick") },
-        { index: 0, key: "page:/sessions/create", kind: "page", label: L.nav.creer, href: base("/sessions/create") },
-        { index: 0, key: "page:/exercises", kind: "page", label: L.nav.exercices, href: base("/exercises") },
-        { index: 0, key: "page:/progression", kind: "page", label: L.nav.progression, href: base("/progression") },
-        { index: 0, key: "page:/progression/poids", kind: "page", label: L.nav.poidsMesures, href: base("/progression/poids") },
-        { index: 0, key: "page:/progression/records", kind: "page", label: L.nav.records, href: base("/progression/records") },
-        { index: 0, key: "page:/progression/stats", kind: "page", label: L.nav.statistiques, href: base("/progression/stats") },
-        { index: 0, key: "page:/calculator", kind: "page", label: L.nav.calculateur, href: base("/calculator") },
-        { index: 0, key: "page:/calendar", kind: "page", label: L.nav.calendrier, href: base("/calendar") },
-        { index: 0, key: "page:/sessions", kind: "page", label: L.nav.seances, href: base("/sessions") },
-        { index: 0, key: "page:/timer", kind: "page", label: L.nav.timer, href: base("/timer") },
-        { index: 0, key: "page:/settings", kind: "page", label: L.nav.settings, href: base("/settings") },
+        { index: 0, key: 'page:/', kind: 'page', label: L.nav.dashboard, href: base('/') },
+        {
+          index: 0,
+          key: 'page:/sessions/quick',
+          kind: 'page',
+          label: L.nav.rapide,
+          href: base('/sessions/quick'),
+        },
+        {
+          index: 0,
+          key: 'page:/sessions/create',
+          kind: 'page',
+          label: L.nav.creer,
+          href: base('/sessions/create'),
+        },
+        {
+          index: 0,
+          key: 'page:/exercises',
+          kind: 'page',
+          label: L.nav.exercices,
+          href: base('/exercises'),
+        },
+        {
+          index: 0,
+          key: 'page:/progression',
+          kind: 'page',
+          label: L.nav.progression,
+          href: base('/progression'),
+        },
+        {
+          index: 0,
+          key: 'page:/progression/poids',
+          kind: 'page',
+          label: L.nav.poidsMesures,
+          href: base('/progression/poids'),
+        },
+        {
+          index: 0,
+          key: 'page:/progression/records',
+          kind: 'page',
+          label: L.nav.records,
+          href: base('/progression/records'),
+        },
+        {
+          index: 0,
+          key: 'page:/progression/stats',
+          kind: 'page',
+          label: L.nav.statistiques,
+          href: base('/progression/stats'),
+        },
+        {
+          index: 0,
+          key: 'page:/calculator',
+          kind: 'page',
+          label: L.nav.calculateur,
+          href: base('/calculator'),
+        },
+        {
+          index: 0,
+          key: 'page:/calendar',
+          kind: 'page',
+          label: L.nav.calendrier,
+          href: base('/calendar'),
+        },
+        {
+          index: 0,
+          key: 'page:/sessions',
+          kind: 'page',
+          label: L.nav.seances,
+          href: base('/sessions'),
+        },
+        { index: 0, key: 'page:/timer', kind: 'page', label: L.nav.timer, href: base('/timer') },
+        {
+          index: 0,
+          key: 'page:/settings',
+          kind: 'page',
+          label: L.nav.settings,
+          href: base('/settings'),
+        },
       ];
 
       const formatDate = (iso: string): string => {
         const d = new Date(iso);
         if (Number.isNaN(d.getTime())) return iso;
-        return d.toLocaleDateString(locale === "en" ? "en-GB" : "fr-FR");
+        return d.toLocaleDateString(locale === 'en' ? 'en-GB' : 'fr-FR');
       };
 
       return {
-        keyword: "",
+        keyword: '',
         highlight: 0,
         placeholder: L.command.placeholder,
         emptyTitle: L.command.noResults,
@@ -456,10 +512,9 @@ const L = t();
           // 1. Pages (shown unfiltered when the query is empty)
           const pageHits = q ? pages.filter((p) => matches(p.label, q)) : pages;
           if (pageHits.length) {
-            result.push({ id: "pages", title: L.command.pages, items: pageHits });
+            result.push({ id: 'pages', title: L.command.pages, items: pageHits });
           }
 
-          // 2. Exercises â€” match the raw (FR) name, the translated name
           //    (so the EN locale can find "bench press"), and the muscle
           //    group. When the query matches a muscle (fr key or en
           //    translation via trMuscle), the exercises of that muscle are
@@ -470,48 +525,38 @@ const L = t();
               .map((e) => e.muscle)
               .filter((m, i, arr) => arr.indexOf(m) === i);
             const muscleHits = new Set(
-              muscleKeys.filter(
-                (m) => matches(m, q) || matches(trMuscle(m), q),
-              ),
+              muscleKeys.filter((m) => matches(m, q) || matches(trMuscle(m), q))
             );
-            const exactMuscle =
-              muscleHits.size === 1 ? [...muscleHits][0] : null;
+            const exactMuscle = muscleHits.size === 1 ? [...muscleHits][0] : null;
 
             const exo = this.exercises
               .map((e) => ({ e, tr: trExercise(e.name) }))
               .filter(
-                ({ e, tr }) =>
-                  matches(e.name, q) ||
-                  matches(tr, q) ||
-                  muscleHits.has(e.muscle),
+                ({ e, tr }) => matches(e.name, q) || matches(tr, q) || muscleHits.has(e.muscle)
               )
               .sort((a, b) => {
                 const score = (item: { e: Exercise; tr: string }): number =>
                   (muscleHits.has(item.e.muscle) ? 0 : 1) * 2 +
-                  Math.min(
-                    rankScore(item.e.name, q),
-                    rankScore(item.tr, q),
-                  );
+                  Math.min(rankScore(item.e.name, q), rankScore(item.tr, q));
                 return score(a) - score(b);
               })
               .slice(0, 8)
               .map(({ e, tr }) => ({
                 index: 0,
                 key: `exo:${e.id}`,
-                kind: "exercise" as const,
+                kind: 'exercise' as const,
                 label: tr,
                 sub: trMuscle(e.muscle),
-                href: base("/exercises"),
+                href: base('/exercises'),
               }));
             if (exo.length) {
               result.push({
-                id: "exercises",
+                id: 'exercises',
                 // Exact muscle query ("Pectoraux" / "chest") becomes the
                 // group header; substring hits only get the rank boost.
                 title:
                   exactMuscle !== null &&
-                  (normalize(exactMuscle) === q ||
-                    normalize(trMuscle(exactMuscle)) === q)
+                  (normalize(exactMuscle) === q || normalize(trMuscle(exactMuscle)) === q)
                     ? trMuscle(exactMuscle)
                     : L.command.exercises,
                 items: exo,
@@ -519,7 +564,6 @@ const L = t();
             }
           }
 
-          // 3. Sessions â€” match by name.
           if (q) {
             const sess = this.sessions
               .filter((s) => matches(s.name, q))
@@ -528,13 +572,13 @@ const L = t();
               .map((s) => ({
                 index: 0,
                 key: `ses:${s.id}`,
-                kind: "session" as const,
+                kind: 'session' as const,
                 label: s.name,
                 sub: formatDate(s.date),
                 href: base(`/sessions/detail?id=${encodeURIComponent(s.id)}`),
               }));
             if (sess.length) {
-              result.push({ id: "sessions", title: L.command.sessions, items: sess });
+              result.push({ id: 'sessions', title: L.command.sessions, items: sess });
             }
           }
 
@@ -553,7 +597,7 @@ const L = t();
           const alpine = this as unknown as AlpineMagicThis;
           alpine.$nextTick(() => {
             const el = alpine.$el.querySelector(`[data-qsi="${this.highlight}"]`);
-            if (el) el.scrollIntoView({ block: "nearest" });
+            if (el) el.scrollIntoView({ block: 'nearest' });
           });
         },
 
@@ -568,32 +612,27 @@ const L = t();
         },
 
         reset() {
-          this.keyword = "";
+          this.keyword = '';
           this.highlight = 0;
         },
       };
     });
   });
 
-  // â”€â”€â”€ Window bridge + global wiring â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   let qsBound = false;
 
   function resetCmdState(dlg: HTMLDialogElement): void {
     const a = (window as any).Alpine;
-    if (!a || typeof a.$data !== "function") return;
+    if (!a || typeof a.$data !== 'function') return;
     try {
       const data = a.$data(dlg) as { reset?: () => void } | undefined;
       data?.reset?.();
-    } catch {
-      // Alpine not ready yet â€” the next open() call will reset again.
-    }
+    } catch {}
   }
 
   function openCmd(): void {
-    const dlg = document.getElementById(
-      "quick-search-dialog",
-    ) as HTMLDialogElement | null;
-    if (!dlg || dlg.tagName !== "DIALOG") return;
+    const dlg = document.getElementById('quick-search-dialog') as HTMLDialogElement | null;
+    if (!dlg || dlg.tagName !== 'DIALOG') return;
     resetCmdState(dlg);
     if (!dlg.open) dlg.showModal();
     const input = dlg.querySelector<HTMLInputElement>('input[type="search"]');
@@ -602,15 +641,12 @@ const L = t();
 
   function bindQuickSearch(): void {
     if (qsBound) return;
-    const dlg = document.getElementById(
-      "quick-search-dialog",
-    ) as HTMLDialogElement | null;
+    const dlg = document.getElementById('quick-search-dialog') as HTMLDialogElement | null;
     if (!dlg) return;
     qsBound = true;
 
-    // Backdrop click â†’ close (click lands on the dialog element itself
     // when it hits the backdrop, same technique as Dialog.astro).
-    dlg.addEventListener("click", (e) => {
+    dlg.addEventListener('click', (e) => {
       if (e.target !== dlg) return;
       const rect = dlg.getBoundingClientRect();
       const inside =
@@ -622,38 +658,28 @@ const L = t();
     });
 
     // Sidebar (and any future) trigger buttons.
-    document
-      .querySelectorAll<HTMLElement>("[data-quick-search-trigger]")
-      .forEach((el) => {
-        if (el.dataset.qsBound === "true") return;
-        el.dataset.qsBound = "true";
-        el.addEventListener("click", (e) => {
-          e.preventDefault();
-          openCmd();
-        });
+    document.querySelectorAll<HTMLElement>('[data-quick-search-trigger]').forEach((el) => {
+      if (el.dataset.qsBound === 'true') return;
+      el.dataset.qsBound = 'true';
+      el.addEventListener('click', (e) => {
+        e.preventDefault();
+        openCmd();
       });
+    });
 
     // "/" opens (unless typing), Ctrl/Cmd+K always opens.
-    document.addEventListener("keydown", (e) => {
+    document.addEventListener('keydown', (e) => {
       const target = e.target as HTMLElement | null;
       const typing =
         !!target &&
-        (target.tagName === "INPUT" ||
-          target.tagName === "TEXTAREA" ||
-          target.isContentEditable);
+        (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable);
 
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault();
         openCmd();
         return;
       }
-      if (
-        e.key === "/" &&
-        !e.ctrlKey &&
-        !e.metaKey &&
-        !e.altKey &&
-        !typing
-      ) {
+      if (e.key === '/' && !e.ctrlKey && !e.metaKey && !e.altKey && !typing) {
         e.preventDefault();
         openCmd();
       }
@@ -663,17 +689,15 @@ const L = t();
   window.quickSearch = {
     open: openCmd,
     close: () => {
-      const dlg = document.getElementById(
-        "quick-search-dialog",
-      ) as HTMLDialogElement | null;
+      const dlg = document.getElementById('quick-search-dialog') as HTMLDialogElement | null;
       if (dlg?.open) dlg.close();
     },
   };
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", bindQuickSearch);
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bindQuickSearch);
   } else {
     bindQuickSearch();
   }
-  document.addEventListener("astro:page-load", bindQuickSearch);
+  document.addEventListener('astro:page-load', bindQuickSearch);
 </script>

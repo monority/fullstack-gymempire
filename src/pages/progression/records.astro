@@ -1,5 +1,4 @@
 ---
-
 import { t, localizedPath } from '../../i18n';
 import AppLayout from '../../layouts/AppLayout.astro';
 import PageHeader from '../../components/layout/PageHeader.astro';
@@ -10,17 +9,9 @@ const L = t();
 ---
 
 <AppLayout title={L.records.title}>
-  <PageHeader
-    title={L.records.titlePage}
-    description={L.records.description}
-  />
+  <PageHeader title={L.records.titlePage} description={L.records.description} />
 
-  <div
-    class="rec"
-    x-data="recordsApp()"
-    x-init="init()"
-    x-cloak
-  >
+  <div class="rec" x-data="recordsApp()" x-init="init()" x-cloak>
     <template x-if="totalPRs > 0 || hasData">
       <div class="rec__stats">
         <div class="rec__stat rec__stat--hero">
@@ -29,7 +20,10 @@ const L = t();
             <span class="rec__stat-value text-display" x-text="formatNumber(bestOverall1RM)"></span>
             <span class="rec__stat-unit">{L.common.kg}</span>
           </div>
-          <span class="rec__stat-foot" x-text="bestOverallExercise ? labels.on + bestOverallExercise : '—'"></span>
+          <span
+            class="rec__stat-foot"
+            x-text="bestOverallExercise ? labels.on + bestOverallExercise : '—'"
+          ></span>
         </div>
 
         <div class="rec__stat">
@@ -38,7 +32,10 @@ const L = t();
             <span class="rec__stat-value text-display" x-text="totalPRs"></span>
             <span class="rec__stat-unit">PR</span>
           </div>
-          <span class="rec__stat-foot" x-text="totalPRs > 1 ? labels.exercisesTracked : labels.exerciseTracked"></span>
+          <span
+            class="rec__stat-foot"
+            x-text="totalPRs > 1 ? labels.exercisesTracked : labels.exerciseTracked"
+          ></span>
         </div>
 
         <div class="rec__stat">
@@ -123,17 +120,23 @@ const L = t();
                   size="sm"
                   :class="'badge--cat-' + muscleHue(rec.muscle)"
                   x-text="trMuscle(rec.muscle)"
-                ></Badge>
+                />
               </div>
 
               <div class="rec__card-stats">
                 <div class="rec__card-stat rec__card-stat--hero">
                   <span class="rec__card-stat-label">{L.records.sortRM}</span>
-                  <span class="rec__card-stat-value text-display" x-text="formatNumber(rec.estimated1RM) + ' ' + labels.kg"></span>
+                  <span
+                    class="rec__card-stat-value text-display"
+                    x-text="formatNumber(rec.estimated1RM) + ' ' + labels.kg"
+                  ></span>
                 </div>
                 <div class="rec__card-stat">
                   <span class="rec__card-stat-label">{L.records.bestWeight}</span>
-                  <span class="rec__card-stat-value text-display" x-text="formatNumber(rec.bestWeight) + ' ' + labels.kg"></span>
+                  <span
+                    class="rec__card-stat-value text-display"
+                    x-text="formatNumber(rec.bestWeight) + ' ' + labels.kg"
+                  ></span>
                 </div>
                 <div class="rec__card-stat">
                   <span class="rec__card-stat-label">{L.records.bestReps}</span>
@@ -149,7 +152,9 @@ const L = t();
             <div class="rec__card-side">
               <span class="rec__card-date-label">{L.records.lastSession}</span>
               <span class="rec__card-date" x-text="formatDate(rec.lastSessionDate)"></span>
-              <span class="rec__card-date rec__card-date--pr">{L.records.prDate} <span x-text="formatDate(rec.date)"></span></span>
+              <span class="rec__card-date rec__card-date--pr">
+                {L.records.prDate} <span x-text="formatDate(rec.date)"></span>
+              </span>
               <span class="rec__card-cta" aria-hidden="true">
                 <Fragment set:html={icons.chevronRight(16, 16)} />
               </span>
@@ -166,7 +171,7 @@ const L = t();
           title={L.records.noRecords}
           description={L.records.noRecordsDesc}
           actionLabel={L.common.startSession}
-          actionHref={localizedPath("/sessions/create")}
+          actionHref={localizedPath('/sessions/create')}
         />
       </div>
     </template>
@@ -184,195 +189,33 @@ const L = t();
 </AppLayout>
 
 <script>
-  import {
-    getSessions,
-    calculate1RM,
-    type SessionExercise,
-    type ProgressRecord,
-  } from '../../lib/storage';
-
-  import { t, localizedPath } from '../../i18n';
-  import { formatDateShort, formatNumber } from '../../lib/format';
+  import { createRecordsApp } from '../../components/progression/recordsApp';
+  import { t, localizedPath, getLocale } from '../../i18n';
 
   const LABELS = t();
 
-  interface ExerciseRecord {
-    exerciseId: string;
-    name: string;
-    muscle: string;
-    estimated1RM: number;
-    bestWeight: number;
-    bestReps: number;
-    date: string;
-    lastSessionDate: string;
-    sessionCount: number;
-  }
-
-  type SortMode = 'rm' | 'name' | 'recent';
-
-  document.addEventListener('alpine:init', () => {
+  const register = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const Alpine = (window as any).Alpine;
 
-    Alpine.data('recordsApp', () => ({
-      labels: {
-        on: LABELS.records.on,
-        exercisesTracked: LABELS.records.exercisesTracked,
-        exerciseTracked: LABELS.records.exerciseTracked,
-        kg: LABELS.common.kg,
-        viewHistoryAriaPrefix: LABELS.records.viewHistoryAriaPrefix,
-      },
+    Alpine.data('recordsApp', () =>
+      createRecordsApp({
+        labels: {
+          on: LABELS.records.on,
+          exercisesTracked: LABELS.records.exercisesTracked,
+          exerciseTracked: LABELS.records.exerciseTracked,
+          kg: LABELS.common.kg,
+          viewHistoryAriaPrefix: LABELS.records.viewHistoryAriaPrefix,
+        },
+        today: () => new Date(),
+        locale: getLocale(),
+        localizedPath,
+      })
+    );
+  };
 
-      allRecords: [] as ExerciseRecord[],
-      search: '',
-      sortBy: 'rm' as SortMode,
-      hasData: false,
-
-      init() {
-        this.recompute();
-      },
-
-      get totalPRs(): number {
-        return this.allRecords.length;
-      },
-
-      get bestOverall1RM(): number {
-        let max = 0;
-        for (const r of this.allRecords) {
-          if (r.estimated1RM > max) max = r.estimated1RM;
-        }
-        return max;
-      },
-
-      get bestOverallExercise(): string {
-        for (const r of this.allRecords) {
-          if (r.estimated1RM === this.bestOverall1RM) return r.name;
-        }
-        return '';
-      },
-
-      get recentPRs(): number {
-        const cutoff = new Date();
-        cutoff.setDate(cutoff.getDate() - 30);
-        cutoff.setHours(0, 0, 0, 0);
-        let count = 0;
-        for (const r of this.allRecords) {
-          if (!r.date) continue;
-          const d = new Date(r.date);
-          if (!isNaN(d.getTime()) && d >= cutoff) count += 1;
-        }
-        return count;
-      },
-
-      get filteredRecords(): ExerciseRecord[] {
-        const term = this.search.trim().toLowerCase();
-        const list = term
-          ? this.allRecords.filter(
-              (r) =>
-                r.name.toLowerCase().includes(term) ||
-                r.muscle.toLowerCase().includes(term),
-            )
-          : this.allRecords.slice();
-
-        switch (this.sortBy) {
-          case 'name':
-            return list.sort((a, b) =>
-              a.name.localeCompare(b.name, 'fr', { sensitivity: 'base' }),
-            );
-          case 'recent':
-            return list.sort(
-              (a, b) =>
-                new Date(b.date || 0).getTime() -
-                new Date(a.date || 0).getTime(),
-            );
-          case 'rm':
-          default:
-            return list.sort((a, b) => b.estimated1RM - a.estimated1RM);
-        }
-      },
-
-      recompute() {
-        const sessions = getSessions();
-        this.hasData = sessions.some((session) =>
-          session.exercises.some((ex) => ex.sets.some((set) => set.completed)),
-        );
-        if (!this.hasData) {
-          this.allRecords = [];
-          return;
-        }
-
-        const map = new Map<string, ExerciseRecord>();
-
-        for (const session of sessions) {
-          for (const ex of session.exercises) {
-            this.accumulate(map, ex, session.date);
-          }
-        }
-
-        this.allRecords = Array.from(map.values()).filter(
-          (record) => record.estimated1RM > 0,
-        );
-        this.hasData = this.allRecords.length > 0;
-      },
-
-      accumulate(
-        map: Map<string, ExerciseRecord>,
-        ex: SessionExercise,
-        sessionDate: string,
-      ) {
-        let rec = map.get(ex.exerciseId);
-        if (!rec) {
-          rec = {
-            exerciseId: ex.exerciseId,
-            name: ex.name,
-            muscle: ex.muscle,
-            estimated1RM: 0,
-            bestWeight: 0,
-            bestReps: 0,
-            date: '',
-            lastSessionDate: '',
-            sessionCount: 0,
-          };
-          map.set(ex.exerciseId, rec);
-        }
-        let trackedInSession = false;
-        for (const set of ex.sets) {
-          if (!set.completed) continue;
-          trackedInSession = true;
-          const rm: ProgressRecord = {
-            exerciseId: ex.exerciseId,
-            date: sessionDate,
-            estimated1RM: calculate1RM(set.weight, set.reps),
-            bestWeight: set.weight,
-            bestReps: set.reps,
-          };
-          if (rm.estimated1RM > rec.estimated1RM) {
-            rec.estimated1RM = rm.estimated1RM;
-            rec.bestWeight = rm.bestWeight;
-            rec.bestReps = rm.bestReps;
-            rec.date = rm.date;
-          }
-        }
-        if (trackedInSession) {
-          rec.sessionCount += 1;
-          if (!rec.lastSessionDate || sessionDate > rec.lastSessionDate) {
-            rec.lastSessionDate = sessionDate;
-          }
-        }
-      },
-
-      formatNumber(n: number): string {
-        return formatNumber(n);
-      },
-      formatDate(iso: string): string {
-        return formatDateShort(iso);
-      },
-
-      historyHref(id: string): string {
-        return localizedPath('/exercises/history?id=' + encodeURIComponent(id));
-      },
-    }));
-  });
+  document.addEventListener('alpine:init', register);
+  if ((window as any).Alpine) register();
 </script>
 
 <style is:global>
@@ -428,13 +271,6 @@ const L = t();
     line-height: 1.1;
   }
 
-  .rec__stat-unit {
-    font-family: var(--font-body);
-    font-size: 1.3rem;
-    color: var(--color-muted);
-    font-weight: 600;
-  }
-
   .rec__stat-foot {
     font-size: 1.1rem;
     color: var(--color-muted);
@@ -488,14 +324,6 @@ const L = t();
     align-items: center;
     gap: 0.625rem;
     flex-shrink: 0;
-  }
-
-  .rec__sort-label {
-    font-size: 1.1rem;
-    text-transform: uppercase;
-    letter-spacing: 0.10em;
-    font-weight: 700;
-    color: var(--color-muted);
   }
 
   .rec__sort-group {
@@ -604,7 +432,7 @@ const L = t();
   .rec__card-stat-label {
     font-size: 0.875rem;
     text-transform: uppercase;
-    letter-spacing: 0.10em;
+    letter-spacing: 0.1em;
     color: var(--color-muted);
     font-weight: 700;
   }
@@ -686,22 +514,12 @@ const L = t();
     }
   }
 
-  .rec__search:focus-within {
-    border-color: var(--color-accent);
-    box-shadow: var(--focus-ring);
-  }
-
   .rec__search-input::placeholder {
     color: var(--color-muted);
   }
 
   .rec__search-input::-webkit-search-cancel-button {
     appearance: none;
-  }
-
-  .rec__sort-btn:hover {
-    color: var(--color-text);
-    background-color: var(--alpha-bg-subtle);
   }
 
   .rec__sort-btn:focus-visible {
@@ -747,8 +565,8 @@ const L = t();
     .rec__card {
       grid-template-columns: auto 1fr;
       grid-template-areas:
-        "icon side"
-        "main main";
+        'icon side'
+        'main main';
       gap: 1rem;
     }
 

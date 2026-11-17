@@ -5,8 +5,8 @@
  * No DOM, no Alpine dependency.
  */
 
-import { getSessionById } from "../../lib/storage";
-import { type BuilderExercise } from "../../lib/session-builder-stats";
+import { getSessionById } from '../../lib/storage/sessions';
+import { type BuilderExercise } from '../../lib/session-builder-stats';
 
 export interface EditSessionData {
   sessionId: string;
@@ -19,17 +19,13 @@ export interface EditSessionData {
   exercises: BuilderExercise[];
 }
 
-export function loadEditSession(
-  sessionId: string,
-): EditSessionData | null {
+export function loadEditSession(sessionId: string): EditSessionData | null {
   const session = getSessionById(sessionId);
   if (!session) return null;
 
   const supersetIds = new Map<string, number>();
   session.supersets?.forEach((group, index) => {
-    group.exercises.forEach((exerciseId) =>
-      supersetIds.set(exerciseId, index + 1),
-    );
+    group.exercises.forEach((exerciseId) => supersetIds.set(exerciseId, index + 1));
   });
 
   return {
@@ -38,8 +34,8 @@ export function loadEditSession(
     date: session.date.slice(0, 10),
     rpe: session.rpe ?? 5,
     fatigue: session.fatigue ?? 0,
-    mood: session.mood ?? "",
-    notes: session.notes ?? "",
+    mood: session.mood ?? '',
+    notes: session.notes ?? '',
     exercises: session.exercises.map((exercise) => ({
       ...exercise,
       sets: exercise.sets.map((set) => ({ ...set, completed: false })),

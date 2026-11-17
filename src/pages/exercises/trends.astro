@@ -11,18 +11,10 @@ const L = t();
 ---
 
 <AppLayout title={L.tendance.title}>
-  <PageHeader
-    title={L.tendance.title}
-    description={L.tendance.description}
-  />
+  <PageHeader title={L.tendance.title} description={L.tendance.description} />
 
-  <div
-    class="trend"
-    x-data="exerciseTrendApp()"
-    x-init="init()"
-    x-cloak
-  >
-    <BackLink href={localizedPath("/exercises")} label={L.tendance.back} />
+  <div class="trend" x-data="exerciseTrendApp()" x-init="init()" x-cloak>
+    <BackLink href={localizedPath('/exercises')} label={L.tendance.back} />
 
     <template x-if="notFound">
       <EmptyState
@@ -30,7 +22,7 @@ const L = t();
         title={L.tendance.notFound}
         description={L.tendance.notFoundDesc}
         actionLabel={L.tendance.viewExercises}
-        actionHref={localizedPath("/exercises")}
+        actionHref={localizedPath('/exercises')}
       />
     </template>
 
@@ -99,10 +91,12 @@ const L = t();
 
             <template x-if="points.length < 2">
               <div class="trend__empty" role="status">
-                <div class="trend__empty-icon" aria-hidden="true">—</div>
+                <div class="trend__empty-icon" aria-hidden="true">
+                  —
+                </div>
                 <h3 class="trend__empty-title">{L.tendance.emptyTitle}</h3>
                 <p class="trend__empty-desc" x-text="emptyMessage"></p>
-                <a href={localizedPath("/sessions/quick")} class="trend__empty-link">
+                <a href={localizedPath('/sessions/quick')} class="trend__empty-link">
                   {L.common.startSession}
                 </a>
               </div>
@@ -118,9 +112,23 @@ const L = t();
                   :aria-label="chartTitle"
                 >
                   <g x-html="chartGridMarkup"></g>
-                  <line x1="0" y1="300" x2="800" y2="300" stroke="var(--color-border)" stroke-width="1" />
+                  <line
+                    x1="0"
+                    y1="300"
+                    x2="800"
+                    y2="300"
+                    stroke="var(--color-border)"
+                    stroke-width="1"
+                  />
                   <polygon :points="chartAreaPoints" fill="url(#trend-gradient)" opacity="0.18" />
-                  <polyline :points="chartLinePoints" fill="none" stroke="var(--color-accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                  <polyline
+                    :points="chartLinePoints"
+                    fill="none"
+                    stroke="var(--color-accent)"
+                    stroke-width="2.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
                   <g x-html="chartDotsMarkup"></g>
                   <defs>
                     <linearGradient id="trend-gradient" x1="0" y1="0" x2="0" y2="1">
@@ -150,127 +158,34 @@ const L = t();
 </AppLayout>
 
 <script>
+  import { createTrendsApp } from '../../components/exercises/trendsApp';
   import { t, trExercise } from '../../i18n';
-  import {
-    getExercises,
-    getExerciseById,
-    getSessions,
-    type Exercise,
-  } from '../../lib/storage';
-  import { formatDateMedium, formatDateDayMonth, formatNumber } from '../../lib/format';
-  import {
-    computeTrendPoints,
-    chartMax as calcChartMax,
-    chartX as calcChartX,
-    chartY as calcChartY,
-    CHART_H,
-    type Metric,
-    type Period,
-    type TrendPoint,
-  } from '../../lib/trends-stats';
 
   const LABELS = t();
 
-  document.addEventListener('alpine:init', () => {
+  const register = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const Alpine = (window as any).Alpine;
 
-    Alpine.data('exerciseTrendApp', () => ({
-      exercises: [] as Exercise[],
-      selectedId: '',
-      exercise: null as Exercise | null,
-      notFound: false,
-      metric: 'volume' as Metric,
-      period: 'all' as Period,
+    Alpine.data('exerciseTrendApp', () =>
+      createTrendsApp({
+        search: window.location.search,
+        labels: {
+          historiqueSessions: LABELS.historique.sessions,
+          historiqueSessionSingular: LABELS.historique.sessionSingular,
+          chartVolumeTitle: LABELS.tendance.chartVolumeTitle,
+          chart1RMTitle: LABELS.tendance.chart1RMTitle,
+          noSessions: LABELS.tendance.noSessions,
+          minPoints: LABELS.tendance.minPoints,
+          kg: LABELS.common.kg,
+        },
+        translateExercise: trExercise,
+      })
+    );
+  };
 
-      init() {
-        this.exercises = getExercises();
-        const params = new URLSearchParams(window.location.search);
-        const exParam = params.get('ex');
-        let found: Exercise | undefined;
-        if (exParam) {
-          found = getExerciseById(exParam);
-          if (!found) found = this.exercises.find((e) => e.name === exParam);
-          if (!found) { this.notFound = true; return; }
-        } else {
-          found = this.exercises[0];
-          if (!found) { this.notFound = true; return; }
-        }
-        this.selectedId = found.id;
-        this.exercise = found;
-      },
-
-      onExerciseChange(value: string) {
-        this.selectedId = value;
-        this.exercise = this.exercises.find((e) => e.id === value) ?? null;
-      },
-
-      get points(): TrendPoint[] {
-        if (!this.exercise) return [];
-        return computeTrendPoints(getSessions(), this.exercise.id, this.metric, this.period);
-      },
-
-      get chartTitle(): string {
-        if (!this.exercise) return '';
-        const t = trExercise(this.exercise.name);
-        return this.metric === 'volume'
-          ? `${t} — ${LABELS.tendance.chartVolumeTitle}`
-          : `${t} — ${LABELS.tendance.chart1RMTitle}`;
-      },
-
-      get chartMeta(): string {
-        const n = this.points.length;
-        return `${n} ${n > 1 ? LABELS.historique.sessions : LABELS.historique.sessionSingular}`;
-      },
-
-      get emptyMessage(): string {
-        return this.points.length === 0 ? LABELS.tendance.noSessions : LABELS.tendance.minPoints;
-      },
-
-      get _chartMax(): number {
-        return calcChartMax(this.points);
-      },
-
-      chartX(i: number): number {
-        return calcChartX(i, this.points.length);
-      },
-
-      chartY(v: number): number {
-        return calcChartY(v, this._chartMax);
-      },
-
-      get chartLinePoints(): string {
-        return this.points.map((d, i) => `${this.chartX(i)},${this.chartY(d.value)}`).join(' ');
-      },
-
-      get chartAreaPoints(): string {
-        if (this.points.length === 0) return '';
-        const top = this.points.map((d, i) => `${this.chartX(i)},${this.chartY(d.value)}`).join(' ');
-        const last = this.points.length - 1;
-        return `${top} ${this.chartX(last)},${CHART_H} ${this.chartX(0)},${CHART_H}`;
-      },
-
-      get chartGridMarkup(): string {
-        let s = '';
-        for (let i = 1; i <= 5; i++) {
-          const y = (i - 1) * 75;
-          s += `<line x1="0" y1="${y}" x2="800" y2="${y}" stroke="var(--color-border)" stroke-width="1" stroke-dasharray="2 4"></line>`;
-          s += `<text x="6" y="${y - 4}" fill="var(--color-muted)" font-size="11" font-family="var(--font-body)">${formatNumber(this._chartMax * (1 - (i - 1) / 5))} ${LABELS.common.kg}</text>`;
-        }
-        return s;
-      },
-
-      get chartDotsMarkup(): string {
-        return this.points.map((d, i) =>
-          `<g><circle cx="${this.chartX(i)}" cy="${this.chartY(d.value)}" r="6" fill="var(--color-bg)" stroke="var(--color-accent)" stroke-width="2.5"></circle><title>${formatDateMedium(d.date)} — ${formatNumber(d.value)} ${LABELS.common.kg}</title></g>`
-        ).join('');
-      },
-
-      formatNumber(n: number): string { return formatNumber(n); },
-      formatDate(iso: string): string { return formatDateMedium(iso); },
-      formatDateShort(iso: string): string { return formatDateDayMonth(iso); },
-    }));
-  });
+  document.addEventListener('alpine:init', register);
+  if ((window as any).Alpine) register();
 </script>
 
 <style>
@@ -333,11 +248,9 @@ const L = t();
     outline: none;
     cursor: pointer;
     appearance: none;
-    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
-  }
-  .trend__select:focus {
-    border-color: var(--color-accent);
-    box-shadow: var(--focus-ring);
+    transition:
+      border-color var(--transition-fast),
+      box-shadow var(--transition-fast);
   }
 
   /* ── Chart ── */
@@ -364,12 +277,6 @@ const L = t();
     color: var(--color-text);
     margin: 0;
     word-break: break-word;
-  }
-
-  .trend__chart-meta {
-    font-size: 1.2rem;
-    color: var(--color-muted);
-    font-weight: 500;
   }
 
   .trend__chart-col {
@@ -461,7 +368,9 @@ const L = t();
     font-size: 1.3rem;
     font-weight: 700;
     text-decoration: none;
-    transition: background-color var(--transition-fast), box-shadow var(--transition-fast);
+    transition:
+      background-color var(--transition-fast),
+      box-shadow var(--transition-fast);
   }
   .trend__empty-link:hover {
     background: var(--color-accent-hover);

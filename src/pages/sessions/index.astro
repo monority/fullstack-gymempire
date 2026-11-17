@@ -22,15 +22,10 @@ const L = t();
     title={L.sessions.title}
     description={L.sessions.description}
     actionLabel={L.dashboard.newSession}
-    actionHref={localizedPath("/sessions/create")}
+    actionHref={localizedPath('/sessions/create')}
   />
 
-  <div
-    class="sess-list"
-    x-data="sessionsApp()"
-    x-init="init()"
-    x-cloak
-  >
+  <div class="sess-list" x-data="sessionsApp()" x-init="init()" x-cloak>
     {/* ── Toolbar: search ── */}
     <div class="sess-list__search">
       <SearchInput
@@ -49,6 +44,9 @@ const L = t();
     {/* ── Grid (when there are sessions) ── */}
     <template x-if="filtered.length > 0">
       <div class="sess__grid">
+        <p id="sess-card-hint" class="sr-only">
+          {L.sessions.seenAriaPrefix}
+        </p>
         <template x-for="session in filtered" :key="session.id">
           <article
             class="sess__card"
@@ -58,7 +56,7 @@ const L = t();
             @keydown.space.prevent="navigateTo(session.id)"
             tabindex="0"
             role="link"
-            :aria-label="labels.seenAriaPrefix + session.name + ' · ' + statusLabel(session.status)"
+            aria-describedby="sess-card-hint"
           >
             <header class="sess__card-header">
               <div class="sess__card-title-row">
@@ -78,7 +76,11 @@ const L = t();
                     :title="labels.moodLabel + ' : ' + moodLabel(session.mood)"
                     :aria-label="labels.moodLabel + ' : ' + moodLabel(session.mood)"
                   >
-                    <span class="sess__card-mood-emoji" x-html="moodEmoji(session.mood)" aria-hidden="true"></span>
+                    <span
+                      class="sess__card-mood-icon"
+                      x-html="moodIcon(session.mood)"
+                      aria-hidden="true"
+                    ></span>
                   </span>
                 </div>
               </div>
@@ -87,16 +89,16 @@ const L = t();
               </div>
             </header>
 
-            <div
-              class="sess__card-date"
-              x-text="formatDate(session.date)"
-            ></div>
+            <div class="sess__card-date" x-text="formatDate(session.date)"></div>
 
             <div class="sess__card-stats">
               <div class="sess__card-stat">
                 <span class="sess__card-stat-icon" set:html={icons.dumbbell()} />
                 <span class="sess__card-stat-value" x-text="session.exercises.length"></span>
-                <span class="sess__card-stat-label" x-text="session.exercises.length > 1 ? labels.exoPlural : labels.exoSingular"></span>
+                <span
+                  class="sess__card-stat-label"
+                  x-text="session.exercises.length > 1 ? labels.exoPlural : labels.exoSingular"
+                ></span>
               </div>
               <div class="sess__volume-badge">
                 <span class="sess__volume-icon" set:html={icons.volumeBox()} />
@@ -144,7 +146,7 @@ const L = t();
                     fullWidth
                     class="sess__menu-item"
                     x-show="session.status !== 'in-progress'"
-                    @click="menuId = ''; setStatus(session.id, 'in-progress')"
+                    @click.stop="menuId = ''; setStatus(session.id, 'in-progress')"
                   >
                     <span x-text="labels.resume"></span>
                   </Button>
@@ -154,7 +156,7 @@ const L = t();
                     fullWidth
                     class="sess__menu-item"
                     x-show="session.status !== 'completed'"
-                    @click="menuId = ''; setStatus(session.id, 'completed')"
+                    @click.stop="menuId = ''; setStatus(session.id, 'completed')"
                   >
                     <span x-text="labels.markComplete"></span>
                   </Button>
@@ -163,7 +165,7 @@ const L = t();
                     size="sm"
                     fullWidth
                     class="sess__menu-item"
-                    @click="menuId = ''; duplicateSession(session.id)"
+                    @click.stop="menuId = ''; duplicateSession(session.id)"
                   >
                     <span x-text="labels.duplicate"></span>
                   </Button>
@@ -172,7 +174,7 @@ const L = t();
                     size="sm"
                     fullWidth
                     class="sess__menu-item"
-                    @click="menuId = ''; openMove(session.id)"
+                    @click.stop="menuId = ''; openMove(session.id)"
                   >
                     <span x-text="labels.moveDate"></span>
                   </Button>
@@ -192,7 +194,7 @@ const L = t();
           title={L.sessions.emptyTitle}
           description={L.sessions.emptyDesc}
           actionLabel={L.sessions.createAction}
-          actionHref={localizedPath("/sessions/create")}
+          actionHref={localizedPath('/sessions/create')}
         />
       </Card>
     </template>
@@ -207,23 +209,13 @@ const L = t();
     </template>
 
     {/* ── Backdrop for the quick-actions menu ── */}
-    <div
-      class="sess-list__backdrop"
-      x-show="menuId !== ''"
-      x-cloak
-      @click="menuId = ''"
-    ></div>
+    <div class="sess-list__backdrop" x-show="menuId !== ''" x-cloak @click="menuId = ''"></div>
 
     {/* ── Move session dialog ── */}
     <Dialog id="sess-move-dialog" title={L.sessions.moveTitle}>
       <label class="sess-list__move-label">
         <span class="sess-list__move-label-text">{L.sessions.moveDateLabel}</span>
-        <input
-          type="date"
-          class="sess-list__move-input"
-          x-model="moveDate"
-          :max="todayIso"
-        />
+        <input type="date" class="sess-list__move-input" x-model="moveDate" :max="todayIso" />
       </label>
       <div slot="footer">
         <DialogFooter
@@ -238,205 +230,42 @@ const L = t();
 </AppLayout>
 
 <script>
-  import {
-    getSessions,
-    getSessionById,
-    saveSession,
-    updateSession,
-    deleteSession,
-    type Session,
-    type SessionMood,
-    type SessionStatus,
-  } from '../../lib/storage';
+  import { createSessionsApp, buildSessionsLabels } from '../../components/sessions/sessionsApp';
   import { t, localizedPath } from '../../i18n';
-  import { formatDateTime as formatDate, formatVolume } from '../../lib/format';
-  import { statusLabel as statusLabelFn, type StatusLabels } from '../../lib/session-utils';
-  import { moodSvg } from '../../lib/mood';
-  import {
-    primaryMuscle,
-    filterSessions,
-    sortByDateDesc,
-    countLabel,
-    computeSessionStats,
-  } from '../../lib/session-list-stats';
 
   const LABELS = t();
-  const statusLabels: StatusLabels = { completed: LABELS.sessions.completed, inProgress: LABELS.sessions.inProgress, planned: LABELS.sessions.planned };
-  function statusLabel(status: SessionStatus): string { return statusLabelFn(status, statusLabels); }
 
-  function moodEmojiFn(mood: SessionMood | undefined | null): string {
-    return moodSvg(mood);
-  }
+  type DialogWindow = Window & {
+    openDialog?: (id: string) => void;
+    closeDialog?: (id: string) => void;
+    trMuscle?: (name: string) => string;
+  };
 
-  function moodLabelFn(mood: SessionMood | undefined | null): string {
-    if (!mood) return '';
-    if (mood === 'great') return LABELS.sessions.moodGreat;
-    if (mood === 'good') return LABELS.sessions.moodGood;
-    if (mood === 'ok') return LABELS.sessions.moodOk;
-    if (mood === 'tired') return LABELS.sessions.moodTired;
-    return LABELS.sessions.moodBad;
-  }
-
-  document.addEventListener('alpine:init', () => {
+  const register = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const Alpine = (window as any).Alpine;
+    const host = window as DialogWindow;
 
-    Alpine.data('sessionsApp', () => ({
-      // ── State ──
-      sessions: [] as Session[],
-      search: '',
-      menuId: '',
-      moveSessionId: '',
-      moveDate: '',
-      labels: {
-        exoPlural: LABELS.sessions.exoPlural,
-        exoSingular: LABELS.sessions.exoSingular,
-        moodLabel: LABELS.sessions.moodLabel,
-        noResult: LABELS.sessions.noResult,
-        noMatchPrefix: LABELS.sessions.noMatchPrefix,
-        resetSearch: LABELS.sessions.resetSearch,
-        noSession: LABELS.sessions.noSession,
-        noMatch: LABELS.sessions.noMatch,
-        seanceSingular: LABELS.sessions.seanceSingular,
-        seancePlural: LABELS.sessions.seancePlural,
-        pluralS: LABELS.sessions.pluralS,
-        deleteConfirm: LABELS.sessions.deleteConfirm,
-        seenAriaPrefix: LABELS.sessions.seenAriaPrefix,
-        moreActions: LABELS.sessions.moreActions,
-        resume: LABELS.sessions.resume,
-        markComplete: LABELS.sessions.markComplete,
-        duplicate: LABELS.sessions.duplicate,
-        moveDate: LABELS.sessions.moveDate,
-      },
-
-      get todayIso(): string {
-        return new Date().toISOString().slice(0, 10);
-      },
-
-      // ── Init ──
-      init() {
-        this.refresh();
-      },
-
-      refresh() {
-        this.sessions = sortByDateDesc(getSessions());
-      },
-
-      // ── Derived ──
-      get filtered(): Session[] {
-        return filterSessions(this.sessions, this.search);
-      },
-
-      get countLabel(): string {
-        return countLabel(
-          this.filtered.length,
-          this.sessions.length,
-          {
-            noSession: this.labels.noSession,
-            noMatch: this.labels.noMatch,
-            seanceSingular: this.labels.seanceSingular,
-            pluralS: this.labels.pluralS,
+    Alpine.data('sessionsApp', () =>
+      createSessionsApp({
+        labels: buildSessionsLabels(LABELS),
+        today: () => new Date(),
+        localizedPath,
+        ui: {
+          confirm: (message) => window.confirm(message),
+          navigate: (href) => {
+            window.location.href = href;
           },
-        );
-      },
+          translateMuscle: (name) => host.trMuscle?.(name) ?? name,
+          openDialog: (id) => host.openDialog?.(id),
+          closeDialog: (id) => host.closeDialog?.(id),
+        },
+      })
+    );
+  };
 
-      get hasSessions(): boolean {
-        return this.sessions.length > 0;
-      },
-
-      // ── Computations ──
-      totalVolume(session: Session): number {
-        return computeSessionStats(session).totalVolume;
-      },
-
-      statusLabel(status: SessionStatus): string {
-        return statusLabel(status);
-      },
-
-      formatDate(iso: string): string {
-        return formatDate(iso);
-      },
-
-      formatVolume(volume: number): string {
-        return formatVolume(volume);
-      },
-
-      moodEmoji(mood: SessionMood | undefined | null) {
-        return moodEmojiFn(mood);
-      },
-
-      moodLabel(mood: SessionMood | undefined | null) {
-        return moodLabelFn(mood);
-      },
-
-      /** Most frequent muscle across the session's exercises ('' when none). */
-      primaryMuscle(session: Session): string {
-        return primaryMuscle(session);
-      },
-
-      /** Translated stored muscle group for display (FR stays as-is). */
-      muscleLabel(name: string): string {
-        const tr = (window as { trMuscle?: (m: string) => string }).trMuscle;
-        return tr ? tr(name) : name;
-      },
-
-      // ── Actions ──
-      navigateTo(id: string) {
-        window.location.href = localizedPath('/sessions/detail?id=' + encodeURIComponent(id));
-      },
-
-      deleteSession(id: string) {
-        // eslint-disable-next-line no-alert
-        if (window.confirm(this.labels.deleteConfirm)) {
-          deleteSession(id);
-          this.sessions = this.sessions.filter((s) => s.id !== id);
-        }
-      },
-
-      // ── Quick actions ──
-      setStatus(id: string, status: SessionStatus) {
-        updateSession(id, { status });
-        this.refresh();
-      },
-
-      duplicateSession(id: string) {
-        const src = getSessionById(id);
-        if (!src) return;
-        const copy: Omit<Session, 'id'> = {
-          name: src.name + ' ' + LABELS.sessions.copySuffix,
-          date: new Date().toISOString(),
-          status: 'planned',
-          exercises: src.exercises.map((ex) => ({
-            ...ex,
-            sets: ex.sets.map((set) => ({ ...set, completed: false })),
-          })),
-        };
-        if (src.supersets) copy.supersets = src.supersets.map((g) => ({ ...g }));
-        saveSession(copy);
-        this.refresh();
-      },
-
-      openMove(id: string) {
-        const src = getSessionById(id);
-        if (!src) return;
-        this.moveSessionId = id;
-        this.moveDate = (src.date || '').slice(0, 10);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (window as any).openDialog?.('sess-move-dialog');
-      },
-
-      confirmMove() {
-        if (!this.moveSessionId || !this.moveDate) return;
-        const date = new Date(this.moveDate + 'T12:00:00').toISOString();
-        updateSession(this.moveSessionId, { date, status: 'planned' });
-        this.moveSessionId = '';
-        this.moveDate = '';
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (window as any).closeDialog?.('sess-move-dialog');
-        this.refresh();
-      },
-    }));
-  });
+  document.addEventListener('alpine:init', register);
+  if ((window as any).Alpine) register();
 </script>
 
 <style>
@@ -506,24 +335,8 @@ const L = t();
     min-width: 0;
   }
 
-  .sess__card-title-row {
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    min-width: 0;
-    flex: 1;
-  }
-
   .sess__card-icon {
     display: none;
-  }
-
-  .sess__card-title-wrap {
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    min-width: 0;
-    flex: 1;
   }
 
   .sess__card-dot {
@@ -534,9 +347,15 @@ const L = t();
     background: var(--color-muted);
   }
 
-  .sess__dot--completed { background: var(--color-success); }
-  .sess__dot--in-progress { background: var(--color-info); }
-  .sess__dot--planned { background: var(--color-muted); }
+  .sess__dot--completed {
+    background: var(--color-success);
+  }
+  .sess__dot--in-progress {
+    background: var(--color-info);
+  }
+  .sess__dot--planned {
+    background: var(--color-muted);
+  }
 
   .sess__card-name {
     font-family: var(--font-display);
@@ -562,20 +381,12 @@ const L = t();
     cursor: help;
   }
 
-  .sess__card-mood-emoji {
+  .sess__card-mood-icon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     line-height: 1;
     color: var(--color-text);
-  }
-
-  .sess__card-badges {
-    display: inline-flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 0.4rem;
-    flex-shrink: 0;
   }
 
   .sess__card-date {
@@ -685,9 +496,6 @@ const L = t();
     }
   }
 
-  /* ════════════════════════════════════════════════════
-     MENU
-     ════════════════════════════════════════════════════ */
   .sess__menu {
     position: absolute;
     right: 0;
@@ -698,7 +506,7 @@ const L = t();
     background: var(--color-surface-3);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
-    box-shadow: 0 12px 32px rgb(0 0 0 / 0.35);
+    box-shadow: var(--shadow-2);
   }
 
   .sess__menu-item {
@@ -725,9 +533,6 @@ const L = t();
     background: var(--alpha-bg-soft);
   }
 
-  /* ════════════════════════════════════════════════════
-     BACKDROP
-     ════════════════════════════════════════════════════ */
   .sess-list__backdrop {
     position: fixed;
     inset: 0;
@@ -735,9 +540,6 @@ const L = t();
     background: transparent;
   }
 
-  /* ════════════════════════════════════════════════════
-     MOVE DIALOG
-     ════════════════════════════════════════════════════ */
   .sess-list__move-label {
     display: flex;
     flex-direction: column;
@@ -764,14 +566,6 @@ const L = t();
     transition: all 140ms ease;
   }
 
-  .sess-list__move-input:focus {
-    border-color: var(--color-accent);
-    box-shadow: var(--focus-ring);
-  }
-
-  /* ════════════════════════════════════════════════════
-     CARD — hover arrow pseudo-element + :has() guard
-     ════════════════════════════════════════════════════ */
   .sess__card::after {
     content: '→';
     position: absolute;
@@ -783,7 +577,9 @@ const L = t();
     line-height: 1;
     opacity: 0;
     transform: translateX(-4px);
-    transition: opacity var(--transition-base), transform var(--transition-base);
+    transition:
+      opacity var(--transition-base),
+      transform var(--transition-base);
     pointer-events: none;
   }
 

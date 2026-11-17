@@ -13,7 +13,9 @@ const L = t();
 <section class="dash__recent" aria-label={L.dashboard.recentAria}>
   <header class="dash__section-head">
     <h2 x-text="labels.recentSessions">{L.dashboard.recentSessions}</h2>
-    <a href={localizedPath("/sessions")} class="dash__see-all" x-text="labels.viewAll">{L.dashboard.viewAll} →</a>
+    <a href={localizedPath('/sessions')} class="dash__see-all" x-text="labels.viewAll">
+      {L.dashboard.viewAll} →
+    </a>
   </header>
 
   <div class="dash__sessions">
@@ -35,15 +37,25 @@ const L = t();
 
         <div class="dash__session-meta">
           <span class="dash__session-date" x-text="formatDate(s.date)"></span>
-          <span class="dash__session-sep" aria-hidden="true">·</span>
+          <span class="dash__session-sep" aria-hidden="true">
+            ·
+          </span>
           <span>
             <span x-text="sessionExercisesCount(s)"></span>
             <span x-text="sessionExercisesCount(s) > 1 ? labels.exoPlural : labels.exoSingular"></span>
           </span>
-          <span class="dash__session-sep" aria-hidden="true">·</span>
-          <span class="dash__session-volume" x-text="formatVolume(sessionVolume(s)) + ' ' + labels.kg"></span>
+          <span class="dash__session-sep" aria-hidden="true">
+            ·
+          </span>
+          <span
+            class="dash__session-volume"
+            x-text="formatVolume(sessionVolume(s)) + ' ' + labels.kg"
+          ></span>
           <div class="dash__session-muscle" x-show="sessionPrimaryMuscle(s)">
-            <span class="dash__session-muscle-label" x-text="muscleLabel(sessionPrimaryMuscle(s))"></span>
+            <span
+              class="dash__session-muscle-label"
+              x-text="muscleLabel(sessionPrimaryMuscle(s))"
+            ></span>
           </div>
         </div>
       </a>
@@ -120,14 +132,6 @@ const L = t();
     box-shadow: var(--focus-ring);
   }
 
-  .dash__session-title {
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    min-width: 0;
-    flex: 1;
-  }
-
   .dash__session-dot {
     width: 1rem;
     height: 1rem;
@@ -154,14 +158,6 @@ const L = t();
     justify-content: space-between;
     gap: 1.2rem;
     min-width: 0;
-  }
-
-  .dash__session-badge {
-    display: inline-flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 0.4rem;
-    flex-shrink: 0;
   }
 
   .dash__session-name {

@@ -5,15 +5,12 @@
  * exercise tips. State stays in Alpine; logic here for testability.
  */
 
-import { getExerciseTip } from "../../lib/exercise-tips";
-import { getTemplateById, type TemplateExercise } from "../../lib/templates";
-import type { Exercise } from "../../lib/storage";
-import {
-  buildExerciseFromTemplate,
-  type BuilderExercise,
-} from "../../lib/session-builder-stats";
+import { getExerciseTip } from '../../lib/exercise-tips';
+import { getTemplateById, type TemplateExercise } from '../../lib/templates';
+import type { Exercise } from '../../lib/storage/types';
+import { buildExerciseFromTemplate, type BuilderExercise } from '../../lib/session-builder-stats';
 
-const TEMPLATE_FALLBACK_CATEGORY = "Autre";
+const TEMPLATE_FALLBACK_CATEGORY = 'Autre';
 
 // ── Search / filter ────────────────────────────────────────────
 
@@ -21,7 +18,7 @@ export function filterExercises(
   available: Exercise[],
   addedIds: Set<string>,
   query: string,
-  muscle = "",
+  muscle = ''
 ): Exercise[] {
   const q = query.trim().toLowerCase();
   const selectedMuscle = muscle.trim();
@@ -36,7 +33,7 @@ export function filterExercises(
       if (Boolean(a.favorite) !== Boolean(b.favorite)) {
         return a.favorite ? -1 : 1;
       }
-      return a.name.localeCompare(b.name, "fr");
+      return a.name.localeCompare(b.name, 'fr');
     });
 }
 
@@ -53,7 +50,7 @@ export function buildNewExercise(exercise: Exercise): BuilderExercise {
         setNumber: 1,
         weight: 0,
         reps: 0,
-        type: "work",
+        type: 'work',
         completed: false,
       },
     ],
@@ -61,17 +58,11 @@ export function buildNewExercise(exercise: Exercise): BuilderExercise {
   };
 }
 
-export function buildFromTemplate(
-  exercise: Exercise,
-  template: TemplateExercise,
-): BuilderExercise {
+export function buildFromTemplate(exercise: Exercise, template: TemplateExercise): BuilderExercise {
   return buildExerciseFromTemplate(exercise, template);
 }
 
-export function findExerciseByName(
-  available: Exercise[],
-  name: string,
-): Exercise | undefined {
+export function findExerciseByName(available: Exercise[], name: string): Exercise | undefined {
   return available.find((e) => e.name === name);
 }
 
@@ -82,10 +73,7 @@ export interface TemplateLoadResult {
   newAvailable: Exercise[];
 }
 
-export function loadTemplate(
-  templateId: string,
-  available: Exercise[],
-): TemplateLoadResult | null {
+export function loadTemplate(templateId: string, available: Exercise[]): TemplateLoadResult | null {
   const tpl = getTemplateById(templateId);
   if (!tpl) return null;
 
@@ -119,9 +107,9 @@ export function hasExerciseTip(name: string): boolean {
 }
 
 export function getExerciseTipText(name: string): string {
-  return getExerciseTip(name)?.description ?? "";
+  return getExerciseTip(name)?.description ?? '';
 }
 
 export function getExerciseTipVideoUrl(name: string): string {
-  return getExerciseTip(name)?.videoUrl ?? "";
+  return getExerciseTip(name)?.videoUrl ?? '';
 }

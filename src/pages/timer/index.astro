@@ -10,17 +10,9 @@ const L = t();
 ---
 
 <AppLayout title={L.timer.title}>
-  <PageHeader
-    title={L.timer.title}
-    description={L.timer.description}
-  />
+  <PageHeader title={L.timer.title} description={L.timer.description} />
 
-  <div
-    class="timer"
-    x-data="timerApp()"
-    x-init="init()"
-    x-cloak
-  >
+  <div class="timer" x-data="timerApp()" x-init="init()" x-cloak>
     {/* ── Top bar: pop-out (right) ── */}
     <div class="timer__topbar">
       <Button
@@ -46,8 +38,15 @@ const L = t();
           <Fragment set:html={icons.countdown(18, 18)} x-show="mode === 'countdown'" />
           <Fragment set:html={icons.stopwatch(18, 18)} x-show="mode === 'stopwatch'" />
         </span>
-        <span class="timer__hero-mode-label" x-text="mode === 'countdown' ? labels.countdown : labels.stopwatch">{L.timer.countdown}</span>
-        <span class="timer__hero-sep" aria-hidden="true">·</span>
+        <span
+          class="timer__hero-mode-label"
+          x-text="mode === 'countdown' ? labels.countdown : labels.stopwatch"
+        >
+          {L.timer.countdown}
+        </span>
+        <span class="timer__hero-sep" aria-hidden="true">
+          ·
+        </span>
         <span class="timer__hero-mode-status" x-text="modeStatusLabel"></span>
       </div>
 
@@ -57,12 +56,20 @@ const L = t();
           <circle
             class="timer__hero-ring-progress"
             :class="ringClasses"
-            cx="120" cy="120" r="108"
+            cx="120"
+            cy="120"
+            r="108"
             :stroke-dasharray="ringCircumference"
             :stroke-dashoffset="ringOffset"
           />
         </svg>
-        <div class="timer__hero-clock" :class="clockClasses" x-text="clockText" aria-live="polite" aria-atomic="true">
+        <div
+          class="timer__hero-clock"
+          :class="clockClasses"
+          x-text="clockText"
+          aria-live="polite"
+          aria-atomic="true"
+        >
           00:00
         </div>
       </div>
@@ -70,26 +77,22 @@ const L = t();
       <div class="timer__hero-info">
         <span x-show="mode === 'countdown'">
           <span x-text="formatShort(totalTime)"></span>
-          <span class="timer__hero-sep" aria-hidden="true">·</span>
+          <span class="timer__hero-sep" aria-hidden="true">
+            ·
+          </span>
           <span x-text="labels.custom + ' ' + (customTime === totalTime ? formatShort(customTime) : formatShort(customTime))"></span>
         </span>
-        <span x-show="mode === 'stopwatch'" x-text="labels.stopwatch + ' · ' + labels.running"></span>
+        <span
+          x-show="mode === 'stopwatch'"
+          x-text="labels.stopwatch + ' · ' + labels.running"
+        ></span>
       </div>
 
       <div class="timer__hero-actions">
-        <Button
-          variant="primary"
-          size="lg"
-          fullWidth
-          @click="toggle()"
-        >
+        <Button variant="primary" size="lg" fullWidth @click="toggle()">
           <span x-text="toggleLabel">{L.timer.start}</span>
         </Button>
-        <Button
-          variant="secondary"
-          size="lg"
-          @click="resetCurrent()"
-        >
+        <Button variant="secondary" size="lg" @click="resetCurrent()">
           <span x-text="labels.reset">{L.timer.reset}</span>
         </Button>
         <Button
@@ -117,7 +120,12 @@ const L = t();
           ]}
         />
       </div>
-      <div class="timer__presets-list" role="group" aria-label={L.timer.presetsAria} x-show="mode === 'countdown'">
+      <div
+        class="timer__presets-list"
+        role="group"
+        aria-label={L.timer.presetsAria}
+        x-show="mode === 'countdown'"
+      >
         <template x-for="preset in presets" :key="preset">
           <Button
             variant="secondary"
@@ -139,11 +147,20 @@ const L = t();
       {/* Custom time — countdown only */}
       <Card padding="md" class="timer__panel-card" x-show="mode === 'countdown'">
         <header class="timer__panel-header">
-          <span class="timer__panel-title" x-text="labels.custom">{L.timer.custom}</span>
-          <span class="timer__panel-subtitle" x-text="labels.customSeconds">{L.timer.customSeconds}</span>
+          <span class="timer__panel-title" x-text="labels.custom">
+            {L.timer.custom}
+          </span>
+          <span class="timer__panel-subtitle" x-text="labels.customSeconds">
+            {L.timer.customSeconds}
+          </span>
         </header>
         <div class="timer__custom-controls">
-          <Button variant="secondary" size="md" @click="adjustCustom(-15); setCustom()" aria-label={L.timer.reduce15}>
+          <Button
+            variant="secondary"
+            size="md"
+            @click="adjustCustom(-15); setCustom()"
+            aria-label={L.timer.reduce15}
+          >
             −15
           </Button>
           <input
@@ -158,25 +175,43 @@ const L = t();
             @blur="setCustom()"
             aria-label={L.timer.customSeconds}
           />
-          <Button variant="secondary" size="md" @click="adjustCustom(15); setCustom()" aria-label={L.timer.increase15}>
+          <Button
+            variant="secondary"
+            size="md"
+            @click="adjustCustom(15); setCustom()"
+            aria-label={L.timer.increase15}
+          >
             +15
           </Button>
         </div>
       </Card>
 
       {/* Laps — stopwatch only */}
-      <Card padding="none" class="timer__panel-card timer__laps" x-show="mode === 'stopwatch' && sw.laps.length > 0">
+      <Card
+        padding="none"
+        class="timer__panel-card timer__laps"
+        x-show="mode === 'stopwatch' && sw.laps.length > 0"
+      >
         <div class="timer__laps-header">
-          <span class="timer__laps-col-label" x-text="labels.lap">{L.timer.lap}</span>
-          <span class="timer__laps-col-label" x-text="labels.lapTime">{L.timer.lapTime}</span>
-          <span class="timer__laps-col-label timer__laps-col-label--right" x-text="labels.total">{L.timer.total}</span>
+          <span class="timer__laps-col-label" x-text="labels.lap">
+            {L.timer.lap}
+          </span>
+          <span class="timer__laps-col-label" x-text="labels.lapTime">
+            {L.timer.lapTime}
+          </span>
+          <span class="timer__laps-col-label timer__laps-col-label--right" x-text="labels.total">
+            {L.timer.total}
+          </span>
         </div>
         <div class="timer__laps-body">
           <template x-for="(lap, revIdx) in swLapsReversed" :key="lap.totalTime + '-' + revIdx">
             <div class="timer__laps-row" :class="{ 'timer__laps-row--latest': revIdx === 0 }">
               <span class="timer__laps-num" x-text="sw.laps.length - revIdx"></span>
               <span class="timer__laps-time" x-text="formatStopwatch(lap.lapTime)"></span>
-              <span class="timer__laps-time timer__laps-time--accent" x-text="formatStopwatch(lap.totalTime)"></span>
+              <span
+                class="timer__laps-time timer__laps-time--accent"
+                x-text="formatStopwatch(lap.totalTime)"
+              ></span>
             </div>
           </template>
         </div>
@@ -188,7 +223,9 @@ const L = t();
         ════════════════════════════════════════════════════ */}
     <div class="timer__shortcuts" aria-hidden="true">
       <span class="timer__shortcut">
-        <kbd class="timer__kbd" x-text="labels.spaceKey">{L.timer.spaceKey}</kbd>
+        <kbd class="timer__kbd" x-text="labels.spaceKey">
+          {L.timer.spaceKey}
+        </kbd>
         <span x-text="labels.shortcutsToggle">{L.timer.shortcutsToggle}</span>
       </span>
       <span class="timer__shortcut">
@@ -208,922 +245,475 @@ const L = t();
           x-model="soundEnabled"
           aria-label={L.timer.soundAlert}
         />
-        <span class="timer__sound-text" x-text="labels.soundAlert">{L.timer.soundAlert}</span>
+        <span class="timer__sound-text" x-text="labels.soundAlert">
+          {L.timer.soundAlert}
+        </span>
       </label>
     </div>
   </div>
 </AppLayout>
 
 <script>
-import { t, localizedPath } from '../../i18n';
-  import {
-    mountTimerWidget,
-    widgetLabelsFrom,
-    TIMER_CHANNEL,
-    type TimerSnapshot,
-  } from '../../lib/timer-widget';
-  import { playBeep } from '../../lib/sound';
-  import { formatTime, formatShort, formatStopwatch } from '../../lib/timer-format';
-  import { installTimerKeyboard } from '../../lib/timer-input';
+  import { createTimerApp } from '../../components/timer/timerApp';
+  import { t, localizedPath } from '../../i18n';
 
   const LABELS = t();
-  type TimerMode = 'countdown' | 'stopwatch';
-
-  const RING_RADIUS = 108;
-  const RING_CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS;
-
-  // Pop-out bridge kept OUTSIDE the reactive Alpine store: Alpine proxies
-  // its state, which breaks exotic objects like BroadcastChannel. Only the
-  // `popupOpen` flag lives in the component (it drives the button class).
-  const timerBridge: {
-    channel: BroadcastChannel | null;
-    pipWindow: Window | null;
-    popWatcher: number;
-    remoteConnected: boolean;
-    connWatchdog: number;
-    instanceId: string;
-  } = {
-    channel: null,
-    pipWindow: null,
-    popWatcher: 0,
-    remoteConnected: false,
-    connWatchdog: 0,
-    instanceId: 'm' + Math.random().toString(36).slice(2, 10),
-  };
 
   const registerTimer = () => {
-    window.Alpine.data('timerApp', () => ({
-      // ── Mode ──
-      mode: 'countdown' as TimerMode,
-
-      // ── Pop-out window ──
-      popupOpen: false,
-
-      // ── Stopwatch state ──
-      sw: {
-        running: false,
-        elapsed: 0,
-        laps: [] as { lapTime: number; totalTime: number }[],
-        startTimestamp: 0,
-        intervalId: null as number | null,
-      },
-
-      // ── Countdown state ──
-      presets: [60, 90, 120, 180],
-      totalTime: 90,
-      remaining: 90,
-      display: 90,
-      running: false,
-      customTime: 90,
-      soundEnabled: true,
-      intervalId: null as number | null,
-      endTime: 0,
-      lastTick: 0,
-
-      // ── Ring (used by both countdown and stopwatch) ──
-      ringCircumference: RING_CIRCUMFERENCE,
-
-      // ── Translations ──
-      labels: {
-        title: LABELS.timer.title,
-        countdown: LABELS.timer.countdown,
-        stopwatch: LABELS.timer.stopwatch,
-        custom: LABELS.timer.custom,
-        start: LABELS.timer.start,
-        restart: LABELS.timer.restart,
-        resume: LABELS.timer.resume,
-        pause: LABELS.timer.pause,
-        reset: LABELS.timer.reset,
-        lap: LABELS.timer.lap,
-        lapTime: LABELS.timer.lapTime,
-        total: LABELS.timer.total,
-        soundAlert: LABELS.timer.soundAlert,
-        running: LABELS.timer.running,
-        paused: LABELS.timer.paused,
-        ready: LABELS.timer.ready,
-        done: LABELS.timer.done,
-        popout: LABELS.timer.popout,
-        popoutAria: LABELS.timer.popoutAria,
-        popoutOpen: LABELS.timer.popoutOpen,
-        shortcutsToggle: LABELS.timer.shortcutsToggle,
-        shortcutsReset: LABELS.timer.shortcutsReset,
-        spaceKey: LABELS.timer.spaceKey,
-      },
-
-      // ── Keyboard ──
-      _cleanupKeyboard: null as (() => void) | null,
-
-      init() {
-        this.display = this.totalTime;
-        this._cleanupKeyboard = installTimerKeyboard({
-          toggle: () => this.toggle(),
-          resetCurrent: () => this.resetCurrent(),
-        });
-        if (!timerBridge.channel) {
-          timerBridge.channel = new BroadcastChannel(TIMER_CHANNEL);
-          timerBridge.channel.onmessage = (ev: MessageEvent) => this.handleRemote(ev.data);
-        }
-        document.addEventListener('visibilitychange', () => {
-          if (document.hidden && !this.popupOpen) {
-            if (this.running) this.pause();
-            if (this.sw.running) this.swPause();
-          }
-        });
-      },
-
-      // ═══════════════════════════════════════════════════════
-      // POP-OUT WINDOW (Picture-in-Picture + fallback)
-      // ═══════════════════════════════════════════════════════
-      snapshot(): TimerSnapshot {
-        return {
-          mode: this.mode,
-          totalTime: this.totalTime,
-          remaining: this.remaining,
-          running: this.running,
-          endAt: this.running ? this.endTime : 0,
-          swRunning: this.sw.running,
-          swStartAt: this.sw.running ? this.sw.startTimestamp : 0,
-          swElapsed: this.sw.elapsed,
-          laps: this.sw.laps.map((l) => ({ ...l })),
-          soundEnabled: this.soundEnabled,
-          now: Date.now(),
-        };
-      },
-
-      broadcast() {
-        if (!this.popupOpen && !timerBridge.remoteConnected) return;
-        this.pushState();
-      },
-
-      pushState() {
-        timerBridge.channel?.postMessage({
-          type: 'state',
-          owner: timerBridge.instanceId,
-          state: this.snapshot(),
-        });
-      },
-
-      handleRemote(msg: any) {
-        if (!msg || typeof msg !== 'object') return;
-        if (msg.type === 'hello') {
-          if (msg.target && msg.target !== '*' && msg.target !== timerBridge.instanceId) return;
-          timerBridge.remoteConnected = true;
-          if (timerBridge.connWatchdog) clearTimeout(timerBridge.connWatchdog);
-          timerBridge.connWatchdog = window.setTimeout(() => {
-            timerBridge.remoteConnected = false;
-            timerBridge.connWatchdog = 0;
-          }, 6500);
-          this.pushState();
-          return;
-        }
-        if (msg.type !== 'cmd') return;
-        if (msg.target && msg.target !== timerBridge.instanceId) return;
-        switch (msg.cmd) {
-          case 'start':
-            if (this.mode === 'stopwatch') this.swStart();
-            else this.start();
-            break;
-          case 'pause':
-            if (this.mode === 'stopwatch') this.swPause();
-            else this.pause();
-            break;
-          case 'reset':
-            this.resetCurrent();
-            break;
-          case 'lap':
-            this.swRecordLap();
-            break;
-          case 'setMode':
-            this.setMode(msg.value === 1 ? 'stopwatch' : 'countdown');
-            break;
-          case 'setTime':
-            this.setPreset(Math.max(5, Math.min(600, Number(msg.value) || 90)));
-            break;
-        }
-        this.pushState();
-      },
-
-      async openPopup() {
-        if (this.popupOpen) {
-          timerBridge.pipWindow?.focus();
-          return;
-        }
-        if (!('documentPictureInPicture' in window)) {
-          this.openFallback();
-          return;
-        }
-        try {
-          const pip = await (window as any).documentPictureInPicture.requestWindow({
-            width: 400,
-            height: 580,
-          });
-          this.attachPip(pip);
-        } catch (e) {
-          this.openFallback();
-        }
-      },
-
-      openFallback() {
-        const w = window.open(
-          localizedPath('/timer/pop'),
-          'muscu_timer_pop',
-          'popup,width=400,height=580',
-        );
-        if (!w) return;
-        this.popupOpen = true;
-        if (timerBridge.popWatcher) clearInterval(timerBridge.popWatcher);
-        timerBridge.popWatcher = window.setInterval(() => {
-          if (w.closed) {
-            window.clearInterval(timerBridge.popWatcher);
-            timerBridge.popWatcher = 0;
-            this.popupOpen = false;
-          }
-        }, 500);
-        setTimeout(() => this.broadcast(), 350);
-      },
-
-      attachPip(pip: Window) {
-        timerBridge.pipWindow = pip;
-        this.popupOpen = true;
-        const doc = pip.document;
-        doc.title = this.labels.title;
-        doc.documentElement.setAttribute(
-          'data-theme',
-          document.documentElement.getAttribute('data-theme') || 'dark',
-        );
-        const bodyBg =
-          getComputedStyle(document.documentElement).getPropertyValue('--color-bg').trim() ||
-          '#0d0d0d';
-        doc.body.style.cssText =
-          'margin:0;background:' + bodyBg + ';overflow:hidden';
-        const root = doc.createElement('div');
-        root.id = 'tw-mount';
-        doc.body.appendChild(root);
-        const widget = mountTimerWidget(root, widgetLabelsFrom(t()));
-        widget.setSnapshot(this.snapshot(), timerBridge.instanceId);
-        pip.addEventListener('pagehide', () => {
-          timerBridge.pipWindow = null;
-          this.popupOpen = false;
-          widget.destroy();
-        });
-      },
-
-      // ═══════════════════════════════════════════════════════
-      // MODE
-      // ═══════════════════════════════════════════════════════
-      setMode(m: TimerMode) {
-        if (m === this.mode) return;
-        this.pause();
-        this.swPause();
-        this.mode = m;
-        this.broadcast();
-      },
-
-      toggle() {
-        if (this.mode === 'stopwatch') {
-          if (this.sw.running) this.swPause();
-          else this.swStart();
-        } else {
-          if (this.running) this.pause();
-          else this.start();
-        }
-      },
-
-      get toggleLabel() {
-        if (this.mode === 'stopwatch') {
-          if (this.sw.running) return this.labels.pause;
-          return this.sw.elapsed > 0 ? this.labels.resume : this.labels.start;
-        }
-        if (this.running) return this.labels.pause;
-        if (this.remaining === 0) return this.labels.restart;
-        if (this.remaining < this.totalTime) return this.labels.resume;
-        return this.labels.start;
-      },
-
-      // ═══════════════════════════════════════════════════════
-      // HERO DISPLAY — clock text + state classes
-      // ═══════════════════════════════════════════════════════
-      get clockText(): string {
-        if (this.mode === 'stopwatch') return this.formatStopwatch(this.sw.elapsed);
-        return this.formatTime(this.display);
-      },
-
-      get clockClasses(): string {
-        const base = 'timer__hero-clock';
-        if (this.mode === 'countdown') {
-          if (this.remaining === 0) return `${base} timer__hero-clock--done`;
-          if (this.running && this.remaining <= 10) return `${base} timer__hero-clock--warning`;
-          if (this.running) return `${base} timer__hero-clock--running`;
-          return base;
-        }
-        return this.sw.running ? `${base} timer__hero-clock--running` : base;
-      },
-
-      get modeStatusLabel(): string {
-        if (this.mode === 'countdown') {
-          if (this.running) return this.labels.running;
-          if (this.remaining === 0) return this.labels.done;
-          if (this.remaining < this.totalTime) return this.labels.paused;
-          return this.labels.ready;
-        }
-        if (this.sw.running) return this.labels.running;
-        if (this.sw.elapsed > 0) return this.labels.paused;
-        return this.labels.ready;
-      },
-
-      // ═══════════════════════════════════════════════════════
-      // RING — countdown progress / stopwatch always full
-      // ═══════════════════════════════════════════════════════
-      get ringOffset(): number {
-        if (this.mode === 'countdown') {
-          const rem = this.display;
-          const progress = this.totalTime > 0
-            ? Math.max(0, Math.min(1, rem / this.totalTime))
-            : 0;
-          return RING_CIRCUMFERENCE * (1 - progress);
-        }
-        return 0; // stopwatch: ring is full (offset 0 = fully drawn)
-      },
-
-      get ringClasses(): string {
-        const base = 'timer__hero-ring-progress';
-        if (this.mode === 'countdown') {
-          if (this.remaining === 0) return `${base} timer__hero-ring-progress--done`;
-          if (this.running && this.remaining <= 10) return `${base} timer__hero-ring-progress--warning`;
-          if (this.running) return `${base} timer__hero-ring-progress--running`;
-          return base;
-        }
-        return this.sw.running
-          ? `${base} timer__hero-ring-progress--running`
-          : `${base} timer__hero-ring-progress--paused`;
-      },
-
-      // ═══════════════════════════════════════════════════════
-      // COUNTDOWN
-      // ═══════════════════════════════════════════════════════
-      setPreset(seconds: number) {
-        this.pause();
-        this.totalTime = seconds;
-        this.remaining = seconds;
-        this.display = seconds;
-        this.customTime = seconds;
-        this.broadcast();
-      },
-
-      setCustom() {
-        const v = Math.max(5, Math.min(600, Number(this.customTime) || 0));
-        if (v === 0) return;
-        this.pause();
-        this.totalTime = v;
-        this.remaining = v;
-        this.display = v;
-        this.customTime = v;
-        this.broadcast();
-      },
-
-      adjustCustom(delta: number) {
-        this.customTime = Math.max(5, Math.min(600, (this.customTime || 0) + delta));
-      },
-
-      start() {
-        if (this.remaining <= 0) {
-          this.remaining = this.totalTime;
-        }
-        if (this.running) return;
-        this.running = true;
-        this.endTime = Date.now() + this.remaining * 1000;
-        this.lastTick = Date.now();
-        this.tick();
-        this._scheduleTick();
-        this.broadcast();
-      },
-
-      pause() {
-        if (!this.running) return;
-        this.running = false;
-        if (this.endTime) {
-          this.remaining = Math.max(0, Math.ceil((this.endTime - Date.now()) / 1000));
-          this.display = this.remaining;
-        }
-        if (this.intervalId) {
-          clearTimeout(this.intervalId);
-          this.intervalId = null;
-        }
-        this.broadcast();
-      },
-
-      reset() {
-        this.pause();
-        this.remaining = this.totalTime;
-        this.display = this.totalTime;
-        this.broadcast();
-      },
-
-      tick() {
-        const now = Date.now();
-        const remainingMs = Math.max(0, this.endTime - now);
-        const remainingSec = Math.ceil(remainingMs / 1000);
-        this.remaining = remainingSec;
-        this.display = remainingSec;
-        this.lastTick = now;
-
-        if (remainingMs <= 0) {
-          this.pause();
-          this.display = 0;
-          this.remaining = 0;
-          if (this.soundEnabled && !this.popupOpen) this.beep();
-        }
-      },
-
-      _scheduleTick() {
-        this.intervalId = window.setTimeout(() => {
-          this.tick();
-          if (this.running) this._scheduleTick();
-        }, 100);
-      },
-
-      // ═══════════════════════════════════════════════════════
-      // STOPWATCH
-      // ═══════════════════════════════════════════════════════
-      get swLapsReversed() {
-        return this.sw.laps.slice().reverse();
-      },
-
-      swStart() {
-        if (this.sw.running) return;
-        this.sw.running = true;
-        this.sw.startTimestamp = Date.now() - this.sw.elapsed;
-        this.sw.intervalId = setInterval(() => this.swTick(), 10);
-        this.broadcast();
-      },
-
-      swPause() {
-        if (!this.sw.running) return;
-        this.sw.running = false;
-        if (this.sw.intervalId) {
-          clearInterval(this.sw.intervalId);
-          this.sw.intervalId = null;
-        }
-        this.sw.elapsed = Date.now() - this.sw.startTimestamp;
-        this.broadcast();
-      },
-
-      swReset() {
-        this.swPause();
-        this.sw.elapsed = 0;
-        this.sw.laps = [];
-        this.broadcast();
-      },
-
-      swRecordLap() {
-        if (!this.sw.running) return;
-        const total = Date.now() - this.sw.startTimestamp;
-        const prevTotal = this.sw.laps.length > 0
-          ? this.sw.laps[this.sw.laps.length - 1].totalTime
-          : 0;
-        this.sw.laps.push({
-          lapTime: total - prevTotal,
-          totalTime: total,
-        });
-        this.broadcast();
-      },
-
-      swTick() {
-        this.sw.elapsed = Date.now() - this.sw.startTimestamp;
-      },
-
-      // ═══════════════════════════════════════════════════════
-      // MODE-AWARE RESET — called by both buttons and remote
-      // ═══════════════════════════════════════════════════════
-      resetCurrent() {
-        if (this.mode === 'stopwatch') this.swReset();
-        else this.reset();
-      },
-
-      formatTime,
-      formatShort,
-      formatStopwatch,
-
-      beep() {
-        playBeep();
-      },
-
-      destroy() {
-        if (this._cleanupKeyboard) {
-          this._cleanupKeyboard();
-          this._cleanupKeyboard = null;
-        }
-        if (this.intervalId) clearInterval(this.intervalId);
-        if (this.sw.intervalId) clearInterval(this.sw.intervalId);
-      },
-    }));
+    window.Alpine.data('timerApp', () =>
+      createTimerApp({
+        labels: LABELS.timer,
+        labelSource: LABELS,
+        now: () => Date.now(),
+        randomId: () => Math.random().toString(36).slice(2, 10),
+        localizedPath,
+      })
+    );
   };
   document.addEventListener('alpine:init', registerTimer);
   if ((window as any).Alpine) registerTimer();
 </script>
 
 <style>
-/* ── Layout ── */
-.timer {
-  display: flex;
-  flex-direction: column;
-  gap: 2.4rem;
-  padding-bottom: 9.6rem;
-}
-
-/* ── Top bar ── */
-.timer__topbar {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-}
-
-/* ── Hero section ── */
-.timer__hero {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1.4rem;
-  padding: 1.6rem 0 2.4rem;
-  border-top: 1px solid var(--color-border);
-  border-bottom: 1px solid var(--color-border);
-}
-
-.timer__hero-mode {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.8rem;
-}
-
-.timer__hero-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 2.8rem;
-  height: 2.8rem;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--color-accent) 12%, transparent);
-  color: var(--color-accent);
-  flex-shrink: 0;
-}
-
-.timer__hero-icon :global(svg) {
-  width: 1.6rem;
-  height: 1.6rem;
-}
-
-.timer__hero-mode-label {
-  font-family: var(--font-display);
-  font-size: 1.1rem;
-  color: var(--color-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  font-weight: 700;
-}
-
-.timer__hero-sep {
-  color: var(--alpha-text-faint);
-}
-
-.timer__hero-mode-status {
-  font-family: var(--font-display);
-  font-size: 1.1rem;
-  color: var(--color-accent);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  font-weight: 700;
-}
-
-.timer__hero-ring-wrap {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: min(28rem, 80vw);
-  aspect-ratio: 1;
-}
-
-.timer__hero-ring-svg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  transform: rotate(-90deg);
-}
-
-.timer__hero-info {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 0.6rem;
-  font-size: 1.3rem;
-  color: var(--color-muted);
-  font-weight: 500;
-}
-
-.timer__hero-actions {
-  display: flex;
-  align-items: stretch;
-  gap: 1.2rem;
-  width: 100%;
-  max-width: 36rem;
-}
-
-/* ── Presets section ── */
-.timer__presets-section {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1.6rem;
-  flex-wrap: wrap;
-}
-
-@media (max-width: 480px) {
-  .timer__presets-section {
+  /* ── Layout ── */
+  .timer {
+    display: flex;
     flex-direction: column;
+    gap: 2.4rem;
+    padding-bottom: 9.6rem;
+  }
+
+  /* ── Top bar ── */
+  .timer__topbar {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  /* ── Hero section ── */
+  .timer__hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.4rem;
+    padding: 1.6rem 0 2.4rem;
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .timer__hero-mode {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .timer__hero-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.8rem;
+    height: 2.8rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+    color: var(--color-accent);
+    flex-shrink: 0;
+  }
+
+  .timer__hero-icon :global(svg) {
+    width: 1.6rem;
+    height: 1.6rem;
+  }
+
+  .timer__hero-mode-label {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    color: var(--color-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+  }
+
+  .timer__hero-sep {
+    color: var(--alpha-text-faint);
+  }
+
+  .timer__hero-mode-status {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    color: var(--color-accent);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+  }
+
+  .timer__hero-ring-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: min(28rem, 80vw);
+    aspect-ratio: 1;
+  }
+
+  .timer__hero-ring-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+  }
+
+  .timer__hero-info {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    font-size: 1.3rem;
+    color: var(--color-muted);
+    font-weight: 500;
+  }
+
+  .timer__hero-actions {
+    display: flex;
     align-items: stretch;
+    gap: 1.2rem;
+    width: 100%;
+    max-width: 36rem;
   }
-}
 
-.timer__presets-segmented {
-  flex: none;
-}
+  /* ── Presets section ── */
+  .timer__presets-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.6rem;
+    flex-wrap: wrap;
+  }
 
-.timer__presets-list {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-  flex-wrap: wrap;
-}
+  @media (max-width: 480px) {
+    .timer__presets-section {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
 
-/* ── Panels ── */
-.timer__panels {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.2rem;
-}
+  .timer__presets-segmented {
+    flex: none;
+  }
 
-@media (min-width: 760px) {
+  .timer__presets-list {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+
+  /* ── Panels ── */
   .timer__panels {
-    grid-template-columns: repeat(2, 1fr);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
   }
-}
 
-.timer__panel-header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.4rem;
-  margin-bottom: 1.2rem;
-}
+  @media (min-width: 760px) {
+    .timer__panels {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
 
-.timer__panel-title {
-  font-family: var(--font-display);
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--color-text);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
+  .timer__panel-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 1.2rem;
+  }
 
-.timer__panel-subtitle {
-  font-size: 1.1rem;
-  color: var(--color-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-weight: 500;
-}
+  .timer__panel-title {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--color-text);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
 
-.timer__custom-controls {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.8rem;
-}
+  .timer__panel-subtitle {
+    font-size: 1.1rem;
+    color: var(--color-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 500;
+  }
 
-/* ── Laps ── */
-.timer__laps-header {
-  display: grid;
-  grid-template-columns: 6rem 1fr 1fr;
-  padding: 1.4rem 2rem;
-  background: var(--color-surface-2);
-  color: var(--color-muted);
-  font-family: var(--font-display);
-  font-size: 1rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  border-bottom: 1px solid var(--color-border);
-}
+  .timer__custom-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+  }
 
-.timer__laps-col-label--right {
-  text-align: right;
-}
+  /* ── Laps ── */
+  .timer__laps-header {
+    display: grid;
+    grid-template-columns: 6rem 1fr 1fr;
+    padding: 1.4rem 2rem;
+    background: var(--color-surface-2);
+    color: var(--color-muted);
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    border-bottom: 1px solid var(--color-border);
+  }
 
-.timer__laps-body {
-  max-height: 32rem;
-  overflow-y: auto;
-}
+  .timer__laps-col-label--right {
+    text-align: right;
+  }
 
-.timer__laps-row {
-  display: grid;
-  grid-template-columns: 6rem 1fr 1fr;
-  align-items: center;
-  padding: 1.3rem 2rem;
-  font-family: var(--font-display);
-  font-size: 1.4rem;
-  font-variant-numeric: tabular-nums;
-  border-bottom: 1px solid var(--color-border);
-  transition: background-color var(--transition-base), color var(--transition-base);
-}
+  .timer__laps-body {
+    max-height: 32rem;
+    overflow-y: auto;
+  }
 
-.timer__laps-row:last-child { border-bottom: 0; }
+  .timer__laps-row {
+    display: grid;
+    grid-template-columns: 6rem 1fr 1fr;
+    align-items: center;
+    padding: 1.3rem 2rem;
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-variant-numeric: tabular-nums;
+    border-bottom: 1px solid var(--color-border);
+    transition:
+      background-color var(--transition-base),
+      color var(--transition-base);
+  }
 
-.timer__laps-row--latest {
-  background-color: color-mix(in srgb, var(--color-accent) 10%, transparent);
-  color: var(--color-accent);
-}
+  .timer__laps-row:last-child {
+    border-bottom: 0;
+  }
 
-.timer__laps-num { color: var(--color-muted); font-weight: 600; }
-.timer__laps-row--latest .timer__laps-num { color: var(--color-accent); font-weight: 700; }
+  .timer__laps-row--latest {
+    background-color: color-mix(in srgb, var(--color-accent) 10%, transparent);
+    color: var(--color-accent);
+  }
 
-.timer__laps-time {
-  font-weight: 600;
-}
+  .timer__laps-num {
+    color: var(--color-muted);
+    font-weight: 600;
+  }
+  .timer__laps-row--latest .timer__laps-num {
+    color: var(--color-accent);
+    font-weight: 700;
+  }
 
-.timer__laps-time--accent {
-  text-align: right;
-  color: var(--color-accent);
-}
+  .timer__laps-time {
+    font-weight: 600;
+  }
 
-/* ── Shortcuts ── */
-.timer__shortcuts {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 2rem;
-  flex-wrap: wrap;
-}
+  .timer__laps-time--accent {
+    text-align: right;
+    color: var(--color-accent);
+  }
 
-.timer__shortcut {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-  font-size: 1.1rem;
-  color: var(--color-muted);
-}
+  /* ── Shortcuts ── */
+  .timer__shortcuts {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
 
-.timer__kbd {
-  font-family: var(--font-body);
-  font-size: 1.1rem;
-  color: var(--color-muted);
-  background: var(--color-surface-2);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  padding: 0.2rem 0.6rem;
-  line-height: 1.2;
-}
+  .timer__shortcut {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 1.1rem;
+    color: var(--color-muted);
+  }
 
-/* ── Sound toggle ── */
-.timer__sound {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+  .timer__kbd {
+    font-family: var(--font-body);
+    font-size: 1.1rem;
+    color: var(--color-muted);
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    padding: 0.2rem 0.6rem;
+    line-height: 1.2;
+  }
 
-.timer__sound-label {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.8rem;
-  color: var(--color-muted);
-  font-size: 1.3rem;
-  font-weight: 500;
-  cursor: pointer;
-  user-select: none;
-  transition: color var(--transition-fast);
-}
+  /* ── Sound toggle ── */
+  .timer__sound {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
-.timer__sound-label:hover { color: var(--color-text); }
+  .timer__sound-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+    color: var(--color-muted);
+    font-size: 1.3rem;
+    font-weight: 500;
+    cursor: pointer;
+    user-select: none;
+    transition: color var(--transition-fast);
+  }
 
-.timer__sound-checkbox {
-  width: 1.8rem;
-  height: 1.8rem;
-  accent-color: var(--color-accent);
-  cursor: pointer;
-}
+  .timer__sound-label:hover {
+    color: var(--color-text);
+  }
 
-/* ── Popout button ── */
-.timer__popout.is-active,
-.timer__popout--open {
-  color: var(--color-accent);
-  border-color: var(--color-accent);
-  background: color-mix(in srgb, var(--color-accent) 10%, transparent);
-}
+  .timer__sound-checkbox {
+    width: 1.8rem;
+    height: 1.8rem;
+    accent-color: var(--color-accent);
+    cursor: pointer;
+  }
 
-.timer__hero-icon :global(svg) {
-  width: 1.6rem;
-  height: 1.6rem;
-}
+  /* ── Popout button ── */
+  .timer__popout.is-active,
+  .timer__popout--open {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+    background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+  }
 
-.timer__hero-ring-track {
-  fill: none;
-  stroke: var(--color-surface-3);
-  stroke-width: 4;
-}
+  .timer__hero-icon :global(svg) {
+    width: 1.6rem;
+    height: 1.6rem;
+  }
 
-.timer__hero-ring-progress {
-  fill: none;
-  stroke: var(--color-accent);
-  stroke-width: 5;
-  stroke-linecap: round;
-  transition: stroke-dashoffset var(--transition-fast), stroke var(--transition-base);
-}
+  .timer__hero-ring-track {
+    fill: none;
+    stroke: var(--color-surface-3);
+    stroke-width: 4;
+  }
 
-.timer__hero-ring-progress--running { stroke: var(--color-accent); }
-.timer__hero-ring-progress--warning { stroke: var(--color-warning); }
-.timer__hero-ring-progress--done    { stroke: var(--color-success); }
-.timer__hero-ring-progress--paused  { stroke: var(--color-muted); opacity: 0.6; }
+  .timer__hero-ring-progress {
+    fill: none;
+    stroke: var(--color-accent);
+    stroke-width: 5;
+    stroke-linecap: round;
+    transition:
+      stroke-dashoffset var(--transition-fast),
+      stroke var(--transition-base);
+  }
 
-.timer__hero-clock {
-  position: relative;
-  z-index: 1;
-  font-family: var(--font-display);
-  font-size: clamp(5rem, 14vw, 9.6rem);
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: -0.04em;
-  font-variant-numeric: tabular-nums;
-  color: var(--color-text);
-  text-align: center;
-  transition: color var(--transition-base);
-}
+  .timer__hero-ring-progress--running {
+    stroke: var(--color-accent);
+  }
+  .timer__hero-ring-progress--warning {
+    stroke: var(--color-warning);
+  }
+  .timer__hero-ring-progress--done {
+    stroke: var(--color-success);
+  }
+  .timer__hero-ring-progress--paused {
+    stroke: var(--color-muted);
+    opacity: 0.6;
+  }
 
-.timer__hero-clock--running { color: var(--color-accent); }
-.timer__hero-clock--warning { color: var(--color-warning); }
-.timer__hero-clock--done    { color: var(--color-success); }
+  .timer__hero-clock {
+    position: relative;
+    z-index: 1;
+    font-family: var(--font-display);
+    font-size: clamp(5rem, 14vw, 9.6rem);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-text);
+    text-align: center;
+    transition: color var(--transition-base);
+  }
 
-.timer__custom-input {
-  flex: 1 1 auto;
-  min-width: 0;
-  height: 4.4rem;
-  padding: 0 1.2rem;
-  background-color: var(--color-surface-2);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  color: var(--color-text);
-  font-family: var(--font-display);
-  font-size: 1.6rem;
-  font-weight: 600;
-  text-align: center;
-  font-variant-numeric: tabular-nums;
-  outline: none;
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
-  -moz-appearance: textfield;
-}
+  .timer__hero-clock--running {
+    color: var(--color-accent);
+  }
+  .timer__hero-clock--warning {
+    color: var(--color-warning);
+  }
+  .timer__hero-clock--done {
+    color: var(--color-success);
+  }
 
-.timer__custom-input::-webkit-outer-spin-button,
-.timer__custom-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
+  .timer__custom-input {
+    flex: 1 1 auto;
+    min-width: 0;
+    height: 4.4rem;
+    padding: 0 1.2rem;
+    background-color: var(--color-surface-2);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    color: var(--color-text);
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    font-weight: 600;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    outline: none;
+    transition:
+      border-color var(--transition-fast),
+      box-shadow var(--transition-fast);
+    -moz-appearance: textfield;
+  }
 
-.timer__custom-input:focus {
-  border-color: var(--color-accent);
-  box-shadow: var(--focus-ring);
-}
+  .timer__custom-input::-webkit-outer-spin-button,
+  .timer__custom-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
 
-.timer__laps-row {
-  display: grid;
-  grid-template-columns: 6rem 1fr 1fr;
-  align-items: center;
-  padding: 1.3rem 2rem;
-  font-family: var(--font-display);
-  font-size: 1.4rem;
-  font-variant-numeric: tabular-nums;
-  border-bottom: 1px solid var(--color-border);
-  transition: background-color var(--transition-base), color var(--transition-base);
-}
+  .timer__laps-row {
+    display: grid;
+    grid-template-columns: 6rem 1fr 1fr;
+    align-items: center;
+    padding: 1.3rem 2rem;
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-variant-numeric: tabular-nums;
+    border-bottom: 1px solid var(--color-border);
+    transition:
+      background-color var(--transition-base),
+      color var(--transition-base);
+  }
 
-.timer__laps-row:last-child { border-bottom: 0; }
+  .timer__laps-row:last-child {
+    border-bottom: 0;
+  }
 
-.timer__laps-row--latest {
-  background-color: color-mix(in srgb, var(--color-accent) 10%, transparent);
-  color: var(--color-accent);
-}
+  .timer__laps-row--latest {
+    background-color: color-mix(in srgb, var(--color-accent) 10%, transparent);
+    color: var(--color-accent);
+  }
 
-.timer__laps-num { color: var(--color-muted); font-weight: 600; }
-.timer__laps-row--latest .timer__laps-num { color: var(--color-accent); font-weight: 700; }
+  .timer__laps-num {
+    color: var(--color-muted);
+    font-weight: 600;
+  }
+  .timer__laps-row--latest .timer__laps-num {
+    color: var(--color-accent);
+    font-weight: 700;
+  }
 
-.timer__sound-label {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.8rem;
-  color: var(--color-muted);
-  font-size: 1.3rem;
-  font-weight: 500;
-  cursor: pointer;
-  user-select: none;
-  transition: color var(--transition-fast);
-}
+  .timer__sound-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+    color: var(--color-muted);
+    font-size: 1.3rem;
+    font-weight: 500;
+    cursor: pointer;
+    user-select: none;
+    transition: color var(--transition-fast);
+  }
 
-.timer__sound-label:hover { color: var(--color-text); }
+  .timer__sound-label:hover {
+    color: var(--color-text);
+  }
 </style>

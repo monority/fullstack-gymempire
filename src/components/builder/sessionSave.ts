@@ -5,28 +5,17 @@
  * No DOM, no Alpine dependency.
  */
 
-import {
-  saveExercise,
-  saveSession,
-  updateSession,
-  getSessionById,
-  type Exercise,
-  type SessionExercise,
-  type SessionMood,
-  type SessionStatus,
-} from "../../lib/storage";
-import { type BuilderExercise } from "../../lib/session-builder-stats";
+import { saveExercise } from '../../lib/storage/exercises';
+import { saveSession, updateSession, getSessionById } from '../../lib/storage/sessions';
+import type { SessionExercise, SessionMood, SessionStatus } from '../../lib/storage/types';
+import { type BuilderExercise } from '../../lib/session-builder-stats';
 
-const TEMPLATE_FALLBACK_CATEGORY = "Autre";
+const TEMPLATE_FALLBACK_CATEGORY = 'Autre';
 
 // ── Transient exercise persistence ─────────────────────────────
 
-export function persistTransientExercises(
-  exercises: BuilderExercise[],
-): Map<string, string> {
-  const transient = exercises.filter((e) =>
-    e.exerciseId.startsWith("template:"),
-  );
+export function persistTransientExercises(exercises: BuilderExercise[]): Map<string, string> {
+  const transient = exercises.filter((e) => e.exerciseId.startsWith('template:'));
   const idMap = new Map<string, string>();
   for (const ex of transient) {
     if (idMap.has(ex.exerciseId)) continue;
@@ -44,7 +33,7 @@ export function persistTransientExercises(
 
 export function cleanExercises(
   exercises: BuilderExercise[],
-  idMap: Map<string, string>,
+  idMap: Map<string, string>
 ): SessionExercise[] {
   return exercises.map(({ supersetId: _sid, ...ex }) => ({
     ...ex,
@@ -60,7 +49,7 @@ export function cleanExercises(
 
 export function buildSupersets(
   exercises: BuilderExercise[],
-  idMap: Map<string, string>,
+  idMap: Map<string, string>
 ): { exercises: string[] }[] {
   const groupMap = new Map<number, string[]>();
   for (const ex of exercises) {
@@ -97,7 +86,7 @@ export function buildPayload(opts: {
   exercises: BuilderExercise[];
   rpe: number;
   fatigue: number;
-  mood: SessionMood | "";
+  mood: SessionMood | '';
   notes: string;
   editSessionId: string | null;
   idMap: Map<string, string>;
@@ -109,21 +98,17 @@ export function buildPayload(opts: {
     name: opts.name.trim(),
     date: opts.date,
     exercises: clean,
-    status:
-      (opts.editSessionId
-        ? getSessionById(opts.editSessionId)?.status
-        : null) ?? "planned",
+    status: (opts.editSessionId ? getSessionById(opts.editSessionId)?.status : null) ?? 'planned',
   };
   if (opts.rpe) payload.rpe = opts.rpe;
   if (opts.fatigue > 0) payload.fatigue = opts.fatigue;
-  if (opts.mood !== "") payload.mood = opts.mood;
-  if (opts.notes.trim() !== "") payload.notes = opts.notes.trim();
+  if (opts.mood !== '') payload.mood = opts.mood;
+  if (opts.notes.trim() !== '') payload.notes = opts.notes.trim();
   if (supersets.length > 0) payload.supersets = supersets;
 
   if (opts.editSessionId) {
     const existing = getSessionById(opts.editSessionId);
-    if (existing?.sourceSessionId)
-      payload.sourceSessionId = existing.sourceSessionId;
+    if (existing?.sourceSessionId) payload.sourceSessionId = existing.sourceSessionId;
   }
 
   return payload;
@@ -137,7 +122,7 @@ export function saveSessionBuilder(opts: {
   exercises: BuilderExercise[];
   rpe: number;
   fatigue: number;
-  mood: SessionMood | "";
+  mood: SessionMood | '';
   notes: string;
   editSessionId: string | null;
 }): void {
@@ -151,9 +136,6 @@ export function saveSessionBuilder(opts: {
   }
 }
 
-export function shouldConfirmDiscard(
-  exerciseCount: number,
-  sessionName: string,
-): boolean {
+export function shouldConfirmDiscard(exerciseCount: number, sessionName: string): boolean {
   return exerciseCount > 0 || sessionName.trim().length > 0;
 }

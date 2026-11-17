@@ -25,21 +25,18 @@ const APP_VERSION = '0.0.1';
 ---
 
 <AppLayout title={L.settings.title}>
-  <PageHeader
-    title={L.settings.title}
-    description={L.settings.description}
-  />
+  <PageHeader title={L.settings.title} description={L.settings.description} />
 
-  <div
-    class="set"
-    x-data="settingsApp()"
-    x-init="init()"
-    x-cloak
-  >
+  <div class="set" x-data="settingsApp()" x-init="init()" x-cloak>
     {/* ═════════════════════════════════════════════════════
         1. PROFIL
         ═════════════════════════════════════════════════════ */}
-    <SettingsSection icon="user" title={L.settings.profile} description={L.settings.profileDesc} id="set-profile">
+    <SettingsSection
+      icon="user"
+      title={L.settings.profile}
+      description={L.settings.profileDesc}
+      id="set-profile"
+    >
       <div class="set__rows">
         <div class="set__row">
           <div class="set__label">
@@ -88,7 +85,12 @@ const APP_VERSION = '0.0.1';
     {/* ═════════════════════════════════════════════════════
         2. UNITÉS
         ═════════════════════════════════════════════════════ */}
-    <SettingsSection icon="ruler" title={L.settings.units} description={L.settings.unitsDesc} id="set-units">
+    <SettingsSection
+      icon="ruler"
+      title={L.settings.units}
+      description={L.settings.unitsDesc}
+      id="set-units"
+    >
       <div class="set__rows">
         <div class="set__row">
           <div class="set__label">
@@ -97,8 +99,8 @@ const APP_VERSION = '0.0.1';
           </div>
           <Segmented
             items={[
-              { value: 'kg', label: 'kg' },
-              { value: 'lbs', label: 'lbs' },
+              { value: 'kg', label: 'kg', action: "setUnit('kg')" },
+              { value: 'lbs', label: 'lbs', action: "setUnit('lbs')" },
             ]}
             model="display.unit"
             ariaLabel={L.settings.weightUnit}
@@ -137,7 +139,12 @@ const APP_VERSION = '0.0.1';
     {/* ═════════════════════════════════════════════════════
         3. OBJECTIFS
         ═════════════════════════════════════════════════════ */}
-    <SettingsSection icon="target" title={L.settings.goals} description={L.settings.goalsDesc} id="set-goals">
+    <SettingsSection
+      icon="target"
+      title={L.settings.goals}
+      description={L.settings.goalsDesc}
+      id="set-goals"
+    >
       <div class="set__rows">
         <div class="set__row set__row--start">
           <div class="set__label">
@@ -186,13 +193,14 @@ const APP_VERSION = '0.0.1';
           <div class="set__control set__control--right">
             <span class="set__progress">
               <span class="set__progress-done" x-text="weeklyDone"></span>
-              <span class="set__progress-sep" aria-hidden="true">/</span>
+              <span class="set__progress-sep" aria-hidden="true">
+                /
+              </span>
               <span class="set__progress-goal" x-text="display.weeklyGoal"></span>
-              <span class="set__progress-unit" x-text="labels.seanceSingular">{L.settings.seanceSingular}</span>
-              <span
-                class="set__progress-plural"
-                x-text="display.weeklyGoal > 1 ? 's' : ''"
-              ></span>
+              <span class="set__progress-unit" x-text="labels.seanceSingular">
+                {L.settings.seanceSingular}
+              </span>
+              <span class="set__progress-plural" x-text="display.weeklyGoal > 1 ? 's' : ''"></span>
             </span>
           </div>
         </div>
@@ -202,7 +210,12 @@ const APP_VERSION = '0.0.1';
     {/* ═════════════════════════════════════════════════════
         4. TIMER
         ═════════════════════════════════════════════════════ */}
-    <SettingsSection icon="clockStopwatch" title={L.settings.timerSettings} description={L.settings.timerDesc} id="set-timer">
+    <SettingsSection
+      icon="clockStopwatch"
+      title={L.settings.timerSettings}
+      description={L.settings.timerDesc}
+      id="set-timer"
+    >
       <div class="set__rows">
         <div class="set__row set__row--start">
           <div class="set__label">
@@ -213,6 +226,7 @@ const APP_VERSION = '0.0.1';
             <Select
               id="set-rest-time"
               name="restTime"
+              aria-label={L.settings.defaultRestTime}
               options={restOptions}
               :value="String(display.defaultRestTime)"
               @change="saveRestTime($event.target.value)"
@@ -228,6 +242,7 @@ const APP_VERSION = '0.0.1';
           <div class="set__control set__control--right">
             <Toggle
               :checked="display.soundAlerts"
+              aria-label={L.settings.soundAlerts}
               :aria-checked="display.soundAlerts ? 'true' : 'false'"
               @change="saveSoundAlerts($event.target.checked)"
             />
@@ -244,7 +259,12 @@ const APP_VERSION = '0.0.1';
     {/* ═════════════════════════════════════════════════════
         6. DONNÉES
         ═════════════════════════════════════════════════════ */}
-    <SettingsSection icon="database" title={L.settings.data} description={L.settings.dataDesc} id="set-data">
+    <SettingsSection
+      icon="database"
+      title={L.settings.data}
+      description={L.settings.dataDesc}
+      id="set-data"
+    >
       <div class="set__data-grid">
         <div class="set__data-tile">
           <div class="set__data-tile-header">
@@ -253,9 +273,7 @@ const APP_VERSION = '0.0.1';
             </div>
             <div class="set__data-tile-content">
               <h4 class="set__data-tile-title">{L.settings.exportJSON}</h4>
-              <p class="set__data-tile-desc">
-                {L.settings.exportJSONDesc}
-              </p>
+              <p class="set__data-tile-desc">{L.settings.exportJSONDesc}</p>
             </div>
           </div>
           <Button
@@ -265,8 +283,12 @@ const APP_VERSION = '0.0.1';
             @click="exportData()"
             :disabled="exporting"
           >
-            <span x-show="!exporting" x-cloak x-text="labels.download">{L.settings.download}</span>
-            <span x-show="exporting" x-cloak x-text="labels.preparing">{L.settings.preparing}</span>
+            <span x-show="!exporting" x-cloak x-text="labels.download">
+              {L.settings.download}
+            </span>
+            <span x-show="exporting" x-cloak x-text="labels.preparing">
+              {L.settings.preparing}
+            </span>
           </Button>
         </div>
 
@@ -277,9 +299,7 @@ const APP_VERSION = '0.0.1';
             </div>
             <div class="set__data-tile-content">
               <h4 class="set__data-tile-title">{L.settings.exportCSV}</h4>
-              <p class="set__data-tile-desc">
-                {L.settings.exportCSVDesc}
-              </p>
+              <p class="set__data-tile-desc">{L.settings.exportCSVDesc}</p>
             </div>
           </div>
           <Button
@@ -289,8 +309,12 @@ const APP_VERSION = '0.0.1';
             @click="exportCSV()"
             :disabled="exportingCsv"
           >
-            <span x-show="!exportingCsv" x-cloak x-text="labels.download">{L.settings.download}</span>
-            <span x-show="exportingCsv" x-cloak x-text="labels.preparing">{L.settings.preparing}</span>
+            <span x-show="!exportingCsv" x-cloak x-text="labels.download">
+              {L.settings.download}
+            </span>
+            <span x-show="exportingCsv" x-cloak x-text="labels.preparing">
+              {L.settings.preparing}
+            </span>
           </Button>
         </div>
 
@@ -301,9 +325,7 @@ const APP_VERSION = '0.0.1';
             </div>
             <div class="set__data-tile-content">
               <h4 class="set__data-tile-title">{L.settings.import}</h4>
-              <p class="set__data-tile-desc">
-                {L.settings.importDesc}
-              </p>
+              <p class="set__data-tile-desc">{L.settings.importDesc}</p>
             </div>
           </div>
           <Button
@@ -313,8 +335,12 @@ const APP_VERSION = '0.0.1';
             @click="triggerImport()"
             :disabled="importing"
           >
-            <span x-show="!importing" x-cloak>{L.settings.chooseFile}</span>
-            <span x-show="importing" x-cloak x-text="labels.importing">{L.settings.importing}</span>
+            <span x-show="!importing" x-cloak>
+              {L.settings.chooseFile}
+            </span>
+            <span x-show="importing" x-cloak x-text="labels.importing">
+              {L.settings.importing}
+            </span>
           </Button>
           <input
             type="file"
@@ -327,23 +353,17 @@ const APP_VERSION = '0.0.1';
         </div>
       </div>
 
-          {/* Danger zone */}
-          <div class="set__danger">
-            <div class="set__danger-header">
-              <span class="set__danger-badge">DANGER</span>
-              <h4 class="set__danger-title">{L.settings.resetAll}</h4>
-            </div>
-            <p class="set__danger-desc">
-              {L.settings.resetDesc}
-            </p>
-            <Button
-              variant="destructive"
-              class="set__danger-btn"
-              @click="askReset()"
-            >
-              {L.settings.resetAction}
-            </Button>
-          </div>
+      {/* Danger zone */}
+      <div class="set__danger">
+        <div class="set__danger-header">
+          <span class="set__danger-badge">DANGER</span>
+          <h4 class="set__danger-title">{L.settings.resetAll}</h4>
+        </div>
+        <p class="set__danger-desc">{L.settings.resetDesc}</p>
+        <Button variant="destructive" class="set__danger-btn" @click="askReset()">
+          {L.settings.resetAction}
+        </Button>
+      </div>
     </SettingsSection>
 
     {/* ═════════════════════════════════════════════════════
@@ -367,8 +387,12 @@ const APP_VERSION = '0.0.1';
             <div class="set__rows">
               <div class="set__row set__row--start">
                 <div class="set__label">
-                  <label class="set__label-title" for="set-sync-url" x-text="labels.syncUrl">{L.settings.sync.url}</label>
-                  <span class="set__label-desc" x-text="labels.syncConflict">{L.settings.sync.conflict}</span>
+                  <label class="set__label-title" for="set-sync-url" x-text="labels.syncUrl">
+                    {L.settings.sync.url}
+                  </label>
+                  <span class="set__label-desc" x-text="labels.syncConflict">
+                    {L.settings.sync.conflict}
+                  </span>
                 </div>
                 <div class="set__control set__control--right">
                   <Input
@@ -389,7 +413,9 @@ const APP_VERSION = '0.0.1';
 
               <div class="set__row set__row--start">
                 <div class="set__label">
-                  <label class="set__label-title" for="set-sync-username">{L.settings.sync.username}</label>
+                  <label class="set__label-title" for="set-sync-username">
+                    {L.settings.sync.username}
+                  </label>
                 </div>
                 <div class="set__control set__control--right">
                   <Input
@@ -410,7 +436,9 @@ const APP_VERSION = '0.0.1';
 
               <div class="set__row set__row--start">
                 <div class="set__label">
-                  <label class="set__label-title" for="set-sync-password">{L.settings.sync.password}</label>
+                  <label class="set__label-title" for="set-sync-password">
+                    {L.settings.sync.password}
+                  </label>
                   <span class="set__label-desc">{L.settings.sync.passwordNote}</span>
                 </div>
                 <div class="set__control set__control--right">
@@ -448,8 +476,12 @@ const APP_VERSION = '0.0.1';
               :loading="syncBusy === 'test'"
               @click="testSync()"
             >
-              <span x-show="syncBusy !== 'test'" x-cloak x-text="labels.syncTest">{L.settings.sync.test}</span>
-              <span x-show="syncBusy === 'test'" x-cloak x-text="labels.syncTesting">{L.settings.sync.testing}</span>
+              <span x-show="syncBusy !== 'test'" x-cloak x-text="labels.syncTest">
+                {L.settings.sync.test}
+              </span>
+              <span x-show="syncBusy === 'test'" x-cloak x-text="labels.syncTesting">
+                {L.settings.sync.testing}
+              </span>
             </Button>
             <Button
               variant="primary"
@@ -459,8 +491,12 @@ const APP_VERSION = '0.0.1';
               :loading="syncBusy === 'push'"
               @click="askPush()"
             >
-              <span x-show="syncBusy !== 'push'" x-cloak x-text="labels.syncPush">{L.settings.sync.push}</span>
-              <span x-show="syncBusy === 'push'" x-cloak x-text="labels.syncPushing">{L.settings.sync.pushing}</span>
+              <span x-show="syncBusy !== 'push'" x-cloak x-text="labels.syncPush">
+                {L.settings.sync.push}
+              </span>
+              <span x-show="syncBusy === 'push'" x-cloak x-text="labels.syncPushing">
+                {L.settings.sync.pushing}
+              </span>
             </Button>
             <Button
               variant="secondary"
@@ -470,8 +506,12 @@ const APP_VERSION = '0.0.1';
               :loading="syncBusy === 'pull'"
               @click="askRestore()"
             >
-              <span x-show="syncBusy !== 'pull'" x-cloak x-text="labels.syncPull">{L.settings.sync.pull}</span>
-              <span x-show="syncBusy === 'pull'" x-cloak x-text="labels.syncPulling">{L.settings.sync.pulling}</span>
+              <span x-show="syncBusy !== 'pull'" x-cloak x-text="labels.syncPull">
+                {L.settings.sync.pull}
+              </span>
+              <span x-show="syncBusy === 'pull'" x-cloak x-text="labels.syncPulling">
+                {L.settings.sync.pulling}
+              </span>
             </Button>
           </div>
         </CardContent>
@@ -481,7 +521,12 @@ const APP_VERSION = '0.0.1';
     {/* ═════════════════════════════════════════════════════
         8. À PROPOS
         ═════════════════════════════════════════════════════ */}
-    <SettingsSection icon="infoCircle" title={L.settings.about} description={L.settings.aboutDesc} id="set-about">
+    <SettingsSection
+      icon="infoCircle"
+      title={L.settings.about}
+      description={L.settings.aboutDesc}
+      id="set-about"
+    >
       <dl class="set__about-grid">
         <div class="set__about-row">
           <dt class="set__about-dt">{L.settings.version}</dt>
@@ -511,9 +556,7 @@ const APP_VERSION = '0.0.1';
         </div>
       </dl>
 
-      <p class="set__about-credits">
-        {L.settings.credits}
-      </p>
+      <p class="set__about-credits">{L.settings.credits}</p>
     </SettingsSection>
 
     {/* ═════════════════════════════════════════════════════
@@ -526,7 +569,8 @@ const APP_VERSION = '0.0.1';
         {L.settings.resetConfirmIntroList}
       </p>
       <p class="set__dialog-muted">
-        {L.settings.resetConfirmAction} <strong class="text-destructive">SUPPRIMER</strong> {L.settings.resetConfirmActionOutro}
+        {L.settings.resetConfirmAction} <strong class="text-destructive">SUPPRIMER</strong>{' '}
+        {L.settings.resetConfirmActionOutro}
         {L.settings.resetIrreversible}
       </p>
       <div class="set__dialog-input-wrap">
@@ -557,16 +601,10 @@ const APP_VERSION = '0.0.1';
         ═════════════════════════════════════════════════════ */}
     <Dialog id="set-push-dialog" title={L.settings.sync.pushTitle}>
       <p class="set__dialog-text">{L.settings.sync.pushBody}</p>
-      <p class="set__dialog-muted">
-        {L.settings.sync.pushIrreversible}
-      </p>
+      <p class="set__dialog-muted">{L.settings.sync.pushIrreversible}</p>
 
       <div slot="footer">
-        <Button
-          variant="secondary"
-          data-dialog-close
-          type="button"
-        >
+        <Button variant="secondary" data-dialog-close type="button">
           {L.common.cancel}
         </Button>
         <Button
@@ -575,8 +613,12 @@ const APP_VERSION = '0.0.1';
           x-bind:disabled="syncBusy !== null"
           @click="confirmPush()"
         >
-          <span x-show="syncBusy !== 'push'" x-cloak>{L.settings.sync.pushConfirm}</span>
-          <span x-show="syncBusy === 'push'" x-cloak>{L.settings.sync.pushing}</span>
+          <span x-show="syncBusy !== 'push'" x-cloak>
+            {L.settings.sync.pushConfirm}
+          </span>
+          <span x-show="syncBusy === 'push'" x-cloak>
+            {L.settings.sync.pushing}
+          </span>
         </Button>
       </div>
     </Dialog>
@@ -586,16 +628,10 @@ const APP_VERSION = '0.0.1';
         ═════════════════════════════════════════════════════ */}
     <Dialog id="set-restore-dialog" title={L.settings.sync.restoreTitle}>
       <p class="set__dialog-text">{L.settings.sync.restoreBody}</p>
-      <p class="set__dialog-muted">
-        {L.settings.sync.restoreIrreversible}
-      </p>
+      <p class="set__dialog-muted">{L.settings.sync.restoreIrreversible}</p>
 
       <div slot="footer">
-        <Button
-          variant="secondary"
-          data-dialog-close
-          type="button"
-        >
+        <Button variant="secondary" data-dialog-close type="button">
           {L.common.cancel}
         </Button>
         <Button
@@ -604,446 +640,74 @@ const APP_VERSION = '0.0.1';
           x-bind:disabled="syncBusy !== null"
           @click="confirmRestore()"
         >
-          <span x-show="syncBusy !== 'pull'" x-cloak>{L.settings.sync.restoreConfirm}</span>
-          <span x-show="syncBusy === 'pull'" x-cloak>{L.settings.sync.pulling}</span>
+          <span x-show="syncBusy !== 'pull'" x-cloak>
+            {L.settings.sync.restoreConfirm}
+          </span>
+          <span x-show="syncBusy === 'pull'" x-cloak>
+            {L.settings.sync.pulling}
+          </span>
         </Button>
       </div>
     </Dialog>
-
   </div>
 </AppLayout>
 
 <script>
-  import {
-    getSettings,
-    updateSettings,
-    exportAllData,
-    exportSessionsAsCSV,
-    importAllData,
-    resetAllData,
-    getSessionsThisWeek,
-  } from '../../lib/storage';
-  import {
-    syncPush,
-    syncPull,
-    syncTest,
-  } from '../../lib/sync';
-  import { t, getLocale } from '../../i18n';
-  import {
-    formatSyncLastLabel,
-    formatSyncErrorLabel,
-    parseRestTime,
-    clampWeeklyGoal,
-    exportFilename,
-  } from '../../lib/settings-stats';
+  import { createSettingsApp, buildSettingsLabels } from '../../components/settings/settingsApp';
+  import { t, DATE_LOCALE } from '../../i18n';
+  import { downloadBlob } from '../../lib/csv-export';
 
   const LABELS = t();
 
+  type DialogWindow = Window & {
+    openDialog?: (id: string) => void;
+    closeDialog?: (id: string) => void;
+  };
 
-  function downloadBlob(filename: string, content: string, mime: string): void {
-    const blob = new Blob([content], { type: mime });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  function readFile(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result ?? ''));
+      reader.onerror = () => reject(new Error(LABELS.settings.readError));
+      reader.readAsText(file);
+    });
   }
 
   const registerSettings = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const Alpine = (window as any).Alpine;
+    const dialogs = window as DialogWindow;
 
-    Alpine.data('settingsApp', () => ({
-      display: getSettings(),
-      exporting: false,
-      exportingCsv: false,
-      importing: false,
-      resetConfirmText: '',
-      weeklyDone: 0,
-      syncForm: { url: '', username: '', password: '' },
-      syncConfigured: false,
-      syncBusy: null as 'test' | 'push' | 'pull' | null,
-      syncHasBackup: false,
-      syncLastLabel: '',
-      labels: {
-        notSet: LABELS.settings.notSet,
-        download: LABELS.settings.download,
-        preparing: LABELS.settings.preparing,
-        importing: LABELS.settings.importing,
-        seanceSingular: LABELS.settings.seanceSingular,
-        storageError: LABELS.settings.storageError,
-        exportFailed: LABELS.settings.exportFailed,
-        exportCsvFailed: LABELS.settings.exportCsvFailed,
-        backupDownloaded: LABELS.settings.backupDownloaded,
-        exportCsvDownloaded: LABELS.settings.exportCsvDownloaded,
-        backupRestored: LABELS.settings.backupRestored,
-        invalidFile: LABELS.settings.invalidFile,
-        readError: LABELS.settings.readError,
-        allDataReset: LABELS.settings.allDataReset,
-        savedAtPrefix: LABELS.settings.savedAtPrefix,
-        pseudoPlaceholder: LABELS.settings.pseudoPlaceholder,
-        emailPlaceholder: LABELS.settings.emailPlaceholder,
-        syncUrl: LABELS.settings.sync.url,
-        syncUrlPlaceholder: LABELS.settings.sync.urlPlaceholder,
-        syncConflict: LABELS.settings.sync.conflict,
-        syncUsernamePlaceholder: LABELS.settings.sync.usernamePlaceholder,
-        syncPasswordPlaceholder: LABELS.settings.sync.passwordPlaceholder,
-        syncTest: LABELS.settings.sync.test,
-        syncTesting: LABELS.settings.sync.testing,
-        syncPush: LABELS.settings.sync.push,
-        syncPushing: LABELS.settings.sync.pushing,
-        syncPull: LABELS.settings.sync.pull,
-        syncPulling: LABELS.settings.sync.pulling,
-        syncTestOk: LABELS.settings.sync.testOk,
-        syncTestOkNoBackup: LABELS.settings.sync.testOkNoBackup,
-        syncPushed: LABELS.settings.sync.pushed,
-        syncRestored: LABELS.settings.sync.restored,
-        syncNotConfigured: LABELS.settings.sync.notConfigured,
-        syncUnavailable: LABELS.settings.sync.unavailable,
-        syncFallback: LABELS.settings.sync.fallback,
-        syncLastSync: LABELS.settings.sync.lastSync,
-        syncNever: LABELS.settings.sync.never,
-        syncError: LABELS.settings.sync.error,
-        resetConfirm: LABELS.settings.resetConfirm,
-      },
-
-      init() {
-        this.display = getSettings();
-        this.weeklyDone = getSessionsThisWeek().length;
-        this.syncForm = {
-          url: this.display.webdav?.url || '',
-          username: this.display.webdav?.username || '',
-          password: this.display.webdav?.password || '',
-        };
-        this.syncConfigured = Boolean(this.display.webdav?.url);
-        this.syncLastLabel = this.lastSyncLabel(this.display.webdav?.lastSyncAt);
-      },
-
-      toastSaved() {
-        window.showToast(
-          this.labels.savedAtPrefix +
-            new Date().toLocaleTimeString(getLocale() === 'fr' ? 'fr-FR' : 'en-US', {
-              hour: '2-digit',
-              minute: '2-digit',
-              second: '2-digit',
-            }),
-          'success',
-        );
-      },
-
-      savePseudo() {
-        this.display = updateSettings({ pseudo: this.display.pseudo.trim() });
-        this.toastSaved();
-      },
-
-      saveEmail() {
-        this.display = updateSettings({ email: this.display.email.trim() });
-        this.toastSaved();
-      },
-
-      setUnit(unit: 'kg' | 'lbs') {
-        if (this.display.unit === unit) return;
-        this.display = updateSettings({ unit });
-        this.toastSaved();
-      },
-
-      setRepsFormat(format: 'simple' | 'range') {
-        if (this.display.repsFormat === format) return;
-        this.display = updateSettings({ repsFormat: format });
-        this.toastSaved();
-      },
-
-      saveRestTime(value: string) {
-        const rest = parseRestTime(value);
-        if (rest === null) return;
-        if (this.display.defaultRestTime === rest) return;
-        this.display = updateSettings({ defaultRestTime: rest });
-        this.toastSaved();
-      },
-
-      saveSoundAlerts(checked: boolean) {
-        if (this.display.soundAlerts === checked) return;
-        this.display = updateSettings({ soundAlerts: checked });
-        this.toastSaved();
-      },
-
-      setWeeklyGoal(value: number) {
-        const next = clampWeeklyGoal(value);
-        if (next === null) return;
-        if (this.display.weeklyGoal === next) return;
-        this.display = updateSettings({ weeklyGoal: next });
-        window.showToast(this.labels.savedAtPrefix + new Date().toLocaleTimeString(getLocale() === 'fr' ? 'fr-FR' : 'en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' }), 'success');
-      },
-
-      exportData() {
-        this.exporting = true;
-        try {
-          const snapshot = exportAllData();
-          if (!snapshot) {
-            window.showToast(this.labels.storageError, 'error');
-            return;
-          }
-          downloadBlob(
-            exportFilename('muscu-backup', 'json'),
-            JSON.stringify(snapshot, null, 2),
-            'application/json',
-          );
-          window.showToast(this.labels.backupDownloaded, 'success');
-        } catch (err) {
-          window.showToast(
-            err instanceof Error ? err.message : this.labels.exportFailed,
-            'error',
-          );
-        } finally {
-          this.exporting = false;
-        }
-      },
-
-      exportCSV() {
-        this.exportingCsv = true;
-        try {
-          const csv = exportSessionsAsCSV();
-          downloadBlob(
-            exportFilename('muscu-sessions', 'csv'),
-            csv,
-            'text/csv;charset=utf-8',
-          );
-          window.showToast(this.labels.exportCsvDownloaded, 'success');
-        } catch (err) {
-          window.showToast(
-            err instanceof Error
-              ? err.message
-              : this.labels.exportCsvFailed,
-            'error',
-          );
-        } finally {
-          this.exportingCsv = false;
-        }
-      },
-
-      triggerImport() {
-        const root = (this as unknown as AlpineMagicThis).$root;
-        const input = root.querySelector<HTMLInputElement>(
-          '.set__file-input',
-        );
-        if (input) {
-          input.value = '';
-          input.click();
-        }
-      },
-
-      handleImportFile(event: Event) {
-        const input = event.target as HTMLInputElement;
-        const file = input.files?.[0];
-        if (!file) return;
-        this.importing = true;
-        const reader = new FileReader();
-        reader.onload = () => {
-          try {
-            const text = String(reader.result ?? '');
-            const parsed = JSON.parse(text);
-            importAllData(parsed);
-            this.display = getSettings();
-            window.showToast(this.labels.backupRestored, 'success');
-          } catch (err) {
-            window.showToast(
-              err instanceof Error
-                ? err.message
-                : this.labels.invalidFile,
-              'error',
-            );
-          } finally {
-            this.importing = false;
+    Alpine.data('settingsApp', () =>
+      createSettingsApp({
+        labels: buildSettingsLabels(LABELS),
+        clock: {
+          now: () => new Date(),
+          nowIso: () => new Date().toISOString(),
+          locale: () => DATE_LOCALE(),
+        },
+        ui: {
+          notify: (message, kind) => window.showToast(message, kind),
+          download: downloadBlob,
+          readFile,
+          openDialog: (id) => dialogs.openDialog?.(id),
+          closeDialog: (id) => dialogs.closeDialog?.(id),
+          pickImportFile: () => {
+            const input = document.querySelector<HTMLInputElement>('.set__file-input');
+            if (!input) return;
             input.value = '';
-          }
-        };
-        reader.onerror = () => {
-          window.showToast(this.labels.readError, 'error');
-          this.importing = false;
-          input.value = '';
-        };
-        reader.readAsText(file);
-      },
-
-      askReset() {
-        this.resetConfirmText = '';
-        this.openDialogById('set-reset-dialog');
-      },
-
-      confirmReset() {
-        if (this.resetConfirmText !== 'SUPPRIMER') return;
-        resetAllData();
-        this.display = getSettings();
-        this.resetConfirmText = '';
-        this.closeDialogById('set-reset-dialog');
-        window.showToast(this.labels.allDataReset, 'success');
-      },
-
-      saveSyncFields() {
-        this.persistSyncConfig();
-        this.toastSaved();
-      },
-
-      persistSyncConfig() {
-        const url = this.syncForm.url.trim();
-        this.display = updateSettings({
-          webdav: {
-            url,
-            username: this.syncForm.username.trim(),
-            password: this.syncForm.password,
-            lastSyncAt: url ? this.display.webdav?.lastSyncAt : undefined,
+            input.click();
           },
-        });
-        this.syncConfigured = Boolean(url);
-        this.syncLastLabel = this.lastSyncLabel(
-          this.syncConfigured ? this.display.webdav?.lastSyncAt : undefined,
-        );
-      },
-
-      persistSyncConfigWithNow() {
-        this.display = updateSettings({
-          webdav: {
-            url: this.syncForm.url.trim(),
-            username: this.syncForm.username.trim(),
-            password: this.syncForm.password,
-            lastSyncAt: new Date().toISOString(),
-          },
-        });
-        this.syncConfigured = true;
-        this.syncLastLabel = this.lastSyncLabel(
-          this.display.webdav?.lastSyncAt,
-        );
-      },
-
-      lastSyncLabel(lastSyncAt?: string): string {
-        return formatSyncLastLabel(
-          lastSyncAt,
-          this.labels.syncNever,
-          this.labels.syncLastSync,
-        );
-      },
-
-      syncErrorLabel(err: unknown): string {
-        return formatSyncErrorLabel(err, this.labels.syncError, this.labels.syncFallback);
-      },
-
-      async testSync() {
-        if (!this.syncForm.url.trim()) {
-          window.showToast(this.labels.syncNotConfigured, 'error');
-          return;
-        }
-        this.syncBusy = 'test';
-        try {
-          const result = await syncTest(
-            this.syncForm.url,
-            this.syncForm.username,
-            this.syncForm.password,
-          );
-          this.syncHasBackup = result.hasBackup;
-          window.showToast(
-            result.hasBackup ? this.labels.syncTestOk : this.labels.syncTestOkNoBackup,
-            'success',
-          );
-        } catch (err) {
-          window.showToast(this.syncErrorLabel(err), 'error');
-        } finally {
-          this.syncBusy = null;
-        }
-      },
-
-      askPush() {
-        if (!this.syncForm.url.trim()) {
-          window.showToast(this.labels.syncNotConfigured, 'error');
-          return;
-        }
-        if (this.syncHasBackup) {
-          this.openDialogById('set-push-dialog');
-        } else {
-          this.doPushSync();
-        }
-      },
-
-      async doPushSync() {
-        this.syncBusy = 'push';
-        try {
-          const snapshot = exportAllData();
-          if (!snapshot) {
-            window.showToast(this.labels.storageError, 'error');
-            return;
-          }
-          await syncPush(
-            this.syncForm.url,
-            this.syncForm.username,
-            this.syncForm.password,
-            snapshot,
-          );
-          this.syncHasBackup = true;
-          this.persistSyncConfigWithNow();
-          window.showToast(this.labels.syncPushed, 'success');
-        } catch (err) {
-          window.showToast(this.syncErrorLabel(err), 'error');
-        } finally {
-          this.syncBusy = null;
-        }
-      },
-
-      async confirmPush() {
-        this.closeDialogById('set-push-dialog');
-        await this.doPushSync();
-      },
-
-      askRestore() {
-        if (!this.syncForm.url.trim()) {
-          window.showToast(this.labels.syncNotConfigured, 'error');
-          return;
-        }
-        this.openDialogById('set-restore-dialog');
-      },
-
-      async confirmRestore() {
-        this.syncBusy = 'pull';
-        try {
-          const snapshot = await syncPull(
-            this.syncForm.url,
-            this.syncForm.username,
-            this.syncForm.password,
-          );
-          importAllData(snapshot);
-          this.display = getSettings();
-          this.persistSyncConfigWithNow();
-          this.closeDialogById('set-restore-dialog');
-          window.showToast(this.labels.syncRestored, 'success');
-        } catch (err) {
-          window.showToast(this.syncErrorLabel(err), 'error');
-        } finally {
-          this.syncBusy = null;
-        }
-      },
-
-      openDialogById(id: string) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const fn = (window as any).openDialog as ((i: string) => void) | undefined;
-        if (fn) fn(id);
-      },
-      closeDialogById(id: string) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const fn = (window as any).closeDialog as ((i: string) => void) | undefined;
-        if (fn) fn(id);
-      },
-    }));
+        },
+      })
+    );
   };
+
   document.addEventListener('alpine:init', registerSettings);
   if ((window as any).Alpine) registerSettings();
 </script>
 
 <style>
-  /* ═════════════════════════════════════════════════════
-     Settings page scoped styles (BEM: set__*)
-     ═════════════════════════════════════════════════════ */
-
   .set {
     padding-bottom: calc(var(--bottom-nav-height, 5.6rem) + 2rem);
     scroll-padding-top: calc(var(--topbar-height, 5.6rem) + 1rem);
@@ -1083,18 +747,6 @@ const APP_VERSION = '0.0.1';
     gap: var(--spacing-1);
     min-width: 0;
     flex: 1;
-  }
-  .set__label-title {
-    font-family: var(--font-display);
-    font-size: 1.4rem;
-    font-weight: 600;
-    color: var(--color-text);
-    line-height: 1.2;
-  }
-  .set__label-desc {
-    font-size: 1.1rem;
-    color: var(--color-muted);
-    line-height: 1.3;
   }
 
   /* ── Control ── */
@@ -1144,17 +796,18 @@ const APP_VERSION = '0.0.1';
     min-width: 6.4rem;
     border-radius: 9999px;
     cursor: pointer;
-    transition: background-color 140ms ease, color 140ms ease, box-shadow 140ms ease, transform 140ms ease;
+    transition:
+      background-color 140ms ease,
+      color 140ms ease,
+      box-shadow 140ms ease,
+      transform 140ms ease;
   }
   .set__seg-btn.is-active {
     background-color: var(--color-accent);
     color: var(--color-accent-foreground);
-    box-shadow: var(--shadow-1),
-                0 0 0 1px color-mix(in srgb, var(--color-accent) 40%, transparent);
-  }
-  .set__seg-btn:hover:not(.is-active) {
-    color: var(--color-text);
-    background-color: var(--alpha-bg-subtle);
+    box-shadow:
+      var(--shadow-1),
+      0 0 0 1px color-mix(in srgb, var(--color-accent) 40%, transparent);
   }
   .set__seg-btn:active {
     transform: scale(0.96);
@@ -1173,11 +826,9 @@ const APP_VERSION = '0.0.1';
     border: 1px solid var(--color-border);
     border-radius: var(--radius-sm);
     overflow: hidden;
-    transition: border-color 140ms ease, box-shadow 140ms ease;
-  }
-  .set__goal-wrap:focus-within {
-    border-color: var(--color-accent);
-    box-shadow: var(--focus-ring);
+    transition:
+      border-color 140ms ease,
+      box-shadow 140ms ease;
   }
   .set__goal-btn {
     border: 0 !important;
@@ -1273,7 +924,9 @@ const APP_VERSION = '0.0.1';
     background-color: var(--color-surface-2);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
-    transition: border-color 200ms ease, box-shadow 200ms ease;
+    transition:
+      border-color 200ms ease,
+      box-shadow 200ms ease;
     position: relative;
   }
   .set__data-tile:hover {
@@ -1350,7 +1003,7 @@ const APP_VERSION = '0.0.1';
     color: var(--color-destructive);
     font-size: 1.1rem;
     font-weight: 700;
-    letter-spacing: 0.10em;
+    letter-spacing: 0.1em;
   }
   .set__danger-title {
     font-family: var(--font-display);

@@ -18,14 +18,9 @@ const L = t();
 ---
 
 <AppLayout title={L.detail.title}>
-  <div
-    class="detail"
-    x-data="sessionDetailApp()"
-    x-init="init()"
-    x-cloak
-  >
+  <div class="detail" x-data="sessionDetailApp()" x-init="init()" x-cloak>
     {/* ── Back link ── */}
-    <BackLink href={localizedPath("/sessions")} label={L.detail.backToSessions} />
+    <BackLink href={localizedPath('/sessions')} label={L.detail.backToSessions} />
 
     <template x-if="notFound">
       <EmptyState
@@ -33,7 +28,7 @@ const L = t();
         title={L.detail.notFound}
         description={L.detail.notFoundDesc}
         actionLabel={L.detail.viewAllSessions}
-        actionHref={localizedPath("/sessions")}
+        actionHref={localizedPath('/sessions')}
       />
     </template>
 
@@ -50,10 +45,7 @@ const L = t();
           <section class="detail__suggestion">
             <h2 class="detail__section-title" x-text="labels.suggestionTitle"></h2>
             <Card>
-              <div
-                class="suggestion"
-                :class="'suggestion--' + rpeSuggestion.tone"
-              >
+              <div class="suggestion" :class="'suggestion--' + rpeSuggestion.tone">
                 <div class="suggestion__icon" aria-hidden="true">
                   <Icon name="sun" size={20} />
                 </div>
@@ -85,10 +77,7 @@ const L = t();
       </div>
     </template>
 
-    <Dialog
-      id="delete-session-dialog"
-      title={L.detail.confirmDelete}
-    >
+    <Dialog id="delete-session-dialog" title={L.detail.confirmDelete}>
       <p class="detail__confirm-text">
         {L.detail.confirmDeleteIntro}
         <strong x-text="session ? session.name : '{L.detail.thisSession}'"></strong>.
@@ -111,27 +100,16 @@ const L = t();
         but this hidden element keeps the markup in one place
         and lets the structure be inspected/edited.
         ════════════════════════════════════════════════════ */}
-    <div
-      id="share-card"
-      class="share-card"
-      x-show="false"
-      aria-hidden="true"
-    >
+    <div id="share-card" class="share-card" x-show="false" aria-hidden="true">
       <div class="share-card__inner">
         <header class="share-card__header">
           <span class="share-card__logo">Gym Empire</span>
-          <span
-            class="share-card__date"
-            x-text="formatShareDate(session?.date)"
-          ></span>
+          <span class="share-card__date" x-text="formatShareDate(session?.date)"></span>
         </header>
         <h2 class="share-card__title" x-text="session?.name"></h2>
         <div class="share-card__stats">
           <div class="share-card__stat">
-            <span
-              class="share-card__stat-value"
-              x-text="session?.exercises?.length || 0"
-            ></span>
+            <span class="share-card__stat-value" x-text="session?.exercises?.length || 0"></span>
             <span class="share-card__stat-label">{L.detail.exercises}</span>
           </div>
           <div class="share-card__stat">
@@ -139,10 +117,7 @@ const L = t();
             <span class="share-card__stat-label">{L.detail.sets}</span>
           </div>
           <div class="share-card__stat">
-            <span
-              class="share-card__stat-value"
-              x-text="formatVolume(sessionTotalVolume)"
-            ></span>
+            <span class="share-card__stat-value" x-text="formatVolume(sessionTotalVolume)"></span>
             <span class="share-card__stat-label">{L.sessions.volume}</span>
           </div>
         </div>
@@ -150,15 +125,11 @@ const L = t();
           <template x-for="ex in session?.exercises || []" :key="ex.exerciseId">
             <div class="share-card__exercise">
               <span x-text="trExercise(ex.name)"></span>
-              <span
-                x-text="`${ex.sets.length} ${ex.sets.length > 1 ? labels.setPlural : labels.setSingular}`"
-              ></span>
+              <span x-text="`${ex.sets.length} ${ex.sets.length > 1 ? labels.setPlural : labels.setSingular}`"></span>
             </div>
           </template>
         </div>
-        <div class="share-card__footer">
-          {L.detail.shareFooter}
-        </div>
+        <div class="share-card__footer">{L.detail.shareFooter}</div>
       </div>
     </div>
   </div>
@@ -166,370 +137,45 @@ const L = t();
 
 <script>
   import {
-    getSessionById,
-    updateSession,
-    deleteSession,
-    calculate1RM,
-    exportSessionAsCsv,
-    type Session,
-    type SessionExercise,
-    type SessionMood,
-    type SessionStatus,
-    type RpeType,
-    type SetType,
-  } from '../../lib/storage';
-  import { t, localizedPath } from '../../i18n';
-  import { formatDateTime, formatVolume, formatDuration } from '../../lib/format';
-  import { statusLabel as statusLabelFn, type StatusLabels } from '../../lib/session-utils';
-  import { typeLabel as typeLabelFn, formatSetRpe as formatSetRpeFn, exerciseVolume as exerciseVolumeFn } from '../../lib/workout-helpers';
-  import { moodSvg as moodSvgFn, moodLabel as moodLabelFn } from '../../lib/mood';
-  import {
-    computeRpeStats,
-    computeRpeSuggestion,
-    computeSessionTotalVolume,
-    computeTotalSets,
-    hasNotes as hasNotesFn,
-    rpeTone as rpeToneFn,
-    rpeLabel as rpeLabelFn,
-    fatigueLabel as fatigueLabelFn,
-  } from '../../lib/session-detail-stats';
-  import { generateSessionShareCard, downloadDataUrl } from '../../lib/share-card';
-  import { downloadBlob, slugify } from '../../lib/csv-export';
+    createSessionDetailApp,
+    buildSessionDetailLabels,
+  } from '../../components/session-detail/sessionDetailApp';
+  import { t, localizedPath, trExercise } from '../../i18n';
 
   const LABELS = t();
-  const statusLabels: StatusLabels = { completed: LABELS.detail.completed, inProgress: LABELS.detail.inProgress, planned: LABELS.detail.planned };
 
-  // ── Pure helpers (module scope) ────────────────────────────
-  function sessionStatusLabel(s: SessionStatus): string {
-    return statusLabelFn(s, statusLabels);
-  }
+  type DialogWindow = Window & {
+    openDialog?: (id: string) => void;
+    closeDialog?: (id: string) => void;
+  };
 
-  function typeLabelLocalized(t: SetType): string {
-    return typeLabelFn(t, {
-      warmup: LABELS.detail.typeWarmup,
-      work: LABELS.detail.typeWork,
-      top: LABELS.detail.typeTop,
-      drop: LABELS.detail.typeDrop,
-      failure: LABELS.detail.typeFailure,
-    });
-  }
-
-  function formatDateTimeFn(iso: string): string {
-    return formatDateTime(iso);
-  }
-
-  function formatDurationFn(seconds?: number): string {
-    if (!seconds || seconds <= 0) return '—';
-    return formatDuration(seconds);
-  }
-
-  function formatVolumeFn(v: number): string {
-    return formatVolume(v);
-  }
-
-  function formatWeightFn(w: number): string {
-    return formatVolume(w);
-  }
-
-  function formatRpeFn(rpe: number): string {
-    if (!Number.isFinite(rpe)) return '—';
-    return rpe.toString();
-  }
-
-  // Mood rendering uses the centralized helpers from src/lib/mood.ts.
-
-  document.addEventListener('alpine:init', () => {
+  const register = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const Alpine = (window as any).Alpine;
+    const dialogs = window as DialogWindow;
+    const labels = buildSessionDetailLabels(LABELS);
+    labels.printHref = localizedPath('/sessions/print');
 
-    Alpine.data('sessionDetailApp', () => ({
-      // ── State ──
-      labels: {
-        ...LABELS.detail,
-        printHref: localizedPath('/sessions/print'),
-      },
-      session: null as Session | null,
-      sessionId: '',
-      notFound: false,
+    Alpine.data('sessionDetailApp', () =>
+      createSessionDetailApp({
+        labels,
+        search: window.location.search,
+        localizedPath,
+        ui: {
+          notify: (message, kind) => window.showToast(message, kind),
+          openDialog: (id) => dialogs.openDialog?.(id),
+          closeDialog: (id) => dialogs.closeDialog?.(id),
+          navigate: (href) => {
+            window.location.href = href;
+          },
+          translateExercise: (name) => trExercise(name),
+        },
+      })
+    );
+  };
 
-      // ── Init ──
-      init() {
-        const params = new URLSearchParams(window.location.search);
-        this.sessionId = params.get('id') || '';
-        if (!this.sessionId) {
-          this.notFound = true;
-          return;
-        }
-        const found = getSessionById(this.sessionId);
-        if (!found) {
-          this.notFound = true;
-          return;
-        }
-        this.session = found;
-      },
-
-      // ── Computed ──
-      get sessionTotalVolume(): number {
-        return computeSessionTotalVolume(this.session);
-      },
-
-      get totalSets(): number {
-        return computeTotalSets(this.session);
-      },
-
-      get hasNotes(): boolean {
-        return hasNotesFn(this.session);
-      },
-
-      get rpeStats(): { count: number; avg: number; max: number; allTen: boolean } {
-        return computeRpeStats(this.session);
-      },
-
-      get rpeSuggestion(): { headline: string; detail: string; tone: 'up' | 'maintain' | 'down' } | null {
-        return computeRpeSuggestion(this.rpeStats, {
-          allTenHeadline: LABELS.detail.suggestionAllTenHeadline,
-          allTenDetail: LABELS.detail.suggestionAllTenDetail,
-          increaseHeadline: LABELS.detail.suggestionIncreaseHeadline,
-          increaseDetail: LABELS.detail.suggestionIncreaseDetail,
-          maintainHeadline: LABELS.detail.suggestionMaintainHeadline,
-          maintainDetail: LABELS.detail.suggestionMaintainDetail,
-          continueHeadline: LABELS.detail.suggestionContinueHeadline,
-          continueDetail: LABELS.detail.suggestionContinueDetail,
-        });
-      },
-
-      // ── Helpers ──
-      exerciseVolume(ex: SessionExercise): number {
-        return exerciseVolumeFn(ex);
-      },
-
-      best1RM(ex: SessionExercise): number {
-        let best = 0;
-        for (const set of ex.sets) {
-          if (!set.completed) continue;
-          const e = calculate1RM(set.weight, set.reps);
-          if (e > best) best = e;
-        }
-        return best;
-      },
-
-      // ── Supersets (rendered 2026-08-09) ──
-      // Pure presentation over the persisted `Session.supersets` array.
-      // Older sessions lack the field → the helpers return null/'' and
-      // the badge stays hidden, so nothing crashes.
-      trName(ex: SessionExercise): string {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const fn = (window as any).trExercise as ((n: string) => string) | undefined;
-        return fn ? fn(ex.name) : ex.name;
-      },
-
-      /**
-       * 1-based group ordinal + colour index for an exercise belonging
-       * to a persisted superset, or null. Colour cycled g1..g5 so it
-       * matches the builder badge palette.
-       */
-      supersetGroup(ex: SessionExercise): { n: number; color: number } | null {
-        if (!this.session?.supersets) return null;
-        const idx = this.session.supersets.findIndex((g) =>
-          g.exercises.includes(ex.exerciseId),
-        );
-        if (idx === -1) return null;
-        return { n: idx + 1, color: (idx % 5) + 1 };
-      },
-
-      /** Row tint class for grouped exercises, '' when not grouped. */
-      supersetTint(ex: SessionExercise): string {
-        const g = this.supersetGroup(ex);
-        return g ? 'exo-row--g' + g.color : '';
-      },
-
-      /** "Superset 1" badge copy, '' when not grouped. */
-      supersetLabelFor(ex: SessionExercise): string {
-        const g = this.supersetGroup(ex);
-        return g ? `${LABELS.detail.supersetLabel} ${g.n}` : '';
-      },
-
-      /** Member names of the group, joined for the tooltip. */
-      supersetMembers(ex: SessionExercise): string {
-        if (!this.session?.supersets) return '';
-        const group = this.session.supersets.find((g) =>
-          g.exercises.includes(ex.exerciseId),
-        );
-        if (!group) return '';
-        return this.session.exercises
-          .filter((e) => group.exercises.includes(e.exerciseId))
-          .map((e) => this.trName(e))
-          .join(' · ');
-      },
-
-      statusLabel(s: SessionStatus): string {
-        return sessionStatusLabel(s);
-      },
-
-      typeLabel(t: SetType): string {
-        return typeLabelLocalized(t);
-      },
-
-      formatDateTime(iso: string): string {
-        return formatDateTimeFn(iso);
-      },
-
-      compareHref(): string {
-        return localizedPath('/sessions/compare?id1=' + encodeURIComponent(this.session?.id || ''));
-      },
-
-      formatDuration(seconds?: number): string {
-        return formatDurationFn(seconds);
-      },
-
-      formatVolume(v: number): string {
-        return formatVolumeFn(v);
-      },
-
-      formatWeight(w: number): string {
-        return formatWeightFn(w);
-      },
-
-      formatRpe(rpe: number): string {
-        return formatRpeFn(rpe);
-      },
-
-      formatSetRpe(set: { rpe?: number | null; rpeType?: RpeType }): string {
-        return formatSetRpeFn(set.rpe, set.rpeType);
-      },
-
-      /**
-       * Long-form French date for the share card (no time, capitalised).
-       * Falls back to the raw string if the input isn't a valid date.
-       */
-      formatShareDate(iso?: string): string {
-        if (!iso) return '';
-        return formatDateTime(iso);
-      },
-
-      rpeTone(rpe: number | undefined | null) {
-        return rpeToneFn(rpe);
-      },
-
-      rpeLabel(rpe: number | undefined | null) {
-        return rpeLabelFn(rpe, {
-          easy: LABELS.detail.rpeEasy,
-          moderate: LABELS.detail.rpeModerate,
-          hard: LABELS.detail.rpeHard,
-          max: LABELS.detail.rpeMaxTone,
-        });
-      },
-
-      fatigueLabel(level: number | undefined | null) {
-        return fatigueLabelFn(level, {
-          veryFresh: LABELS.detail.fatigueVeryFresh,
-          fresh: LABELS.detail.fatigueFresh,
-          normal: LABELS.detail.fatigueNormal,
-          tired: LABELS.detail.fatigueTired,
-          exhausted: LABELS.detail.fatigueExhausted,
-        });
-      },
-
-      moodEmoji(mood: SessionMood | undefined | null) {
-        return moodSvgFn(mood);
-      },
-
-      moodLabel(mood: SessionMood | undefined | null) {
-        return moodLabelFn(mood);
-      },
-
-      // ── Actions ──
-      quickSessionHref(): string {
-        if (!this.session) return localizedPath('/sessions/quick');
-        return `${localizedPath('/sessions/quick')}?session=${encodeURIComponent(this.session.id)}`;
-      },
-
-      editHref(): string {
-        return `${localizedPath('/sessions/create')}?edit=${encodeURIComponent(this.session?.id || '')}`;
-      },
-
-      updateStatus(status: SessionStatus) {
-        if (!this.session) return;
-        this.session.status = status;
-        updateSession(this.session.id, { status });
-      },
-
-      openDeleteDialog() {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const fn = (window as any).openDialog as
-          | ((id: string) => void)
-          | undefined;
-        if (fn) fn('delete-session-dialog');
-      },
-
-      confirmDelete() {
-        if (!this.session) return;
-        const id = this.session.id;
-        deleteSession(id);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const fn = (window as any).closeDialog as
-          | ((i: string) => void)
-          | undefined;
-        if (fn) fn('delete-session-dialog');
-        window.location.href = localizedPath('/sessions');
-      },
-
-      // ── Fiche de séance (PDF/CSV, added 2026-08-09) ──
-      /** URL of the print-friendly sheet route for the loaded session. */
-      printHref(): string {
-        const base = this.labels.printHref as string;
-        return base + (this.session ? `?id=${encodeURIComponent(this.session.id)}` : '');
-      },
-
-      /** Downloads THIS session only as CSV (`<slug>_<date>.csv`). */
-      downloadSessionCsv() {
-        if (!this.session) return;
-        try {
-          const csv = exportSessionAsCsv(this.session);
-          const datePart = (this.session.date || '').split('T')[0] || 'seance';
-          downloadBlob(
-            `${slugify(this.session.name)}_${datePart}.csv`,
-            csv,
-            'text/csv;charset=utf-8',
-          );
-          window.showToast(this.labels.csvDownloaded, 'success');
-        } catch (err) {
-          window.showToast(
-            err instanceof Error ? err.message : this.labels.csvDownloadFailed,
-            'error',
-          );
-        }
-      },
-
-      // ── Share image generation ──
-      async generateShareCard(): Promise<void> {
-        if (!this.session) return;
-        const datePart = (this.session.date || '').split('T')[0] || 'seance';
-        const filename = `muscu-${datePart}.png`;
-
-        try {
-          const dataUrl = await generateSessionShareCard(this.session, {
-            labels: {
-              exercises: LABELS.detail.exercises,
-              shareSetsLabel: LABELS.detail.shareSetsLabel,
-              volume: LABELS.sessions.volume,
-              setSingular: LABELS.detail.setSingular,
-              setPlural: LABELS.detail.setPlural,
-              moreSingular: LABELS.detail.moreSingular,
-              morePlural: LABELS.detail.morePlural,
-              shareFooter: LABELS.detail.shareFooter,
-              completed: LABELS.detail.completed,
-              inProgress: LABELS.detail.inProgress,
-              planned: LABELS.detail.planned,
-            },
-          });
-          if (dataUrl) downloadDataUrl(dataUrl, filename);
-        } catch {
-          // canvas unsupported or toBlob failed — silently ignore
-        }
-      },
-    }));
-  });
+  document.addEventListener('alpine:init', register);
+  if ((window as any).Alpine) register();
 </script>
 
 <style is:global>
@@ -571,14 +217,6 @@ const L = t();
     letter-spacing: -0.01em;
     word-break: break-word;
     margin: 0;
-  }
-
-  .detail__badges {
-    display: inline-flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 0.4rem;
-    flex-shrink: 0;
   }
 
   .detail__date {
@@ -628,9 +266,6 @@ const L = t();
     }
   }
 
-  /* ════════════════════════════════════════════════════
-     STATUS PICKER — Alpine dynamic states
-     ════════════════════════════════════════════════════ */
   .detail__status-btn {
     display: inline-flex;
     align-items: center;
@@ -714,9 +349,6 @@ const L = t();
     background-color: var(--color-success);
   }
 
-  /* ════════════════════════════════════════════════════
-     STATS CARDS
-     ════════════════════════════════════════════════════ */
   .detail__stat {
     display: flex;
     flex-direction: column;
@@ -775,9 +407,6 @@ const L = t();
     color: var(--color-stat-volume);
   }
 
-  /* ════════════════════════════════════════════════════
-     ACTIONS + SHEET
-     ════════════════════════════════════════════════════ */
   .detail__actions {
     display: flex;
     align-items: center;
@@ -809,9 +438,6 @@ const L = t();
     margin-right: 0.4rem;
   }
 
-  /* ════════════════════════════════════════════════════
-     SECTION / EXERCISES
-     ════════════════════════════════════════════════════ */
   .detail__section-title {
     font-family: var(--font-display);
     font-size: 1.1rem;
@@ -835,9 +461,6 @@ const L = t();
     padding: 2rem 0;
   }
 
-  /* ════════════════════════════════════════════════════
-     DIALOG TEXT
-     ════════════════════════════════════════════════════ */
   .detail__confirm-text {
     color: var(--color-text);
     font-size: 1.3rem;
@@ -849,9 +472,6 @@ const L = t();
     font-weight: 700;
   }
 
-  /* ════════════════════════════════════════════════════
-     EXERCISE ROW
-     ════════════════════════════════════════════════════ */
   .exo-row {
     display: flex;
     flex-direction: column;
@@ -895,17 +515,47 @@ const L = t();
     flex-shrink: 0;
   }
 
-  .exo-row__superset--g1 { background-color: var(--color-superset-g1-bg); color: var(--color-superset-g1); border-color: color-mix(in srgb, var(--color-superset-g1) 30%, transparent); }
-  .exo-row__superset--g2 { background-color: var(--color-superset-g2-bg); color: var(--color-superset-g2); border-color: color-mix(in srgb, var(--color-superset-g2) 30%, transparent); }
-  .exo-row__superset--g3 { background-color: var(--color-superset-g3-bg); color: var(--color-superset-g3); border-color: color-mix(in srgb, var(--color-superset-g3) 30%, transparent); }
-  .exo-row__superset--g4 { background-color: var(--color-superset-g4-bg); color: var(--color-superset-g4); border-color: color-mix(in srgb, var(--color-superset-g4) 30%, transparent); }
-  .exo-row__superset--g5 { background-color: var(--color-superset-g5-bg); color: var(--color-superset-g5); border-color: color-mix(in srgb, var(--color-superset-g5) 30%, transparent); }
+  .exo-row__superset--g1 {
+    background-color: var(--color-superset-g1-bg);
+    color: var(--color-superset-g1);
+    border-color: color-mix(in srgb, var(--color-superset-g1) 30%, transparent);
+  }
+  .exo-row__superset--g2 {
+    background-color: var(--color-superset-g2-bg);
+    color: var(--color-superset-g2);
+    border-color: color-mix(in srgb, var(--color-superset-g2) 30%, transparent);
+  }
+  .exo-row__superset--g3 {
+    background-color: var(--color-superset-g3-bg);
+    color: var(--color-superset-g3);
+    border-color: color-mix(in srgb, var(--color-superset-g3) 30%, transparent);
+  }
+  .exo-row__superset--g4 {
+    background-color: var(--color-superset-g4-bg);
+    color: var(--color-superset-g4);
+    border-color: color-mix(in srgb, var(--color-superset-g4) 30%, transparent);
+  }
+  .exo-row__superset--g5 {
+    background-color: var(--color-superset-g5-bg);
+    color: var(--color-superset-g5);
+    border-color: color-mix(in srgb, var(--color-superset-g5) 30%, transparent);
+  }
 
-  .exo-row--g1 { background-color: color-mix(in srgb, var(--color-superset-g1) 6%, transparent); }
-  .exo-row--g2 { background-color: color-mix(in srgb, var(--color-superset-g2) 6%, transparent); }
-  .exo-row--g3 { background-color: color-mix(in srgb, var(--color-superset-g3) 6%, transparent); }
-  .exo-row--g4 { background-color: color-mix(in srgb, var(--color-superset-g4) 6%, transparent); }
-  .exo-row--g5 { background-color: color-mix(in srgb, var(--color-superset-g5) 6%, transparent); }
+  .exo-row--g1 {
+    background-color: color-mix(in srgb, var(--color-superset-g1) 6%, transparent);
+  }
+  .exo-row--g2 {
+    background-color: color-mix(in srgb, var(--color-superset-g2) 6%, transparent);
+  }
+  .exo-row--g3 {
+    background-color: color-mix(in srgb, var(--color-superset-g3) 6%, transparent);
+  }
+  .exo-row--g4 {
+    background-color: color-mix(in srgb, var(--color-superset-g4) 6%, transparent);
+  }
+  .exo-row--g5 {
+    background-color: color-mix(in srgb, var(--color-superset-g5) 6%, transparent);
+  }
 
   /* ── Per-exercise header actions ── */
   .exo-row__head-actions {
@@ -947,13 +597,6 @@ const L = t();
     line-height: 1.1;
   }
 
-  /* ── Sets table ── */
-  .exo-row__table-wrap {
-    overflow-x: auto;
-    border-radius: var(--radius-md);
-    border: 1px solid var(--color-border);
-  }
-
   .exo-row__table {
     width: 100%;
     border-collapse: collapse;
@@ -979,7 +622,7 @@ const L = t();
   }
 
   .exo-row__table tbody td {
-    padding: 1.0rem 1.4rem;
+    padding: 1rem 1.4rem;
     border-bottom: 1px solid var(--color-border);
     vertical-align: middle;
   }
@@ -1014,11 +657,21 @@ const L = t();
     font-weight: 700;
     font-variant-numeric: tabular-nums;
   }
-  .exo-row__rpe--easy { color: var(--color-success); }
-  .exo-row__rpe--moderate { color: var(--color-warning); }
-  .exo-row__rpe--hard { color: var(--color-accent); }
-  .exo-row__rpe--max { color: var(--color-destructive); }
-  .exo-row__rpe--none { color: var(--color-muted); }
+  .exo-row__rpe--easy {
+    color: var(--color-success);
+  }
+  .exo-row__rpe--moderate {
+    color: var(--color-warning);
+  }
+  .exo-row__rpe--hard {
+    color: var(--color-accent);
+  }
+  .exo-row__rpe--max {
+    color: var(--color-destructive);
+  }
+  .exo-row__rpe--none {
+    color: var(--color-muted);
+  }
 
   .exo-row__td-end {
     text-align: right;
@@ -1048,9 +701,6 @@ const L = t();
     padding: 1.6rem 0 0.4rem;
   }
 
-  /* ════════════════════════════════════════════════════
-     SUGGESTION (tone variants via Alpine)
-     ════════════════════════════════════════════════════ */
   .detail__suggestion {
     display: flex;
     flex-direction: column;
@@ -1165,9 +815,6 @@ const L = t();
     font-variant-numeric: tabular-nums;
   }
 
-  /* ════════════════════════════════════════════════════
-     NOTES (RPE tone, fatigue .is-active, mood variants)
-     ════════════════════════════════════════════════════ */
   .detail__notes {
     display: flex;
     flex-direction: column;
@@ -1207,7 +854,7 @@ const L = t();
   .notes__value {
     display: flex;
     align-items: center;
-    gap: 1.0rem;
+    gap: 1rem;
     flex-wrap: wrap;
     min-width: 0;
   }
@@ -1217,7 +864,7 @@ const L = t();
     font-size: 1.3rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.10em;
+    letter-spacing: 0.1em;
     color: var(--color-muted);
   }
 
@@ -1233,7 +880,7 @@ const L = t();
     align-items: center;
     justify-content: center;
     color: var(--color-text);
-    filter: grayscale(1) opacity(0.30);
+    filter: grayscale(1) opacity(0.3);
     transition: filter var(--transition-fast);
   }
 
@@ -1250,7 +897,7 @@ const L = t();
     font-size: 1.3rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.10em;
+    letter-spacing: 0.1em;
     color: var(--color-muted);
   }
 
@@ -1266,14 +913,14 @@ const L = t();
     border: 1px solid var(--color-border);
   }
 
-  .notes__mood-emoji {
+  .notes__mood-icon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     line-height: 1;
   }
 
-  .notes__mood-emoji svg {
+  .notes__mood-icon svg {
     display: block;
   }
 
@@ -1282,7 +929,7 @@ const L = t();
     font-size: 1.3rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.10em;
+    letter-spacing: 0.1em;
     color: var(--color-text);
   }
 
@@ -1326,9 +973,6 @@ const L = t();
     word-break: break-word;
   }
 
-  /* ════════════════════════════════════════════════════
-     RESPONSIVE
-     ════════════════════════════════════════════════════ */
   @media (max-width: 640px) {
     .detail__actions {
       align-items: stretch;
@@ -1361,17 +1005,14 @@ const L = t();
     }
     .exo-row__table thead th,
     .exo-row__table tbody td {
-      padding: 0.8rem 1.0rem;
+      padding: 0.8rem 1rem;
       font-size: 1.2rem;
     }
     .exo-row__table thead th {
-      font-size: 1.0rem;
+      font-size: 1rem;
     }
   }
 
-  /* ════════════════════════════════════════════════════
-     SHARE CARD (hidden DOM reference — absolute off-screen)
-     ════════════════════════════════════════════════════ */
   .share-card {
     position: absolute;
     top: 0;

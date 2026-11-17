@@ -8,16 +8,17 @@
  * Labels, trExercise, trMuscle, muscleHue accessed via parent Alpine scope.
  */
 
-import { suggestLoadSuggestion } from "../../lib/mrv";
-import { getLocale } from "../../i18n";
+import { suggestLoadSuggestion } from '../../lib/mrv';
+import { currentUnit, formatWeightValue, weightFromInput } from '../../lib/format';
+import { getLocale } from '../../i18n';
 import {
   formatExerciseSummary,
   generateWarmupSets,
   hasWorkingWeight,
   createNextSet,
   type BuilderExercise,
-} from "../../lib/session-builder-stats";
-import type { SessionSet } from "../../lib/storage";
+} from '../../lib/session-builder-stats';
+import type { SessionSet } from '../../lib/storage/types';
 
 export function exerciseCard(exercise: BuilderExercise, exerciseIndex: number) {
   return {
@@ -28,10 +29,10 @@ export function exerciseCard(exercise: BuilderExercise, exerciseIndex: number) {
 
     init() {
       this.expanded = true;
-      window.addEventListener("builder:expand-all", () => {
+      window.addEventListener('builder:expand-all', () => {
         this.expanded = true;
       });
-      window.addEventListener("builder:collapse-all", () => {
+      window.addEventListener('builder:collapse-all', () => {
         this.expanded = false;
       });
     },
@@ -39,14 +40,25 @@ export function exerciseCard(exercise: BuilderExercise, exerciseIndex: number) {
     toggle() {
       this.expanded = !this.expanded;
       window.dispatchEvent(
-        new CustomEvent("builder:exercise-toggled", {
+        new CustomEvent('builder:exercise-toggled', {
           detail: { exerciseId: this.exercise.exerciseId, expanded: this.expanded },
-        }),
+        })
       );
     },
 
     get summary(): string {
       return formatExerciseSummary(this.exercise, (window as any).__builderLabels ?? {});
+    },
+
+    /** Poids affiché dans l'unité choisie ; le stockage reste en kg. */
+    displayWeight(kg: number): string {
+      return formatWeightValue(kg, currentUnit());
+    },
+
+    /** Convertit la saisie en kg puis réaffiche la valeur normalisée. */
+    storeWeight(input: HTMLInputElement, set: SessionSet): void {
+      set.weight = weightFromInput(Number(input.value), currentUnit());
+      input.value = this.displayWeight(set.weight);
     },
 
     addSet() {
@@ -64,10 +76,7 @@ export function exerciseCard(exercise: BuilderExercise, exerciseIndex: number) {
     },
 
     generateWarmup() {
-      const result = generateWarmupSets(
-        this.exercise.exerciseId,
-        this.exercise.sets,
-      );
+      const result = generateWarmupSets(this.exercise.exerciseId, this.exercise.sets);
       if (result.length > 0) this.exercise.sets = result;
     },
 
@@ -77,7 +86,7 @@ export function exerciseCard(exercise: BuilderExercise, exerciseIndex: number) {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     remove(this: any) {
-      this.$dispatch("builder:remove-exercise", {
+      this.$dispatch('builder:remove-exercise', {
         index: this.exerciseIndex,
       });
     },
@@ -88,14 +97,10 @@ export function exerciseCard(exercise: BuilderExercise, exerciseIndex: number) {
       const key = `${this.exercise.exerciseId}:${setIndex}:${set.reps}:${set.weight}`;
       if (this._mrvCache.has(key)) return this._mrvCache.get(key)!;
       const allSessions = (window as any).__builderSessions ?? [];
-      const result = suggestLoadSuggestion(
-        this.exercise.exerciseId,
-        allSessions,
-        {
-          targetReps: set.reps > 0 ? set.reps : undefined,
-          lastLoad: set.weight > 0 ? set.weight : undefined,
-        },
-      );
+      const result = suggestLoadSuggestion(this.exercise.exerciseId, allSessions, {
+        targetReps: set.reps > 0 ? set.reps : undefined,
+        lastLoad: set.weight > 0 ? set.weight : undefined,
+      });
       this._mrvCache.set(key, result);
       return result;
     },
@@ -108,9 +113,9 @@ export function exerciseCard(exercise: BuilderExercise, exerciseIndex: number) {
     mrvTitle(setIndex: number): string {
       const labels = (window as any).__builderLabels ?? {};
       const s = this.mrvSuggestion(setIndex);
-      if (!s || s.reason === "none") return labels.mrvNoHistory ?? "";
-      if (s.reason === "epley-cap") return labels.mrvCapped ?? "";
-      return labels.mrvFromHistory ?? "";
+      if (!s || s.reason === 'none') return labels.mrvNoHistory ?? '';
+      if (s.reason === 'epley-cap') return labels.mrvCapped ?? '';
+      return labels.mrvFromHistory ?? '';
     },
 
     applyMrv(setIndex: number) {
@@ -119,23 +124,18 @@ export function exerciseCard(exercise: BuilderExercise, exerciseIndex: number) {
       const s = this.mrvSuggestion(setIndex);
       if (!set || !s) return;
       if (s.weight == null) {
-        this.showToast(labels.mrvNoHistory ?? "", "warning");
+        this.showToast(labels.mrvNoHistory ?? '', 'warning');
         return;
       }
       set.weight = s.weight;
-      const weightLabel = s.weight.toLocaleString(
-        getLocale() === "fr" ? "fr-FR" : "en-US",
-        { maximumFractionDigits: 1 },
-      );
-      this.showToast(
-        (labels.mrvToast ?? "").replace("{weight}", weightLabel),
-        "success",
-      );
+      const weightLabel = s.weight.toLocaleString(getLocale() === 'fr' ? 'fr-FR' : 'en-US', {
+        maximumFractionDigits: 1,
+      });
+      this.showToast((labels.mrvToast ?? '').replace('{weight}', weightLabel), 'success');
     },
 
-    showToast(message: string, variant = "info") {
-      const fn = (window as any).showToast as
-        ((m: string, v?: string) => void) | undefined;
+    showToast(message: string, variant = 'info') {
+      const fn = (window as any).showToast as ((m: string, v?: string) => void) | undefined;
       if (fn) fn(message, variant);
     },
   };

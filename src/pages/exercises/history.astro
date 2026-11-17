@@ -1,5 +1,4 @@
 ---
-
 import { t, localizedPath } from '../../i18n';
 import AppLayout from '../../layouts/AppLayout.astro';
 import PageHeader from '../../components/layout/PageHeader.astro';
@@ -12,19 +11,11 @@ const L = t();
 ---
 
 <AppLayout title={L.historique.title}>
-  <PageHeader
-    title={L.historique.title}
-    description={L.historique.description}
-  />
+  <PageHeader title={L.historique.title} description={L.historique.description} />
 
-  <div
-    class="hist__main"
-    x-data="exerciseHistoryApp()"
-    x-init="init()"
-    x-cloak
-  >
+  <div class="hist__main" x-data="exerciseHistoryApp()" x-init="init()" x-cloak>
     {/* ── Back link ── */}
-    <BackLink href={localizedPath("/exercises")} label={L.historique.back} />
+    <BackLink href={localizedPath('/exercises')} label={L.historique.back} />
 
     <template x-if="notFound">
       <EmptyState
@@ -32,7 +23,7 @@ const L = t();
         title={L.historique.notFound}
         description={L.historique.notFoundDesc}
         actionLabel={L.historique.viewExercises}
-        actionHref={localizedPath("/exercises")}
+        actionHref={localizedPath('/exercises')}
       />
     </template>
 
@@ -54,8 +45,8 @@ const L = t();
                 size="sm"
                 :class="'badge--cat-' + muscleHue(exercise.muscle)"
                 x-text="trMuscle(exercise.muscle)"
-              ></Badge>
-              <Badge variant="default" size="sm" x-text="trCategory(exercise.category)"></Badge>
+              />
+              <Badge variant="default" size="sm" x-text="trCategory(exercise.category)" />
             </div>
           </div>
         </header>
@@ -69,9 +60,7 @@ const L = t();
             </header>
 
             <template x-if="chartData.length === 0">
-              <p class="hist__empty-msg">
-                {L.historique.historyEmpty}
-              </p>
+              <p class="hist__empty-msg">{L.historique.historyEmpty}</p>
             </template>
 
             <template x-if="chartData.length > 0">
@@ -97,11 +86,7 @@ const L = t();
                   />
 
                   {/* Soft area under the line */}
-                  <polygon
-                    :points="chartAreaPoints"
-                    fill="url(#hist-gradient)"
-                    opacity="0.18"
-                  />
+                  <polygon :points="chartAreaPoints" fill="url(#hist-gradient)" opacity="0.18" />
 
                   {/* Line */}
                   <polyline
@@ -147,46 +132,63 @@ const L = t();
             {/* Best 1RM */}
             <div class="hist__stat">
               <div class="hist__stat-label">
-                <span class="hist__stat-icon"><Fragment set:html={icons.trendingUp(16, 16)} /></span>
+                <span class="hist__stat-icon">
+                  <Fragment set:html={icons.trendingUp(16, 16)} />
+                </span>
                 <span class="hist__stat-name">{L.historique.best1RM}</span>
               </div>
               <div class="hist__stat-row">
                 <span class="hist__stat-value" x-text="formatNumber(best1RM)"></span>
                 <span class="hist__stat-unit">kg</span>
               </div>
-              <span class="hist__stat-date" x-text="best1RMDate ? formatDate(best1RMDate) : '—'"></span>
+              <span
+                class="hist__stat-date"
+                x-text="best1RMDate ? formatDate(best1RMDate) : '—'"
+              ></span>
             </div>
 
             {/* Best weight */}
             <div class="hist__stat">
               <div class="hist__stat-label">
-                <span class="hist__stat-icon"><Fragment set:html={icons.volumeBox(16, 16)} /></span>
+                <span class="hist__stat-icon">
+                  <Fragment set:html={icons.volumeBox(16, 16)} />
+                </span>
                 <span class="hist__stat-name">{L.historique.bestWeight}</span>
               </div>
               <div class="hist__stat-row">
                 <span class="hist__stat-value" x-text="formatNumber(bestWeight)"></span>
                 <span class="hist__stat-unit">kg</span>
               </div>
-              <span class="hist__stat-date" x-text="bestWeightDate ? formatDate(bestWeightDate) : '—'"></span>
+              <span
+                class="hist__stat-date"
+                x-text="bestWeightDate ? formatDate(bestWeightDate) : '—'"
+              ></span>
             </div>
 
             {/* Max reps */}
             <div class="hist__stat">
               <div class="hist__stat-label">
-                <span class="hist__stat-icon"><Fragment set:html={icons.arrowUpDown(16, 16)} /></span>
+                <span class="hist__stat-icon">
+                  <Fragment set:html={icons.arrowUpDown(16, 16)} />
+                </span>
                 <span class="hist__stat-name">{L.historique.maxReps}</span>
               </div>
               <div class="hist__stat-row">
                 <span class="hist__stat-value" x-text="maxReps"></span>
                 <span class="hist__stat-unit">reps</span>
               </div>
-              <span class="hist__stat-date" x-text="maxRepsDate ? formatDate(maxRepsDate) : '—'"></span>
+              <span
+                class="hist__stat-date"
+                x-text="maxRepsDate ? formatDate(maxRepsDate) : '—'"
+              ></span>
             </div>
 
             {/* Total volume */}
             <div class="hist__stat">
               <div class="hist__stat-label">
-                <span class="hist__stat-icon"><Fragment set:html={icons.trendingUpLine(16, 16)} /></span>
+                <span class="hist__stat-icon">
+                  <Fragment set:html={icons.trendingUpLine(16, 16)} />
+                </span>
                 <span class="hist__stat-name">{L.historique.totalVolume}</span>
               </div>
               <div class="hist__stat-row">
@@ -212,7 +214,7 @@ const L = t();
                 title={L.common.noData}
                 description={L.historique.historyEmpty}
                 actionLabel={L.historique.viewExercises}
-                actionHref={localizedPath("/exercises")}
+                actionHref={localizedPath('/exercises')}
               />
             </Card>
           </template>
@@ -225,8 +227,12 @@ const L = t();
                     <th scope="col">{L.historique.colDate}</th>
                     <th scope="col">{L.historique.colWeight}</th>
                     <th scope="col">{L.historique.colReps}</th>
-                    <th scope="col" class="text-right!">{L.historique.col1RM}</th>
-                    <th scope="col" class="text-right!">{L.historique.colRpe}</th>
+                    <th scope="col" class="text-right!">
+                      {L.historique.col1RM}
+                    </th>
+                    <th scope="col" class="text-right!">
+                      {L.historique.colRpe}
+                    </th>
                     <th scope="col">{L.historique.colType}</th>
                   </tr>
                 </thead>
@@ -235,14 +241,33 @@ const L = t();
                     <tr class="hist__tr">
                       <td data-label={L.historique.colDate}>
                         <div class="hist__date">
-                          <span class="hist__date-main font-semibold text-text" x-text="formatDate(row.date)"></span>
+                          <span
+                            class="hist__date-main font-semibold text-text"
+                            x-text="formatDate(row.date)"
+                          ></span>
                           <span class="hist__session-name" x-text="row.sessionName"></span>
                         </div>
                       </td>
-                      <td class="hist__num font-display tabular-nums font-semibold text-right" data-label={L.historique.colWeight} x-text="formatNumber(row.weight) + ' kg'"></td>
-                      <td class="hist__num font-display tabular-nums font-semibold text-right" data-label={L.historique.colReps} x-text="row.reps"></td>
-                      <td class="hist__num font-display tabular-nums font-semibold text-right text-accent" data-label={L.historique.col1RM} x-text="formatNumber(row.estimated1RM) + ' kg'"></td>
-                      <td class="hist__num font-display tabular-nums font-semibold text-right" data-label={L.historique.colRpe} x-text="formatRpe(row)"></td>
+                      <td
+                        class="hist__num font-display tabular-nums font-semibold text-right"
+                        data-label={L.historique.colWeight}
+                        x-text="formatNumber(row.weight) + ' kg'"
+                      ></td>
+                      <td
+                        class="hist__num font-display tabular-nums font-semibold text-right"
+                        data-label={L.historique.colReps}
+                        x-text="row.reps"
+                      ></td>
+                      <td
+                        class="hist__num font-display tabular-nums font-semibold text-right text-accent"
+                        data-label={L.historique.col1RM}
+                        x-text="formatNumber(row.estimated1RM) + ' kg'"
+                      ></td>
+                      <td
+                        class="hist__num font-display tabular-nums font-semibold text-right"
+                        data-label={L.historique.colRpe}
+                        x-text="formatRpe(row)"
+                      ></td>
                       <td data-label={L.historique.colType}>
                         <span
                           class="type-pill"
@@ -263,305 +288,25 @@ const L = t();
 </AppLayout>
 
 <script>
+  import { createHistoryApp } from '../../components/exercises/historyApp';
   import { t } from '../../i18n';
-  import {
-    getExerciseById,
-    getSessions,
-    calculate1RM,
-    type Exercise,
-    type RpeType,
-    type SetType,
-  } from '../../lib/storage';
-  import { typeLabel as typeLabelFn } from '../../lib/workout-helpers';
-  import { formatDateMedium, formatDateDayMonth, formatNumber } from '../../lib/format';
 
   const LABELS = t();
 
-  /**
-   * One row of the exercise history.
-   * - `estimated1RM` is recomputed at read time via the Epley formula.
-   * - `sessionName` is denormalised so the table can show context without
-   *   a second join.
-   */
-  interface HistoryRow {
-    date: string;
-    weight: number;
-    reps: number;
-    rpe: number | null;
-    rpeType?: RpeType;
-    type: SetType;
-    estimated1RM: number;
-    sessionName: string;
-  }
-
-  /** One data point on the 1RM evolution chart (best 1RM per date). */
-  interface ChartPoint {
-    date: string;
-    rm: number;
-  }
-
-  // Chart geometry — kept as constants so the template stays readable.
-  const CHART_W = 800;
-  const CHART_H = 300;
-
-  function typeLabelLocal(t: SetType): string {
-    return typeLabelFn(t, {
-      warmup: LABELS.historique.typeWarmup,
-      work: LABELS.historique.typeWork,
-      top: LABELS.historique.typeTop,
-      drop: LABELS.historique.typeDrop,
-      failure: LABELS.historique.typeFailure,
-    });
-  }
-
-  /**
-   * Per-set RPE display label: "RPE 7.5" or "uRPE 7".
-   * Absent rpeType falls back to plain RPE; missing value renders '—'.
-   */
-  function fmtRpe(rpe: number | string | null | undefined, rpeType?: RpeType): string {
-    const v = typeof rpe === 'string' ? Number(rpe) : rpe;
-    if (v == null || !Number.isFinite(v)) return '—';
-    return (rpeType === 'urpe' ? 'uRPE ' : 'RPE ') + v.toString();
-  }
-
-  document.addEventListener('alpine:init', () => {
+  const register = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const Alpine = (window as any).Alpine;
 
-    Alpine.data('exerciseHistoryApp', () => ({
-      // ── State ──
-      exercise: null as Exercise | null,
-      notFound: false,
-      history: [] as HistoryRow[],
-      chartData: [] as ChartPoint[],
+    Alpine.data('exerciseHistoryApp', () =>
+      createHistoryApp({
+        search: window.location.search,
+        labels: { ...LABELS.historique, kg: LABELS.common.kg },
+      })
+    );
+  };
 
-      // Aggregates
-      best1RM: 0,
-      best1RMDate: '',
-      bestWeight: 0,
-      bestWeightDate: '',
-      maxReps: 0,
-      maxRepsDate: '',
-      totalVolume: 0,
-      sessionCount: 0,
-
-      // ── Init ──
-      init() {
-        const params = new URLSearchParams(window.location.search);
-        const exerciseId = params.get('id');
-        if (!exerciseId) {
-          this.notFound = true;
-          return;
-        }
-        const found = getExerciseById(exerciseId);
-        if (!found) {
-          this.notFound = true;
-          return;
-        }
-        this.exercise = found;
-        this.computeHistory();
-      },
-
-      // ── Pure computations ──
-      computeHistory() {
-        if (!this.exercise) return;
-        const exerciseId = this.exercise.id;
-        const sessions = getSessions();
-        const rows: HistoryRow[] = [];
-
-        for (const session of sessions) {
-          for (const ex of session.exercises) {
-            if (ex.exerciseId !== exerciseId) continue;
-            for (const set of ex.sets) {
-              if (!set.completed) continue;
-              rows.push({
-                date: session.date,
-                weight: set.weight,
-                reps: set.reps,
-                rpe: set.rpe ?? null,
-                rpeType: set.rpeType,
-                type: set.type,
-                estimated1RM: calculate1RM(set.weight, set.reps),
-                sessionName: session.name,
-              });
-            }
-          }
-        }
-
-        // Sort ascending by date for chart and time-based lookups.
-        this.history = rows.sort(
-          (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
-        );
-
-        // Best 1RM per date → chart points.
-        const byDate = new Map<string, number>();
-        for (const row of this.history) {
-          const current = byDate.get(row.date) ?? 0;
-          if (row.estimated1RM > current) byDate.set(row.date, row.estimated1RM);
-        }
-        this.chartData = Array.from(byDate.entries())
-          .map(([date, rm]) => ({ date, rm }))
-          .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-
-        // Stats.
-        this.computeStats();
-      },
-
-      computeStats() {
-        if (this.history.length === 0) {
-          this.best1RM = 0;
-          this.best1RMDate = '';
-          this.bestWeight = 0;
-          this.bestWeightDate = '';
-          this.maxReps = 0;
-          this.maxRepsDate = '';
-          this.totalVolume = 0;
-          this.sessionCount = 0;
-          return;
-        }
-
-        let bestRm = 0;
-        let bestRmDate = '';
-        let bestW = 0;
-        let bestWDate = '';
-        let maxR = 0;
-        let maxRDate = '';
-        let volume = 0;
-        const uniqueSessions = new Set<string>();
-
-        for (const row of this.history) {
-          if (row.estimated1RM > bestRm) {
-            bestRm = row.estimated1RM;
-            bestRmDate = row.date;
-          }
-          if (row.weight > bestW) {
-            bestW = row.weight;
-            bestWDate = row.date;
-          }
-          if (row.reps > maxR) {
-            maxR = row.reps;
-            maxRDate = row.date;
-          }
-          volume += row.weight * row.reps;
-          uniqueSessions.add(row.date + '|' + row.sessionName);
-        }
-
-        this.best1RM = bestRm;
-        this.best1RMDate = bestRmDate;
-        this.bestWeight = bestW;
-        this.bestWeightDate = bestWDate;
-        this.maxReps = maxR;
-        this.maxRepsDate = maxRDate;
-        this.totalVolume = volume;
-        this.sessionCount = uniqueSessions.size;
-      },
-
-      // ── Derived (display) ──
-      get chartMeta(): string {
-        return (
-          this.chartData.length +
-          ' ' +
-          LABELS.historique.sessions +
-          ' — ' +
-          LABELS.historique.best1RM +
-          ' : ' +
-          this.formatNumber(this.best1RM) +
-          ' ' +
-          LABELS.common.kg
-        );
-      },
-
-      get tableMeta(): string {
-        return this.history.length + ' ' + LABELS.historique.sets;
-      },
-
-      get sessionCountLabel(): string {
-        return (
-          this.sessionCount +
-          ' ' +
-          (this.sessionCount > 1
-            ? LABELS.historique.sessions
-            : LABELS.historique.sessionSingular)
-        );
-      },
-
-      get historyDesc(): HistoryRow[] {
-        // Most recent first for the table.
-        return this.history.slice().reverse();
-      },
-
-      get chartMax(): number {
-        // Scale headroom: 10% above the peak so the top dot doesn't kiss the border.
-        const peak = this.chartData.reduce((m, d) => (d.rm > m ? d.rm : m), 0);
-        return Math.max(peak * 1.1, 10);
-      },
-
-      // ── Chart geometry helpers ──
-      chartX(i: number): number {
-        const n = this.chartData.length;
-        if (n <= 1) return CHART_W / 2;
-        return (i / (n - 1)) * CHART_W;
-      },
-
-      chartY(rm: number): number {
-        const max = this.chartMax;
-        if (max <= 0) return CHART_H;
-        return CHART_H - (rm / max) * CHART_H;
-      },
-
-      get chartLinePoints(): string {
-        return this.chartData
-          .map((d, i) => `${this.chartX(i)},${this.chartY(d.rm)}`)
-          .join(' ');
-      },
-
-      get chartAreaPoints(): string {
-        if (this.chartData.length === 0) return '';
-        const top = this.chartData
-          .map((d, i) => `${this.chartX(i)},${this.chartY(d.rm)}`)
-          .join(' ');
-        // Close the polygon along the X axis at y = CHART_H.
-        const last = this.chartData.length - 1;
-        return `${top} ${this.chartX(last)},${CHART_H} ${this.chartX(0)},${CHART_H}`;
-      },
-
-      get chartGridMarkup(): string {
-        let s = '';
-        for (let i = 1; i <= 5; i++) {
-          const y = (i - 1) * 75;
-          s += `<line x1="0" y1="${y}" x2="800" y2="${y}" stroke="var(--color-border)" stroke-width="1" stroke-dasharray="2 4"></line>`;
-          s += `<text x="6" y="${y - 4}" fill="var(--color-muted)" font-size="11" font-family="var(--font-body)">${this.formatNumber(this.chartMax * (1 - (i - 1) / 5))} kg</text>`;
-        }
-        return s;
-      },
-
-      get chartDotsMarkup(): string {
-        return this.chartData
-          .map(
-            (d, i) =>
-              `<g><circle cx="${this.chartX(i)}" cy="${this.chartY(d.rm)}" r="6" fill="var(--color-bg)" stroke="var(--color-accent)" stroke-width="2.5"></circle><title>${this.formatDate(d.date)} — ${this.formatNumber(d.rm)} kg</title></g>`
-          )
-          .join('');
-      },
-
-      // ── Display helpers ──
-      formatNumber(n: number): string {
-        return formatNumber(n);
-      },
-      formatDate(iso: string): string {
-        return formatDateMedium(iso);
-      },
-      formatDateShort(iso: string): string {
-        return formatDateDayMonth(iso);
-      },
-      typeLabel(t: SetType): string {
-        return typeLabelLocal(t);
-      },
-      formatRpe(row: HistoryRow): string {
-        return fmtRpe(row.rpe, row.rpeType);
-      },
-    }));
-  });
+  document.addEventListener('alpine:init', register);
+  if ((window as any).Alpine) register();
 </script>
 
 <style>
@@ -599,18 +344,6 @@ const L = t();
     letter-spacing: 0.14em;
     color: var(--color-text);
     margin: 0;
-  }
-
-  .hist__table-meta {
-    font-size: 1.2rem;
-    color: var(--color-muted);
-    font-weight: 500;
-  }
-
-  .hist__table-wrap {
-    overflow-x: auto;
-    border-radius: var(--radius-md);
-    border: 1px solid var(--color-border);
   }
 
   .hist__table {
@@ -700,7 +433,7 @@ const L = t();
   }
 
   .hist__table tbody td {
-    padding: 1.0rem 1.4rem;
+    padding: 1rem 1.4rem;
     border-bottom: 1px solid var(--color-border);
     vertical-align: middle;
   }
@@ -778,10 +511,10 @@ const L = t();
     .hist__table td::before {
       content: attr(data-label);
       flex: 0 0 auto;
-      font-size: 1.0rem;
+      font-size: 1rem;
       color: var(--color-muted);
       text-transform: uppercase;
-      letter-spacing: 0.10em;
+      letter-spacing: 0.1em;
       font-weight: 700;
     }
 
@@ -796,13 +529,13 @@ const L = t();
 
   @media (max-width: 480px) {
     .hist__title-icon {
-      width: 4.0rem;
-      height: 4.0rem;
+      width: 4rem;
+      height: 4rem;
     }
 
     .hist__title-icon svg {
-      width: 2.0rem;
-      height: 2.0rem;
+      width: 2rem;
+      height: 2rem;
     }
 
     .hist__stat {
@@ -810,12 +543,11 @@ const L = t();
     }
 
     .hist__stat-value {
-      font-size: 2.0rem;
+      font-size: 2rem;
     }
 
     .hist__title {
       font-size: 2.2rem;
     }
   }
-
 </style>

@@ -6,12 +6,12 @@
  * - Mobile  (<1024px): topbar (with hamburger) + content
  *                    + slide-in drawer (same nav as the sidebar)
  */
-import Sidebar from "./Sidebar.astro";
-import Header from "./Header.astro";
-import Icon from "../ui/Icon.astro";
-import { t } from "../../i18n";
-import { renderIcon } from "../../lib/nav";
-import type { NavGroup, NavItem } from "../../lib/types";
+import Sidebar from './Sidebar.astro';
+import Header from './Header.astro';
+import Icon from '../ui/Icon.astro';
+import { t } from '../../i18n';
+import { renderIcon } from '../../lib/nav';
+import type { NavGroup, NavItem } from '../../lib/types';
 
 interface Props {
   groups: NavGroup[];
@@ -19,10 +19,10 @@ interface Props {
   class?: string;
 }
 
-const { groups, title, class: className = "" } = Astro.props as unknown as Props;
+const { groups, title, class: className = '' } = Astro.props as unknown as Props;
 const L = t();
 
-const classes = ["app-shell", className].filter(Boolean).join(" ");
+const classes = ['app-shell', className].filter(Boolean).join(' ');
 
 // Flatten groups into items + children for the mobile drawer
 const drawerItems = groups.map((group) => ({
@@ -48,20 +48,9 @@ const drawerItems = groups.map((group) => ({
   </div>
 
   {/* Mobile drawer (hidden on desktop via CSS) */}
-  <div
-    class="drawer"
-    id="primary-drawer"
-    data-mobile-panel
-    hidden
-    aria-hidden="true"
-  >
+  <div class="drawer" id="primary-drawer" data-mobile-panel hidden aria-hidden="true">
     <div class="drawer__backdrop" data-mobile-backdrop></div>
-    <div
-      class="drawer__panel"
-      role="dialog"
-      aria-modal="true"
-      aria-label={L.layout.menuAria}
-    >
+    <div class="drawer__panel" role="dialog" aria-modal="true" aria-label={L.layout.menuAria}>
       <div class="drawer__header">
         <div class="drawer__brand">
           <span class="drawer__brand-icon" aria-hidden="true">
@@ -80,44 +69,45 @@ const drawerItems = groups.map((group) => ({
       </div>
 
       <nav class="drawer__nav" aria-label={L.layout.mobileNavAria}>
-        {
-          drawerItems.map((group) => (
-            <div class="drawer__group">
-              <div class="drawer__group-label">{group.label}</div>
-              {group.items.map((item) => (
-                <a
-                  href={item.href}
-                  class:list={["drawer__item", item.active && "is-active", item.isChild && "drawer__item--child"]}
-                  aria-current={item.active ? "page" : undefined}
-                >
-                  {item.icon && (
-                    <span
-                      class="drawer__item-icon"
-                      aria-hidden="true"
-                      set:html={renderIcon(item.icon)}
-                    />
-                  )}
-                  <span class="drawer__item-label">{item.label}</span>
-                </a>
-              ))}
-            </div>
-          ))
-        }
+        {drawerItems.map((group) => (
+          <div class="drawer__group">
+            <div class="drawer__group-label">{group.label}</div>
+            {group.items.map((item) => (
+              <a
+                href={item.href}
+                class:list={[
+                  'drawer__item',
+                  item.active && 'is-active',
+                  item.isChild && 'drawer__item--child',
+                ]}
+                aria-current={item.active ? 'page' : undefined}
+              >
+                {item.icon && (
+                  <span
+                    class="drawer__item-icon"
+                    aria-hidden="true"
+                    set:html={renderIcon(item.icon)}
+                  />
+                )}
+                <span class="drawer__item-label">{item.label}</span>
+              </a>
+            ))}
+          </div>
+        ))}
       </nav>
 
       {/* Footer - user session + logout */}
       <div class="drawer__user" data-user-zone hidden>
         <div class="drawer__user-info">
           <span class="drawer__user-label">{L.layout.signedInAs}</span>
-          <span class="drawer__user-name" data-user-name>--</span>
-          <span class="drawer__user-email" data-user-email>--</span>
+          <span class="drawer__user-name" data-user-name>
+            --
+          </span>
+          <span class="drawer__user-email" data-user-email>
+            --
+          </span>
         </div>
-        <button
-          type="button"
-          class="drawer__logout"
-          data-logout
-          aria-label={L.layout.logoutAria}
-        >
+        <button type="button" class="drawer__logout" data-logout aria-label={L.layout.logoutAria}>
           <Icon name="logout" size={16} />
           <span>{L.layout.logout}</span>
         </button>
@@ -129,41 +119,36 @@ const drawerItems = groups.map((group) => ({
 <script>
   // Mobile drawer toggle
   (() => {
-    const toggle = document.querySelector<HTMLButtonElement>(
-      "[data-mobile-toggle]"
-    );
-    const panel = document.querySelector<HTMLElement>("[data-mobile-panel]");
-    const closeBtn = document.querySelector<HTMLButtonElement>(
-      "[data-mobile-close]"
-    );
-    const backdrop = document.querySelector<HTMLElement>(
-      "[data-mobile-backdrop]"
-    );
+    const toggle = document.querySelector<HTMLButtonElement>('[data-mobile-toggle]');
+    const panel = document.querySelector<HTMLElement>('[data-mobile-panel]');
+    const closeBtn = document.querySelector<HTMLButtonElement>('[data-mobile-close]');
+    const backdrop = document.querySelector<HTMLElement>('[data-mobile-backdrop]');
 
     if (!toggle || !panel) return;
 
     let previouslyFocused: HTMLElement | null = null;
 
     const open = () => {
-      previouslyFocused = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+      previouslyFocused =
+        document.activeElement instanceof HTMLElement ? document.activeElement : null;
       panel.hidden = false;
-      panel.setAttribute("aria-hidden", "false");
+      panel.setAttribute('aria-hidden', 'false');
       requestAnimationFrame(() => {
-        panel.classList.add("is-open");
+        panel.classList.add('is-open');
         closeBtn?.focus();
       });
-      toggle.setAttribute("aria-expanded", "true");
-      document.body.style.overflow = "hidden";
+      toggle.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
     };
 
     const close = () => {
       if (panel.hidden) return;
-      panel.classList.remove("is-open");
-      panel.setAttribute("aria-hidden", "true");
-      toggle.setAttribute("aria-expanded", "false");
-      document.body.style.overflow = "";
+      panel.classList.remove('is-open');
+      panel.setAttribute('aria-hidden', 'true');
+      toggle.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
       window.setTimeout(() => {
-        if (panel && !panel.classList.contains("is-open")) {
+        if (panel && !panel.classList.contains('is-open')) {
           panel.hidden = true;
           previouslyFocused?.focus();
           previouslyFocused = null;
@@ -171,24 +156,24 @@ const drawerItems = groups.map((group) => ({
       }, 240);
     };
 
-    toggle.addEventListener("click", open);
-    closeBtn?.addEventListener("click", close);
-    backdrop?.addEventListener("click", close);
+    toggle.addEventListener('click', open);
+    closeBtn?.addEventListener('click', close);
+    backdrop?.addEventListener('click', close);
 
     const getFocusable = (): HTMLElement[] =>
       Array.from(
         panel.querySelectorAll<HTMLElement>(
-          'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
-        ),
-      ).filter((element) => !element.hasAttribute("hidden"));
+          'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        )
+      ).filter((element) => !element.hasAttribute('hidden'));
 
-    document.addEventListener("keydown", (e) => {
+    document.addEventListener('keydown', (e) => {
       if (panel.hidden) return;
-      if (e.key === "Escape") {
+      if (e.key === 'Escape') {
         close();
         return;
       }
-      if (e.key !== "Tab" || !panel.classList.contains("is-open")) return;
+      if (e.key !== 'Tab' || !panel.classList.contains('is-open')) return;
 
       const focusable = getFocusable();
       if (focusable.length === 0) return;
@@ -205,41 +190,37 @@ const drawerItems = groups.map((group) => ({
       }
     });
 
-    panel.querySelectorAll<HTMLAnchorElement>("a[href]").forEach((a) => {
-      a.addEventListener("click", () => close());
+    panel.querySelectorAll<HTMLAnchorElement>('a[href]').forEach((a) => {
+      a.addEventListener('click', () => close());
     });
   })();
 
   // Auth gate + session display
-  import { getAuth, clearAuth } from "../../lib/auth";
-  import { localizedPath } from "../../i18n";
+  import { getAuth, clearAuth } from '../../lib/auth';
+  import { localizedPath } from '../../i18n';
 
   const logout = () => {
     clearAuth();
-    window.location.href = localizedPath("/login");
+    window.location.href = localizedPath('/login');
   };
 
-  document
-    .querySelectorAll<HTMLButtonElement>("[data-logout]")
-    .forEach((btn) => {
-      btn.addEventListener("click", logout);
-    });
+  document.querySelectorAll<HTMLButtonElement>('[data-logout]').forEach((btn) => {
+    btn.addEventListener('click', logout);
+  });
 
   const auth = getAuth();
   if (auth) {
-    document.querySelectorAll<HTMLElement>("[data-user-name]").forEach((el) => {
+    document.querySelectorAll<HTMLElement>('[data-user-name]').forEach((el) => {
       el.textContent = auth.name;
     });
-    document
-      .querySelectorAll<HTMLElement>("[data-user-email]")
-      .forEach((el) => {
-        el.textContent = auth.email;
-      });
-    document.querySelectorAll<HTMLElement>("[data-user-zone]").forEach((el) => {
-      el.removeAttribute("hidden");
+    document.querySelectorAll<HTMLElement>('[data-user-email]').forEach((el) => {
+      el.textContent = auth.email;
+    });
+    document.querySelectorAll<HTMLElement>('[data-user-zone]').forEach((el) => {
+      el.removeAttribute('hidden');
     });
   } else {
-    window.location.replace("/login");
+    window.location.replace('/login');
   }
 
   // The sidebar is persisted by Astro's client router, so refresh its
@@ -251,41 +232,40 @@ const drawerItems = groups.map((group) => ({
       return currentPath === path;
     };
 
-    document.querySelectorAll<HTMLElement>(".sidebar .nav-item-wrap").forEach((wrap) => {
-      const children = Array.from(wrap.querySelectorAll<HTMLAnchorElement>(".nav-child"));
+    document.querySelectorAll<HTMLElement>('.sidebar .nav-item-wrap').forEach((wrap) => {
+      const children = Array.from(wrap.querySelectorAll<HTMLAnchorElement>('.nav-child'));
       if (children.length > 0) {
         const childActive = children.some((link) => {
           const active = isCurrent(link.href);
-          link.classList.toggle("is-active", active);
-          if (active) link.setAttribute("aria-current", "page");
-          else link.removeAttribute("aria-current");
+          link.classList.toggle('is-active', active);
+          if (active) link.setAttribute('aria-current', 'page');
+          else link.removeAttribute('aria-current');
           return active;
         });
-        wrap.querySelector(".nav-item--toggle")?.classList.toggle(
-          "nav-item--parent-active",
-          childActive,
-        );
+        wrap
+          .querySelector('.nav-item--toggle')
+          ?.classList.toggle('nav-item--parent-active', childActive);
         return;
       }
 
-      const link = wrap.querySelector<HTMLAnchorElement>(".nav-item:not(.nav-item--toggle)");
+      const link = wrap.querySelector<HTMLAnchorElement>('.nav-item:not(.nav-item--toggle)');
       if (!link) return;
       const active = isCurrent(link.href);
-      link.classList.toggle("is-active", active);
-      if (active) link.setAttribute("aria-current", "page");
-      else link.removeAttribute("aria-current");
+      link.classList.toggle('is-active', active);
+      if (active) link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
     });
   };
 
   syncSidebarActiveState();
-  document.addEventListener("astro:after-swap", syncSidebarActiveState);
+  document.addEventListener('astro:after-swap', syncSidebarActiveState);
 
   // Theme + nav accordion Alpine data factory
-  document.addEventListener("alpine:init", () => {
+  document.addEventListener('alpine:init', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const Alpine = (window as any).Alpine;
 
-    const ACCORDION_KEY = "muscu:nav:collapsed";
+    const ACCORDION_KEY = 'muscu:nav:collapsed';
 
     function readCollapsed(): string[] {
       try {
@@ -297,15 +277,14 @@ const drawerItems = groups.map((group) => ({
       }
     }
 
-    Alpine.data("themeApp", () => ({
-      theme: "dark" as "dark" | "light",
+    Alpine.data('themeApp', () => ({
+      theme: 'dark' as 'dark' | 'light',
       collapsed: [] as string[],
       navReady: false,
 
       init() {
-        const current =
-          document.documentElement.getAttribute("data-theme") || "dark";
-        this.theme = current === "light" ? "light" : "dark";
+        const current = document.documentElement.getAttribute('data-theme') || 'dark';
+        this.theme = current === 'light' ? 'light' : 'dark';
         this.collapsed = readCollapsed();
 
         // Let Alpine apply the restored accordion state without a transition;
@@ -316,15 +295,15 @@ const drawerItems = groups.map((group) => ({
       },
 
       toggleTheme() {
-        this.theme = this.theme === "dark" ? "light" : "dark";
-        document.documentElement.setAttribute("data-theme", this.theme);
+        this.theme = this.theme === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', this.theme);
         try {
-          window.localStorage.setItem("muscu-theme", this.theme);
+          window.localStorage.setItem('muscu-theme', this.theme);
         } catch {}
       },
 
       isDark(): boolean {
-        return this.theme === "dark";
+        return this.theme === 'dark';
       },
 
       isExpanded(id: string): boolean {
@@ -411,7 +390,7 @@ const drawerItems = groups.map((group) => ({
   .drawer__backdrop {
     position: absolute;
     inset: 0;
-    background-color: color-mix(in srgb, #000 55%, transparent);
+    background-color: color-mix(in srgb, var(--color-scrim) 55%, transparent);
     opacity: 0;
     transition: opacity 220ms ease;
   }
@@ -430,7 +409,7 @@ const drawerItems = groups.map((group) => ({
     -webkit-backdrop-filter: blur(20px) saturate(1.2);
     backdrop-filter: blur(20px) saturate(1.2);
     border-right: 1px solid var(--color-border);
-    box-shadow: 8px 0 24px color-mix(in srgb, #000 50%, transparent);
+    box-shadow: 8px 0 24px color-mix(in srgb, var(--color-scrim) 50%, transparent);
     display: flex;
     flex-direction: column;
     transform: translateX(-100%);
@@ -445,14 +424,14 @@ const drawerItems = groups.map((group) => ({
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 1.6rem 2.0rem;
+    padding: 1.6rem 2rem;
     border-bottom: 1px solid var(--color-border);
   }
 
   .drawer__brand {
     display: flex;
     align-items: center;
-    gap: 1.0rem;
+    gap: 1rem;
     min-width: 0;
   }
 
@@ -523,7 +502,7 @@ const drawerItems = groups.map((group) => ({
   .drawer__item {
     display: flex;
     align-items: center;
-    gap: 1.0rem;
+    gap: 1rem;
     min-height: 4.2rem;
     padding: 0.6rem 1.2rem;
     border-radius: var(--radius-sm);
@@ -546,18 +525,13 @@ const drawerItems = groups.map((group) => ({
       color var(--transition-fast);
   }
 
-  .drawer__item:hover {
-    background-color: var(--alpha-bg-subtle);
-    color: var(--color-text);
-  }
-
   .drawer__item.is-active {
     background: var(--alpha-bg-soft);
     color: var(--color-text);
   }
 
   .drawer__item.is-active::before {
-    content: "";
+    content: '';
     position: absolute;
     left: 0;
     top: 0.8rem;
@@ -618,7 +592,7 @@ const drawerItems = groups.map((group) => ({
   .drawer__user {
     display: flex;
     flex-direction: column;
-    gap: 1.0rem;
+    gap: 1rem;
     margin: 1.2rem 0.8rem 1.2rem;
     padding: 1.2rem;
     background-color: var(--color-surface-2);
@@ -629,13 +603,6 @@ const drawerItems = groups.map((group) => ({
 
   .drawer__user[hidden] {
     display: none;
-  }
-
-  .drawer__user-info {
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-    min-width: 0;
   }
 
   .drawer__user-label {

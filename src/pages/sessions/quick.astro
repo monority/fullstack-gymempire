@@ -1,11 +1,11 @@
 ---
-import { t, localizedPath } from "../../i18n";
-import AppLayout from "../../layouts/AppLayout.astro";
-import Button from "../../components/ui/Button.astro";
-import IconButton from "../../components/ui/IconButton.astro";
-import Segmented from "../../components/ui/Segmented.astro";
-import Select from "../../components/ui/Select.astro";
-import { icons } from "../../lib/icons";
+import { t, localizedPath } from '../../i18n';
+import AppLayout from '../../layouts/AppLayout.astro';
+import Button from '../../components/ui/Button.astro';
+import IconButton from '../../components/ui/IconButton.astro';
+import Segmented from '../../components/ui/Segmented.astro';
+import Select from '../../components/ui/Select.astro';
+import { icons } from '../../lib/icons';
 const L = t();
 ---
 
@@ -22,20 +22,14 @@ const L = t();
         />
 
         <div class="quick__progress-center">
-          <span
-            class="quick__progress-text"
-            aria-live="polite"
-            aria-atomic="true"
-          >
+          <span class="quick__progress-text" aria-live="polite" aria-atomic="true">
             {L.rapide.setProgress}
-            <strong class="quick__progress-value" x-text="currentSetIndex + 1"
-            ></strong>/<span x-text="currentExercise?.sets?.length || 0"></span>
+            <strong class="quick__progress-value" x-text="currentSetIndex + 1"></strong>/
+            <span x-text="currentExercise?.sets?.length || 0"></span>
             <span class="quick__separator">·</span>
             {L.rapide.exerciseProgress}
-            <strong
-              class="quick__progress-value"
-              x-text="currentExerciseIndex + 1"></strong>/<span
-              x-text="totalExercises"></span>
+            <strong class="quick__progress-value" x-text="currentExerciseIndex + 1"></strong>/
+            <span x-text="totalExercises"></span>
           </span>
           <div
             class="quick__progress-bar"
@@ -45,11 +39,7 @@ const L = t();
             aria-label={L.rapide.setProgress}
             :aria-valuenow="progressPercent"
           >
-            <div
-              class="quick__progress-fill"
-              :style="`width: ${progressPercent}%`"
-            >
-            </div>
+            <div class="quick__progress-fill" :style="`width: ${progressPercent}%`"></div>
           </div>
         </div>
 
@@ -70,41 +60,29 @@ const L = t();
           <div class="quick__zap-icon" aria-hidden="true">
             <Fragment set:html={icons.zap(64, 64)} />
           </div>
-          <h1 class="quick__title">
-            {L.rapide.title}
-          </h1>
-          <p class="quick__intro">
-            {L.rapide.introText}
-          </p>
+          <h1 class="quick__title">{L.rapide.title}</h1>
+          <p class="quick__intro">{L.rapide.introText}</p>
 
           <div class="quick__form">
-            <label class="quick__label" for="qs-session"
-              >{L.rapide.session}</label
-            >
-            <select
-              id="qs-session"
-              class="quick__select"
-              x-model="selectedSessionId"
-            >
+            <label class="quick__label" for="qs-session">
+              {L.rapide.session}
+            </label>
+            <select id="qs-session" class="quick__select" x-model="selectedSessionId">
               <option value="">{L.rapide.selectSession}</option>
               <template x-for="s in availableSessions" :key="s.id">
                 <option
                   :value="s.id"
-                  x-text="`${s.label} (${s.totalSets} ${setsShortLabel} · ${formatWeight(s.totalVolume)})`"
+                  x-text="`${s.label} (${s.totalSets} ${setsShortLabel} · ${formatWeightValue(s.totalVolume)})`"
                 ></option>
               </template>
             </select>
           </div>
 
           <div class="quick__selecting-actions">
-            <Button variant="ghost" href={localizedPath("/sessions")}
-              >{L.common.back}</Button
-            >
-            <Button
-              variant="primary"
-              :disabled="!selectedSessionId"
-              @click="startSession()"
-            >
+            <Button variant="ghost" href={localizedPath('/sessions')}>
+              {L.common.back}
+            </Button>
+            <Button variant="primary" :disabled="!selectedSessionId" @click="startSession()">
               {L.rapide.start}
             </Button>
           </div>
@@ -112,10 +90,10 @@ const L = t();
           <template x-if="availableSessions.length === 0">
             <p class="quick__empty-text">
               {L.rapide.emptyDesc}{' '}
-              <a
-                class="quick__empty-link"
-                href={localizedPath("/sessions/create")}>{L.rapide.restart}</a
-              >.
+              <a class="quick__empty-link" href={localizedPath('/sessions/create')}>
+                {L.rapide.restart}
+              </a>
+              .
             </p>
           </template>
         </div>
@@ -135,10 +113,8 @@ const L = t();
             x-text="trExercise(currentExercise?.name)"
             aria-live="polite"
             aria-atomic="true"
-          >
-          </div>
-          <div class="quick__muscle" x-text="trMuscle(currentExercise?.muscle)">
-          </div>
+          ></div>
+          <div class="quick__muscle" x-text="trMuscle(currentExercise?.muscle)"></div>
 
           <div class="quick__set-info" aria-live="polite" aria-atomic="true">
             {L.rapide.setProgress}
@@ -146,17 +122,21 @@ const L = t();
             <span
               class="quick__set-type"
               :class="'tone--' + currentSet.type"
-              x-text="typeLabel(currentSet.type)"></span>
+              x-text="typeLabel(currentSet.type)"
+            ></span>
           </div>
 
           <div class="quick__values">
             <div class="quick__value-col">
               <span
                 class="quick__value-number"
-                x-text="formatWeight(currentSet.weight)"></span>
+                x-text="formatWeightValue(currentSet.weight)"
+              ></span>
               <span class="quick__value-unit" x-text="weightUnit()"></span>
             </div>
-            <div class="quick__x-separator" aria-hidden="true">×</div>
+            <div class="quick__x-separator" aria-hidden="true">
+              ×
+            </div>
             <div class="quick__value-col">
               <span class="quick__value-number" x-text="currentSet.reps"></span>
               <span class="quick__value-unit">{L.rapide.repsUnit}</span>
@@ -167,8 +147,8 @@ const L = t();
             <span class="quick__label">{L.rapide.rpeLabel}</span>
             <Segmented
               items={[
-                { value: "rpe", label: "RPE" },
-                { value: "urpe", label: "uRPE" },
+                { value: 'rpe', label: 'RPE' },
+                { value: 'urpe', label: 'uRPE' },
               ]}
               model="currentRpeType"
               ariaLabel={L.rapide.rpeTypeLabel}
@@ -238,31 +218,23 @@ const L = t();
           <div class="quick__recorded-label" role="status" aria-live="polite">
             {L.rapide.setRecorded}
           </div>
-          <div class="quick__resting-title">
-            {L.rapide.resting}
-          </div>
+          <div class="quick__resting-title">{L.rapide.resting}</div>
           <div
             class="quick__resting-timer"
             role="timer"
             aria-live="off"
             :class="{ 'quick__resting-timer--low': restRemaining <= 10 && restRemaining > 0 }"
             x-text="formatRestTime()"
-          >
-          </div>
+          ></div>
           <div
             class="quick__rest-next"
             x-text="restNextLabel()"
             aria-live="polite"
             aria-atomic="true"
-          >
-          </div>
+          ></div>
 
           <div class="quick__resting-grid">
-            <Button
-              variant="ghost"
-              @click="addRestTime(-15)"
-              aria-label={L.rapide.restMinusAria}
-            >
+            <Button variant="ghost" @click="addRestTime(-15)" aria-label={L.rapide.restMinusAria}>
               -15s
             </Button>
             <Button
@@ -273,19 +245,10 @@ const L = t();
             >
               {L.common.skip}
             </Button>
-            <Button
-              variant="ghost"
-              @click="addRestTime(15)"
-              aria-label={L.rapide.restPlusAria}
-            >
+            <Button variant="ghost" @click="addRestTime(15)" aria-label={L.rapide.restPlusAria}>
               +15s
             </Button>
-            <Button
-              variant="ghost"
-              class="quick__undo"
-              :disabled="!canUndo"
-              @click="undoLastSet()"
-            >
+            <Button variant="ghost" class="quick__undo" :disabled="!canUndo" @click="undoLastSet()">
               {L.rapide.undoLast}
             </Button>
           </div>
@@ -306,53 +269,27 @@ const L = t();
           </div>
           <h1 class="quick__done-title" x-text="completionTitle"></h1>
           <p class="quick__done-name" x-text="session?.name"></p>
-          <p
-            class="quick__done-message"
-            x-text="completionMessage"
-            role="status"
-          >
-          </p>
+          <p class="quick__done-message" x-text="completionMessage" role="status"></p>
 
           <div class="quick__stats">
             <div class="quick__stat-card">
-              <div
-                class="quick__stat-value"
-                x-text="`${recordedSets} / ${totalSets}`"
-              >
-              </div>
-              <div class="quick__stat-label">
-                {L.rapide.setsDone}
-              </div>
+              <div class="quick__stat-value" x-text="`${recordedSets} / ${totalSets}`"></div>
+              <div class="quick__stat-label">{L.rapide.setsDone}</div>
             </div>
             <div class="quick__stat-card">
               <div
                 class="quick__stat-value"
                 x-text="`${completedExercises} / ${totalExercises}`"
-              >
-              </div>
-              <div class="quick__stat-label">
-                {L.rapide.exercises}
-              </div>
+              ></div>
+              <div class="quick__stat-label">{L.rapide.exercises}</div>
             </div>
             <div class="quick__stat-card">
-              <div
-                class="quick__stat-value"
-                x-text="formatDuration(sessionDuration)"
-              >
-              </div>
-              <div class="quick__stat-label">
-                {L.rapide.duration}
-              </div>
+              <div class="quick__stat-value" x-text="formatDuration(sessionDuration)"></div>
+              <div class="quick__stat-label">{L.rapide.duration}</div>
             </div>
             <div class="quick__stat-card">
-              <div
-                class="quick__stat-value"
-                x-text="formatWeight(sessionTotalVolume)"
-              >
-              </div>
-              <div class="quick__stat-label">
-                {L.rapide.volume}
-              </div>
+              <div class="quick__stat-value" x-text="formatWeightValue(sessionTotalVolume)"></div>
+              <div class="quick__stat-label">{L.rapide.volume}</div>
             </div>
           </div>
 
@@ -374,542 +311,31 @@ const L = t();
 </AppLayout>
 
 <script>
-  import {
-    getSessions,
-    getSettings,
-    RPE_OPTIONS,
-    saveSession,
-    updateSession,
-    type Session,
-    type SessionSet,
-    type SetType,
-  } from "../../lib/storage";
-  import { t, localizedPath } from "../../i18n";
-  import { undoLastCompletedSet } from "../../lib/session-utils";
-  import {
-    formatWeight,
-    formatDuration,
-    formatRestTime,
-    typeLabel,
-    todayISO,
-    computeAvailableSessions,
-    computeSessionStats,
-    computeProgressPercent,
-    canGoPrev as canGoPrevFn,
-    canGoNext as canGoNextFn,
-    restNextLabel as restNextLabelFn,
-    completionTitle as completionTitleFn,
-    completionMessage as completionMessageFn,
-  } from "../../lib/quick-session-stats";
+  import { t, localizedPath } from '../../i18n';
+  import { getSessions, saveSession, updateSession } from '../../lib/storage/sessions';
+  import { getSettings } from '../../lib/storage/settings';
+  import { getRestTime } from '../../lib/rest-times';
+  import { createQuickSession } from '../../components/sessions/quickSession';
 
   const LABELS = t();
 
-  document.addEventListener("alpine:init", () => {
+  document.addEventListener('alpine:init', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const Alpine = (window as any).Alpine;
 
-    Alpine.data("quickSessionApp", () => ({
-      state: "selecting" as "selecting" | "working" | "resting" | "completed",
-
-      availableSessions: [] as Array<{
-        id: string;
-        label: string;
-        totalSets: number;
-        totalVolume: number;
-        status: Session["status"];
-      }>,
-      selectedSessionId: "",
-      session: null as Session | null,
-
-      currentExerciseIndex: 0,
-      currentSetIndex: 0,
-      completedSets: 0,
-      startTime: 0,
-      endTime: 0,
-
-      restRemaining: 0,
-      restInterval: null as number | null,
-      restPaused: false,
-
-      wakeLock: null as any,
-
-      _touchStartX: 0,
-      _touchStartY: 0,
-
-      _keyHandler: null as ((e: KeyboardEvent) => void) | null,
-
-      rpeValues: RPE_OPTIONS,
-
-      init() {
-        this.loadSessions();
-        const requestedSessionId = new URLSearchParams(
-          window.location.search,
-        ).get("session");
-        if (
-          requestedSessionId &&
-          this.availableSessions.some((s) => s.id === requestedSessionId)
-        ) {
-          this.selectedSessionId = requestedSessionId;
-        }
-        this._installKeyboard();
-        this._requestWakeLock();
-        document.addEventListener("visibilitychange", () => {
-          if (
-            document.visibilityState === "visible" &&
-            this.state === "working"
-          ) {
-            this._requestWakeLock();
-          }
-        });
-      },
-
-      destroy() {
-        if (this.restInterval) {
-          window.clearInterval(this.restInterval);
-          this.restInterval = null;
-        }
-        if (this._keyHandler) {
-          window.removeEventListener("keydown", this._keyHandler);
-          this._keyHandler = null;
-        }
-        this._releaseWakeLock();
-      },
-
-      loadSessions() {
-        this.availableSessions = computeAvailableSessions(getSessions());
-      },
-
-      startSession() {
-        if (!this.selectedSessionId) return;
-        const found = getSessions().find(
-          (s) => s.id === this.selectedSessionId,
-        );
-        if (!found) return;
-        if (found.status === "in-progress" && found.sourceSessionId) {
-          this.session = found;
-        } else {
-          this.session = saveSession({
-            ...found,
-            sourceSessionId: found.id,
-            date: todayISO(),
-            status: "in-progress",
-            duration: undefined,
-            exercises: found.exercises.map((exercise) => ({
-              ...exercise,
-              sets: exercise.sets.map((set) => ({
-                ...set,
-                completed: false,
-                rpe: null,
-                rpeType: "rpe",
-              })),
-            })),
-          });
-        }
-        const firstPending = this.session.exercises.findIndex((exercise) =>
-          exercise.sets.some((set) => !set.completed),
-        );
-        this.currentExerciseIndex = firstPending >= 0 ? firstPending : 0;
-        const current = this.session.exercises[this.currentExerciseIndex];
-        this.currentSetIndex =
-          current?.sets.findIndex((set) => !set.completed) ?? 0;
-        if (this.currentSetIndex < 0) this.currentSetIndex = 0;
-        this.completedSets = this.session.exercises.reduce(
-          (total, exercise) =>
-            total + exercise.sets.filter((set) => set.completed).length,
-          0,
-        );
-        this.startTime = Date.now();
-        this.endTime = 0;
-        this.session.status = "in-progress";
-        updateSession(this.session.id, { status: "in-progress" });
-        this.state = "working";
-      },
-
-      get currentExercise() {
-        return this.session?.exercises[this.currentExerciseIndex] ?? null;
-      },
-
-      get currentSet(): SessionSet | null {
-        const ex = this.currentExercise;
-        if (!ex) return null;
-        return ex.sets[this.currentSetIndex] ?? null;
-      },
-
-      get currentRpe(): number | null {
-        return this.currentSet?.rpe ?? null;
-      },
-      set currentRpe(value: number | string | null) {
-        if (this.currentSet) {
-          this.currentSet.rpe =
-            value === "" || value == null ? null : Number(value);
-        }
-      },
-      get currentRpeType(): "rpe" | "urpe" {
-        return this.currentSet?.rpeType === "urpe" ? "urpe" : "rpe";
-      },
-      set currentRpeType(value: "rpe" | "urpe") {
-        if (this.currentSet) this.currentSet.rpeType = value;
-      },
-
-      get totalExercises(): number {
-        return this.session?.exercises.length ?? 0;
-      },
-
-      get totalSets(): number {
-        if (!this.session) return 0;
-        return computeSessionStats(this.session).totalSets;
-      },
-
-      get recordedSets(): number {
-        if (!this.session) return 0;
-        return computeSessionStats(this.session).recordedSets;
-      },
-
-      get progressPercent(): number {
-        if (!this.session) return 0;
-        return computeProgressPercent(
-          this.session,
-          this.currentExerciseIndex,
-          this.currentSetIndex,
-        );
-      },
-
-      get sessionTotalVolume(): number {
-        if (!this.session) return 0;
-        return computeSessionStats(this.session).totalVolume;
-      },
-
-      get sessionDuration(): number {
-        if (!this.startTime) return 0;
-        const end = this.endTime || Date.now();
-        return Math.floor((end - this.startTime) / 1000);
-      },
-
-      get completedExercises(): number {
-        if (!this.session) return 0;
-        return computeSessionStats(this.session).completedExercises;
-      },
-
-      get completionTitle(): string {
-        return completionTitleFn(
-          this.recordedSets,
-          this.totalSets,
-          LABELS.rapide.allDone,
-          LABELS.rapide.endedEarly,
-        );
-      },
-
-      get completionMessage(): string {
-        return completionMessageFn(
-          this.recordedSets,
-          this.totalSets,
-          LABELS.rapide.completionFull,
-          LABELS.rapide.completionPartial,
-          LABELS.rapide.setsShort,
-        );
-      },
-
-      canGoPrev(): boolean {
-        return canGoPrevFn(this.currentExerciseIndex, this.currentSetIndex);
-      },
-
-      canGoNext(): boolean {
-        if (!this.session) return false;
-        return canGoNextFn(
-          this.session,
-          this.currentExerciseIndex,
-          this.currentSetIndex,
-        );
-      },
-
-      prevSet() {
-        if (!this.canGoPrev()) return;
-        if (this.currentSetIndex > 0) {
-          this.currentSetIndex -= 1;
-          return;
-        }
-        if (this.currentExerciseIndex > 0) {
-          this.currentExerciseIndex -= 1;
-          const ex = this.currentExercise;
-          this.currentSetIndex = ex ? ex.sets.length - 1 : 0;
-        }
-      },
-
-      nextSet() {
-        if (!this.canGoNext()) return;
-        const ex = this.currentExercise;
-        if (!ex) return;
-        if (this.currentSetIndex < ex.sets.length - 1) {
-          this.currentSetIndex += 1;
-          return;
-        }
-        if (this.currentExerciseIndex < this.session!.exercises.length - 1) {
-          this.currentExerciseIndex += 1;
-          this.currentSetIndex = 0;
-        }
-      },
-
-      completeSet() {
-        if (!this.session || !this.currentSet) return;
-        const ex = this.currentExercise;
-        if (!ex) return;
-        const set = ex.sets[this.currentSetIndex];
-        if (!set) return;
-        if (set.completed) return;
-        set.completed = true;
-        this.completedSets += 1;
-        updateSession(this.session.id, { exercises: this.session.exercises });
-
-        const isLastExercise =
-          this.currentExerciseIndex === this.session.exercises.length - 1;
-        const isLastSet = this.currentSetIndex === ex.sets.length - 1;
-        if (isLastExercise && isLastSet) {
-          this._finishSession();
-        } else {
-          this.nextSet();
-          this._startRest();
-        }
-      },
-
-      get canUndo(): boolean {
-        return this.completedSets > 0;
-      },
-
-      undoLastSet() {
-        if (!this.session || !this.canUndo) return;
-        const res = undoLastCompletedSet(this.session);
-        if (!res) return;
-        this.session.exercises = res.session.exercises;
-        this.completedSets = Math.max(0, this.completedSets - 1);
-        if (this.restInterval) {
-          window.clearInterval(this.restInterval);
-          this.restInterval = null;
-        }
-        this.restRemaining = 0;
-        this.state = "working";
-        this.currentExerciseIndex = res.exerciseIndex;
-        this.currentSetIndex = res.setIndex;
-        if (this.session.status === "completed") {
-          this.session.status = "in-progress";
-          updateSession(this.session.id, {
-            status: "in-progress",
-            exercises: this.session.exercises,
-          });
-        } else {
-          updateSession(this.session.id, { exercises: this.session.exercises });
-        }
-        this._requestWakeLock();
-      },
-
-      _startRest() {
-        this.restRemaining = Math.max(0, getSettings().defaultRestTime);
-        this.restPaused = false;
-        this.state = "resting";
-        if (this.restInterval) {
-          window.clearInterval(this.restInterval);
-        }
-        this.restInterval = window.setInterval(() => {
-          if (this.restPaused) return;
-          if (this.restRemaining <= 0) {
-            this._endRest();
-            return;
-          }
-          this.restRemaining -= 1;
-          if (this.restRemaining <= 0) {
-            this._endRest();
-          }
-        }, 1000);
-      },
-
-      _endRest() {
-        if (this.restInterval) {
-          window.clearInterval(this.restInterval);
-          this.restInterval = null;
-        }
-        this.restRemaining = 0;
-        this.state = "working";
-      },
-
-      skipRest() {
-        this._endRest();
-      },
-
-      addRestTime(delta: number) {
-        this.restRemaining = Math.max(0, this.restRemaining + delta);
-      },
-
-      stopSession() {
-        if (!window.confirm(LABELS.rapide.exitConfirm)) return;
-        if (this.restInterval) {
-          window.clearInterval(this.restInterval);
-          this.restInterval = null;
-        }
-        if (this.session) {
-          updateSession(this.session.id, this.session);
-        }
-        this._releaseWakeLock();
-        window.location.href = localizedPath("/sessions");
-      },
-
-      confirmStop() {
-        if (
-          this.recordedSets < this.totalSets &&
-          !window.confirm(LABELS.rapide.partialFinishConfirm)
-        )
-          return;
-        this._finishSession();
-      },
-
-      _finishSession() {
-        if (!this.session) return;
-        this.endTime = Date.now();
-        this.session.status = "completed";
-        this.session.duration = this.sessionDuration;
-        updateSession(this.session.id, {
-          status: "completed",
-          duration: this.sessionDuration,
-          exercises: this.session.exercises,
-        });
-        if (this.restInterval) {
-          window.clearInterval(this.restInterval);
-          this.restInterval = null;
-        }
-        this._releaseWakeLock();
-        this.state = "completed";
-      },
-
-      reset() {
-        if (this.restInterval) {
-          window.clearInterval(this.restInterval);
-          this.restInterval = null;
-        }
-        this._releaseWakeLock();
-        this.session = null;
-        this.selectedSessionId = "";
-        this.currentExerciseIndex = 0;
-        this.currentSetIndex = 0;
-        this.completedSets = 0;
-        this.startTime = 0;
-        this.endTime = 0;
-        this.restRemaining = 0;
-        this.loadSessions();
-        this.state = "selecting";
-      },
-
-      onTouchStart(e: TouchEvent) {
-        const t = e.touches[0];
-        if (!t) return;
-        this._touchStartX = t.clientX;
-        this._touchStartY = t.clientY;
-      },
-
-      onTouchEnd(e: TouchEvent) {
-        const t = e.changedTouches[0];
-        if (!t) return;
-        const dx = t.clientX - this._touchStartX;
-        const dy = t.clientY - this._touchStartY;
-        if (Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy)) return;
-        if (dx < 0) {
-          this.nextSet();
-        } else {
-          this.prevSet();
-        }
-      },
-
-      _installKeyboard() {
-        this._keyHandler = (e: KeyboardEvent) => {
-          const target = e.target as HTMLElement | null;
-          if (
-            target &&
-            (target.tagName === "INPUT" ||
-              target.tagName === "TEXTAREA" ||
-              target.tagName === "SELECT")
-          ) {
-            return;
-          }
-          if (this.state === "working") {
-            if (e.key === " " || e.key === "Enter") {
-              e.preventDefault();
-              this.completeSet();
-            } else if (e.key === "ArrowRight" || e.key === "ArrowDown") {
-              e.preventDefault();
-              this.nextSet();
-            } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
-              e.preventDefault();
-              this.prevSet();
-            }
-          } else if (this.state === "resting") {
-            if (e.key === " " || e.key === "Enter") {
-              e.preventDefault();
-              this.skipRest();
-            }
-          } else if (this.state === "selecting" || this.state === "completed") {
-            if (e.key === "Escape") {
-              if (this.state === "completed") this.reset();
-              else window.location.href = localizedPath("/sessions");
-            }
-          }
-        };
-        window.addEventListener("keydown", this._keyHandler);
-      },
-
-      async _requestWakeLock(): Promise<void> {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const nav = navigator as any;
-        if (!nav.wakeLock || typeof nav.wakeLock.request !== "function") {
-          return;
-        }
-        try {
-          this.wakeLock = await nav.wakeLock.request("screen");
-        } catch {
-          // Permission denied, no user activation, or insecure context.
-        }
-      },
-
-      _releaseWakeLock() {
-        try {
-          if (this.wakeLock && typeof this.wakeLock.release === "function") {
-            this.wakeLock.release();
-          }
-        } catch {
-          // ignore
-        }
-        this.wakeLock = null;
-      },
-
-      setsShortLabel: LABELS.rapide.setsShort,
-      typeLabel(t: SetType): string {
-        return typeLabel(t, LABELS.rapide);
-      },
-      formatWeight(w: number): string {
-        return formatWeight(w);
-      },
-      formatDuration(s?: number): string {
-        return formatDuration(s, LABELS.rapide);
-      },
-      detailHref(id?: string): string {
-        return localizedPath(
-          "/sessions/detail?id=" + encodeURIComponent(id || ""),
-        );
-      },
-      weightUnit(): string {
-        return getSettings().unit;
-      },
-      formatRestTime(): string {
-        return formatRestTime(this.restRemaining);
-      },
-      restNextLabel(): string {
-        if (!this.session) return "";
-        return restNextLabelFn(
-          this.session,
-          this.currentExerciseIndex,
-          this.currentSetIndex,
-          formatWeight,
-          this.weightUnit(),
-          LABELS.rapide.nextUp,
-        );
-      },
-    }));
+    Alpine.data('quickSessionApp', () =>
+      createQuickSession({
+        labels: LABELS.rapide,
+        storage: { getSessions, saveSession, updateSession },
+        defaultRestSeconds: () => getSettings().defaultRestTime,
+        restSecondsFor: (name, fallback) => getRestTime(name, fallback),
+        unit: () => getSettings().unit,
+        confirm: (message) => window.confirm(message),
+        navigate: (href) => (window.location.href = href),
+        sessionsHref: localizedPath('/sessions'),
+        detailHref: (id) => localizedPath('/sessions/detail?id=' + encodeURIComponent(id || '')),
+      })
+    );
   });
 </script>
 
@@ -1256,8 +682,7 @@ const L = t();
     align-items: center;
     justify-content: center;
     gap: 0.6rem;
-    box-shadow: 0 2px 8px
-      color-mix(in srgb, var(--color-success) 20%, transparent);
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--color-success) 20%, transparent);
     transition: all 140ms var(--transition-fast);
   }
   .quick__done-btn:hover {
@@ -1486,14 +911,6 @@ const L = t();
     font-weight: 700;
     color: var(--color-accent);
     line-height: 1;
-  }
-
-  .quick__stat-label {
-    font-size: 1.1rem;
-    color: var(--color-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    font-weight: 700;
   }
 
   .quick__done-actions {

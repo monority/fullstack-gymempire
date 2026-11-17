@@ -4,16 +4,12 @@
  *
  * Renders inside Alpine x-data scope (dashboardApp).
  */
-import { t, localizedPath } from "../../i18n";
+import { t } from '../../i18n';
 
 const L = t();
 ---
 
-<section
-  class="dash__next"
-  x-show="nextSession"
-  aria-label={L.dashboard.nextSession}
->
+<section class="dash__next" x-show="nextSession" aria-label={L.dashboard.nextSession}>
   <div class="dash__next-kicker" x-text="labels.nextSession">
     {L.dashboard.nextSession}
   </div>
@@ -23,16 +19,13 @@ const L = t();
       <p
         class="dash__next-hint"
         x-text="nextSession?.status === 'in-progress' ? labels.continueWorkout : labels.plannedWorkoutHint"
-      >
-      </p>
+      ></p>
     </div>
     <a
       class="dash__next-action"
       :href="localizedPath('/sessions/quick?session=' + nextSession?.id)"
     >
-      <span
-        x-text="nextSession?.status === 'in-progress' ? labels.continueWorkout : labels.startWorkout"
-      ></span>
+      <span x-text="nextSession?.status === 'in-progress' ? labels.continueWorkout : labels.startWorkout"></span>
       <span aria-hidden="true">↗</span>
     </a>
   </div>

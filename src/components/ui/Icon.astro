@@ -1,7 +1,12 @@
 ---
 import { icons } from '../../lib/icons';
-interface Props { name: string; size?: number; class?: string; [key: string]: unknown; }
-const { name, size = 20, class: className = '', ...rest } = Astro.props;
+interface Props {
+  name: string;
+  size?: number;
+  class?: string;
+  [key: string]: unknown;
+}
+const { name, size = 20, class: className = '' } = Astro.props;
 const raw = (icons as Record<string, (w?: number, h?: number) => string>)[name]?.(size, size) ?? '';
 // When a class is applied, strip inline width/height so CSS can control sizing.
 // Set --icon-size CSS var so scoped styles can reference the intended size.
@@ -12,4 +17,5 @@ const svg = className
       .replace('<svg ', `<svg class="${className}" style="--icon-size:${size}px" `)
   : raw;
 ---
+
 <Fragment set:html={svg} />

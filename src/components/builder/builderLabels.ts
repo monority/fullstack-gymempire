@@ -4,9 +4,7 @@
  * Maps LABELS.builder.* to a flat object for Alpine scope.
  */
 
-export function pickBuilderLabels(L: {
-  builder: Record<string, string>;
-}) {
+export function pickBuilderLabels(L: { builder: Record<string, string> }) {
   const b = L.builder;
   return {
     saveSession: b.saveSession,
@@ -72,3 +70,6 @@ export function pickBuilderLabels(L: {
     videoTitle: b.videoTitle,
   };
 }
+
+/** Type dérivé : une seule source de vérité pour les labels du builder. */
+export type BuilderLabels = ReturnType<typeof pickBuilderLabels>;

@@ -9,7 +9,7 @@
  * `:class="{ 'is-active': … }"` + `@click="model = value"` directives.
  */
 interface Props {
-  items: { value: string; label: string }[];
+  items: { value: string; label: string; action?: string }[];
   /** Alpine scope expression to read/write, e.g. "period" or "metric". */
   model: string;
   /** Optional `aria-label` for the group. */
@@ -17,37 +17,30 @@ interface Props {
   class?: string;
 }
 
-const {
-  items,
-  model,
-  ariaLabel,
-  class: className = '',
-} = Astro.props;
+const { items, model, ariaLabel, class: className = '' } = Astro.props;
 
 /** Escape a string for safe injection into single-quoted Alpine expressions. */
 const escapeAlpine = (s: string) => s.replace(/'/g, "\\'");
 ---
 
-<div class:list={['seg', className]}
-  role="group"
-  aria-label={ariaLabel}
->
-  {
-    items.map((item) => {
-      const escaped = escapeAlpine(item.value);
-      return (
-        <button
-          type="button"
-          class="seg__btn"
-          :class={`{ 'is-active': ${model} === '${escaped}' }`}
-          @click={`${model} = '${escaped}'`}
-          :aria-pressed={`${model} === '${escaped}'`}
-        >
-          {item.label}
-        </button>
-      );
-    })
-  }
+<div class:list={['seg', className]} role="group" aria-label={ariaLabel}>
+  {items.map((item) => {
+    const escaped = escapeAlpine(item.value);
+    // `action` permet d'appeler une méthode Alpine à la place de
+    // l'assignation par défaut (ex. persister un réglage).
+    const click = item.action ?? `${model} = '${escaped}'`;
+    return (
+      <button
+        type="button"
+        class="seg__btn"
+        :class={`{ 'is-active': ${model} === '${escaped}' }`}
+        @click={click}
+        :aria-pressed={`${model} === '${escaped}'`}
+      >
+        {item.label}
+      </button>
+    );
+  })}
 </div>
 
 <style>
@@ -80,9 +73,10 @@ const escapeAlpine = (s: string) => s.replace(/'/g, "\\'");
     font-weight: 600;
     white-space: nowrap;
     cursor: pointer;
-    transition: background-color var(--transition-fast),
-                border-color var(--transition-fast),
-                color var(--transition-fast);
+    transition:
+      background-color var(--transition-fast),
+      border-color var(--transition-fast),
+      color var(--transition-fast);
   }
 
   .seg__btn:hover {
@@ -105,5 +99,4 @@ const escapeAlpine = (s: string) => s.replace(/'/g, "\\'");
       padding: 0 1.2rem;
     }
   }
-
 </style>

@@ -1,5 +1,4 @@
 ---
-
 import { t, localizedPath } from '../i18n';
 import AppLayout from '../layouts/AppLayout.astro';
 import Button from '../components/ui/Button.astro';
@@ -36,10 +35,16 @@ import { icons } from '../lib/icons';
 import WorkoutCard from '../components/workout/WorkoutCard.astro';
 const L = t();
 
+// B1 (plan-execution.md) — page design-system réservée au dev :
+// en production, /ui renvoie la page 404 (route non destinée au public).
+if (import.meta.env.PROD) {
+  return Astro.rewrite('/404');
+}
+
 // Design-token showcase — the `value` strings below deliberately mirror
-// the raw token literals from styles/tokens.css. They are the specimen
+// the raw token literals from styles/tokens/colors.css. They are the specimen
 // data this page exists to display, NOT style drifts; keep them in sync
-// with tokens.css and out of any color-purge pass.
+// with the tokens and out of any color-purge pass.
 const swatches = [
   { name: 'bg', token: '--color-bg', value: '#050505' },
   { name: 'surface', token: '--color-surface', value: '#0B0B0B' },
@@ -146,47 +151,69 @@ const workoutCards = [
   <!-- ─── 1. Typography ──────────────────────────────────────── -->
   <section style="margin-bottom: 4.8rem;">
     <header style="margin-bottom: 2.4rem;">
-      <div style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; color: var(--color-accent); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.4rem;">01</div>
-      <h2 style="font-family: var(--font-display); font-size: 2.4rem; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 0.8rem;">{L.ui.typography}</h2>
-      <p style="color: var(--color-muted); font-size: 1.4rem; max-width: 60rem;">{L.ui.typographyDesc}</p>
+      <div style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; color: var(--color-accent); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.4rem;">
+        01
+      </div>
+      <h2 style="font-family: var(--font-display); font-size: 2.4rem; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 0.8rem;">
+        {L.ui.typography}
+      </h2>
+      <p style="color: var(--color-muted); font-size: 1.4rem; max-width: 60rem;">
+        {L.ui.typographyDesc}
+      </p>
     </header>
 
     <Card>
       <CardContent>
         <div style="display: flex; flex-direction: column; gap: 1.6rem;">
           <div>
-            <div style="font-family: var(--font-display); font-size: clamp(2.8rem, 5vw, 4.2rem); font-weight: 700; line-height: 1.05; letter-spacing: -0.02em;">Push Day Intense</div>
-            <div style="color: var(--color-muted); font-size: 1.1rem; margin-top: 0.4rem; text-transform: uppercase; letter-spacing: 0.05em;">Display · var(--font-display) · clamp(2.8rem, 5vw, 4.2rem) · 700</div>
+            <div style="font-family: var(--font-display); font-size: clamp(2.8rem, 5vw, 4.2rem); font-weight: 700; line-height: 1.05; letter-spacing: -0.02em;">
+              Push Day Intense
+            </div>
+            <div style="color: var(--color-muted); font-size: 1.1rem; margin-top: 0.4rem; text-transform: uppercase; letter-spacing: 0.05em;">
+              Display · var(--font-display) · clamp(2.8rem, 5vw, 4.2rem) · 700
+            </div>
           </div>
           <div>
             <h1 style="margin-bottom: 0.4rem;">{L.ui.demoDashboard}</h1>
-            <div style="color: var(--color-muted); font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.05em;">H1 · var(--font-display) · clamp(1.6rem, 3vw, 2rem) · 700</div>
+            <div style="color: var(--color-muted); font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.05em;">
+              H1 · var(--font-display) · clamp(1.6rem, 3vw, 2rem) · 700
+            </div>
           </div>
           <div>
             <h2 style="margin-bottom: 0.4rem;">{L.ui.demoRecentSessions}</h2>
-            <div style="color: var(--color-muted); font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.05em;">H2 · var(--font-display) · 1.6rem · 700</div>
+            <div style="color: var(--color-muted); font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.05em;">
+              H2 · var(--font-display) · 1.6rem · 700
+            </div>
           </div>
           <div>
             <h3 style="margin-bottom: 0.4rem;">{L.ui.exos.benchPress}</h3>
-            <div style="color: var(--color-muted); font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.05em;">H3 · var(--font-display) · 1.4rem · 700</div>
+            <div style="color: var(--color-muted); font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.05em;">
+              H3 · var(--font-display) · 1.4rem · 700
+            </div>
           </div>
           <div>
             <p style="font-family: var(--font-body); font-size: 1.6rem; line-height: 1.5; margin-bottom: 0.4rem; color: var(--color-text);">
               {L.ui.bodyText}
             </p>
-            <div style="color: var(--color-muted); font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.05em;">Body · var(--font-body) · 1.6rem · 400</div>
+            <div style="color: var(--color-muted); font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.05em;">
+              Body · var(--font-body) · 1.6rem · 400
+            </div>
           </div>
           <div>
             <p style="font-family: var(--font-body); font-size: 1.3rem; line-height: 1.4; margin-bottom: 0.4rem; color: var(--color-text);">
               {L.ui.secondaryText}
             </p>
-            <div style="color: var(--color-muted); font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.05em;">Small · var(--font-body) · 1.3rem · 400</div>
+            <div style="color: var(--color-muted); font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.05em;">
+              Small · var(--font-body) · 1.3rem · 400
+            </div>
           </div>
           <div>
             <p style="font-family: var(--font-body); font-size: 1.1rem; line-height: 1.3; margin-bottom: 0.4rem; color: var(--color-muted);">
               {L.ui.captionText}
             </p>
-            <div style="color: var(--color-muted); font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.05em;">Caption · var(--font-body) · 1.1rem · 400</div>
+            <div style="color: var(--color-muted); font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.05em;">
+              Caption · var(--font-body) · 1.1rem · 400
+            </div>
           </div>
         </div>
       </CardContent>
@@ -196,15 +223,23 @@ const workoutCards = [
   <!-- ─── 2. Colors ──────────────────────────────────────────── -->
   <section style="margin-bottom: 4.8rem;">
     <header style="margin-bottom: 2.4rem;">
-      <div style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; color: var(--color-accent); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.4rem;">02</div>
-      <h2 style="font-family: var(--font-display); font-size: 2.4rem; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 0.8rem;">{L.ui.colors}</h2>
-      <p style="color: var(--color-muted); font-size: 1.4rem; max-width: 60rem;">{L.ui.colorsDesc}</p>
+      <div style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; color: var(--color-accent); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.4rem;">
+        02
+      </div>
+      <h2 style="font-family: var(--font-display); font-size: 2.4rem; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 0.8rem;">
+        {L.ui.colors}
+      </h2>
+      <p style="color: var(--color-muted); font-size: 1.4rem; max-width: 60rem;">
+        {L.ui.colorsDesc}
+      </p>
     </header>
 
     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); gap: 1.6rem;">
       {swatches.map((swatch) => (
         <div>
-          <div style={`height: 7.2rem; border-radius: var(--radius-md); background: var(${swatch.token}); border: 1px solid var(--color-border);`}></div>
+          <div
+            style={`height: 7.2rem; border-radius: var(--radius-md); background: var(${swatch.token}); border: 1px solid var(--color-border);`}
+          ></div>
           <div style="margin-top: 0.8rem; font-size: 1.3rem; font-weight: 600; color: var(--color-text); font-family: var(--font-body);">
             {swatch.name}
           </div>
@@ -219,9 +254,15 @@ const workoutCards = [
   <!-- ─── 3. Buttons ─────────────────────────────────────────── -->
   <section style="margin-bottom: 4.8rem;">
     <header style="margin-bottom: 2.4rem;">
-      <div style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; color: var(--color-accent); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.4rem;">03</div>
-      <h2 style="font-family: var(--font-display); font-size: 2.4rem; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 0.8rem;">{L.ui.buttons}</h2>
-      <p style="color: var(--color-muted); font-size: 1.4rem; max-width: 60rem;">{L.ui.buttonsDesc}</p>
+      <div style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; color: var(--color-accent); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.4rem;">
+        03
+      </div>
+      <h2 style="font-family: var(--font-display); font-size: 2.4rem; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 0.8rem;">
+        {L.ui.buttons}
+      </h2>
+      <p style="color: var(--color-muted); font-size: 1.4rem; max-width: 60rem;">
+        {L.ui.buttonsDesc}
+      </p>
     </header>
 
     <Card>
@@ -233,9 +274,15 @@ const workoutCards = [
                 {variant}
               </div>
               <div style="display: flex; gap: 1.6rem; align-items: center; flex-wrap: wrap;">
-                <Button variant={variant} size="sm">{L.ui.btnSmall}</Button>
-                <Button variant={variant} size="md">{L.ui.btnMedium}</Button>
-                <Button variant={variant} size="lg">{L.ui.btnLarge}</Button>
+                <Button variant={variant} size="sm">
+                  {L.ui.btnSmall}
+                </Button>
+                <Button variant={variant} size="md">
+                  {L.ui.btnMedium}
+                </Button>
+                <Button variant={variant} size="lg">
+                  {L.ui.btnLarge}
+                </Button>
               </div>
             </div>
           ))}
@@ -245,10 +292,18 @@ const workoutCards = [
               {L.ui.states}
             </div>
             <div style="display: flex; gap: 1.6rem; align-items: center; flex-wrap: wrap;">
-              <Button variant="primary" loading>{L.common.loading}</Button>
-              <Button variant="primary" disabled>{L.ui.disabled}</Button>
-              <Button variant="secondary" disabled>{L.ui.disabled}</Button>
-              <Button variant="primary" fullWidth>{L.ui.fullWidthBtn}</Button>
+              <Button variant="primary" loading>
+                {L.common.loading}
+              </Button>
+              <Button variant="primary" disabled>
+                {L.ui.disabled}
+              </Button>
+              <Button variant="secondary" disabled>
+                {L.ui.disabled}
+              </Button>
+              <Button variant="primary" fullWidth>
+                {L.ui.fullWidthBtn}
+              </Button>
             </div>
           </div>
         </div>
@@ -259,19 +314,29 @@ const workoutCards = [
   <!-- ─── 4. Cards ───────────────────────────────────────────── -->
   <section style="margin-bottom: 4.8rem;">
     <header style="margin-bottom: 2.4rem;">
-      <div style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; color: var(--color-accent); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.4rem;">04</div>
-      <h2 style="font-family: var(--font-display); font-size: 2.4rem; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 0.8rem;">{L.ui.cards}</h2>
-      <p style="color: var(--color-muted); font-size: 1.4rem; max-width: 60rem;">{L.ui.cardsDesc}</p>
+      <div style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; color: var(--color-accent); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.4rem;">
+        04
+      </div>
+      <h2 style="font-family: var(--font-display); font-size: 2.4rem; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 0.8rem;">
+        {L.ui.cards}
+      </h2>
+      <p style="color: var(--color-muted); font-size: 1.4rem; max-width: 60rem;">
+        {L.ui.cardsDesc}
+      </p>
     </header>
 
-    <h3 style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; margin: 0 0 1.2rem; color: var(--color-muted); text-transform: uppercase; letter-spacing: 0.05em;">{L.ui.surfaceVariants}</h3>
+    <h3 style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; margin: 0 0 1.2rem; color: var(--color-muted); text-transform: uppercase; letter-spacing: 0.05em;">
+      {L.ui.surfaceVariants}
+    </h3>
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(24rem, 1fr)); gap: 1.6rem; margin-bottom: 2.4rem;">
       <Card>
         <CardHeader>
           <CardTitle>Default</CardTitle>
         </CardHeader>
         <CardContent>
-          <p style="color: var(--color-muted); font-size: 1.3rem; margin: 0;">{L.ui.cardDefaultDesc}</p>
+          <p style="color: var(--color-muted); font-size: 1.3rem; margin: 0;">
+            {L.ui.cardDefaultDesc}
+          </p>
         </CardContent>
       </Card>
 
@@ -280,7 +345,9 @@ const workoutCards = [
           <CardTitle>Elevated</CardTitle>
         </CardHeader>
         <CardContent>
-          <p style="color: var(--color-muted); font-size: 1.3rem; margin: 0;">{L.ui.cardElevatedDesc}</p>
+          <p style="color: var(--color-muted); font-size: 1.3rem; margin: 0;">
+            {L.ui.cardElevatedDesc}
+          </p>
         </CardContent>
       </Card>
 
@@ -289,22 +356,32 @@ const workoutCards = [
           <CardTitle>Interactive</CardTitle>
         </CardHeader>
         <CardContent>
-          <p style="color: var(--color-muted); font-size: 1.3rem; margin: 0;">{L.ui.cardInteractiveDesc}</p>
+          <p style="color: var(--color-muted); font-size: 1.3rem; margin: 0;">
+            {L.ui.cardInteractiveDesc}
+          </p>
         </CardContent>
       </Card>
     </div>
 
-    <h3 style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; margin: 0 0 1.2rem; color: var(--color-muted); text-transform: uppercase; letter-spacing: 0.05em;">{L.ui.headerComposition}</h3>
+    <h3 style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; margin: 0 0 1.2rem; color: var(--color-muted); text-transform: uppercase; letter-spacing: 0.05em;">
+      {L.ui.headerComposition}
+    </h3>
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(28rem, 1fr)); gap: 1.6rem; margin-bottom: 2.4rem;">
       <Card>
         <CardHeader>
           <CardTitle>{L.ui.titlePlusDesc}</CardTitle>
           <p style="color: var(--color-muted); font-size: 1.3rem; margin: 0; line-height: 1.5;">
-            {L.ui.headerCompoBefore}<code style="font-family: 'Courier New', monospace; font-size: 1.1rem; background: var(--color-surface-2); padding: 0.1rem 0.4rem; border-radius: 0.3rem;">flex-col</code>{L.ui.headerCompoAfter}
+            {L.ui.headerCompoBefore}
+            <code style="font-family: 'Courier New', monospace; font-size: 1.1rem; background: var(--color-surface-2); padding: 0.1rem 0.4rem; border-radius: 0.3rem;">
+              flex-col
+            </code>
+            {L.ui.headerCompoAfter}
           </p>
         </CardHeader>
         <CardContent>
-          <p style="color: var(--color-muted); font-size: 1.3rem; margin: 0;">{L.ui.cardContentDesc}</p>
+          <p style="color: var(--color-muted); font-size: 1.3rem; margin: 0;">
+            {L.ui.cardContentDesc}
+          </p>
         </CardContent>
       </Card>
 
@@ -312,24 +389,36 @@ const workoutCards = [
         <CardHeader>
           <div class="ui__card-header">
             <CardTitle>{L.ui.titlePlusBadge}</CardTitle>
-            <Badge variant="accent" size="sm">{L.ui.new}</Badge>
+            <Badge variant="accent" size="sm">
+              {L.ui.new}
+            </Badge>
           </div>
           <p style="color: var(--color-muted); font-size: 1.3rem; margin: 0; line-height: 1.5;">
-            {L.ui.badgeWrapperBefore}<code style="font-family: 'Courier New', monospace; font-size: 1.1rem; background: var(--color-surface-2); padding: 0.1rem 0.4rem; border-radius: 0.3rem;">flex-row</code>{L.ui.badgeWrapperAfter}
+            {L.ui.badgeWrapperBefore}
+            <code style="font-family: 'Courier New', monospace; font-size: 1.1rem; background: var(--color-surface-2); padding: 0.1rem 0.4rem; border-radius: 0.3rem;">
+              flex-row
+            </code>
+            {L.ui.badgeWrapperAfter}
           </p>
         </CardHeader>
         <CardContent>
-          <p style="color: var(--color-muted); font-size: 1.3rem; margin: 0;">{L.ui.wrapperCoexistDesc}</p>
+          <p style="color: var(--color-muted); font-size: 1.3rem; margin: 0;">
+            {L.ui.wrapperCoexistDesc}
+          </p>
         </CardContent>
       </Card>
     </div>
 
-    <h3 style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; margin: 0 0 1.2rem; color: var(--color-muted); text-transform: uppercase; letter-spacing: 0.05em;">{L.ui.fullCard}</h3>
+    <h3 style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; margin: 0 0 1.2rem; color: var(--color-muted); text-transform: uppercase; letter-spacing: 0.05em;">
+      {L.ui.fullCard}
+    </h3>
     <Card>
       <CardHeader>
         <div class="ui__card-header">
           <CardTitle>{L.ui.compositeCard}</CardTitle>
-          <Badge variant="success" size="sm">{L.sessions.completed}</Badge>
+          <Badge variant="success" size="sm">
+            {L.sessions.completed}
+          </Badge>
         </div>
       </CardHeader>
       <CardContent>
@@ -338,8 +427,12 @@ const workoutCards = [
         </p>
       </CardContent>
       <CardFooter>
-        <Button variant="ghost" size="sm">{L.ui.details}</Button>
-        <Button variant="primary" size="sm">{L.ui.viewSession}</Button>
+        <Button variant="ghost" size="sm">
+          {L.ui.details}
+        </Button>
+        <Button variant="primary" size="sm">
+          {L.ui.viewSession}
+        </Button>
       </CardFooter>
     </Card>
   </section>
@@ -347,9 +440,15 @@ const workoutCards = [
   <!-- ─── 5. Forms ───────────────────────────────────────────── -->
   <section style="margin-bottom: 4.8rem;">
     <header style="margin-bottom: 2.4rem;">
-      <div style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; color: var(--color-accent); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.4rem;">05</div>
-      <h2 style="font-family: var(--font-display); font-size: 2.4rem; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 0.8rem;">{L.ui.forms}</h2>
-      <p style="color: var(--color-muted); font-size: 1.4rem; max-width: 60rem;">{L.ui.formsDesc}</p>
+      <div style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; color: var(--color-accent); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.4rem;">
+        05
+      </div>
+      <h2 style="font-family: var(--font-display); font-size: 2.4rem; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 0.8rem;">
+        {L.ui.forms}
+      </h2>
+      <p style="color: var(--color-muted); font-size: 1.4rem; max-width: 60rem;">
+        {L.ui.formsDesc}
+      </p>
     </header>
 
     <Card>
@@ -368,12 +467,7 @@ const workoutCards = [
             type="number"
             error={L.ui.loadError}
           />
-          <Input
-            id="demo-input-3"
-            label={L.ui.disabledField}
-            value={L.ui.readOnly}
-            disabled
-          />
+          <Input id="demo-input-3" label={L.ui.disabledField} value={L.ui.readOnly} disabled />
 
           <Select
             id="demo-select-1"
@@ -407,9 +501,15 @@ const workoutCards = [
   <!-- ─── 6. Feedback ────────────────────────────────────────── -->
   <section style="margin-bottom: 4.8rem;">
     <header style="margin-bottom: 2.4rem;">
-      <div style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; color: var(--color-accent); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.4rem;">06</div>
-      <h2 style="font-family: var(--font-display); font-size: 2.4rem; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 0.8rem;">Feedback</h2>
-      <p style="color: var(--color-muted); font-size: 1.4rem; max-width: 60rem;">{L.ui.feedbackDesc}</p>
+      <div style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; color: var(--color-accent); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.4rem;">
+        06
+      </div>
+      <h2 style="font-family: var(--font-display); font-size: 2.4rem; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 0.8rem;">
+        Feedback
+      </h2>
+      <p style="color: var(--color-muted); font-size: 1.4rem; max-width: 60rem;">
+        {L.ui.feedbackDesc}
+      </p>
     </header>
 
     <div style="display: flex; flex-direction: column; gap: 1.6rem;">
@@ -427,27 +527,61 @@ const workoutCards = [
             <Badge variant="accent">{L.ui.accent}</Badge>
           </div>
           <div style="display: flex; gap: 1.6rem; align-items: center; flex-wrap: wrap; margin-top: 1.6rem; padding-top: 1.6rem; border-top: 1px solid var(--color-border);">
-            <Badge variant="default" size="sm">SM · Default</Badge>
-            <Badge variant="success" size="sm">SM · {L.common.success}</Badge>
-            <Badge variant="warning" size="sm">SM · {L.ui.avert}</Badge>
-            <Badge variant="danger" size="sm">SM · {L.common.error}</Badge>
-            <Badge variant="info" size="sm">SM · {L.common.info}</Badge>
-            <Badge variant="accent" size="sm">SM · {L.ui.accent}</Badge>
+            <Badge variant="default" size="sm">
+              SM · Default
+            </Badge>
+            <Badge variant="success" size="sm">
+              SM · {L.common.success}
+            </Badge>
+            <Badge variant="warning" size="sm">
+              SM · {L.ui.avert}
+            </Badge>
+            <Badge variant="danger" size="sm">
+              SM · {L.common.error}
+            </Badge>
+            <Badge variant="info" size="sm">
+              SM · {L.common.info}
+            </Badge>
+            <Badge variant="accent" size="sm">
+              SM · {L.ui.accent}
+            </Badge>
           </div>
           <div style="display: flex; gap: 1.6rem; align-items: center; flex-wrap: wrap; margin-top: 1.6rem; padding-top: 1.6rem; border-top: 1px solid var(--color-border);">
-            <Badge variant="category" tone="chest" size="sm">{L.exercices.muscles.pecs}</Badge>
-            <Badge variant="category" tone="back" size="sm">{L.exercices.muscles.dos}</Badge>
-            <Badge variant="category" tone="shoulders" size="sm">{L.exercices.muscles.epaules}</Badge>
-            <Badge variant="category" tone="arms" size="sm">{L.exercices.muscles.biceps}</Badge>
-            <Badge variant="category" tone="legs" size="sm">{L.exercices.muscles.jambes}</Badge>
-            <Badge variant="category" tone="core" size="sm">{L.exercices.muscles.abdos}</Badge>
+            <Badge variant="category" tone="chest" size="sm">
+              {L.exercices.muscles.pecs}
+            </Badge>
+            <Badge variant="category" tone="back" size="sm">
+              {L.exercices.muscles.dos}
+            </Badge>
+            <Badge variant="category" tone="shoulders" size="sm">
+              {L.exercices.muscles.epaules}
+            </Badge>
+            <Badge variant="category" tone="arms" size="sm">
+              {L.exercices.muscles.biceps}
+            </Badge>
+            <Badge variant="category" tone="legs" size="sm">
+              {L.exercices.muscles.jambes}
+            </Badge>
+            <Badge variant="category" tone="core" size="sm">
+              {L.exercices.muscles.abdos}
+            </Badge>
           </div>
           <div style="display: flex; gap: 1.6rem; align-items: center; flex-wrap: wrap; margin-top: 1.6rem; padding-top: 1.6rem; border-top: 1px solid var(--color-border);">
-            <Badge variant="superset" group="g1" size="sm">{L.detail.supersetLabel} 1</Badge>
-            <Badge variant="superset" group="g2" size="sm">{L.detail.supersetLabel} 2</Badge>
-            <Badge variant="superset" group="g3" size="sm">{L.detail.supersetLabel} 3</Badge>
-            <Badge variant="superset" group="g4" size="sm">{L.detail.supersetLabel} 4</Badge>
-            <Badge variant="superset" group="g5" size="sm">{L.detail.supersetLabel} 5</Badge>
+            <Badge variant="superset" group="g1" size="sm">
+              {L.detail.supersetLabel} 1
+            </Badge>
+            <Badge variant="superset" group="g2" size="sm">
+              {L.detail.supersetLabel} 2
+            </Badge>
+            <Badge variant="superset" group="g3" size="sm">
+              {L.detail.supersetLabel} 3
+            </Badge>
+            <Badge variant="superset" group="g4" size="sm">
+              {L.detail.supersetLabel} 4
+            </Badge>
+            <Badge variant="superset" group="g5" size="sm">
+              {L.detail.supersetLabel} 5
+            </Badge>
           </div>
         </CardContent>
       </Card>
@@ -496,16 +630,10 @@ const workoutCards = [
                 title={L.sessions.noSession}
                 description={L.ui.emptyStateDesc}
                 actionLabel={L.ui.createSession}
-                actionHref={localizedPath("/sessions/create")}
+                actionHref={localizedPath('/sessions/create')}
               />
-              <EmptyState
-                iconName="dumbbell"
-                title={L.exercices.emptyLibrary}
-              />
-              <EmptyState
-                iconName="chart"
-                title={L.progression.noData}
-              />
+              <EmptyState iconName="dumbbell" title={L.exercices.emptyLibrary} />
+              <EmptyState iconName="chart" title={L.progression.noData} />
             </div>
           </CardContent>
         </Card>
@@ -516,9 +644,15 @@ const workoutCards = [
   <!-- ─── 7. Navigation ──────────────────────────────────────── -->
   <section style="margin-bottom: 4.8rem;">
     <header style="margin-bottom: 2.4rem;">
-      <div style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; color: var(--color-accent); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.4rem;">07</div>
-      <h2 style="font-family: var(--font-display); font-size: 2.4rem; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 0.8rem;">{L.ui.navigation}</h2>
-      <p style="color: var(--color-muted); font-size: 1.4rem; max-width: 60rem;">{L.ui.navigationDesc}</p>
+      <div style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; color: var(--color-accent); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.4rem;">
+        07
+      </div>
+      <h2 style="font-family: var(--font-display); font-size: 2.4rem; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 0.8rem;">
+        {L.ui.navigation}
+      </h2>
+      <p style="color: var(--color-muted); font-size: 1.4rem; max-width: 60rem;">
+        {L.ui.navigationDesc}
+      </p>
     </header>
 
     <div style="display: flex; flex-direction: column; gap: 1.6rem;">
@@ -530,13 +664,19 @@ const workoutCards = [
           <Tabs>
             <TabList tabs={tabItems} activeTab="overview" />
             <TabPanel id="overview">
-              <p style="color: var(--color-muted); font-size: 1.3rem; padding: 1.6rem 0; margin: 0;">{L.ui.overviewDesc}</p>
+              <p style="color: var(--color-muted); font-size: 1.3rem; padding: 1.6rem 0; margin: 0;">
+                {L.ui.overviewDesc}
+              </p>
             </TabPanel>
             <TabPanel id="specs">
-              <p style="color: var(--color-muted); font-size: 1.3rem; padding: 1.6rem 0; margin: 0;">{L.ui.specsDesc}</p>
+              <p style="color: var(--color-muted); font-size: 1.3rem; padding: 1.6rem 0; margin: 0;">
+                {L.ui.specsDesc}
+              </p>
             </TabPanel>
             <TabPanel id="reviews">
-              <p style="color: var(--color-muted); font-size: 1.3rem; padding: 1.6rem 0; margin: 0;">{L.ui.reviewsDesc}</p>
+              <p style="color: var(--color-muted); font-size: 1.3rem; padding: 1.6rem 0; margin: 0;">
+                {L.ui.reviewsDesc}
+              </p>
             </TabPanel>
           </Tabs>
         </CardContent>
@@ -580,9 +720,15 @@ const workoutCards = [
   <!-- ─── 8. Overlays ────────────────────────────────────────── -->
   <section style="margin-bottom: 4.8rem;">
     <header style="margin-bottom: 2.4rem;">
-      <div style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; color: var(--color-accent); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.4rem;">08</div>
-      <h2 style="font-family: var(--font-display); font-size: 2.4rem; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 0.8rem;">Overlays</h2>
-      <p style="color: var(--color-muted); font-size: 1.4rem; max-width: 60rem;">{L.ui.overlaysDesc}</p>
+      <div style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; color: var(--color-accent); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.4rem;">
+        08
+      </div>
+      <h2 style="font-family: var(--font-display); font-size: 2.4rem; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 0.8rem;">
+        Overlays
+      </h2>
+      <p style="color: var(--color-muted); font-size: 1.4rem; max-width: 60rem;">
+        {L.ui.overlaysDesc}
+      </p>
     </header>
 
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(28rem, 1fr)); gap: 1.6rem;">
@@ -613,12 +759,20 @@ const workoutCards = [
             </p>
             <Dropdown align="start">
               <Button variant="secondary">{L.ui.actions}</Button>
-              <button slot="menu" role="menuitem">{L.common.edit}</button>
-              <button slot="menu" role="menuitem">{L.ui.duplicate}</button>
+              <button slot="menu" role="menuitem">
+                {L.common.edit}
+              </button>
+              <button slot="menu" role="menuitem">
+                {L.ui.duplicate}
+              </button>
               <hr slot="menu" />
-              <button slot="menu" role="menuitem">{L.ui.export}</button>
+              <button slot="menu" role="menuitem">
+                {L.ui.export}
+              </button>
               <hr slot="menu" />
-              <button slot="menu" role="menuitem">{L.common.delete}</button>
+              <button slot="menu" role="menuitem">
+                {L.common.delete}
+              </button>
             </Dropdown>
           </div>
         </CardContent>
@@ -626,19 +780,25 @@ const workoutCards = [
     </div>
 
     <Dialog id="demo-dialog" title={L.ui.confirmRequired}>
-      <p style="margin: 0;">
-        {L.ui.dialogBody}
-      </p>
-      <Button slot="footer" variant="secondary" data-dialog-close>{L.common.cancel}</Button>
-      <Button slot="footer" variant="destructive" data-dialog-close>{L.common.confirm}</Button>
+      <p style="margin: 0;">{L.ui.dialogBody}</p>
+      <Button slot="footer" variant="secondary" data-dialog-close>
+        {L.common.cancel}
+      </Button>
+      <Button slot="footer" variant="destructive" data-dialog-close>
+        {L.common.confirm}
+      </Button>
     </Dialog>
   </section>
 
   <!-- ─── 9. Data ────────────────────────────────────────────── -->
   <section style="margin-bottom: 4.8rem;">
     <header style="margin-bottom: 2.4rem;">
-      <div style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; color: var(--color-accent); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.4rem;">09</div>
-      <h2 style="font-family: var(--font-display); font-size: 2.4rem; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 0.8rem;">{L.ui.data}</h2>
+      <div style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; color: var(--color-accent); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.4rem;">
+        09
+      </div>
+      <h2 style="font-family: var(--font-display); font-size: 2.4rem; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 0.8rem;">
+        {L.ui.data}
+      </h2>
       <p style="color: var(--color-muted); font-size: 1.4rem; max-width: 60rem;">{L.ui.dataDesc}</p>
     </header>
 
@@ -687,24 +847,60 @@ const workoutCards = [
   <!-- ─── 10. Workout ────────────────────────────────────────── -->
   <section style="margin-bottom: 4.8rem;">
     <header style="margin-bottom: 2.4rem;">
-      <div style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; color: var(--color-accent); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.4rem;">10</div>
-      <h2 style="font-family: var(--font-display); font-size: 2.4rem; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 0.8rem;">Workout</h2>
-      <p style="color: var(--color-muted); font-size: 1.4rem; max-width: 60rem;">{L.ui.workoutDesc}</p>
+      <div style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; color: var(--color-accent); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.4rem;">
+        10
+      </div>
+      <h2 style="font-family: var(--font-display); font-size: 2.4rem; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 0.8rem;">
+        Workout
+      </h2>
+      <p style="color: var(--color-muted); font-size: 1.4rem; max-width: 60rem;">
+        {L.ui.workoutDesc}
+      </p>
     </header>
 
     <div style="display: flex; flex-direction: column; gap: 1.6rem;">
       <div>
-        <h3 style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; margin-bottom: 1.2rem; color: var(--color-muted); text-transform: uppercase; letter-spacing: 0.05em;">{L.stats.title}</h3>
+        <h3 style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; margin-bottom: 1.2rem; color: var(--color-muted); text-transform: uppercase; letter-spacing: 0.05em;">
+          {L.stats.title}
+        </h3>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr)); gap: 1.6rem;">
-          <StatsCard label={L.dashboard.totalVolume} value="12 940" unit="kg" trend="up" trendValue="+8 %" icon={icons.chartBar(18, 18)} />
-          <StatsCard label={L.dashboard.totalSessions} value="24" trend="up" trendValue="+3" icon={icons.dumbbell(18, 18)} />
-          <StatsCard label={L.records.titlePage} value="2" trend="neutral" trendValue="stable" icon={icons.award(18, 18)} />
-          <StatsCard label={L.ui.currentStreak} value="12" unit={L.dashboard.daysPlural} trend="up" trendValue="record" icon={icons.flame(18, 18)} />
+          <StatsCard
+            label={L.dashboard.totalVolume}
+            value="12 940"
+            unit="kg"
+            trend="up"
+            trendValue="+8 %"
+            icon={icons.chartBar(18, 18)}
+          />
+          <StatsCard
+            label={L.dashboard.totalSessions}
+            value="24"
+            trend="up"
+            trendValue="+3"
+            icon={icons.dumbbell(18, 18)}
+          />
+          <StatsCard
+            label={L.records.titlePage}
+            value="2"
+            trend="neutral"
+            trendValue="stable"
+            icon={icons.award(18, 18)}
+          />
+          <StatsCard
+            label={L.ui.currentStreak}
+            value="12"
+            unit={L.dashboard.daysPlural}
+            trend="up"
+            trendValue="record"
+            icon={icons.flame(18, 18)}
+          />
         </div>
       </div>
 
       <div>
-        <h3 style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; margin-bottom: 1.2rem; color: var(--color-muted); text-transform: uppercase; letter-spacing: 0.05em;">{L.ui.exerciseCard}</h3>
+        <h3 style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; margin-bottom: 1.2rem; color: var(--color-muted); text-transform: uppercase; letter-spacing: 0.05em;">
+          {L.ui.exerciseCard}
+        </h3>
         <ExerciseCard
           name={L.ui.exos.benchPress}
           muscle={L.exercices.muscles.pecs}
@@ -714,7 +910,9 @@ const workoutCards = [
       </div>
 
       <div>
-        <h3 style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; margin-bottom: 1.2rem; color: var(--color-muted); text-transform: uppercase; letter-spacing: 0.05em;">{L.ui.workoutCards}</h3>
+        <h3 style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; margin-bottom: 1.2rem; color: var(--color-muted); text-transform: uppercase; letter-spacing: 0.05em;">
+          {L.ui.workoutCards}
+        </h3>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(30rem, 1fr)); gap: 1.6rem;">
           {workoutCards.map((card) => (
             <WorkoutCard
@@ -738,16 +936,24 @@ const workoutCards = [
        set-type pills ← /sessions/compare, segmented ← /progression/stats. -->
   <section style="margin-bottom: 4.8rem;">
     <header style="margin-bottom: 2.4rem;">
-      <div style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; color: var(--color-accent); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.4rem;">11</div>
-      <h2 style="font-family: var(--font-display); font-size: 2.4rem; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 0.8rem;">Micro patterns</h2>
-      <p style="color: var(--color-muted); font-size: 1.4rem; max-width: 60rem;">{L.ui.microPatternsDesc}</p>
+      <div style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; color: var(--color-accent); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.4rem;">
+        11
+      </div>
+      <h2 style="font-family: var(--font-display); font-size: 2.4rem; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 0.8rem;">
+        Micro patterns
+      </h2>
+      <p style="color: var(--color-muted); font-size: 1.4rem; max-width: 60rem;">
+        {L.ui.microPatternsDesc}
+      </p>
     </header>
 
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(28rem, 1fr)); gap: 1.6rem;">
       <Card>
         <CardHeader>
           <CardTitle>{L.ui.dots}</CardTitle>
-          <p style="color: var(--color-muted); font-size: 1.3rem; margin: 0; line-height: 1.5;">{L.ui.dotsDesc}</p>
+          <p style="color: var(--color-muted); font-size: 1.3rem; margin: 0; line-height: 1.5;">
+            {L.ui.dotsDesc}
+          </p>
         </CardHeader>
         <CardContent>
           <div style="display: flex; gap: 2.4rem; align-items: center; flex-wrap: wrap;">
@@ -755,14 +961,18 @@ const workoutCards = [
             <span class="demo-dot demo-dot--info" aria-hidden="true"></span>
             <span class="demo-dot demo-dot--muted" aria-hidden="true"></span>
           </div>
-          <p style="color: var(--color-muted); font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.05em; margin: 1.2rem 0 0;">success · info · muted</p>
+          <p style="color: var(--color-muted); font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.05em; margin: 1.2rem 0 0;">
+            success · info · muted
+          </p>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
           <CardTitle>{L.ui.setTypePills}</CardTitle>
-          <p style="color: var(--color-muted); font-size: 1.3rem; margin: 0; line-height: 1.5;">{L.ui.setTypePillsDesc}</p>
+          <p style="color: var(--color-muted); font-size: 1.3rem; margin: 0; line-height: 1.5;">
+            {L.ui.setTypePillsDesc}
+          </p>
         </CardHeader>
         <CardContent>
           <div style="display: flex; gap: 0.8rem; align-items: center; flex-wrap: wrap;">
@@ -778,7 +988,9 @@ const workoutCards = [
       <Card>
         <CardHeader>
           <CardTitle>{L.ui.segmented}</CardTitle>
-          <p style="color: var(--color-muted); font-size: 1.3rem; margin: 0; line-height: 1.5;">{L.ui.segmentedDesc}</p>
+          <p style="color: var(--color-muted); font-size: 1.3rem; margin: 0; line-height: 1.5;">
+            {L.ui.segmentedDesc}
+          </p>
         </CardHeader>
         <CardContent>
           <div x-data="{ demoPeriod: 'week' }">
@@ -814,9 +1026,15 @@ const workoutCards = [
     height: 1rem;
     border-radius: 50%;
   }
-  .demo-dot--success { background-color: var(--color-success); }
-  .demo-dot--info { background-color: var(--color-info); }
-  .demo-dot--muted { background-color: var(--color-muted); }
+  .demo-dot--success {
+    background-color: var(--color-success);
+  }
+  .demo-dot--info {
+    background-color: var(--color-info);
+  }
+  .demo-dot--muted {
+    background-color: var(--color-muted);
+  }
 
   .demo-pill {
     display: inline-flex;
@@ -824,7 +1042,7 @@ const workoutCards = [
     height: 2.2rem;
     padding: 0 0.8rem;
     border-radius: var(--radius-pill);
-    font-size: 1.0rem;
+    font-size: 1rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.04em;

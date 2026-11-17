@@ -1,15 +1,15 @@
 ---
-import AppLayout from "../layouts/AppLayout.astro";
-import PageHeader from "../components/layout/PageHeader.astro";
-import Button from "../components/ui/Button.astro";
-import Icon from "../components/ui/Icon.astro";
-import KpiItem from "../components/ui/KpiItem.astro";
-import HeroSection from "../components/dashboard/HeroSection.astro";
-import WeeklyGoal from "../components/dashboard/WeeklyGoal.astro";
-import NextSession from "../components/dashboard/NextSession.astro";
-import VolumeTrend from "../components/dashboard/VolumeTrend.astro";
-import RecentSessions from "../components/dashboard/RecentSessions.astro";
-import { t, localizedPath } from "../i18n";
+import AppLayout from '../layouts/AppLayout.astro';
+import PageHeader from '../components/layout/PageHeader.astro';
+import Button from '../components/ui/Button.astro';
+import Icon from '../components/ui/Icon.astro';
+import KpiItem from '../components/ui/KpiItem.astro';
+import HeroSection from '../components/dashboard/HeroSection.astro';
+import WeeklyGoal from '../components/dashboard/WeeklyGoal.astro';
+import NextSession from '../components/dashboard/NextSession.astro';
+import VolumeTrend from '../components/dashboard/VolumeTrend.astro';
+import RecentSessions from '../components/dashboard/RecentSessions.astro';
+import { t, localizedPath } from '../i18n';
 
 const L = t();
 ---
@@ -19,7 +19,7 @@ const L = t();
     title={L.dashboard.title}
     description={L.dashboard.description}
     actionLabel={L.dashboard.newSession}
-    actionHref={localizedPath("/sessions/create")}
+    actionHref={localizedPath('/sessions/create')}
   />
 
   <div class="dash" x-data="dashboardApp()" x-init="init()" x-cloak>
@@ -91,8 +91,7 @@ const L = t();
     <div class="dash__empty" x-show="!isLoading && !loadError && !hasSessions">
       <div class="dash__empty-ring" aria-hidden="true">
         <svg viewBox="0 0 100 100" class="dash__empty-ring-svg">
-          <circle cx="50" cy="50" r="46" class="dash__empty-ring-track"
-          ></circle>
+          <circle cx="50" cy="50" r="46" class="dash__empty-ring-track"></circle>
           <circle cx="50" cy="50" r="46" class="dash__empty-ring-fill"></circle>
         </svg>
         <div class="dash__empty-disc">
@@ -104,19 +103,15 @@ const L = t();
       <p class="dash__empty-desc">{L.dashboard.emptyDesc}</p>
 
       <div class="dash__empty-actions">
-        <Button
-          variant="primary"
-          size="md"
-          href={localizedPath("/sessions/create")}
-        >
+        <Button variant="primary" size="md" href={localizedPath('/sessions/create')}>
           <Icon name="plus" size={16} />
           <span>{L.dashboard.createFirst}</span>
         </Button>
-        <Button variant="secondary" size="md" href={localizedPath("/timer")}>
+        <Button variant="secondary" size="md" href={localizedPath('/timer')}>
           <Icon name="clockStopwatch" size={16} />
           <span>{L.dashboard.stopwatch}</span>
         </Button>
-        <a href={localizedPath("/exercises")} class="dash__empty-link">
+        <a href={localizedPath('/exercises')} class="dash__empty-link">
           {L.dashboard.browseExercises}
         </a>
       </div>
@@ -125,226 +120,43 @@ const L = t();
 </AppLayout>
 
 <script>
-  import {
-    getSessions,
-    getExercises,
-    getSessionsThisWeek,
-    getSettings,
-    type Session,
-  } from "../lib/storage";
-  import { t, getLocale, localizedPath } from "../i18n";
-  import {
-    computeSessionVolume,
-    computeTodayVolume,
-    computeTodaySessions,
-    computeTodayExercises,
-    computeTotalVolume,
-    computeBestPRs,
-    computeTop1RM,
-    computeStreak,
-    computeWeeklyVolumeByDay,
-    computeSessionPrimaryMuscle,
-  } from "../lib/dashboard-stats";
-  import { formatDateShort } from "../lib/format";
+  import { createDashboardApp } from '../components/dashboard/dashboardApp';
+  import { t, getLocale, localizedPath } from '../i18n';
 
   const LABELS = t();
 
-  const DATE_LOCALE = getLocale() === "fr" ? "fr-FR" : "en-US";
-
-  function formatVolumeNum(volume: number): string {
-    if (!Number.isFinite(volume) || volume <= 0) return "0";
-    return Math.round(volume).toLocaleString(DATE_LOCALE);
-  }
-
-  document.addEventListener("alpine:init", () => {
+  const register = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const Alpine = (window as any).Alpine;
 
-    Alpine.data("dashboardApp", () => ({
-      // ── State ──
-      sessions: [] as Session[],
-      settings: getSettings(),
-      weeklyDone: 0,
-      labels: {
-        top1RM: LABELS.dashboard.top1RM,
-        weeklyGoalEyebrow: LABELS.dashboard.weeklyGoalEyebrow,
-        weeklyGoalDone: LABELS.dashboard.weeklyGoalDone,
-        weeklyMoreSingular: LABELS.dashboard.weeklyMoreSingular,
-        sessionsUnit: LABELS.dashboard.sessionsUnit,
-        exercisesUnit: LABELS.dashboard.exercisesUnit,
-        daysUnit: LABELS.dashboard.daysUnit,
-        remainingHint: LABELS.dashboard.remainingHint,
-        exoPlural: LABELS.dashboard.exoPlural,
-        exoSingular: LABELS.dashboard.exoSingular,
-        daysSingular: LABELS.dashboard.daysSingular,
-        noRecent: LABELS.dashboard.noRecent,
-        viewAll: LABELS.dashboard.viewAllArrow,
-        recentSessions: LABELS.dashboard.recentSessions,
-        kg: LABELS.common.kg,
-        todayVolume: LABELS.dashboard.todayVolume,
-        weeklyVolumeTrend: LABELS.dashboard.weeklyVolumeTrend,
-        noWeeklyVolume: LABELS.dashboard.noWeeklyVolume,
-        noWeeklyVolumeHint: LABELS.dashboard.noWeeklyVolumeHint,
-        nextSession: LABELS.dashboard.nextSession,
-        continueWorkout: LABELS.dashboard.continueWorkout,
-        startWorkout: LABELS.dashboard.startWorkout,
-        plannedWorkoutHint: LABELS.dashboard.plannedWorkoutHint,
-        sessionCount: LABELS.dashboard.sessionCount,
-        exerciseCount: LABELS.dashboard.exerciseCount,
-        loading: LABELS.dashboard.loading,
-        loadError: LABELS.dashboard.loadError,
-        retry: LABELS.dashboard.retry,
-      },
-
-      isLoading: true,
-      loadError: false,
-
-      // Expose localizedPath to Alpine expressions (uses window.__LOCALE__).
-      localizedPath,
-
-      // ── Init ──
-      init() {
-        this.loadDashboard();
-      },
-
-      retry() {
-        this.loadDashboard();
-      },
-
-      loadDashboard() {
-        this.isLoading = true;
-        this.loadError = false;
-        try {
-          // Seed exercises on first load (side effect).
-          getExercises();
-          this.sessions = getSessions().sort(
-            (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-          );
-          this.settings = getSettings();
-          this.weeklyDone = getSessionsThisWeek().length;
-        } catch (error) {
-          console.error('[dashboard] failed to load', error);
-          this.loadError = true;
-        } finally {
-          this.isLoading = false;
+    Alpine.data('dashboardApp', () =>
+      createDashboardApp(
+        {
+          ...LABELS.dashboard,
+          kg: LABELS.common.kg,
+          status: {
+            completed: LABELS.sessions.completed,
+            inProgress: LABELS.sessions.inProgress,
+            planned: LABELS.sessions.planned,
+          },
+        },
+        localizedPath,
+        {
+          locale: () => (getLocale() === 'en' ? 'en' : 'fr'),
+          today: () => new Date(),
+          onError: (error) => console.error('[dashboard] failed to load', error),
+          translateMuscle: (name) =>
+            (window as { trMuscle?: (m: string) => string }).trMuscle?.(name) ?? name,
         }
-      },
+      )
+    );
+  };
 
-      // ── Derived ──
-      get hasSessions(): boolean {
-        return this.sessions.length > 0;
-      },
-
-      get recentSessions(): Session[] {
-        return this.sessions.slice(0, 5);
-      },
-
-      get nextSession(): Session | null {
-        return (
-          this.sessions.find(
-            (s) => s.status === "in-progress" || s.status === "planned",
-          ) ?? null
-        );
-      },
-
-      get weeklyProgress(): number {
-        const target = this.settings.weeklyGoal;
-        if (!Number.isFinite(target) || target <= 0) return 0;
-        return Math.min(1, Math.max(0, this.weeklyDone / target));
-      },
-
-      // ── Today ──
-      get todayVolume(): number {
-        return computeTodayVolume(this.sessions);
-      },
-
-      get todaySessions(): number {
-        return computeTodaySessions(this.sessions);
-      },
-
-      get todayExercises(): number {
-        return computeTodayExercises(this.sessions);
-      },
-
-      // ── Weekly trend ──
-      get weeklyVolumeByDay(): number[] {
-        return computeWeeklyVolumeByDay(this.sessions);
-      },
-
-      get todayIdx(): number {
-        return new Date().getDay();
-      },
-
-      get weeklyVolumeTotal(): number {
-        return this.weeklyVolumeByDay.reduce((sum, volume) => sum + volume, 0);
-      },
-
-      get maxVol(): number {
-        return Math.max(...this.weeklyVolumeByDay, 1);
-      },
-
-      get dayLabels(): string[] {
-        return getLocale() === "fr"
-          ? ["D", "L", "M", "M", "J", "V", "S"]
-          : ["S", "M", "T", "W", "T", "F", "S"];
-      },
-
-      // ── KPIs ──
-      get kpis() {
-        return {
-          totalSessions: this.sessions.length,
-          totalVolume: computeTotalVolume(this.sessions),
-          bestPRs: computeBestPRs(this.sessions),
-          top1RM: computeTop1RM(this.sessions),
-          streak: computeStreak(this.sessions),
-        };
-      },
-
-      // ── Goal hint ──
-      remainingHintText(): string {
-        const remaining = Math.max(
-          0,
-          this.settings.weeklyGoal - this.weeklyDone,
-        );
-        const unit =
-          remaining === 1
-            ? this.labels.weeklyMoreSingular
-            : this.labels.sessionsUnit;
-        return this.labels.remainingHint
-          .replace("{count}", String(remaining))
-          .replace("{unit}", unit);
-      },
-
-      // ── Per-session ──
-      sessionVolume(s: Session): number {
-        return computeSessionVolume(s);
-      },
-
-      sessionPrimaryMuscle(s: Session): string {
-        return computeSessionPrimaryMuscle(s);
-      },
-
-      muscleLabel(name: string): string {
-        const tr = (window as { trMuscle?: (m: string) => string }).trMuscle;
-        return tr ? tr(name) : name;
-      },
-
-      // ── Formatters ──
-      formatDate(iso: string): string {
-        return formatDateShort(iso);
-      },
-
-      formatVolume(volume: number): string {
-        return formatVolumeNum(volume);
-      },
-    }));
-  });
+  document.addEventListener('alpine:init', register);
+  if ((window as any).Alpine) register();
 </script>
 
 <style>
-  /* ════════════════════════════════════════════════════
-     CONTAINER
-     ════════════════════════════════════════════════════ */
   .dash {
     max-width: 96rem;
     margin: 0 auto;
@@ -403,12 +215,11 @@ const L = t();
   }
 
   @keyframes dash-state-spin {
-    to { transform: rotate(360deg); }
+    to {
+      transform: rotate(360deg);
+    }
   }
 
-  /* ════════════════════════════════════════════════════
-     OVERVIEW — open metric + one useful grouping
-     ════════════════════════════════════════════════════ */
   .dash__overview {
     display: grid;
     gap: 0;
@@ -419,9 +230,6 @@ const L = t();
     border-top: 1px solid var(--color-border);
   }
 
-  /* ════════════════════════════════════════════════════
-     KPI BAND — vertical stack with dividers
-     ════════════════════════════════════════════════════ */
   .dash__kpis {
     display: grid;
     grid-template-columns: 1fr;
@@ -455,9 +263,6 @@ const L = t();
     background-color: var(--alpha-bg-subtle);
   }
 
-  /* ════════════════════════════════════════════════════
-     EMPTY STATE — welcome (no zeros anywhere)
-     ════════════════════════════════════════════════════ */
   .dash__empty {
     max-width: 48rem;
     margin: 0 auto;

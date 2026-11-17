@@ -40,7 +40,7 @@ interface Props {
   maxlength?: number | string;
   /** Renders input without FormField wrapper. */
   bare?: boolean;
-  size?: "sm" | "md" | "lg";
+  size?: 'sm' | 'md' | 'lg';
   class?: string;
   [key: string]: unknown;
 }
@@ -51,14 +51,14 @@ const {
   error,
   disabled = false,
   required = false,
-  type = "text",
+  type = 'text',
   placeholder,
   name,
   id,
   value,
   bare = false,
-  size = "md",
-  class: className = "",
+  size = 'md',
+  class: className = '',
   ...rest
 } = Astro.props;
 
@@ -76,7 +76,7 @@ const isBare = bare || (!label && !hint && !error);
     placeholder={placeholder}
     disabled={disabled}
     required={required}
-    aria-invalid={error ? "true" : undefined}
+    aria-invalid={error ? 'true' : undefined}
     aria-describedby={describedBy}
     class:list={['input', `input--${size}`, error && 'input--error', className]}
   />
@@ -91,7 +91,7 @@ const isBare = bare || (!label && !hint && !error);
       placeholder={placeholder}
       disabled={disabled}
       required={required}
-      aria-invalid={error ? "true" : undefined}
+      aria-invalid={error ? 'true' : undefined}
       aria-describedby={describedBy}
       class:list={['input', `input--${size}`, error && 'input--error', className]}
     />
@@ -106,7 +106,9 @@ const isBare = bare || (!label && !hint && !error);
     border-radius: var(--radius-sm);
     color: var(--color-text);
     outline: none;
-    transition: border-color 160ms ease, box-shadow 160ms ease;
+    transition:
+      border-color 160ms ease,
+      box-shadow 160ms ease;
   }
 
   .input--sm {
@@ -128,11 +130,6 @@ const isBare = bare || (!label && !hint && !error);
 
   .input::placeholder {
     color: var(--alpha-text-faint);
-  }
-
-  .input:focus {
-    border-color: var(--color-accent);
-    box-shadow: var(--focus-ring);
   }
 
   .input:disabled {

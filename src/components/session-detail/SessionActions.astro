@@ -11,25 +11,18 @@ import { icons } from '../../lib/icons';
     href="#"
     :href="quickSessionHref()"
     :aria-label="labels.startSession"
+    x-show="session?.status !== 'completed'"
   >
     <Icon name="play" size={20} />
     <span x-text="labels.startSession"></span>
   </Button>
 
-  <Button
-    variant="secondary"
-    @click="generateShareCard()"
-  >
+  <Button variant="secondary" @click="generateShareCard()">
     <Icon name="share" size={20} />
     <span x-text="labels.share"></span>
   </Button>
 
-  <Button
-    variant="secondary"
-    href="#"
-    :href="compareHref()"
-    :aria-disabled="!session?.id"
-  >
+  <Button variant="secondary" href="#" :href="compareHref()" :aria-disabled="!session?.id">
     <Icon name="grid" size={20} />
     <span x-text="labels.compare"></span>
   </Button>
@@ -37,11 +30,7 @@ import { icons } from '../../lib/icons';
   <div class="detail__sheet" role="group">
     <span class="detail__sheet-label" aria-hidden="true"></span>
 
-    <Button
-      variant="secondary"
-      @click="downloadSessionCsv()"
-      :aria-label="labels.downloadCsvAria"
-    >
+    <Button variant="secondary" @click="downloadSessionCsv()" :aria-label="labels.downloadCsvAria">
       <Icon name="table" size={20} />
       <span x-text="labels.downloadCsv"></span>
     </Button>

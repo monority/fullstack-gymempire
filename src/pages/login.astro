@@ -2,7 +2,6 @@
 import AppLayout from '../layouts/AppLayout.astro';
 import Button from '../components/ui/Button.astro';
 import Icon from '../components/ui/Icon.astro';
-import IconButton from '../components/ui/IconButton.astro';
 import Input from '../components/ui/Input.astro';
 import { t } from '../i18n';
 
@@ -10,12 +9,7 @@ const L = t();
 ---
 
 <AppLayout title={L.login.title} groups={[]}>
-  <div
-    class="login"
-    x-data="loginApp()"
-    x-init="init()"
-    x-cloak
-  >
+  <div class="login" x-data="loginApp()" x-init="init()" x-cloak>
     <div class="login__card" role="form" aria-labelledby="login-title">
       {/* ── Nav: theme · logo · language ── */}
       <div class="login__nav">
@@ -45,7 +39,7 @@ const L = t();
             variant="secondary"
             size="md"
             @click="toggleLocale()"
-            :aria-label="switchLocaleAria"
+            :aria-label="switchLocaleAria + ' : ' + langTarget"
             :title="switchLocaleAria"
             class="login__lang-btn"
           >
@@ -55,13 +49,17 @@ const L = t();
         </div>
       </div>
 
-      <h1 id="login-title" class="login__title">{L.login.title}</h1>
+      <h1 id="login-title" class="login__title">
+        {L.login.title}
+      </h1>
       <p class="login__subtitle">{L.login.subtitle}</p>
 
       {/* ── Form ── */}
       <form class="login__form" @submit.prevent="submit" novalidate>
         <div class="login__field">
-          <label for="login-email" class="login__label">{L.login.email}</label>
+          <label for="login-email" class="login__label">
+            {L.login.email}
+          </label>
           <Input
             type="email"
             id="login-email"
@@ -77,7 +75,9 @@ const L = t();
         </div>
 
         <div class="login__field">
-          <label for="login-password" class="login__label">{L.login.password}</label>
+          <label for="login-password" class="login__label">
+            {L.login.password}
+          </label>
           <div class="login__pw-wrap">
             <Input
               :type="showPassword ? 'text' : 'password'"
@@ -90,23 +90,17 @@ const L = t();
               bare
               class="login__input login__input--pw"
             />
-            <IconButton
-              variant="ghost"
-              :icon="showPassword ? icons.eyeOff() : icons.eye()"
-              :label="showPassword ? labels.hidePassword : labels.showPassword"
+            <button
+              type="button"
+              class="icon-btn icon-btn--ghost login__pw-toggle"
+              x-html="showPassword ? icons.eyeOff() : icons.eye()"
+              :aria-label="showPassword ? labels.hidePassword : labels.showPassword"
               @click="showPassword = !showPassword"
-              class="login__pw-toggle"
-            />
+            ></button>
           </div>
         </div>
 
-        <p
-          class="login__error"
-          x-show="error"
-          x-text="error"
-          x-cloak
-          role="alert"
-        ></p>
+        <p class="login__error" x-show="error" x-text="error" x-cloak role="alert"></p>
 
         <Button
           type="submit"
@@ -117,9 +111,13 @@ const L = t();
           @click="submit"
           class="login__submit"
         >
-          <span class="login__submit-label" x-text="labels.submit">{L.login.submit}</span>
+          <span class="login__submit-label" x-text="labels.submit">
+            {L.login.submit}
+          </span>
           <span class="login__submit-loading" x-show="loading" x-cloak>
-            <span class="login__spinner"><Icon name="spinner" size={18} /></span>
+            <span class="login__spinner">
+              <Icon name="spinner" size={18} />
+            </span>
             <span x-text="labels.loading">{L.login.loading}</span>
           </span>
         </Button>
@@ -133,7 +131,9 @@ const L = t();
       {/* ── Dev mode ── */}
       <section class="login__dev" aria-labelledby="login-dev-title">
         <div class="login__dev-header">
-          <span class="login__dev-badge" aria-hidden="true">DEV</span>
+          <span class="login__dev-badge" aria-hidden="true">
+            DEV
+          </span>
           <h2 id="login-dev-title" class="login__dev-title">
             {L.login.devMode}
           </h2>
@@ -144,12 +144,7 @@ const L = t();
           </span>
           {L.login.devWarning}
         </p>
-        <Button
-          variant="secondary"
-          fullWidth
-          @click="devLogin()"
-          class="login__dev-btn"
-        >
+        <Button variant="secondary" fullWidth @click="devLogin()" class="login__dev-btn">
           <Icon name="zap" size={18} class="login__dev-btn-icon" slot="icon-left" />
           <span>{L.login.devLogin}</span>
         </Button>
@@ -157,9 +152,7 @@ const L = t();
 
       {/* ── Signup link ── */}
       <div class="login__signup">
-        <p class="login__signup-text">
-          {L.login.createAccount}
-        </p>
+        <p class="login__signup-text">{L.login.createAccount}</p>
         <Button
           variant="secondary"
           type="button"
@@ -187,112 +180,49 @@ const L = t();
 </AppLayout>
 
 <script>
-  import { setAuth, isAuthenticated } from '../lib/auth';
+  import { createLoginApp } from '../components/layout/loginApp';
   import { t, localizedPath, getLocale } from '../i18n';
-  import { icons } from '../lib/icons';
 
   const LABELS = t();
 
-  function nameFromEmail(email: string): string {
-    const local = email.split('@')[0] ?? '';
-    const formatted = local
-      .split(/[._\-+]+/)
-      .filter(Boolean)
-      .map((s) => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase())
-      .join(' ');
-    return formatted || LABELS.login.defaultPseudo;
-  }
-
-  function isValidEmail(email: string): boolean {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  }
-
-  document.addEventListener('alpine:init', () => {
+  const register = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const Alpine = (window as any).Alpine;
 
-    Alpine.data('loginApp', () => ({
-      email: '',
-      password: '',
-      error: '',
-      showPassword: false,
-      showSignupMessage: false,
-      loading: false,
-      theme: 'dark' as 'dark' | 'light',
-      get locale(): string {
-        const l = (window as { __LOCALE__?: string }).__LOCALE__;
-        return l === 'en' ? 'en' : 'fr';
-      },
-      switchToLight: LABELS.layout.switchToLight,
-      switchToDark: LABELS.layout.switchToDark,
-      switchLocaleAria: LABELS.layout.switchLocale,
-      icons: { eye: icons.eye, eyeOff: icons.eyeOff },
-      labels: {
-        submit: LABELS.login.submit,
-        loading: LABELS.login.loading,
-        showPassword: LABELS.login.showPassword,
-        hidePassword: LABELS.login.hidePassword,
-        signupMessage: LABELS.login.signupMessage,
-      },
+    Alpine.data('loginApp', () =>
+      createLoginApp({
+        labels: {
+          defaultPseudo: LABELS.login.defaultPseudo,
+          submit: LABELS.login.submit,
+          loading: LABELS.login.loading,
+          showPassword: LABELS.login.showPassword,
+          hidePassword: LABELS.login.hidePassword,
+          signupMessage: LABELS.login.signupMessage,
+          switchToLight: LABELS.layout.switchToLight,
+          switchToDark: LABELS.layout.switchToDark,
+          switchLocaleAria: LABELS.layout.switchLocale,
+          errors: LABELS.login.errors,
+        },
+        locale: () => (getLocale() === 'en' ? 'en' : 'fr'),
+        localizedPath,
+        host: {
+          theme: () =>
+            document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark',
+          setTheme: (theme) => document.documentElement.setAttribute('data-theme', theme),
+          storeTheme: (theme) => window.localStorage.setItem('muscu-theme', theme),
+          navigate: (href) => {
+            window.location.href = href;
+          },
+          schedule: (fn, ms) => window.setTimeout(fn, ms),
+          search: () => window.location.search,
+          hash: () => window.location.hash,
+        },
+      })
+    );
+  };
 
-      init() {
-        const current =
-          document.documentElement.getAttribute('data-theme') || 'dark';
-        this.theme = current === 'light' ? 'light' : 'dark';
-        if (isAuthenticated()) {
-          window.location.href = localizedPath('/');
-        }
-      },
-
-      toggleTheme() {
-        this.theme = this.theme === 'dark' ? 'light' : 'dark';
-        document.documentElement.setAttribute('data-theme', this.theme);
-        try {
-          window.localStorage.setItem('muscu-theme', this.theme);
-        } catch {
-          // private mode / quota
-        }
-      },
-
-      isDark(): boolean {
-        return this.theme === 'dark';
-      },
-
-      get langTarget(): string {
-        return this.locale === 'en' ? 'FR' : 'EN';
-      },
-
-      toggleLocale() {
-        const target = this.locale === 'en' ? 'fr' : 'en';
-        const search = window.location.search;
-        const hash = window.location.hash;
-        const path = target === 'fr' ? '/login' : '/en/login';
-        window.location.href = path + search + hash;
-      },
-
-      submit() {
-        this.error = '';
-        const email = this.email.trim();
-        const password = this.password;
-
-        if (!email) { this.error = LABELS.login.errors.emailRequired; return; }
-        if (!isValidEmail(email)) { this.error = LABELS.login.errors.emailInvalid; return; }
-        if (!password) { this.error = LABELS.login.errors.passwordRequired; return; }
-
-        this.loading = true;
-        const name = nameFromEmail(email);
-        setAuth(email, name);
-        window.setTimeout(() => { window.location.href = localizedPath('/'); }, 240);
-      },
-
-      devLogin() {
-        this.error = '';
-        this.loading = true;
-        setAuth('dev@muscu.app', 'Dev User');
-        window.location.href = localizedPath('/');
-      },
-    }));
-  });
+  document.addEventListener('alpine:init', register);
+  if ((window as any).Alpine) register();
 </script>
 
 <style>
@@ -313,8 +243,10 @@ const L = t();
     background: var(--color-surface);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-lg);
-    padding: 4.0rem 3.2rem;
-    box-shadow: var(--shadow-1), 0 1px 0 var(--alpha-bg-subtle) inset;
+    padding: 4rem 3.2rem;
+    box-shadow:
+      var(--shadow-1),
+      0 1px 0 var(--alpha-bg-subtle) inset;
   }
 
   /* ── Nav ── */
@@ -463,7 +395,7 @@ const L = t();
     background: color-mix(in srgb, var(--color-destructive) 10%, transparent);
     border: 1px solid color-mix(in srgb, var(--color-destructive) 30%, transparent);
     border-radius: var(--radius-sm);
-    padding: 1.0rem 1.2rem;
+    padding: 1rem 1.2rem;
     margin: 0;
     line-height: 1.4;
   }
@@ -483,7 +415,9 @@ const L = t();
     transform: scale(0.985);
   }
   .login__submit:focus-visible {
-    box-shadow: var(--focus-ring), 0 6px 18px color-mix(in srgb, var(--color-accent) 30%, transparent);
+    box-shadow:
+      var(--focus-ring),
+      0 6px 18px color-mix(in srgb, var(--color-accent) 30%, transparent);
   }
 
   .login__submit-label {
@@ -505,7 +439,9 @@ const L = t();
   }
 
   @keyframes login-spin {
-    to { transform: rotate(360deg); }
+    to {
+      transform: rotate(360deg);
+    }
   }
 
   /* ── Divider ── */
@@ -517,7 +453,7 @@ const L = t();
   }
   .login__divider::before,
   .login__divider::after {
-    content: "";
+    content: '';
     flex: 1;
     height: 1px;
     background-color: var(--color-border);
@@ -535,7 +471,7 @@ const L = t();
   .login__dev {
     display: flex;
     flex-direction: column;
-    gap: 1.0rem;
+    gap: 1rem;
     padding: 1.6rem 1.6rem 1.4rem;
     margin-top: 0.4rem;
     background-color: color-mix(in srgb, var(--color-accent) 4%, transparent);
@@ -572,7 +508,7 @@ const L = t();
     font-weight: 700;
     color: var(--color-accent);
     text-transform: uppercase;
-    letter-spacing: 0.10em;
+    letter-spacing: 0.1em;
     line-height: 1;
     margin: 0;
   }
@@ -613,7 +549,7 @@ const L = t();
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1.0rem;
+    gap: 1rem;
     margin-top: 0.4rem;
   }
 
@@ -654,21 +590,27 @@ const L = t();
     letter-spacing: 0.18em;
     font-weight: 600;
     margin: 0;
-    opacity: 0.7;
+    /* Pas d'opacity : le contraste du token --color-muted suffit (axe H2). */
   }
 
   /* ── Theme icon visibility ── */
-  .login__theme-icon--moon { display: none; }
-  :global([data-theme="light"]) .login__theme-icon--sun { display: none; }
-  :global([data-theme="light"]) .login__theme-icon--moon { display: inline-flex; }
+  .login__theme-icon--moon {
+    display: none;
+  }
+  :global([data-theme='light']) .login__theme-icon--sun {
+    display: none;
+  }
+  :global([data-theme='light']) .login__theme-icon--moon {
+    display: inline-flex;
+  }
 
   /* ── Light theme overrides ── */
-  :global([data-theme="light"]) .login__error {
+  :global([data-theme='light']) .login__error {
     color: color-mix(in srgb, var(--color-destructive) 45%, var(--color-text));
     background-color: color-mix(in srgb, var(--color-destructive) 8%, transparent);
     border-color: color-mix(in srgb, var(--color-destructive) 25%, transparent);
   }
-  :global([data-theme="light"]) .login__signup-msg {
+  :global([data-theme='light']) .login__signup-msg {
     color: color-mix(in srgb, var(--color-info) 45%, var(--color-text));
     background-color: color-mix(in srgb, var(--color-info) 6%, transparent);
     border-color: color-mix(in srgb, var(--color-info) 20%, transparent);

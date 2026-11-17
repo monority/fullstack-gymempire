@@ -35,7 +35,7 @@ const {
   value,
   placeholder,
   options,
-  class: className = "",
+  class: className = '',
   ...rest
 } = Astro.props;
 
@@ -49,7 +49,7 @@ const describedBy = buildDescribedBy(id, hint, error);
       name={name}
       disabled={disabled}
       required={required}
-      aria-invalid={error ? "true" : undefined}
+      aria-invalid={error ? 'true' : undefined}
       aria-describedby={describedBy}
       class:list={['select', error && 'select--error', className]}
       {...rest}
@@ -91,12 +91,9 @@ const describedBy = buildDescribedBy(id, hint, error);
     outline: none;
     appearance: none;
     cursor: pointer;
-    transition: border-color 160ms ease, box-shadow 160ms ease;
-  }
-
-  .select:focus {
-    border-color: var(--color-accent);
-    box-shadow: var(--focus-ring);
+    transition:
+      border-color 160ms ease,
+      box-shadow 160ms ease;
   }
 
   .select:disabled {

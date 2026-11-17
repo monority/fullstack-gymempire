@@ -1,5 +1,4 @@
 ---
-
 import { t } from '../i18n';
 import AppLayout from '../layouts/AppLayout.astro';
 import PageHeader from '../components/layout/PageHeader.astro';
@@ -15,10 +14,7 @@ const L = t();
 ---
 
 <AppLayout title={L.calendrier.title}>
-  <PageHeader
-    title={L.calendrier.title}
-    description={L.calendrier.description}
-  />
+  <PageHeader title={L.calendrier.title} description={L.calendrier.description} />
 
   <div class="cal" x-data="calendarApp()" x-init="init()" x-cloak>
     {/* ═══ Month controls ═══ */}
@@ -137,7 +133,8 @@ const L = t();
                     <span class="cal__session-name" x-text="s.name"></span>
                     <span class="cal__session-meta">
                       <span x-text="s.exercises.length"></span>
-                      {L.sessions.exoSingular}<span x-show="s.exercises.length > 1">{L.sessions.pluralS}</span>
+                      {L.sessions.exoSingular}
+                      <span x-show="s.exercises.length > 1">{L.sessions.pluralS}</span>
                     </span>
                   </div>
                   <span
@@ -192,200 +189,31 @@ const L = t();
 </AppLayout>
 
 <script>
-  import { getSessions, type Session } from '../lib/storage';
+  import { createCalendarApp } from '../components/calendar/calendarApp';
   import { t, localizedPath } from '../i18n';
-  import { formatDateLong, formatNumber as formatNumberFn } from '../lib/format';
-  import { statusLabel as statusLabelFn, type StatusLabels } from '../lib/session-utils';
-  import { buildMonthDays, assignSessions, formatISO, type CalendarDay } from '../lib/calendar-grid';
 
   const LABELS = t();
-  const statusLabels: StatusLabels = { completed: LABELS.sessions.completed, inProgress: LABELS.sessions.inProgress, planned: LABELS.sessions.planned };
-  function statusLabel(status: string): string { return statusLabelFn(status as 'completed' | 'in-progress' | 'planned', statusLabels); }
 
   const registerCalendar = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const Alpine = (window as any).Alpine;
 
-    Alpine.data('calendarApp', () => ({
-      // ── State ──
-      currentYear: new Date().getFullYear(),
-      currentMonth: new Date().getMonth(),
-      selectedDate: '',
-      selectedSessions: [] as Session[],
-      allSessions: [] as Session[],
-      days: [] as CalendarDay[],
-      weekdays: LABELS.calendrier.weekdays,
-      localizedPath,
-
-      // ── Init ──
-      init() {
-        this.allSessions = getSessions();
-        this.loadMonth();
-      },
-
-      // ── Calendar generation ──
-      get calendarDays(): CalendarDay[] {
-        return this.days;
-      },
-
-      loadMonth() {
-        this.selectedDate = '';
-        this.selectedSessions = [];
-        const days = buildMonthDays(this.currentYear, this.currentMonth, new Date());
-        this.days = assignSessions(days, this.allSessions);
-      },
-
-      prevMonth() {
-        if (this.currentMonth === 0) {
-          this.currentMonth = 11;
-          this.currentYear--;
-        } else {
-          this.currentMonth--;
-        }
-        this.loadMonth();
-      },
-
-      nextMonth() {
-        if (this.currentMonth === 11) {
-          this.currentMonth = 0;
-          this.currentYear++;
-        } else {
-          this.currentMonth++;
-        }
-        this.loadMonth();
-      },
-
-      goToday() {
-        const now = new Date();
-        this.currentYear = now.getFullYear();
-        this.currentMonth = now.getMonth();
-        this.loadMonth();
-      },
-
-      selectDate(day: CalendarDay) {
-        if (!day.isCurrentMonth) return;
-        this.selectedDate = day.date;
-        this.selectedSessions = day.sessions;
-      },
-
-      dayAriaLabel(day: CalendarDay): string {
-        const date = this.formatDate(day.date);
-        if (day.sessions.length === 0) return date;
-
-        const statusCounts = new Map<string, number>();
-        for (const session of day.sessions) {
-          statusCounts.set(session.status, (statusCounts.get(session.status) ?? 0) + 1);
-        }
-        const statusSummary = Array.from(statusCounts.entries())
-          .map(([status, count]) => `${count} ${this.statusLabel(status).toLowerCase()}`)
-          .join(', ');
-        const sessionLabel =
-          day.sessions.length === 1
-            ? LABELS.sessions.seanceSingular
-            : LABELS.sessions.seancePlural;
-        return `${date} — ${day.sessions.length} ${sessionLabel}: ${statusSummary}`;
-      },
-
-      monthName(): string {
-        return `${LABELS.calendrier.monthNames[this.currentMonth]} ${this.currentYear}`;
-      },
-
-      // ── Monthly stats ──
-      get monthSessionCount(): number {
-        return this.allSessions.filter((s) => {
-          const d = new Date(s.date);
-          return (
-            d.getFullYear() === this.currentYear &&
-            d.getMonth() === this.currentMonth
-          );
-        }).length;
-      },
-
-      get monthVolume(): number {
-        let total = 0;
-        for (const s of this.allSessions) {
-          const d = new Date(s.date);
-          if (
-            d.getFullYear() !== this.currentYear ||
-            d.getMonth() !== this.currentMonth
-          ) {
-            continue;
-          }
-          for (const ex of s.exercises) {
-            for (const set of ex.sets) {
-              if (set.completed) total += set.weight * set.reps;
-            }
-          }
-        }
-        return total;
-      },
-
-      /**
-       * Counts consecutive days, walking back from today (or yesterday
-       * when today has no session), until a day with no session is found.
-       * Returns 0 when the user has no sessions at all.
-       */
-      get currentStreak(): number {
-        if (this.allSessions.length === 0) return 0;
-        const sessionDates = new Set(
-          this.allSessions.map((s) => s.date.substring(0, 10)),
-        );
-        let streak = 0;
-        const cursor = new Date();
-        // If today has no session, allow the streak to start at yesterday
-        // (otherwise the user would see 0 right after a rest day).
-        if (!sessionDates.has(formatISO(cursor))) {
-          cursor.setDate(cursor.getDate() - 1);
-        }
-        while (sessionDates.has(formatISO(cursor))) {
-          streak++;
-          cursor.setDate(cursor.getDate() - 1);
-        }
-        return streak;
-      },
-
-      /**
-       * Walks every distinct session date (sorted) and tracks the longest
-       * run of consecutive calendar days. Single-session streaks count as
-       * 1. Returns 0 when the user has no sessions.
-       */
-      get longestStreak(): number {
-        if (this.allSessions.length === 0) return 0;
-        const dates = Array.from(
-          new Set(this.allSessions.map((s) => s.date.substring(0, 10))),
-        ).sort();
-        let longest = 0;
-        let run = 0;
-        let prev: Date | null = null;
-        for (const dStr of dates) {
-          const d = new Date(dStr);
-          if (prev) {
-            const diff = Math.round(
-              (d.getTime() - prev.getTime()) / 86400000,
-            );
-            run = diff === 1 ? run + 1 : 1;
-          } else {
-            run = 1;
-          }
-          if (run > longest) longest = run;
-          prev = d;
-        }
-        return longest;
-      },
-
-      // ── Display helpers ──
-      statusLabel(status: string): string {
-        return statusLabel(status as 'completed' | 'in-progress' | 'planned');
-      },
-
-      formatDate(iso: string): string {
-        return formatDateLong(iso);
-      },
-
-      formatNumber(n: number): string {
-        return formatNumberFn(n);
-      },
-    }));
+    Alpine.data('calendarApp', () =>
+      createCalendarApp({
+        labels: {
+          ...LABELS.calendrier,
+          status: {
+            completed: LABELS.sessions.completed,
+            inProgress: LABELS.sessions.inProgress,
+            planned: LABELS.sessions.planned,
+          },
+          seanceSingular: LABELS.sessions.seanceSingular,
+          seancePlural: LABELS.sessions.seancePlural,
+        },
+        today: () => new Date(),
+        localizedPath,
+      })
+    );
   };
   document.addEventListener('alpine:init', registerCalendar);
   if ((window as any).Alpine) registerCalendar();
@@ -437,7 +265,7 @@ const L = t();
     font-size: 1.1rem;
     color: var(--color-muted);
     text-transform: uppercase;
-    letter-spacing: 0.10em;
+    letter-spacing: 0.1em;
     font-weight: 700;
     text-align: center;
     padding: 0.4rem 0;
@@ -611,14 +439,9 @@ const L = t();
     text-decoration: none;
     color: var(--color-text);
     min-height: 4.4rem;
-    transition: background-color var(--transition-fast), border-color var(--transition-fast);
-  }
-
-  .cal__session-info {
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-    min-width: 0;
+    transition:
+      background-color var(--transition-fast),
+      border-color var(--transition-fast);
   }
 
   .cal__session-name {
@@ -697,7 +520,7 @@ const L = t();
     font-size: 0.8rem;
     color: var(--color-muted);
     text-transform: uppercase;
-    letter-spacing: 0.10em;
+    letter-spacing: 0.1em;
     font-weight: 700;
     line-height: 1.25;
   }

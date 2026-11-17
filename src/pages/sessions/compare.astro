@@ -1,5 +1,4 @@
 ---
-
 import { t, localizedPath } from '../../i18n';
 import AppLayout from '../../layouts/AppLayout.astro';
 import PageHeader from '../../components/layout/PageHeader.astro';
@@ -15,18 +14,10 @@ const L = t();
 ---
 
 <AppLayout title={L.comparer.title}>
-  <div
-    class="comp"
-    x-data="comparisonApp()"
-    x-init="init()"
-    x-cloak
-  >
-    <PageHeader
-      title={L.comparer.title}
-      description={L.comparer.description}
-    />
+  <div class="comp" x-data="comparisonApp()" x-init="init()" x-cloak>
+    <PageHeader title={L.comparer.title} description={L.comparer.description} />
 
-    <BackLink href={localizedPath("/sessions")} label={L.comparer.back} />
+    <BackLink href={localizedPath('/sessions')} label={L.comparer.back} />
 
     {/* ═══════════════════════════════════════════════════
         SESSION PICKERS
@@ -38,7 +29,9 @@ const L = t();
       <CardContent>
         <div class="comp__pickers">
           <div class="comp__picker-field">
-            <label for="comp-s1" class="comp__picker-label">{L.comparer.session1Ref}</label>
+            <label for="comp-s1" class="comp__picker-label">
+              {L.comparer.session1Ref}
+            </label>
             <div class="comp__picker-wrap">
               <Fragment set:html={icons.dumbbellBox(18, 18)} />
               <select
@@ -64,7 +57,9 @@ const L = t();
           </div>
 
           <div class="comp__picker-field">
-            <label for="comp-s2" class="comp__picker-label">{L.comparer.session2}</label>
+            <label for="comp-s2" class="comp__picker-label">
+              {L.comparer.session2}
+            </label>
             <div class="comp__picker-wrap">
               <Fragment set:html={icons.dumbbellBox(18, 18)} />
               <select
@@ -100,7 +95,9 @@ const L = t();
           </div>
           <p>
             {L.comparer.needTwo}
-            <a href={localizedPath("/sessions/create")} class="comp__hint-link">{L.comparer.createSession}</a>
+            <a href={localizedPath('/sessions/create')} class="comp__hint-link">
+              {L.comparer.createSession}
+            </a>
           </p>
         </div>
       </Card>
@@ -135,7 +132,10 @@ const L = t();
               <div class="comp__summary-body">
                 <div class="comp__summary-col">
                   <div class="comp__summary-col-label">{L.comparer.session1Ref}</div>
-                  <div class="comp__summary-col-value" x-text="formatVolume(totalVolume(session1))"></div>
+                  <div
+                    class="comp__summary-col-value"
+                    x-text="formatVolume(totalVolume(session1))"
+                  ></div>
                 </div>
                 <div
                   class="comp__summary-delta"
@@ -143,7 +143,9 @@ const L = t();
                 >
                   <span class="comp__summary-delta-icon" aria-hidden="true">
                     <template x-if="volumeDelta.direction === 'up'">
-                      <span class="comp__rotate-180"><Fragment set:html={icons.arrowDown(18, 18)} /></span>
+                      <span class="comp__rotate-180">
+                        <Fragment set:html={icons.arrowDown(18, 18)} />
+                      </span>
                     </template>
                     <template x-if="volumeDelta.direction === 'down'">
                       <Fragment set:html={icons.arrowDown(18, 18)} />
@@ -156,7 +158,10 @@ const L = t();
                 </div>
                 <div class="comp__summary-col">
                   <div class="comp__summary-col-label">{L.comparer.session2}</div>
-                  <div class="comp__summary-col-value" x-text="formatVolume(totalVolume(session2))"></div>
+                  <div
+                    class="comp__summary-col-value"
+                    x-text="formatVolume(totalVolume(session2))"
+                  ></div>
                 </div>
               </div>
             </article>
@@ -178,7 +183,9 @@ const L = t();
                 >
                   <span class="comp__summary-delta-icon" aria-hidden="true">
                     <template x-if="exercisesDelta.direction === 'up'">
-                      <span class="comp__rotate-180"><Fragment set:html={icons.arrowDown(18, 18)} /></span>
+                      <span class="comp__rotate-180">
+                        <Fragment set:html={icons.arrowDown(18, 18)} />
+                      </span>
                     </template>
                     <template x-if="exercisesDelta.direction === 'down'">
                       <Fragment set:html={icons.arrowDown(18, 18)} />
@@ -213,7 +220,9 @@ const L = t();
                 >
                   <span class="comp__summary-delta-icon" aria-hidden="true">
                     <template x-if="setsDelta.direction === 'up'">
-                      <span class="comp__rotate-180"><Fragment set:html={icons.arrowDown(18, 18)} /></span>
+                      <span class="comp__rotate-180">
+                        <Fragment set:html={icons.arrowDown(18, 18)} />
+                      </span>
                     </template>
                     <template x-if="setsDelta.direction === 'down'">
                       <Fragment set:html={icons.arrowDown(18, 18)} />
@@ -240,7 +249,10 @@ const L = t();
               <div class="comp__summary-body">
                 <div class="comp__summary-col">
                   <div class="comp__summary-col-label">{L.comparer.session1Ref}</div>
-                  <div class="comp__summary-col-value" x-text="formatVolume(bestSet(session1))"></div>
+                  <div
+                    class="comp__summary-col-value"
+                    x-text="formatVolume(bestSet(session1))"
+                  ></div>
                 </div>
                 <div
                   class="comp__summary-delta"
@@ -248,7 +260,9 @@ const L = t();
                 >
                   <span class="comp__summary-delta-icon" aria-hidden="true">
                     <template x-if="bestSetDelta.direction === 'up'">
-                      <span class="comp__rotate-180"><Fragment set:html={icons.arrowDown(18, 18)} /></span>
+                      <span class="comp__rotate-180">
+                        <Fragment set:html={icons.arrowDown(18, 18)} />
+                      </span>
                     </template>
                     <template x-if="bestSetDelta.direction === 'down'">
                       <Fragment set:html={icons.arrowDown(18, 18)} />
@@ -261,7 +275,10 @@ const L = t();
                 </div>
                 <div class="comp__summary-col">
                   <div class="comp__summary-col-label">{L.comparer.session2}</div>
-                  <div class="comp__summary-col-value" x-text="formatVolume(bestSet(session2))"></div>
+                  <div
+                    class="comp__summary-col-value"
+                    x-text="formatVolume(bestSet(session2))"
+                  ></div>
                 </div>
               </div>
             </article>
@@ -290,7 +307,10 @@ const L = t();
                 </div>
                 <div class="comp__stat">
                   <span class="comp__stat-label">{L.sessions.volume}</span>
-                  <span class="comp__stat-value" x-text="formatVolume(totalVolume(session1))"></span>
+                  <span
+                    class="comp__stat-value"
+                    x-text="formatVolume(totalVolume(session1))"
+                  ></span>
                 </div>
               </div>
             </header>
@@ -301,10 +321,7 @@ const L = t();
               </template>
 
               <template x-for="item in unionExercises" :key="item.exerciseId">
-                <article
-                  class="comp__exo"
-                  :class="{ 'comp__exo--missing': !item.session1Ex }"
-                >
+                <article class="comp__exo" :class="{ 'comp__exo--missing': !item.session1Ex }">
                   <header class="comp__exo-header">
                     <div class="comp__exo-info">
                       <h4 class="comp__exo-name" x-text="trExercise(item.name)"></h4>
@@ -314,7 +331,7 @@ const L = t();
                         :class="'badge--cat-' + muscleHue(item.muscle)"
                         class="comp__exo-badge"
                         x-text="trMuscle(item.muscle)"
-                      ></Badge>
+                      />
                     </div>
                     <div class="comp__exo-volume" x-show="item.session1Ex">
                       <span class="comp__stat-label">{L.sessions.volume}</span>
@@ -336,11 +353,11 @@ const L = t();
                       <div class="comp__exo-th">{L.common.reps}</div>
                       <div class="comp__exo-th comp__exo-th--end">{L.sessions.volume}</div>
                     </div>
-                    <template x-for="set in (item.session1Ex ? item.session1Ex.sets : [])" :key="set.setNumber">
-                      <div
-                        class="comp__exo-row"
-                        :class="{ 'is-completed': set.completed }"
-                      >
+                    <template
+                      x-for="set in (item.session1Ex ? item.session1Ex.sets : [])"
+                      :key="set.setNumber"
+                    >
+                      <div class="comp__exo-row" :class="{ 'is-completed': set.completed }">
                         <div class="comp__exo-td comp__exo-td--num" x-text="set.setNumber"></div>
                         <div class="comp__exo-td">
                           <span
@@ -351,7 +368,10 @@ const L = t();
                         </div>
                         <div class="comp__exo-td" x-text="formatWeight(set.weight)"></div>
                         <div class="comp__exo-td" x-text="set.reps"></div>
-                        <div class="comp__exo-td comp__exo-td--end" x-text="formatVolume(set.weight * set.reps)"></div>
+                        <div
+                          class="comp__exo-td comp__exo-td--end"
+                          x-text="formatVolume(set.weight * set.reps)"
+                        ></div>
                       </div>
                     </template>
                   </div>
@@ -363,7 +383,9 @@ const L = t();
           {/* Session 2 column */}
           <section class="comp__session-col" aria-label={L.comparer.detailsAria2}>
             <header class="comp__session-header">
-              <span class="comp__session-badge comp__session-badge--accent">{L.comparer.session2}</span>
+              <span class="comp__session-badge comp__session-badge--accent">
+                {L.comparer.session2}
+              </span>
               <h3 class="comp__session-name" x-text="session2.name"></h3>
               <div class="comp__session-meta">
                 <span
@@ -380,7 +402,10 @@ const L = t();
                 </div>
                 <div class="comp__stat">
                   <span class="comp__stat-label">{L.sessions.volume}</span>
-                  <span class="comp__stat-value" x-text="formatVolume(totalVolume(session2))"></span>
+                  <span
+                    class="comp__stat-value"
+                    x-text="formatVolume(totalVolume(session2))"
+                  ></span>
                 </div>
               </div>
             </header>
@@ -391,10 +416,7 @@ const L = t();
               </template>
 
               <template x-for="item in unionExercises" :key="item.exerciseId + '-s2'">
-                <article
-                  class="comp__exo"
-                  :class="{ 'comp__exo--missing': !item.session2Ex }"
-                >
+                <article class="comp__exo" :class="{ 'comp__exo--missing': !item.session2Ex }">
                   <header class="comp__exo-header">
                     <div class="comp__exo-info">
                       <h4 class="comp__exo-name" x-text="trExercise(item.name)"></h4>
@@ -404,7 +426,7 @@ const L = t();
                         :class="'badge--cat-' + muscleHue(item.muscle)"
                         class="comp__exo-badge"
                         x-text="trMuscle(item.muscle)"
-                      ></Badge>
+                      />
                     </div>
                     <div class="comp__exo-volume" x-show="item.session2Ex">
                       <span class="comp__stat-label">{L.sessions.volume}</span>
@@ -426,11 +448,11 @@ const L = t();
                       <div class="comp__exo-th">{L.common.reps}</div>
                       <div class="comp__exo-th comp__exo-th--end">{L.sessions.volume}</div>
                     </div>
-                    <template x-for="set in (item.session2Ex ? item.session2Ex.sets : [])" :key="set.setNumber">
-                      <div
-                        class="comp__exo-row"
-                        :class="{ 'is-completed': set.completed }"
-                      >
+                    <template
+                      x-for="set in (item.session2Ex ? item.session2Ex.sets : [])"
+                      :key="set.setNumber"
+                    >
+                      <div class="comp__exo-row" :class="{ 'is-completed': set.completed }">
                         <div class="comp__exo-td comp__exo-td--num" x-text="set.setNumber"></div>
                         <div class="comp__exo-td">
                           <span
@@ -441,7 +463,10 @@ const L = t();
                         </div>
                         <div class="comp__exo-td" x-text="formatWeight(set.weight)"></div>
                         <div class="comp__exo-td" x-text="set.reps"></div>
-                        <div class="comp__exo-td comp__exo-td--end" x-text="formatVolume(set.weight * set.reps)"></div>
+                        <div
+                          class="comp__exo-td comp__exo-td--end"
+                          x-text="formatVolume(set.weight * set.reps)"
+                        ></div>
                       </div>
                     </template>
                   </div>
@@ -456,310 +481,40 @@ const L = t();
 </AppLayout>
 
 <script>
-  import {
-    getSessions,
-    calculate1RM,
-    type Session,
-    type SessionExercise,
-    type SessionStatus,
-    type SetType,
-    } from '../../lib/storage';
+  import { createComparisonApp } from '../../components/sessions/compareApp';
   import { t } from '../../i18n';
-  import { statusLabel as statusLabelFn, type StatusLabels } from '../../lib/session-utils';
-  import { typeLabel as typeLabelFn } from '../../lib/workout-helpers';
-  import { formatDateCompact, formatDurationShort, formatVolume, formatWeight } from '../../lib/format';
 
   const LABELS = t();
 
-  const statusLabels: StatusLabels = { completed: LABELS.comparer.completed, inProgress: LABELS.comparer.inProgress, planned: LABELS.comparer.planned };
-
-  function statusLabelLocal(s: SessionStatus): string {
-    return statusLabelFn(s, statusLabels);
-  }
-
-  function typeLabelLocal(t: SetType): string {
-    return typeLabelFn(t, {
-      warmup: LABELS.rapide.typeWarmup,
-      work: LABELS.rapide.typeWork,
-      top: LABELS.rapide.typeTop,
-      drop: LABELS.rapide.typeDrop,
-      failure: LABELS.rapide.typeFailure,
-    });
-  }
-
-  function formatVolumeFn(v: number): string {
-    return formatVolume(v);
-  }
-
-  function exerciseVolumeFn(ex: SessionExercise | undefined): number {
-    if (!ex) return 0;
-    return ex.sets.reduce(
-      (s, set) => s + (set.completed ? set.weight * set.reps : 0),
-      0,
-    );
-  }
-
-  function totalSetsFn(session: Session | null): number {
-    if (!session) return 0;
-    return session.exercises.reduce((sum, ex) => sum + ex.sets.length, 0);
-  }
-
-  function bestSetFn(session: Session | null): number {
-    if (!session) return 0;
-    let best = 0;
-    for (const ex of session.exercises) {
-      for (const set of ex.sets) {
-        if (!set.completed) continue;
-        const e = calculate1RM(set.weight, set.reps);
-        if (e > best) best = e;
-      }
-    }
-    return best;
-  }
-
-  type Direction = 'up' | 'down' | 'equal';
-  function deltaFn(
-    a: number,
-    b: number,
-    upLabel: string,
-    downLabel: string,
-    equalLabel: string,
-    formatter: (n: number) => string,
-  ): { direction: Direction; label: string; diff: number } {
-    if (a === b) {
-      return { direction: 'equal', label: equalLabel, diff: 0 };
-    }
-    if (b > a) {
-      return {
-        direction: 'up',
-        label: upLabel + ' (+' + formatter(b - a) + ')',
-        diff: b - a,
-      };
-    }
-    return {
-      direction: 'down',
-      label: downLabel + ' (−' + formatter(a - b) + ')',
-      diff: a - b,
-    };
-  }
-
-  document.addEventListener('alpine:init', () => {
+  const register = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const Alpine = (window as any).Alpine;
 
-    Alpine.data('comparisonApp', () => ({
-      allSessions: [] as Session[],
-      session1Id: '' as string,
-      session2Id: '' as string,
-      session1: null as Session | null,
-      session2: null as Session | null,
+    Alpine.data('comparisonApp', () =>
+      createComparisonApp({
+        search: window.location.search,
+        pathname: window.location.pathname,
+        labels: {
+          comparer: LABELS.comparer,
+          rapide: LABELS.rapide,
+          status: {
+            completed: LABELS.comparer.completed,
+            inProgress: LABELS.comparer.inProgress,
+            planned: LABELS.comparer.planned,
+          },
+        },
+        ui: {
+          replaceUrl: (url) => window.history.replaceState({}, '', url),
+        },
+      })
+    );
+  };
 
-      init() {
-        this.allSessions = getSessions().sort(
-          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-        );
-        const params = new URLSearchParams(window.location.search);
-        const id1 = params.get('id1');
-        const id2 = params.get('id2');
-        if (id1) {
-          const found = this.allSessions.find((s) => s.id === id1);
-          if (found) {
-            this.session1Id = found.id;
-            this.session1 = found;
-          }
-        }
-        if (id2) {
-          const found = this.allSessions.find((s) => s.id === id2);
-          if (found) {
-            this.session2Id = found.id;
-            this.session2 = found;
-          }
-        }
-      },
-
-      get unionExercises(): Array<{
-        exerciseId: string;
-        name: string;
-        muscle: string;
-        session1Ex: SessionExercise | undefined;
-        session2Ex: SessionExercise | undefined;
-      }> {
-        if (!this.session1 && !this.session2) return [];
-        const map = new Map<
-          string,
-          {
-            exerciseId: string;
-            name: string;
-            muscle: string;
-            session1Ex: SessionExercise | undefined;
-            session2Ex: SessionExercise | undefined;
-          }
-        >();
-        if (this.session1) {
-          for (const ex of this.session1.exercises) {
-            map.set(ex.exerciseId, {
-              exerciseId: ex.exerciseId,
-              name: ex.name,
-              muscle: ex.muscle,
-              session1Ex: ex,
-              session2Ex: undefined,
-            });
-          }
-        }
-        if (this.session2) {
-          for (const ex of this.session2.exercises) {
-            const existing = map.get(ex.exerciseId);
-            if (existing) {
-              existing.session2Ex = ex;
-            } else {
-              map.set(ex.exerciseId, {
-                exerciseId: ex.exerciseId,
-                name: ex.name,
-                muscle: ex.muscle,
-                session1Ex: undefined,
-                session2Ex: ex,
-              });
-            }
-          }
-        }
-        return Array.from(map.values());
-      },
-
-      get volumeDelta() {
-        if (!this.session1 || !this.session2) {
-          return { direction: 'equal' as Direction, label: '—', diff: 0 };
-        }
-        return deltaFn(
-          this.totalVolume(this.session1),
-          this.totalVolume(this.session2),
-          LABELS.comparer.volumeMore,
-          LABELS.comparer.volumeLess,
-          LABELS.comparer.volumeEqual,
-          formatVolumeFn,
-        );
-      },
-
-      get exercisesDelta() {
-        if (!this.session1 || !this.session2) {
-          return { direction: 'equal' as Direction, label: '—', diff: 0 };
-        }
-        return deltaFn(
-          this.session1.exercises.length,
-          this.session2.exercises.length,
-          LABELS.comparer.exercisesMore,
-          LABELS.comparer.exercisesLess,
-          LABELS.comparer.exercisesEqual,
-          (n) => Math.round(n).toString(),
-        );
-      },
-
-      get setsDelta() {
-        if (!this.session1 || !this.session2) {
-          return { direction: 'equal' as Direction, label: '—', diff: 0 };
-        }
-        return deltaFn(
-          this.totalSets(this.session1),
-          this.totalSets(this.session2),
-          LABELS.comparer.setsMore,
-          LABELS.comparer.setsLess,
-          LABELS.comparer.setsEqual,
-          (n) => Math.round(n).toString(),
-        );
-      },
-
-      get bestSetDelta() {
-        if (!this.session1 || !this.session2) {
-          return { direction: 'equal' as Direction, label: '—', diff: 0 };
-        }
-        return deltaFn(
-          this.bestSet(this.session1),
-          this.bestSet(this.session2),
-          LABELS.comparer.best1RM,
-          LABELS.comparer.best1RMLower,
-          LABELS.comparer.best1RMSame,
-          formatVolumeFn,
-        );
-      },
-
-      formatOption(s: Session) {
-        const date = formatDateCompact(s.date);
-        return s.name + ' — ' + date;
-      },
-
-      statusLabel(s: SessionStatus) {
-        return statusLabelLocal(s);
-      },
-
-      typeLabel(t: SetType) {
-        return typeLabelLocal(t);
-      },
-
-      formatDate(iso: string) {
-        return formatDateCompact(iso);
-      },
-
-      formatDuration(seconds?: number) {
-        return formatDurationShort(seconds);
-      },
-
-      formatVolume(v: number) {
-        return formatVolume(v);
-      },
-
-      formatWeight(w: number) {
-        return formatWeight(w);
-      },
-
-      totalVolume(session: Session | null): number {
-        if (!session) return 0;
-        return session.exercises.reduce(
-          (sum, ex) => sum + exerciseVolumeFn(ex),
-          0,
-        );
-      },
-
-      exerciseVolume(ex: SessionExercise | undefined): number {
-        return exerciseVolumeFn(ex);
-      },
-
-      totalSets(session: Session | null): number {
-        return totalSetsFn(session);
-      },
-
-      bestSet(session: Session | null): number {
-        return bestSetFn(session);
-      },
-
-      onSession1Change(id: string) {
-        this.session1 = id ? this.allSessions.find((s) => s.id === id) || null : null;
-        this.syncUrl();
-      },
-
-      onSession2Change(id: string) {
-        this.session2 = id ? this.allSessions.find((s) => s.id === id) || null : null;
-        this.syncUrl();
-      },
-
-      syncUrl() {
-        if (typeof window === 'undefined') return;
-        const params = new URLSearchParams();
-        if (this.session1Id) params.set('id1', this.session1Id);
-        if (this.session2Id) params.set('id2', this.session2Id);
-        const qs = params.toString();
-        const newUrl = qs
-          ? window.location.pathname + '?' + qs
-          : window.location.pathname;
-        window.history.replaceState({}, '', newUrl);
-      },
-    }));
-  });
+  document.addEventListener('alpine:init', register);
+  if ((window as any).Alpine) register();
 </script>
 
 <style>
-  /* ═════════════════════════════════════════════════════
-     Compare page scoped styles (BEM: comp__*)
-     ═════════════════════════════════════════════════════ */
-
   .comp {
     display: flex;
     flex-direction: column;
@@ -807,7 +562,11 @@ const L = t();
     height: 4.8rem;
     padding: 0 1.4rem;
     border-radius: 9999px;
-    background: linear-gradient(135deg, color-mix(in srgb, var(--color-accent) 18%, transparent), color-mix(in srgb, var(--color-accent) 5%, transparent));
+    background: linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--color-accent) 18%, transparent),
+      color-mix(in srgb, var(--color-accent) 5%, transparent)
+    );
     border: 1px solid color-mix(in srgb, var(--color-accent) 35%, transparent);
     color: var(--color-accent);
     font-family: var(--font-display);
@@ -903,22 +662,16 @@ const L = t();
     align-items: center;
     gap: var(--spacing-3);
   }
-  .comp__summary-col {
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-    min-width: 0;
-  }
   .comp__summary-col-label {
-    font-size: 1.0rem;
+    font-size: 1rem;
     color: var(--color-muted);
     text-transform: uppercase;
-    letter-spacing: 0.10em;
+    letter-spacing: 0.1em;
     font-weight: 700;
   }
   .comp__summary-col-value {
     font-family: var(--font-display);
-    font-size: 2.0rem;
+    font-size: 2rem;
     font-weight: 700;
     color: var(--color-text);
     font-variant-numeric: tabular-nums;
@@ -992,16 +745,16 @@ const L = t();
     align-items: center;
     align-self: flex-start;
     height: 2.4rem;
-    padding: 0 1.0rem;
+    padding: 0 1rem;
     background-color: var(--alpha-bg-soft);
     border: 1px solid var(--color-border);
     border-radius: 9999px;
     color: var(--color-muted);
     font-family: var(--font-display);
-    font-size: 1.0rem;
+    font-size: 1rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.10em;
+    letter-spacing: 0.1em;
   }
   .comp__session-badge--accent {
     background-color: color-mix(in srgb, var(--color-accent) 12%, transparent);
@@ -1035,17 +788,11 @@ const L = t();
     padding-top: var(--spacing-1);
     flex-wrap: wrap;
   }
-  .comp__stat {
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-    min-width: 0;
-  }
   .comp__stat-label {
     font-size: 1.05rem;
     color: var(--color-muted);
     text-transform: uppercase;
-    letter-spacing: 0.10em;
+    letter-spacing: 0.1em;
     font-weight: 700;
   }
   .comp__stat-value {
@@ -1062,7 +809,7 @@ const L = t();
     display: inline-flex;
     align-items: center;
     height: 2.4rem;
-    padding: 0 1.0rem;
+    padding: 0 1rem;
     border-radius: var(--radius-pill);
     font-family: var(--font-body);
     font-size: 1.05rem;
@@ -1160,7 +907,7 @@ const L = t();
   .comp__exo-missing {
     display: inline-flex;
     align-items: center;
-    height: 3.0rem;
+    height: 3rem;
     padding: 0 1.2rem;
     background-color: var(--alpha-bg-subtle);
     border: 1px dashed var(--color-border);
@@ -1185,15 +932,18 @@ const L = t();
   .comp__exo-thead,
   .comp__exo-row {
     display: grid;
-    grid-template-columns: 3.4rem minmax(0, 1.2fr) minmax(0, 0.9fr) minmax(0, 0.7fr) minmax(0, 1.1fr);
+    grid-template-columns: 3.4rem minmax(0, 1.2fr) minmax(0, 0.9fr) minmax(0, 0.7fr) minmax(
+        0,
+        1.1fr
+      );
     align-items: center;
     gap: 0.6rem;
-    padding: 0 1.0rem;
+    padding: 0 1rem;
   }
   .comp__exo-thead {
     height: 3.4rem;
     background-color: var(--color-surface);
-    font-size: 1.0rem;
+    font-size: 1rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.08em;

@@ -1,5 +1,4 @@
 ---
-
 import { t, localizedPath } from '../../i18n';
 import AppLayout from '../../layouts/AppLayout.astro';
 import PageHeader from '../../components/layout/PageHeader.astro';
@@ -11,34 +10,34 @@ const L = t();
 ---
 
 <AppLayout title={L.progression.title}>
-  <PageHeader
-    title={L.progression.title}
-    description={L.progression.description}
-  />
+  <PageHeader title={L.progression.title} description={L.progression.description} />
 
-  <div
-    class="prog"
-    x-data="progressionApp()"
-    x-init="init()"
-    x-cloak
-  >
+  <div class="prog" x-data="progressionApp()" x-init="init()" x-cloak>
     {/* ── Toolbar: summary + sort ── */}
     <div class="prog__toolbar" x-show="exerciseStats.length > 0">
       <div class="prog__summary">
         <div class="prog__summary-item">
           <Fragment set:html={icons.dumbbellBox()} />
           <span class="prog__summary-value" x-text="exerciseStats.length"></span>
-          <span class="prog__summary-label">{L.progression.exerciseSingular}<span x-show="exerciseStats.length > 1">s</span></span>
+          <span class="prog__summary-label">
+            {L.progression.exerciseSingular}
+            <span x-show="exerciseStats.length > 1">s</span>
+          </span>
         </div>
         <div class="prog__summary-item">
           <Fragment set:html={icons.trendingUp()} />
           <span class="prog__summary-value" x-text="formatNumber(max1RM)"></span>
-          <span class="prog__summary-label">{L.progression.kg} {L.progression.max1RM}</span>
+          <span class="prog__summary-label">
+            {L.progression.kg} {L.progression.max1RM}
+          </span>
         </div>
         <div class="prog__summary-item">
           <Fragment set:html={icons.list()} />
           <span class="prog__summary-value" x-text="totalSessions"></span>
-          <span class="prog__summary-label">{L.records.sessionSingular}<span x-show="totalSessions > 1">s</span></span>
+          <span class="prog__summary-label">
+            {L.records.sessionSingular}
+            <span x-show="totalSessions > 1">s</span>
+          </span>
         </div>
       </div>
     </div>
@@ -48,77 +47,88 @@ const L = t();
       <div class="prog__grid">
         <template x-for="stat in exerciseStats" :key="stat.exerciseId">
           <article class="prog__item">
-              <header class="prog__item-header">
-                <div class="prog__item-title">
-                  <Fragment set:html={icons.dumbbellBox()} />
-                  <h3 class="prog__item-name" x-text="trExercise(stat.name)"></h3>
-                </div>
-                <Badge
-                  variant="category"
-                  size="sm"
-                  :class="'badge--cat-' + muscleHue(stat.muscle)"
-                  x-text="trMuscle(stat.muscle)"
-                ></Badge>
-              </header>
+            <header class="prog__item-header">
+              <div class="prog__item-title">
+                <Fragment set:html={icons.dumbbellBox()} />
+                <h3 class="prog__item-name" x-text="trExercise(stat.name)"></h3>
+              </div>
+              <Badge
+                variant="category"
+                size="sm"
+                :class="'badge--cat-' + muscleHue(stat.muscle)"
+                x-text="trMuscle(stat.muscle)"
+              />
+            </header>
 
-              <div class="prog__item-stats">
-                <div class="prog__stat prog__stat--hero">
-                  <span class="prog__stat-label">{L.progression.best1RM}</span>
-                  <div class="prog__stat-row">
-                    <span class="prog__stat-value prog__stat-value--hero" x-text="formatNumber(stat.estimated1RM)"></span>
-                    <span class="prog__stat-unit">{L.progression.kg}</span>
-                  </div>
+            <div class="prog__item-stats">
+              <div class="prog__stat prog__stat--hero">
+                <span class="prog__stat-label">{L.progression.best1RM}</span>
+                <div class="prog__stat-row">
                   <span
-                    class="prog__stat-trend"
-                    x-show="historyDelta(stat) !== null"
-                    :class="historyDelta(stat) >= 0 ? 'prog__stat-trend--up' : 'prog__stat-trend--down'"
-                    x-text="formatDelta(historyDelta(stat))"
+                    class="prog__stat-value prog__stat-value--hero"
+                    x-text="formatNumber(stat.estimated1RM)"
                   ></span>
+                  <span class="prog__stat-unit">{L.progression.kg}</span>
                 </div>
-                <div class="prog__stat">
-                  <span class="prog__stat-label">{L.progression.bestWeight}</span>
-                  <div class="prog__stat-row">
-                    <span class="prog__stat-value" x-text="formatNumber(stat.bestWeight)"></span>
-                    <span class="prog__stat-unit">{L.progression.kg}</span>
-                  </div>
-                </div>
-                <div class="prog__stat">
-                  <span class="prog__stat-label">{L.progression.maxReps}</span>
-                  <div class="prog__stat-row">
-                    <span class="prog__stat-value" x-text="stat.bestReps"></span>
-                    <span class="prog__stat-unit">{L.progression.repsSuffix}</span>
-                  </div>
-                </div>
-                <div class="prog__stat">
-                  <span class="prog__stat-label">{L.progression.date}</span>
-                  <div class="prog__stat-row">
-                    <span class="prog__stat-value prog__stat-value--sm" x-text="formatDate(stat.date)"></span>
-                  </div>
+                <span
+                  class="prog__stat-trend"
+                  x-show="historyDelta(stat) !== null"
+                  :class="historyDelta(stat) >= 0 ? 'prog__stat-trend--up' : 'prog__stat-trend--down'"
+                  x-text="formatDelta(historyDelta(stat))"
+                ></span>
+              </div>
+              <div class="prog__stat">
+                <span class="prog__stat-label">{L.progression.bestWeight}</span>
+                <div class="prog__stat-row">
+                  <span class="prog__stat-value" x-text="formatNumber(stat.bestWeight)"></span>
+                  <span class="prog__stat-unit">{L.progression.kg}</span>
                 </div>
               </div>
+              <div class="prog__stat">
+                <span class="prog__stat-label">{L.progression.maxReps}</span>
+                <div class="prog__stat-row">
+                  <span class="prog__stat-value" x-text="stat.bestReps"></span>
+                  <span class="prog__stat-unit">{L.progression.repsSuffix}</span>
+                </div>
+              </div>
+              <div class="prog__stat">
+                <span class="prog__stat-label">{L.progression.date}</span>
+                <div class="prog__stat-row">
+                  <span
+                    class="prog__stat-value prog__stat-value--sm"
+                    x-text="formatDate(stat.date)"
+                  ></span>
+                </div>
+              </div>
+            </div>
 
-              <footer class="prog__item-footer">
+            <footer class="prog__item-footer">
               <div class="prog__session-info">
                 <Fragment set:html={icons.calendar()} />
-                  <span x-text="stat.sessionCount"></span>
-                  <span class="prog__session-label">{L.records.sessionSingular}<span x-show="stat.sessionCount > 1">s</span></span>
-                  <span class="prog__sep" aria-hidden="true">·</span>
-                  <span class="prog__session-label">{L.records.lastSession}</span>
-                  <span class="prog__session-date" x-text="formatDate(stat.lastSessionDate)"></span>
+                <span x-text="stat.sessionCount"></span>
+                <span class="prog__session-label">
+                  {L.records.sessionSingular}
+                  <span x-show="stat.sessionCount > 1">s</span>
+                </span>
+                <span class="prog__sep" aria-hidden="true">
+                  ·
+                </span>
+                <span class="prog__session-label">{L.records.lastSession}</span>
+                <span class="prog__session-date" x-text="formatDate(stat.lastSessionDate)"></span>
+              </div>
+              <div class="prog__history" x-show="stat.history.length > 1">
+                <span class="prog__stat-label">{L.historique.titleShort}</span>
+                <div class="prog__history-bar" :title="historyTooltip(stat.history)">
+                  <template x-for="(record, idx) in stat.history" :key="idx">
+                    <span
+                      class="prog__history-tick"
+                      :style="{ height: historyBarHeight(stat.history, record.estimated1RM) + '%' }"
+                      :title="formatNumber(record.estimated1RM) + ' kg · ' + formatDate(record.date)"
+                    ></span>
+                  </template>
                 </div>
-                <div class="prog__history" x-show="stat.history.length > 1">
-                  <span class="prog__stat-label">{L.historique.titleShort}</span>
-                  <div class="prog__history-bar" :title="historyTooltip(stat.history)">
-                    <template x-for="(record, idx) in stat.history" :key="idx">
-                      <span
-                        class="prog__history-tick"
-                        :style="{ height: historyBarHeight(stat.history, record.estimated1RM) + '%' }"
-                        :title="formatNumber(record.estimated1RM) + ' kg · ' + formatDate(record.date)"
-                      ></span>
-                    </template>
-                  </div>
-                </div>
-              </footer>
+              </div>
+            </footer>
           </article>
         </template>
       </div>
@@ -132,7 +142,7 @@ const L = t();
           title={L.progression.noData}
           description={L.progression.empty}
           actionLabel={L.common.startSession}
-          actionHref={localizedPath("/sessions/create")}
+          actionHref={localizedPath('/sessions/create')}
         />
       </Card>
     </template>
@@ -140,10 +150,8 @@ const L = t();
 </AppLayout>
 
 <script>
-  import {
-    getSessions,
-    type ProgressRecord,
-  } from '../../lib/storage';
+  import { getSessions } from '../../lib/storage/sessions';
+  import type { ProgressRecord } from '../../lib/storage/types';
   import { formatNumPositive, formatDateShort } from '../../lib/format';
   import {
     computeExerciseProgression,
@@ -188,13 +196,13 @@ const L = t();
         if (stat.history.length < 2) return null;
         const current = stat.history[stat.history.length - 1]?.estimated1RM;
         const previous = stat.history[stat.history.length - 2]?.estimated1RM;
-        if (typeof current !== "number" || typeof previous !== "number") return null;
+        if (typeof current !== 'number' || typeof previous !== 'number') return null;
         return current - previous;
       },
 
       formatDelta(delta: number | null): string {
-        if (delta === null) return "";
-        const sign = delta > 0 ? "+" : "";
+        if (delta === null) return '';
+        const sign = delta > 0 ? '+' : '';
         return `${sign}${formatNumPositive(delta)} kg`;
       },
 
@@ -220,7 +228,9 @@ const L = t();
   }
 
   /* ── Summary toolbar ── */
-  .prog__toolbar { margin-bottom: 0.4rem; }
+  .prog__toolbar {
+    margin-bottom: 0.4rem;
+  }
 
   .prog__summary {
     display: flex;
@@ -281,14 +291,6 @@ const L = t();
     justify-content: space-between;
     gap: 1.6rem;
     min-width: 0;
-  }
-
-  .prog__item-title {
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    min-width: 0;
-    flex: 1;
   }
 
   .prog__item-name {
@@ -362,8 +364,12 @@ const L = t();
     letter-spacing: 0.04em;
   }
 
-  .prog__stat-trend--up { color: var(--color-success); }
-  .prog__stat-trend--down { color: var(--color-destructive); }
+  .prog__stat-trend--up {
+    color: var(--color-success);
+  }
+  .prog__stat-trend--down {
+    color: var(--color-destructive);
+  }
 
   .prog__stat-value--sm {
     font-size: 1.4rem;
@@ -454,17 +460,40 @@ const L = t();
   }
 
   @media (max-width: 900px) {
-    .prog__item { grid-template-columns: minmax(18rem, 0.8fr) minmax(0, 1.2fr); }
-    .prog__item-footer { grid-column: 1 / -1; }
+    .prog__item {
+      grid-template-columns: minmax(18rem, 0.8fr) minmax(0, 1.2fr);
+    }
+    .prog__item-footer {
+      grid-column: 1 / -1;
+    }
   }
 
   @media (max-width: 480px) {
-    .prog__item { display: flex; flex-direction: column; align-items: stretch; gap: 1.4rem; }
-    .prog__summary { padding: 1.2rem 0; gap: 1rem 1.6rem; }
-    .prog__summary-value { font-size: 1.6rem; }
-    .prog__item-stats { grid-template-columns: 1fr; }
-    .prog__stat:nth-child(4) { border-left: 0; padding-left: 0; }
-    .prog__stat-value { font-size: 1.8rem; }
-    .prog__stat-value--hero { font-size: 2.4rem; }
+    .prog__item {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 1.4rem;
+    }
+    .prog__summary {
+      padding: 1.2rem 0;
+      gap: 1rem 1.6rem;
+    }
+    .prog__summary-value {
+      font-size: 1.6rem;
+    }
+    .prog__item-stats {
+      grid-template-columns: 1fr;
+    }
+    .prog__stat:nth-child(4) {
+      border-left: 0;
+      padding-left: 0;
+    }
+    .prog__stat-value {
+      font-size: 1.8rem;
+    }
+    .prog__stat-value--hero {
+      font-size: 2.4rem;
+    }
   }
 </style>

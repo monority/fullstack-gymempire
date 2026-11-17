@@ -1,33 +1,29 @@
 ---
 /**
- * Sidebar â€” fixed left navigation, palworld.tools style.
  *
- * Visible on desktop (â‰¥1024px) only. On smaller viewports, the
  * AppShell renders a slide-in drawer with the same nav data so
  * users get the same IA on every screen size.
  *
  * Structure:
  *   [logo + brand]
- *   [search field â†’ exercises search (/exercises)]
- *   [nav groups â†’ items (with optional sub-items)]
  *   [footer]
  */
-import { t } from "../../i18n";
-import { navId, renderIcon, chevronDown } from "../../lib/nav";
-import Icon from "../ui/Icon.astro";
-import type { NavGroup } from "../../lib/types";
+import { t } from '../../i18n';
+import { navId, renderIcon, chevronDown } from '../../lib/nav';
+import Icon from '../ui/Icon.astro';
+import type { NavGroup } from '../../lib/types';
 
 interface Props {
   groups: NavGroup[];
   class?: string;
 }
 
-const { groups, class: className = "" } = Astro.props;
+const { groups, class: className = '' } = Astro.props;
 const L = t();
 ---
 
 <aside
-  class:list={["sidebar", className]}
+  class:list={['sidebar', className]}
   :class="{ 'nav-ready': navReady }"
   x-show="navReady"
   transition:persist="main-sidebar"
@@ -46,71 +42,20 @@ const L = t();
 
   {/* Nav */}
   <nav class="sidebar__nav">
-    {
-      groups.map((group) => (
-        <div class="nav-group">
-          <div class="nav-group__label">{group.label}</div>
-          {group.items.map((item) => (
-            <div class="nav-item-wrap">
-              {item.children && item.children.length > 0 ? (
-                <>
-                  <button
-                    type="button"
-                    class:list={[
-                      "nav-item nav-item--toggle",
-                      item.parentActive && "is-open",
-                    ]}
-                    :class={`{ 'is-open': isExpanded('${navId(item.href)}'), 'nav-item--parent-active': ${item.parentActive ?? false} }`}
-                    :aria-expanded={`isExpanded('${navId(item.href)}')`}
-                    aria-controls={`nav-children-${navId(item.href)}`}
-                    @click={`toggleNav('${navId(item.href)}')`}
-                  >
-                    {item.icon && (
-                      <span
-                        class="nav-item__icon"
-                        aria-hidden="true"
-                        set:html={renderIcon(item.icon)}
-                      />
-                    )}
-                    <span class="nav-item__label">{item.label}</span>
-                    <span
-                      class="nav-item__chevron"
-                      aria-hidden="true"
-                      set:html={chevronDown}
-                    />
-                  </button>
-                  <div
-                    class:list={["nav-children", item.parentActive && "is-open"]}
-                    id={`nav-children-${navId(item.href)}`}
-                    data-nav-group={navId(item.href)}
-                    :class={`{ 'is-open': isExpanded('${navId(item.href)}') }`}
-                    role="region"
-                  >
-                    <div class="nav-children-inner">
-                      {item.children.map((child) => (
-                        <a
-                          href={child.href}
-                          class:list={["nav-child", child.active && "is-active"]}
-                          aria-current={child.active ? "page" : undefined}
-                        >
-                          {child.icon && (
-                            <span
-                              class="nav-child__icon"
-                              aria-hidden="true"
-                              set:html={renderIcon(child.icon)}
-                            />
-                          )}
-                          <span class="nav-child__label">{child.label}</span>
-                        </a>
-                      ))}
-                    </div>
-                  </div>
-                </>
-              ) : (
-                <a
-                  href={item.href}
-                  class:list={["nav-item", item.active && "is-active"]}
-                  aria-current={item.active ? "page" : undefined}
+    {groups.map((group) => (
+      <div class="nav-group">
+        <div class="nav-group__label">{group.label}</div>
+        {group.items.map((item) => (
+          <div class="nav-item-wrap">
+            {item.children && item.children.length > 0 ? (
+              <>
+                <button
+                  type="button"
+                  class:list={['nav-item nav-item--toggle', item.parentActive && 'is-open']}
+                  :class={`{ 'is-open': isExpanded('${navId(item.href)}'), 'nav-item--parent-active': ${item.parentActive ?? false} }`}
+                  :aria-expanded={`isExpanded('${navId(item.href)}')`}
+                  aria-controls={`nav-children-${navId(item.href)}`}
+                  @click={`toggleNav('${navId(item.href)}')`}
                 >
                   {item.icon && (
                     <span
@@ -120,13 +65,55 @@ const L = t();
                     />
                   )}
                   <span class="nav-item__label">{item.label}</span>
-                </a>
-              )}
-            </div>
-          ))}
-        </div>
-      ))
-    }
+                  <span class="nav-item__chevron" aria-hidden="true" set:html={chevronDown} />
+                </button>
+                <div
+                  class:list={['nav-children', item.parentActive && 'is-open']}
+                  id={`nav-children-${navId(item.href)}`}
+                  data-nav-group={navId(item.href)}
+                  :class={`{ 'is-open': isExpanded('${navId(item.href)}') }`}
+                  role="region"
+                >
+                  <div class="nav-children-inner">
+                    {item.children.map((child) => (
+                      <a
+                        href={child.href}
+                        class:list={['nav-child', child.active && 'is-active']}
+                        aria-current={child.active ? 'page' : undefined}
+                      >
+                        {child.icon && (
+                          <span
+                            class="nav-child__icon"
+                            aria-hidden="true"
+                            set:html={renderIcon(child.icon)}
+                          />
+                        )}
+                        <span class="nav-child__label">{child.label}</span>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              </>
+            ) : (
+              <a
+                href={item.href}
+                class:list={['nav-item', item.active && 'is-active']}
+                aria-current={item.active ? 'page' : undefined}
+              >
+                {item.icon && (
+                  <span
+                    class="nav-item__icon"
+                    aria-hidden="true"
+                    set:html={renderIcon(item.icon)}
+                  />
+                )}
+                <span class="nav-item__label">{item.label}</span>
+              </a>
+            )}
+          </div>
+        ))}
+      </div>
+    ))}
   </nav>
 
   {/* Footer */}
@@ -136,11 +123,7 @@ const L = t();
 </aside>
 
 <style>
-  /* â”€â”€ Shell â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-  /* Fixed on desktop (â‰¥1024px) so it stays pinned to the viewport
-     regardless of long page content (e.g. session builder with many
-     exercises + notes). Hidden on mobile via the responsive block
-     at the bottom, where `position` is irrelevant. */
+  /* Fixed on desktop so the sidebar stays pinned while long pages scroll. */
   .sidebar {
     width: var(--sidebar-width);
     /* Translucent so the decorative background shows through the
@@ -160,7 +143,6 @@ const L = t();
     z-index: 4;
   }
 
-  /* â”€â”€ Logo â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   .sidebar__logo {
     display: flex;
     align-items: center;
@@ -181,13 +163,6 @@ const L = t();
     flex-shrink: 0;
   }
 
-  .sidebar__logo-text {
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-    min-width: 0;
-  }
-
   .sidebar__logo-name {
     font-family: var(--font-display);
     font-size: 1.6rem;
@@ -205,7 +180,6 @@ const L = t();
     line-height: 1;
   }
 
-  /* â”€â”€ Nav â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   .sidebar__nav {
     flex: 1;
     padding: 0 0.8rem;
@@ -217,7 +191,7 @@ const L = t();
 
   .nav-group__label {
     font-family: var(--font-display);
-    font-size: 1.0rem;
+    font-size: 1rem;
     color: var(--color-muted);
     text-transform: uppercase;
     letter-spacing: 0.15em;
@@ -256,11 +230,6 @@ const L = t();
       box-shadow var(--transition-fast);
   }
 
-  .nav-item:hover {
-    background-color: var(--alpha-bg-subtle);
-    color: var(--color-text);
-  }
-
   .nav-item.is-active {
     background-color: color-mix(in srgb, var(--color-accent) 12%, transparent);
     color: var(--color-accent);
@@ -292,7 +261,6 @@ const L = t();
     min-width: 0;
   }
 
-  /* Collapsible toggle chevron â€” rotates when the group is expanded. */
   .nav-item__chevron {
     display: inline-flex;
     flex-shrink: 0;
@@ -304,9 +272,7 @@ const L = t();
     transform: rotate(180deg);
   }
 
-  /* â”€â”€ Child items (accordion body) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-  /* Animated with the grid-template-rows 0fr â†’ 1fr technique so the
-     height transition works without requiring a fixed max-height. */
+  /* Accordéon animé via grid-template-rows. */
   .nav-children {
     display: grid;
     grid-template-rows: 0fr;
@@ -373,7 +339,6 @@ const L = t();
     display: block;
   }
 
-  /* â”€â”€ Footer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   .sidebar__footer {
     padding: 1.6rem;
     border-top: 1px solid var(--color-border);
@@ -392,7 +357,6 @@ const L = t();
     margin: 0;
   }
 
-  /* â”€â”€ Focus visible â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   .nav-item:focus-visible,
   .nav-item--toggle:focus-visible,
   .nav-child:focus-visible {
@@ -400,42 +364,93 @@ const L = t();
     box-shadow: var(--focus-ring);
   }
 
-  /* â”€â”€ Solid fallback when backdrop-filter is unavailable â”€â”€ */
   @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
     .sidebar {
       background-color: var(--color-surface);
     }
   }
 
-  /* â”€â”€ Responsive â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   @media (max-width: 1023px) {
     .sidebar {
       display: none;
     }
   }
 
-  /* â”€â”€ Performance rail overrides â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   .sidebar {
     width: var(--sidebar-width);
     background: color-mix(in srgb, var(--color-bg) 92%, transparent);
     border-right: 1px solid var(--color-border);
     backdrop-filter: none;
   }
-  .sidebar__logo { padding: 2.4rem 1.8rem 1.6rem; }
-  .sidebar__logo-icon { width: 3.6rem; height: 3.6rem; border-radius: var(--radius-sm); background: var(--color-accent); color: var(--color-accent-foreground); border: 0; }
-  .sidebar__logo-name { letter-spacing: -0.04em; font-size: 1.8rem; }
-  .sidebar__logo-subtitle { color: var(--color-accent); font-size: 0.8rem; }
-  .sidebar__nav { padding: 0 1rem; }
-  .nav-group { margin-bottom: 2.4rem; }
-  .nav-group__label { padding: 0.8rem 1rem; color: var(--color-muted); font-size: 0.85rem; letter-spacing: 0.18em; }
-  .nav-item { min-height: 4.2rem; border-radius: var(--radius-sm); font-size: 1.3rem; }
-  .nav-item.is-active, .nav-child.is-active { position: relative; background: var(--alpha-bg-soft); color: var(--color-text); box-shadow: none; }
-  .nav-item.is-active::before, .nav-child.is-active::before { content: ""; position: absolute; left: 0; top: 0.8rem; bottom: 0.8rem; width: 0.3rem; background: var(--color-accent); border-radius: 0 2px 2px 0; }
-  .nav-item--parent-active { color: var(--color-accent); }
-  .nav-child { min-height: 3.8rem; font-size: 1.2rem; border-radius: var(--radius-sm); color: var(--color-muted); }
-  .sidebar__footer { margin: 1rem; padding: 1.2rem 0; border-top: 1px solid var(--color-border); }
+  .sidebar__logo {
+    padding: 2.4rem 1.8rem 1.6rem;
+  }
+  .sidebar__logo-icon {
+    width: 3.6rem;
+    height: 3.6rem;
+    border-radius: var(--radius-sm);
+    background: var(--color-accent);
+    color: var(--color-accent-foreground);
+    border: 0;
+  }
+  .sidebar__logo-name {
+    letter-spacing: -0.04em;
+    font-size: 1.8rem;
+  }
+  .sidebar__logo-subtitle {
+    color: var(--color-accent);
+    font-size: 0.8rem;
+  }
+  .sidebar__nav {
+    padding: 0 1rem;
+  }
+  .nav-group {
+    margin-bottom: 2.4rem;
+  }
+  .nav-group__label {
+    padding: 0.8rem 1rem;
+    color: var(--color-muted);
+    font-size: 0.85rem;
+    letter-spacing: 0.18em;
+  }
+  .nav-item {
+    min-height: 4.2rem;
+    border-radius: var(--radius-sm);
+    font-size: 1.3rem;
+  }
+  .nav-item.is-active,
+  .nav-child.is-active {
+    position: relative;
+    background: var(--alpha-bg-soft);
+    color: var(--color-text);
+    box-shadow: none;
+  }
+  .nav-item.is-active::before,
+  .nav-child.is-active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.8rem;
+    bottom: 0.8rem;
+    width: 0.3rem;
+    background: var(--color-accent);
+    border-radius: 0 2px 2px 0;
+  }
+  .nav-item--parent-active {
+    color: var(--color-accent);
+  }
+  .nav-child {
+    min-height: 3.8rem;
+    font-size: 1.2rem;
+    border-radius: var(--radius-sm);
+    color: var(--color-muted);
+  }
+  .sidebar__footer {
+    margin: 1rem;
+    padding: 1.2rem 0;
+    border-top: 1px solid var(--color-border);
+  }
 
   @media (max-width: 640px) {
   }
-
 </style>

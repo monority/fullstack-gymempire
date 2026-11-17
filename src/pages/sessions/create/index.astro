@@ -1,34 +1,29 @@
 ---
-import AppLayout from "../../../layouts/AppLayout.astro";
-import PageHeader from "../../../components/layout/PageHeader.astro";
-import Card from "../../../components/ui/Card.astro";
-import CardHeader from "../../../components/ui/CardHeader.astro";
-import CardTitle from "../../../components/ui/CardTitle.astro";
-import CardContent from "../../../components/ui/CardContent.astro";
-import Badge from "../../../components/ui/Badge.astro";
-import Button from "../../../components/ui/Button.astro";
-import IconButton from "../../../components/ui/IconButton.astro";
-import Input from "../../../components/ui/Input.astro";
-import Dialog from "../../../components/ui/Dialog.astro";
-import { TRAINING_TEMPLATES } from "../../../lib/templates";
-import {
-  t,
-  localizedPath,
-  trTemplateName,
-  trTemplateDesc,
-} from "../../../i18n";
-import { icons } from "../../../lib/icons";
-import Icon from "../../../components/ui/Icon.astro";
+import AppLayout from '../../../layouts/AppLayout.astro';
+import PageHeader from '../../../components/layout/PageHeader.astro';
+import Card from '../../../components/ui/Card.astro';
+import CardHeader from '../../../components/ui/CardHeader.astro';
+import CardTitle from '../../../components/ui/CardTitle.astro';
+import CardContent from '../../../components/ui/CardContent.astro';
+import Badge from '../../../components/ui/Badge.astro';
+import Button from '../../../components/ui/Button.astro';
+import IconButton from '../../../components/ui/IconButton.astro';
+import Input from '../../../components/ui/Input.astro';
+import Dialog from '../../../components/ui/Dialog.astro';
+import { TRAINING_TEMPLATES } from '../../../lib/templates';
+import { t, localizedPath, trTemplateName, trTemplateDesc } from '../../../i18n';
+import { icons } from '../../../lib/icons';
+import Icon from '../../../components/ui/Icon.astro';
 
 const L = t();
-const editId = Astro.url.searchParams.get("edit");
+const editId = Astro.url.searchParams.get('edit');
 const isEditMode = Boolean(editId);
 const setTypes = [
-  { value: "warmup", label: L.builder.types.warmup },
-  { value: "work", label: L.builder.types.work },
-  { value: "top", label: L.builder.types.top },
-  { value: "drop", label: L.builder.types.drop },
-  { value: "failure", label: L.builder.types.failure },
+  { value: 'warmup', label: L.builder.types.warmup },
+  { value: 'work', label: L.builder.types.work },
+  { value: 'top', label: L.builder.types.top },
+  { value: 'drop', label: L.builder.types.drop },
+  { value: 'failure', label: L.builder.types.failure },
 ] as const;
 ---
 
@@ -46,14 +41,15 @@ const setTypes = [
     @builder:remove-exercise.window="removeExercise($event.detail.index)"
     @builder:remove-superset.window="removeFromSuperset($event.detail.index)"
   >
-
     <div class="create__action-bar">
       <div class="create__summary" x-show="exercises.length > 0" aria-live="polite">
         <span class="create__summary-item">
           <strong x-text="exercises.length"></strong>
           <span>{L.builder.exercisesWord}</span>
         </span>
-        <span class="create__summary-separator" aria-hidden="true">/</span>
+        <span class="create__summary-separator" aria-hidden="true">
+          /
+        </span>
         <span class="create__summary-item">
           <strong x-text="exercises.reduce((total, exercise) => total + exercise.sets.length, 0)"></strong>
           <span>{L.builder.setsPlural}</span>
@@ -96,12 +92,7 @@ const setTypes = [
             autocomplete="off"
             maxlength={80}
           />
-          <Input
-            label={L.builder.date}
-            id="ses-date"
-            type="date"
-            x-model="sessionDate"
-          />
+          <Input label={L.builder.date} id="ses-date" type="date" x-model="sessionDate" />
         </div>
       </CardContent>
     </Card>
@@ -112,19 +103,13 @@ const setTypes = [
           <div class="create__empty-icon" aria-hidden="true">
             <Fragment set:html={icons.dumbbellBox(48, 48)} />
           </div>
-          <h3
-            class="create__empty-title"
-            x-text="labels.noExoAdded"
-          >
+          <h3 class="create__empty-title" x-text="labels.noExoAdded">
             {L.builder.noExoAdded}
           </h3>
           <p class="create__empty-desc" x-text="labels.noExoDesc">
             {L.builder.noExoDesc}
           </p>
-          <Button
-            class="create__empty-add-btn"
-            @click="openPicker()"
-          >
+          <Button class="create__empty-add-btn" @click="openPicker()">
             <Fragment set:html={icons.plus(20, 20)} />
             <span>{L.builder.addExercise}</span>
           </Button>
@@ -132,10 +117,7 @@ const setTypes = [
       </Card>
     </template>
 
-    <template
-      x-for="(ex, exIdx) in exercises"
-      :key="ex.exerciseId + '-' + exIdx"
-    >
+    <template x-for="(ex, exIdx) in exercises" :key="ex.exerciseId + '-' + exIdx">
       <div x-data="exerciseCard(ex, exIdx)">
         <Card>
           <div
@@ -147,9 +129,7 @@ const setTypes = [
             <span class="ses-superset-dot" aria-hidden="true"></span>
             <Icon name="link" size={16} class="create__superset-bar-icon" />
             <span class="create__superset-bar-label">
-              <span x-text="labels.supersetLabel + ' ' + exercise.supersetId"
-                >Superset</span
-              >
+              <span x-text="labels.supersetLabel + ' ' + exercise.supersetId">Superset</span>
             </span>
             <IconButton
               variant="ghost"
@@ -170,27 +150,18 @@ const setTypes = [
             >
               <div class="create__toggle-body">
                 <div class="ses-ex-head create__ex-head">
-                  <h3 class="create__ex-name" x-text="trExercise(exercise.name)">
-                  </h3>
+                  <h3 class="create__ex-name" x-text="trExercise(exercise.name)"></h3>
                   <Badge
                     variant="category"
                     :class="'badge--cat-' + muscleHue(exercise.muscle)"
                     x-text="trMuscle(exercise.muscle)"
                   />
                 </div>
-                <p
-                  class="create__ex-summary"
-                  x-show="!expanded"
-                  x-cloak
-                  x-text="summary"
-                >
-                </p>
+                <p class="create__ex-summary" x-show="!expanded" x-cloak x-text="summary"></p>
               </div>
-              <span
-                class="ses-chevron create__ex-chevron"
-                :class="{ 'is-open': expanded }"
-                ><Fragment set:html={icons.chevronDown(20, 20)} /></span
-              >
+              <span class="ses-chevron create__ex-chevron" :class="{ 'is-open': expanded }">
+                <Fragment set:html={icons.chevronDown(20, 20)} />
+              </span>
             </button>
             <IconButton
               variant="danger"
@@ -214,7 +185,9 @@ const setTypes = [
                 :aria-label="labels.setsFor + ' ' + exercise.name"
               >
                 <div class="ses-table-head" role="row">
-                  <div class="ses-cell ses-cell-num" role="columnheader">#</div>
+                  <div class="ses-cell ses-cell-num" role="columnheader">
+                    #
+                  </div>
                   <div class="ses-cell ses-cell-type" role="columnheader">
                     {L.builder.setTypeHeader}
                   </div>
@@ -228,31 +201,20 @@ const setTypes = [
                     class="ses-cell ses-cell-action"
                     role="columnheader"
                     aria-label="Actions"
-                  >
-                  </div>
+                  ></div>
                 </div>
-                <template
-                  x-for="(set, setIdx) in exercise.sets"
-                  :key="setIdx"
-                >
+                <template x-for="(set, setIdx) in exercise.sets" :key="setIdx">
                   <div class="ses-table-row" role="row">
-                    <div
-                      class="ses-cell ses-cell-num"
-                      role="cell"
-                      x-text="set.setNumber"
-                    >
-                    </div>
+                    <div class="ses-cell ses-cell-num" role="cell" x-text="set.setNumber"></div>
                     <div class="ses-cell ses-cell-type" role="cell">
                       <select
                         class="create__select"
                         x-model="set.type"
                         :aria-label="labels.setTypeLabel + ' ' + (setIdx + 1)"
                       >
-                        {
-                          setTypes.map((t) => (
-                            <option value={t.value}>{t.label}</option>
-                          ))
-                        }
+                        {setTypes.map((t) => (
+                          <option value={t.value}>{t.label}</option>
+                        ))}
                       </select>
                     </div>
                     <div class="ses-cell ses-cell-num" role="cell">
@@ -261,7 +223,8 @@ const setTypes = [
                         class="create__input ses-input-inline"
                         min="0"
                         step="0.5"
-                        x-model.number="set.weight"
+                        :value="displayWeight(set.weight)"
+                        @change="storeWeight($event.target, set)"
                         inputmode="decimal"
                         :aria-label="labels.weightForSet + ' ' + (setIdx + 1)"
                       />
@@ -323,13 +286,10 @@ const setTypes = [
           <div class="create__notes">
             <div class="create__field">
               <div class="create__field-row">
-                <label for="ses-rpe" class="create__label"
-                  >{L.builder.rpe}</label
-                >
-                <span
-                  class="rpe-value"
-                  :class="'tone--' + rpeTone"
-                  x-text="sessionRpe"></span>
+                <label for="ses-rpe" class="create__label">
+                  {L.builder.rpe}
+                </label>
+                <span class="rpe-value" :class="'tone--' + rpeTone" x-text="sessionRpe"></span>
               </div>
               <div class="create__rpe-slider">
                 <input
@@ -373,11 +333,7 @@ const setTypes = [
 
             <div class="create__field">
               <label class="create__label">{L.builder.moodTitle}</label>
-              <div
-                class="create__mood-group"
-                role="radiogroup"
-                aria-label={L.builder.moodAria}
-              >
+              <div class="create__mood-group" role="radiogroup" aria-label={L.builder.moodAria}>
                 <button
                   type="button"
                   class="ses-mood-btn create__mood-btn"
@@ -432,16 +388,17 @@ const setTypes = [
             </div>
 
             <div class="create__field">
-              <label for="ses-notes" class="create__label"
-                >{L.builder.notesLabel}</label
-              >
+              <label for="ses-notes" class="create__label">
+                {L.builder.notesLabel}
+              </label>
               <textarea
                 id="ses-notes"
                 class="create__textarea"
                 x-model="sessionNotes"
                 placeholder={L.builder.notesPlaceholder}
                 rows="3"
-                maxlength="500"></textarea>
+                maxlength="500"
+              ></textarea>
             </div>
           </div>
         </CardContent>
@@ -467,9 +424,9 @@ const setTypes = [
     <Dialog id="ses-picker-dialog" title={L.builder.pickerTitle}>
       <div class="create__picker">
         <div class="create__picker-search">
-          <span class="create__picker-search-icon"
-            ><Fragment set:html={icons.searchLine(20, 20)} /></span
-          >
+          <span class="create__picker-search-icon">
+            <Fragment set:html={icons.searchLine(20, 20)} />
+          </span>
           <Input
             type="search"
             class="create__picker-input ses-search-input"
@@ -504,36 +461,21 @@ const setTypes = [
           </template>
         </div>
 
-        <div
-          class="create__picker-templates"
-          x-show="exerciseSearch.trim() === ''"
-        >
+        <div class="create__picker-templates" x-show="exerciseSearch.trim() === ''">
           <div class="create__picker-templates-head">
-            <span class="create__picker-templates-title"
-              >Templates</span
-            >
+            <span class="create__picker-templates-title">Templates</span>
             <span class="create__picker-templates-hint">{L.builder.templateHint}</span>
           </div>
           <div class="create__picker-templates-grid">
-            {
-              TRAINING_TEMPLATES.map((tpl) => (
-                <button
-                  type="button"
-                  class="create__picker-tpl"
-                  @click={`loadTemplate('${tpl.id}')`}
-                >
-                  <span class="create__picker-tpl-name">
-                    {trTemplateName(tpl.name)}
-                  </span>
-                  <span class="create__picker-tpl-desc">
-                    {trTemplateDesc(tpl.id)}
-                  </span>
-                  <span class="create__picker-tpl-count">
-                    {tpl.exercises.length} {L.builder.exercisesWord}
-                  </span>
-                </button>
-              ))
-            }
+            {TRAINING_TEMPLATES.map((tpl) => (
+              <button type="button" class="create__picker-tpl" @click={`loadTemplate('${tpl.id}')`}>
+                <span class="create__picker-tpl-name">{trTemplateName(tpl.name)}</span>
+                <span class="create__picker-tpl-desc">{trTemplateDesc(tpl.id)}</span>
+                <span class="create__picker-tpl-count">
+                  {tpl.exercises.length} {L.builder.exercisesWord}
+                </span>
+              </button>
+            ))}
           </div>
         </div>
 
@@ -542,7 +484,7 @@ const setTypes = [
             <div class="create__picker-empty">
               <p x-text="labels.emptyLibrary">{L.builder.emptyLibrary}</p>
               <a
-                href={localizedPath("/exercises")}
+                href={localizedPath('/exercises')}
                 class="create__picker-empty-link"
                 x-text="labels.createExoLink"
               >
@@ -551,35 +493,27 @@ const setTypes = [
             </div>
           </template>
 
-          <template
-            x-if="availableExercises.length > 0 && filteredExercises.length === 0 && exerciseSearch.trim() === ''"
-          >
+          <template x-if="availableExercises.length > 0 && filteredExercises.length === 0 && exerciseSearch.trim() === ''">
             <div class="create__picker-empty">
               <p x-text="labels.allAdded">{L.builder.allAdded}</p>
             </div>
           </template>
 
-          <template
-            x-if="availableExercises.length > 0 && filteredExercises.length === 0 && exerciseSearch.trim() !== ''"
-          >
+          <template x-if="availableExercises.length > 0 && filteredExercises.length === 0 && exerciseSearch.trim() !== ''">
             <div class="create__picker-empty">
               <p x-text="labels.noSearchMatch">{L.builder.noSearchMatch}</p>
             </div>
           </template>
 
           <template x-for="ex in filteredExercises" :key="ex.id">
-            <div
-              class="create__picker-item"
-              role="listitem"
-            >
+            <div class="create__picker-item" role="listitem">
               <button
                 type="button"
                 class="create__picker-item-btn"
                 @click="addExercise(ex)"
                 :aria-label="labels.addExoAria + ' ' + ex.name + ' ' + labels.toSession"
               >
-                <span class="create__picker-item-name" x-text="trExercise(ex.name)"
-                ></span>
+                <span class="create__picker-item-name" x-text="trExercise(ex.name)"></span>
                 <Badge
                   variant="category"
                   size="sm"
@@ -622,302 +556,78 @@ const setTypes = [
       </div>
 
       <div slot="footer">
-        <Button variant="secondary" data-dialog-close> {L.builder.close} </Button>
+        <Button variant="secondary" data-dialog-close>
+          {' '}
+          {L.builder.close}{' '}
+        </Button>
       </div>
     </Dialog>
   </div>
 </AppLayout>
 
 <script>
-  import {
-    getExercises,
-    getSessions,
-    type Exercise,
-    type Session,
-    type SessionMood,
-  } from "../../../lib/storage";
-  import { t, localizedPath } from "../../../i18n";
-  import {
-    rpeTone,
-    type BuilderExercise,
-  } from "../../../lib/session-builder-stats";
-  import { exerciseCard } from "../../../components/builder/exerciseCard";
-  import {
-    filterExercises,
-    buildNewExercise,
-    loadTemplate as loadPickerTemplate,
-    hasExerciseTip,
-    getExerciseTipText,
-    getExerciseTipVideoUrl,
-  } from "../../../components/builder/exercisePicker";
-  import {
-    rpeLabel as rpeLabelFn,
-    toggleFatigue,
-    toggleMood,
-  } from "../../../components/builder/sessionMeta";
-  import {
-    availableSupersetIds as getAvailableSupersetIds,
-    nextSupersetId as getNextSupersetIdFn,
-    normalizeSupersetId,
-    buildSupersetChain,
-    trName,
-  } from "../../../components/builder/superset";
-  import {
-    saveSessionBuilder,
-    shouldConfirmDiscard,
-  } from "../../../components/builder/sessionSave";
-  import {
-    toggleId,
-    addId,
-    removeId,
-    isIdIn,
-    allExpanded as checkAllExpanded,
-    openDialogById,
-    closeDialogById,
-  } from "../../../components/builder/builderState";
-  import { loadEditSession } from "../../../components/builder/editSessionLoader";
-  import { pickBuilderLabels } from "../../../components/builder/builderLabels";
+  import { createSessionBuilderApp } from '../../../components/builder/sessionBuilder';
+  import { pickBuilderLabels } from '../../../components/builder/builderLabels';
+  import { exerciseCard } from '../../../components/builder/exerciseCard';
+  import { t, localizedPath, DATE_LOCALE } from '../../../i18n';
 
   const LABELS = t();
+  const BUILDER_LABELS = pickBuilderLabels(
+    LABELS as unknown as { builder: Record<string, string> }
+  );
 
-  document.addEventListener("alpine:init", () => {
+  type BuilderWindow = Window & {
+    __builderSessions?: unknown;
+    __builderLabels?: unknown;
+    openDialog?: (id: string) => void;
+    closeDialog?: (id: string) => void;
+  };
+
+  const register = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const Alpine = (window as any).Alpine;
+    const host = window as BuilderWindow;
 
-    Alpine.data("exerciseCard", (...args: any[]) => exerciseCard(args[0], args[1]));
+    Alpine.data('exerciseCard', (...args: any[]) => exerciseCard(args[0], args[1]));
 
-    Alpine.data("sessionBuilder", () => ({
-      sessionName: "",
-      sessionDate: new Date().toISOString().split("T")[0],
-      exercises: [] as BuilderExercise[],
-      availableExercises: [] as Exercise[],
-      allSessions: [] as Session[],
-      exerciseSearch: "",
-      exerciseMuscleFilter: "",
+    Alpine.data('sessionBuilder', () =>
+      createSessionBuilderApp({
+        labels: BUILDER_LABELS,
+        rpeLabels:
+          LABELS.builder as unknown as import('../../../components/builder/sessionMeta').SessionMetaLabels,
+        search: window.location.search,
+        today: () => new Date().toISOString().split('T')[0],
+        locale: DATE_LOCALE(),
+        localizedPath,
+        host: {
+          expose: (sessions, labels) => {
+            host.__builderSessions = sessions;
+            host.__builderLabels = labels;
+          },
+          onToggle: (listener) => {
+            window.addEventListener('builder:exercise-toggled', ((e: CustomEvent) => {
+              listener(e.detail.exerciseId, e.detail.expanded);
+            }) as EventListener);
+          },
+          openDialog: (id) => host.openDialog?.(id),
+          closeDialog: (id) => host.closeDialog?.(id),
+          dispatch: (name) => window.dispatchEvent(new CustomEvent(name)),
+          confirm: (message) => window.confirm(message),
+          navigate: (href) => {
+            window.location.href = href;
+          },
+          focusPickerSearch: () => {
+            requestAnimationFrame(() => {
+              document.querySelector<HTMLInputElement>('[x-ref="pickerSearch"]')?.focus();
+            });
+          },
+        },
+      })
+    );
+  };
 
-      sessionRpe: 5,
-      sessionFatigue: 0,
-      sessionMood: "" as SessionMood | "",
-      sessionNotes: "",
-
-      expandedExercises: [] as string[],
-
-      openTips: [] as string[],
-
-      labels: pickBuilderLabels(LABELS as unknown as { builder: Record<string, string> }),
-
-      editSessionId: null as string | null,
-
-      init() {
-        this.availableExercises = getExercises();
-        this.allSessions = getSessions();
-        (window as any).__builderSessions = this.allSessions;
-        (window as any).__builderLabels = this.labels;
-
-        window.addEventListener("builder:exercise-toggled", ((e: CustomEvent) => {
-          const { exerciseId, expanded } = e.detail;
-          this.expandedExercises = expanded
-            ? addId(this.expandedExercises, exerciseId)
-            : removeId(this.expandedExercises, exerciseId);
-        }) as EventListener);
-
-        const requestedId = new URLSearchParams(window.location.search).get("edit");
-        if (!requestedId) return;
-        const data = loadEditSession(requestedId);
-        if (!data) return;
-        this.editSessionId = data.sessionId;
-        this.sessionName = data.name;
-        this.sessionDate = data.date;
-        this.sessionRpe = data.rpe;
-        this.sessionFatigue = data.fatigue;
-        this.sessionMood = data.mood as SessionMood | "";
-        this.sessionNotes = data.notes;
-        this.exercises = data.exercises;
-        this.expandAll();
-      },
-
-      get filteredExercises(): Exercise[] {
-        const addedIds = new Set(this.exercises.map((se) => se.exerciseId));
-        return filterExercises(
-          this.availableExercises,
-          addedIds,
-          this.exerciseSearch,
-          this.exerciseMuscleFilter,
-        );
-      },
-
-      get muscleFilters(): string[] {
-        return [...new Set(this.availableExercises.map((exercise) => exercise.muscle))]
-          .filter(Boolean)
-          .sort((a, b) => a.localeCompare(b, "fr"));
-      },
-
-      get canSave(): boolean {
-        return Boolean(this.sessionName.trim()) && this.exercises.length > 0 &&
-          this.exercises.every((exercise) => exercise.sets.length > 0);
-      },
-
-      get rpeTone(): "easy" | "moderate" | "hard" | "max" {
-        return rpeTone(this.sessionRpe);
-      },
-
-      get rpeLabel(): string {
-        return rpeLabelFn(this.sessionRpe, LABELS.builder);
-      },
-
-      isExpanded(exerciseIndex: number): boolean {
-        const ex = this.exercises[exerciseIndex];
-        return ex ? isIdIn(this.expandedExercises, ex.exerciseId) : false;
-      },
-
-      toggleExpand(exerciseIndex: number) {
-        const ex = this.exercises[exerciseIndex];
-        if (!ex) return;
-        this.expandedExercises = toggleId(this.expandedExercises, ex.exerciseId);
-      },
-
-      expandAll() {
-        this.expandedExercises = this.exercises.map((ex) => ex.exerciseId);
-        window.dispatchEvent(new CustomEvent("builder:expand-all"));
-      },
-
-      collapseAll() {
-        this.expandedExercises = [];
-        window.dispatchEvent(new CustomEvent("builder:collapse-all"));
-      },
-
-      get allExpanded(): boolean {
-        return checkAllExpanded(this.exercises.length, this.expandedExercises.length);
-      },
-
-      openPicker() {
-        this.exerciseSearch = "";
-        this.exerciseMuscleFilter = "";
-        this.openDialogById("ses-picker-dialog");
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const ref = (this as any).$refs?.pickerSearch as
-          HTMLInputElement | undefined;
-        if (ref) {
-          requestAnimationFrame(() => ref.focus());
-        }
-      },
-
-      addExercise(exercise: Exercise) {
-        const newEx = buildNewExercise(exercise);
-        this.exercises.push(newEx);
-        this.expandedExercises = [
-          ...this.expandedExercises,
-          newEx.exerciseId,
-        ];
-        this.exerciseSearch = "";
-        this.closeDialogById("ses-picker-dialog");
-      },
-
-      loadTemplate(templateId: string) {
-        const result = loadPickerTemplate(templateId, this.availableExercises);
-        if (!result) return;
-        this.availableExercises = result.newAvailable;
-        const added: string[] = [];
-        for (const ex of result.exercises) {
-          this.exercises.push(ex);
-          added.push(ex.exerciseId);
-        }
-        if (added.length > 0) {
-          this.expandedExercises = [...this.expandedExercises, ...added];
-        }
-        this.exerciseSearch = "";
-        this.closeDialogById("ses-picker-dialog");
-      },
-
-      findExerciseByName(name: string): Exercise | undefined {
-        return this.availableExercises.find((e) => e.name === name);
-      },
-
-      hasTip(name: string): boolean {
-        return hasExerciseTip(name);
-      },
-      getTip(name: string): string {
-        return getExerciseTipText(name);
-      },
-      getVideoUrl(name: string): string {
-        return getExerciseTipVideoUrl(name);
-      },
-      isTipOpen(exId: string): boolean {
-        return isIdIn(this.openTips, exId);
-      },
-      toggleTip(exId: string) {
-        this.openTips = toggleId(this.openTips, exId);
-      },
-
-      availableSupersetIds() {
-        return getAvailableSupersetIds(this.exercises);
-      },
-
-      nextSupersetId() {
-        return getNextSupersetIdFn(this.exercises);
-      },
-
-      onSupersetChange(exIdx: number) {
-        const ex = this.exercises[exIdx];
-        if (!ex) return;
-        ex.supersetId = normalizeSupersetId(ex.supersetId);
-      },
-
-      removeFromSuperset(exIdx: number) {
-        const ex = this.exercises[exIdx];
-        if (!ex) return;
-        ex.supersetId = null;
-      },
-
-      supersetChainFor(gid: number | null): string[] {
-        return buildSupersetChain(this.exercises, gid, (n) => trName({ name: n } as BuilderExercise));
-      },
-
-      removeExercise(exerciseIndex: number) {
-        const ex = this.exercises[exerciseIndex];
-        if (ex) {
-          this.expandedExercises = this.expandedExercises.filter(
-            (id) => id !== ex.exerciseId,
-          );
-        }
-        this.exercises.splice(exerciseIndex, 1);
-      },
-
-      setFatigue(level: number) {
-        this.sessionFatigue = toggleFatigue(this.sessionFatigue, level);
-      },
-
-      setMood(mood: SessionMood) {
-        this.sessionMood = toggleMood(this.sessionMood, mood);
-      },
-
-      discard() {
-        if (shouldConfirmDiscard(this.exercises.length, this.sessionName)) {
-          const ok = window.confirm(this.labels.discardConfirm);
-          if (!ok) return;
-        }
-        window.location.href = localizedPath("/sessions");
-      },
-
-      save() {
-        if (!this.canSave) return;
-        saveSessionBuilder({
-          name: this.sessionName,
-          date: this.sessionDate,
-          exercises: this.exercises,
-          rpe: this.sessionRpe,
-          fatigue: this.sessionFatigue,
-          mood: this.sessionMood,
-          notes: this.sessionNotes,
-          editSessionId: this.editSessionId,
-        });
-        window.location.href = localizedPath("/sessions");
-      },
-
-      openDialogById,
-      closeDialogById,
-    }));
-  });
+  document.addEventListener('alpine:init', register);
+  if ((window as any).Alpine) register();
 </script>
 
 <style>
@@ -937,10 +647,9 @@ const setTypes = [
   .ses-table-head,
   .ses-table-row {
     display: grid;
-    grid-template-columns: 3.2rem minmax(0, 1.3fr) minmax(0, 1fr) minmax(
-        0,
-        0.8fr
-      ) 5.2rem;
+    grid-template-columns:
+      3.2rem minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, 0.8fr)
+      5.2rem;
     align-items: center;
     gap: 0.8rem;
     padding: 0 1.2rem;
@@ -1089,12 +798,11 @@ const setTypes = [
     filter: none;
     background-color: color-mix(in srgb, var(--color-accent) 14%, transparent);
     border-color: color-mix(in srgb, var(--color-accent) 45%, transparent);
-    box-shadow: 0 0 0 2px
-      color-mix(in srgb, var(--color-accent) 18%, transparent);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-accent) 18%, transparent);
   }
 
   .ses-picker-tip::before {
-    content: "";
+    content: '';
     display: inline-block;
     width: 0.9rem;
     height: 0.9rem;
@@ -1235,7 +943,6 @@ const setTypes = [
     font-size: 0.75rem;
     color: var(--color-muted);
   }
-
 
   .create__ex-header {
     display: flex;
@@ -1408,7 +1115,9 @@ const setTypes = [
     border: 1px solid var(--color-border);
     background-color: transparent;
     color: var(--color-muted);
-    transition: color var(--transition-fast), border-color var(--transition-fast);
+    transition:
+      color var(--transition-fast),
+      border-color var(--transition-fast);
   }
   .create__fatigue-btn:hover {
     color: var(--color-accent);
@@ -1432,7 +1141,9 @@ const setTypes = [
     border: 1px solid var(--color-border);
     background-color: transparent;
     color: var(--color-muted);
-    transition: color var(--transition-fast), border-color var(--transition-fast);
+    transition:
+      color var(--transition-fast),
+      border-color var(--transition-fast);
   }
   .create__mood-btn:hover {
     color: var(--color-accent);
@@ -1504,7 +1215,9 @@ const setTypes = [
     font-size: 1.2rem;
     font-weight: 600;
     cursor: pointer;
-    transition: color var(--transition-fast), border-color var(--transition-fast);
+    transition:
+      color var(--transition-fast),
+      border-color var(--transition-fast);
   }
 
   .create__picker-filter:hover,
@@ -1577,7 +1290,9 @@ const setTypes = [
     border: 1px solid var(--color-border);
     background-color: transparent;
     text-align: left;
-    transition: border-color var(--transition-fast), background-color var(--transition-fast);
+    transition:
+      border-color var(--transition-fast),
+      background-color var(--transition-fast);
   }
   .create__picker-tpl:hover {
     border-color: var(--color-accent);
@@ -1646,7 +1361,9 @@ const setTypes = [
     font-size: 1.3rem;
     font-weight: 500;
     cursor: pointer;
-    transition: background-color var(--transition-fast), color var(--transition-fast);
+    transition:
+      background-color var(--transition-fast),
+      color var(--transition-fast);
   }
   .create__picker-item-btn:hover {
     background-color: var(--alpha-bg-subtle);
@@ -1744,7 +1461,7 @@ const setTypes = [
     }
     .ses-table-row {
       grid-template-columns: 1fr 1fr;
-      grid-template-areas: "num type" "weight reps" "action action";
+      grid-template-areas: 'num type' 'weight reps' 'action action';
       gap: 0.6rem;
       padding: 1rem;
       min-height: 0;
@@ -1768,5 +1485,4 @@ const setTypes = [
       border-top: 1px dashed var(--color-border);
     }
   }
-
 </style>

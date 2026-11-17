@@ -1,11 +1,9 @@
 ---
 /**
- * Pagination Ã¢â‚¬â€ design-system primitive.
  *
  * Renders a flex row of previous/next anchors + page-number links
  * with smart ellipsis collapsing. Visual state comes from
- * `@theme` tokens in src/styles/tokens.css (--color-accent,
- * --color-muted, --radius-sm, Ã¢â‚¬Â¦).
+ * `@theme` tokens in src/styles/tokens/ (--color-accent,
  */
 interface Props {
   currentPage: number;
@@ -19,19 +17,14 @@ import Icon from './Icon.astro';
 
 const L = t();
 
-const {
-  currentPage,
-  totalPages,
-  hrefPattern,
-  class: className = '',
-} = Astro.props;
+const { currentPage, totalPages, hrefPattern, class: className = '' } = Astro.props;
 
 if (totalPages < 1) {
   throw new Error('Pagination: totalPages must be >= 1');
 }
 if (currentPage < 1 || currentPage > totalPages) {
   throw new Error(
-    `Pagination: currentPage (${currentPage}) must be between 1 and totalPages (${totalPages})`,
+    `Pagination: currentPage (${currentPage}) must be between 1 and totalPages (${totalPages})`
   );
 }
 
@@ -40,9 +33,7 @@ const buildHref = (page: number): string => {
   return hrefPattern.replace('{n}', String(page));
 };
 
-type Item =
-  | { kind: 'page'; page: number }
-  | { kind: 'ellipsis'; key: string };
+type Item = { kind: 'page'; page: number } | { kind: 'ellipsis'; key: string };
 
 const items: Item[] = [];
 
@@ -68,68 +59,60 @@ const isFirst = currentPage === 1;
 const isLast = currentPage === totalPages;
 ---
 
-{
-  totalPages > 1 && (
-    <nav
-      class:list={['pagination', className]}
-      aria-label={L.common.paginationAria}
+{totalPages > 1 && (
+  <nav class:list={['pagination', className]} aria-label={L.common.paginationAria}>
+    {/* Previous */}
+    <a
+      href={isFirst ? undefined : buildHref(currentPage - 1)}
+      class:list={[
+        'pagination__page',
+        'pagination__page--inactive',
+        isFirst && 'pagination__page--disabled',
+      ]}
+      aria-label={L.common.prevPage}
+      aria-disabled={isFirst ? 'true' : undefined}
+      tabindex={isFirst ? -1 : undefined}
     >
-      {/* Previous */}
-      <a
-        href={isFirst ? undefined : buildHref(currentPage - 1)}
-        class:list={[
-          'pagination__page',
-          'pagination__page--inactive',
-          isFirst && 'pagination__page--disabled',
-        ]}
-        aria-label={L.common.prevPage}
-        aria-disabled={isFirst ? 'true' : undefined}
-        tabindex={isFirst ? -1 : undefined}
-      >
-        <Icon name="chevronLeft" size={16} />
-      </a>
+      <Icon name="chevronLeft" size={16} />
+    </a>
 
-      {/* Page numbers + ellipsis */}
-      {items.map((item) =>
-        item.kind === 'ellipsis' ? (
-          <span
-            class="pagination__ellipsis"
-            aria-hidden="true"
-          >
-            Ã¢â‚¬Â¦
-          </span>
-        ) : (
-          <a
-            href={buildHref(item.page)}
-            class:list={[
-              'pagination__page',
-              item.page === currentPage ? 'pagination__page--active' : 'pagination__page--inactive',
-            ]}
-            aria-current={item.page === currentPage ? 'page' : undefined}
-            aria-label={L.common.pageAria.replace('{page}', String(item.page))}
-          >
-            {item.page}
-          </a>
-        ),
-      )}
+    {/* Page numbers + ellipsis */}
+    {items.map((item) =>
+      item.kind === 'ellipsis' ? (
+        <span class="pagination__ellipsis" aria-hidden="true">
+          …
+        </span>
+      ) : (
+        <a
+          href={buildHref(item.page)}
+          class:list={[
+            'pagination__page',
+            item.page === currentPage ? 'pagination__page--active' : 'pagination__page--inactive',
+          ]}
+          aria-current={item.page === currentPage ? 'page' : undefined}
+          aria-label={L.common.pageAria.replace('{page}', String(item.page))}
+        >
+          {item.page}
+        </a>
+      )
+    )}
 
-      {/* Next */}
-      <a
-        href={isLast ? undefined : buildHref(currentPage + 1)}
-        class:list={[
-          'pagination__page',
-          'pagination__page--inactive',
-          isLast && 'pagination__page--disabled',
-        ]}
-        aria-label={L.common.nextPage}
-        aria-disabled={isLast ? 'true' : undefined}
-        tabindex={isLast ? -1 : undefined}
-      >
-        <Icon name="chevronRight" size={16} />
-      </a>
-    </nav>
-  )
-}
+    {/* Next */}
+    <a
+      href={isLast ? undefined : buildHref(currentPage + 1)}
+      class:list={[
+        'pagination__page',
+        'pagination__page--inactive',
+        isLast && 'pagination__page--disabled',
+      ]}
+      aria-label={L.common.nextPage}
+      aria-disabled={isLast ? 'true' : undefined}
+      tabindex={isLast ? -1 : undefined}
+    >
+      <Icon name="chevronRight" size={16} />
+    </a>
+  </nav>
+)}
 
 <style>
   .pagination {
@@ -160,11 +143,6 @@ const isLast = currentPage === totalPages;
 
   .pagination__page--inactive {
     color: var(--color-muted);
-  }
-
-  .pagination__page--inactive:hover {
-    background-color: var(--alpha-bg-subtle);
-    color: var(--color-text);
   }
 
   .pagination__page--disabled {

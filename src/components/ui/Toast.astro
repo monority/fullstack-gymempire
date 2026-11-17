@@ -1,16 +1,13 @@
 ---
 /**
- * Toast Ã¢â‚¬â€ reusable, self-contained notification primitive.
  *
  * Renders a small stack in the bottom-right of the viewport. Driven by
  * Alpine (loaded via CDN on each page) and registers a global API so any
  * page/component can trigger it.
  *
- * Usage (import anywhere Ã¢â‚¬â€ ideally once, e.g. in AppLayout):
  *   <Toast />
  *
  * Trigger from anywhere on the page:
- *   showToast('Session enregistrÃƒÂ©e', 'success');
  *   showToast('Oops, une erreur est survenue', 'error');
  *   showToast('Synchronisation en cours...', 'info');
  *   showToast('Attention : poids faible', 'warning');
@@ -27,11 +24,10 @@ interface Props {
 }
 
 const { duration = 3000 } = Astro.props;
-import Icon from "./Icon.astro";
+import Icon from './Icon.astro';
 ---
 
 <div x-data="toastApp()" data-duration={duration} class="toast-root">
-  <!-- Ã¢â€â‚¬Ã¢â€â‚¬ Toast container Ã¢â€â‚¬Ã¢â€â‚¬ -->
   <div
     x-show="open"
     x-cloak
@@ -43,56 +39,28 @@ import Icon from "./Icon.astro";
     :class="`toast--${variant}`"
   >
     <!-- Variant icons -->
-    <span
-      class="toast__icon"
-      x-show="variant === 'success'"
-      x-cloak
-      aria-hidden="true"
-    >
+    <span class="toast__icon" x-show="variant === 'success'" x-cloak aria-hidden="true">
       <Icon name="check" size={18} />
     </span>
-    <span
-      class="toast__icon"
-      x-show="variant === 'error'"
-      x-cloak
-      aria-hidden="true"
-    >
+    <span class="toast__icon" x-show="variant === 'error'" x-cloak aria-hidden="true">
       <Icon name="closeX" size={18} />
     </span>
-    <span
-      class="toast__icon"
-      x-show="variant === 'info'"
-      x-cloak
-      aria-hidden="true"
-    >
+    <span class="toast__icon" x-show="variant === 'info'" x-cloak aria-hidden="true">
       <Icon name="infoCircle" size={18} />
     </span>
-    <span
-      class="toast__icon"
-      x-show="variant === 'warning'"
-      x-cloak
-      aria-hidden="true"
-    >
+    <span class="toast__icon" x-show="variant === 'warning'" x-cloak aria-hidden="true">
       <Icon name="alertTriangle" size={18} />
     </span>
 
     <p class="toast__message" x-text="message"></p>
 
-    <button
-      type="button"
-      class="toast__close"
-      @click="dismiss()"
-      aria-label="Close"
-    >
+    <button type="button" class="toast__close" @click="dismiss()" aria-label="Close">
       <Icon name="closeX" size={16} />
     </button>
   </div>
 </div>
 
 <style>
-  /* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
-     TOAST Ã¢â‚¬â€ fixed, bottom-right
-     Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
   .toast-root {
     position: fixed;
     bottom: calc(var(--bottom-nav-height, 5.6rem) + 1.2rem);
@@ -161,7 +129,6 @@ import Icon from "./Icon.astro";
     background-color: var(--alpha-bg-hover);
   }
 
-  /* Ã¢â€â‚¬Ã¢â€â‚¬ Variant accent colors Ã¢â€â‚¬Ã¢â€â‚¬ */
   .toast--success .toast__icon {
     color: var(--color-success);
   }
@@ -175,8 +142,6 @@ import Icon from "./Icon.astro";
     color: var(--color-warning);
   }
 
-  /* Ã¢â€â‚¬Ã¢â€â‚¬ Responsive: < 640px Ã¢â‚¬â€ raise above the bottom nav,
-        reduce the right margin Ã¢â€â‚¬Ã¢â€â‚¬ */
   @media (max-width: 640px) {
     .toast-root {
       bottom: 5.6rem;
@@ -187,16 +152,15 @@ import Icon from "./Icon.astro";
 
 <script>
   // Register the Alpine data store. Mirrors the pattern used across the
-  // app (exercices, timer, Ã¢â‚¬Â¦): a plain script listens for `alpine:init`
   // and registers Alpine.data so any page using the CDN build picks it up.
-  document.addEventListener("alpine:init", () => {
+  document.addEventListener('alpine:init', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const Alpine = (window as any).Alpine;
 
-    Alpine.data("toastApp", () => ({
+    Alpine.data('toastApp', () => ({
       open: false,
-      message: "",
-      variant: "info",
+      message: '',
+      variant: 'info',
       defaultDuration: 3000,
       _timer: 0,
 
@@ -205,21 +169,20 @@ import Icon from "./Icon.astro";
         // Astro prop rendered (avoids inlining expressions into inline
         // scripts, which Astro deliberately leaves unevaluated).
         const root = (this as unknown as { $el: HTMLElement }).$el;
-        const attr = root.getAttribute("data-duration");
+        const attr = root.getAttribute('data-duration');
         const parsed = attr ? Number(attr) : NaN;
-        if (Number.isFinite(parsed) && parsed > 0)
-          this.defaultDuration = parsed;
+        if (Number.isFinite(parsed) && parsed > 0) this.defaultDuration = parsed;
 
         // Expose the global API: window.showToast(message, variant?)
         const win = window as Window & {
           showToast?: (message: string, variant?: string) => void;
         };
-        win.showToast = (message: string, variant: string = "info") => {
+        win.showToast = (message: string, variant: string = 'info') => {
           this.show(message, variant);
         };
       },
 
-      show(message: string, variant: string = "info") {
+      show(message: string, variant: string = 'info') {
         this.message = message;
         this.variant = variant;
         this.open = true;
