@@ -1,6 +1,5 @@
 /**
  * Low-level localStorage access with graceful degradation.
- * Moved verbatim from `src/lib/storage.ts` (C1, plan-execution.md).
  */
 
 /**

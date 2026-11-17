@@ -1,5 +1,5 @@
 /**
- * D5 (plan-execution.md) — logique Alpine de la page détail séance.
+ * logique Alpine de la page détail séance.
  *
  * Module pur : aucune lecture de `window` ni de localStorage ici. Les données
  * et les effets de bord sont injectés par la page `.astro`.

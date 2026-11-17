@@ -66,7 +66,7 @@ describe('login pure helpers', () => {
   });
 });
 
-describe('createLoginApp (D8)', () => {
+describe('createLoginApp', () => {
   it('redirects when already authenticated', () => {
     mocks.isAuthenticated.mockReturnValue(true);
     const { app, navigated } = create();

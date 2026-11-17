@@ -1,5 +1,5 @@
 /**
- * D1 (plan-execution.md) — quick session Alpine factory.
+ * quick session Alpine factory.
  *
  * State + navigation + completion + rest wiring, extracted from
  * pages/sessions/quick.astro. Storage, settings and navigation are

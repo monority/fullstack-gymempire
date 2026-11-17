@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { formatWeight, formatWeightValue } from '../format';
 
-// B4 (plan-execution.md) — single weight-formatting API in lib/format.
+// single weight-formatting API in lib/format.
 
 describe('formatWeightValue', () => {
   it('formats integer weights without decimals', () => {

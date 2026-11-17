@@ -1,6 +1,5 @@
 /**
  * Storage keys and default values.
- * Moved verbatim from `src/lib/storage.ts` (C1, plan-execution.md).
  */
 
 import type { ReminderSettings, Settings, WebdavSettings } from './types';

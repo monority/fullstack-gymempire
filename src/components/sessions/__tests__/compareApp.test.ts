@@ -57,7 +57,7 @@ function session(id: string, weight: number): Session {
   } as Session;
 }
 
-describe('comparison pure helpers (D7)', () => {
+describe('comparison pure helpers', () => {
   it('computes deltas in both directions', () => {
     expect(delta(10, 10, 'up', 'down', 'equal', String)).toEqual({
       direction: 'equal',
@@ -97,7 +97,7 @@ describe('comparison pure helpers (D7)', () => {
   });
 });
 
-describe('createComparisonApp (D7)', () => {
+describe('createComparisonApp', () => {
   it('syncs the URL from the selected ids', () => {
     const replaced: string[] = [];
     const app = createComparisonApp({

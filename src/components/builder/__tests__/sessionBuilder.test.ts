@@ -87,7 +87,7 @@ beforeEach(() => {
   mocks.confirm.mockReturnValue(true);
 });
 
-describe('createSessionBuilderApp (D6b)', () => {
+describe('createSessionBuilderApp', () => {
   it('loads the catalog and exposes it to the picker', () => {
     const { app } = create();
     app.init();

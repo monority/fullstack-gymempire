@@ -82,7 +82,7 @@ beforeEach(() => {
   mocks.getSessionById.mockReturnValue(session());
 });
 
-describe('createPrintSheetApp (D8)', () => {
+describe('createPrintSheetApp', () => {
   it('marks not found without an id', () => {
     const { app } = create('');
     app.init();

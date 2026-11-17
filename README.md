@@ -27,6 +27,7 @@ Requires Node.js ≥ 22.13.0.
 - [`plan-execution.md`](./plan-execution.md) — plan de chantier technique détaillé (lots, tâches, critères).
 - [`rules.md`](./rules.md) — règles de qualité et contraintes UI.
 - [`roadmap.md`](./roadmap.md) — historique de livraison.
+- [`SECURITY.md`](./SECURITY.md) — limites du stockage local et du WebDAV.
 
 ## Scripts
 

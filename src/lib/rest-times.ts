@@ -7,7 +7,7 @@
  * muscle recovers quickly and the metabolic cost is small.
  *
  * The key is the exact `Exercise.name` (see `DEFAULT_EXERCISES` in
- * `src/lib/storage.ts`). Unknown exercises fall back to `DEFAULT_REST`
+ * `src/lib/storage/defaults.ts`). Unknown exercises fall back to `DEFAULT_REST`
  * which mirrors `Settings.defaultRestTime` (90s).
  *
  * Values are tuned for hypertrophy / strength work on a 3-5 rep range.

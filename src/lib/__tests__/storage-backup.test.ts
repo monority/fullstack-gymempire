@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 /**
- * C4 + C5 (plan-execution.md) — snapshot versioning, migrations and
+ * C4 + snapshot versioning, migrations and
  * boundary filtering for exportAllData / importAllData.
  */
 

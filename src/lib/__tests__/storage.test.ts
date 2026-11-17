@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 /**
- * Tests for src/lib/storage.ts
+ * Tests de la couche storage (src/lib/storage/).
  *
  * The storage module reads from `window.localStorage`, so we override the
  * default `node` environment with `jsdom` per file.

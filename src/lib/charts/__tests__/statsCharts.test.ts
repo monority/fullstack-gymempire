@@ -60,7 +60,7 @@ function expectCleanSvg(svg: string) {
   expect(svg).not.toMatch(/NaN|undefined|Infinity/);
 }
 
-describe('benchmarkBadge (D3)', () => {
+describe('benchmarkBadge', () => {
   it('returns nothing below p50', () => {
     expect(benchmarkBadge(null)).toBe('');
     expect(benchmarkBadge('below-p25')).toBe('');
@@ -74,7 +74,7 @@ describe('benchmarkBadge (D3)', () => {
   });
 });
 
-describe('renderVolumeChart (D3)', () => {
+describe('renderVolumeChart', () => {
   it('renders the localized empty state', () => {
     const html = renderVolumeChart([], labels, deps);
     expect(html).toContain(labels.noData);
@@ -99,7 +99,7 @@ describe('renderVolumeChart (D3)', () => {
   });
 });
 
-describe('renderMuscleChart (D3)', () => {
+describe('renderMuscleChart', () => {
   it('renders the localized empty state', () => {
     const html = renderMuscleChart([], labels, deps);
     expect(html).toContain(labels.volumeEmpty);
@@ -132,7 +132,7 @@ describe('renderMuscleChart (D3)', () => {
   });
 });
 
-describe('renderFrequencyChart (D3)', () => {
+describe('renderFrequencyChart', () => {
   it('renders the localized empty state', () => {
     const html = renderFrequencyChart([], labels, deps);
     expect(html).toContain(labels.noData);
@@ -156,7 +156,7 @@ describe('renderFrequencyChart (D3)', () => {
   });
 });
 
-describe('renderTopExercises (D3)', () => {
+describe('renderTopExercises', () => {
   it('renders the localized empty state', () => {
     expect(renderTopExercises([], labels, deps)).toContain(labels.noData);
   });
@@ -176,7 +176,7 @@ describe('renderTopExercises (D3)', () => {
   });
 });
 
-describe('renderBenchmarksTable (D3)', () => {
+describe('renderBenchmarksTable', () => {
   it('asks for completed sessions first', () => {
     const html = renderBenchmarksTable([], false, labels, deps);
     expect(html).toContain(labels.benchmarksEmpty);

@@ -43,7 +43,7 @@ function create(now = 1_000_000) {
   return { app };
 }
 
-describe('createTimerApp (D8)', () => {
+describe('createTimerApp', () => {
   it('exposes a deterministic snapshot with the injected clock and id', () => {
     const { app } = create(1_234_000);
     app.running = true;

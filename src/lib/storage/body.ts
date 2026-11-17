@@ -1,6 +1,5 @@
 /**
  * Body measurements CRUD (added 2026-08-04).
- * Moved verbatim from `src/lib/storage.ts` (C1, plan-execution.md).
  */
 
 import { STORAGE_KEYS } from './defaults';

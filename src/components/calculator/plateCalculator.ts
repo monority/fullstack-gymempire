@@ -1,5 +1,5 @@
 /**
- * D0 (plan-execution.md) — reference pattern for extracted Alpine state.
+ * reference pattern for extracted Alpine state.
  *
  * Pure factory: no DOM, no Alpine dependency. The page (.astro) registers
  * it via `Alpine.data('plateCalculator', () => createPlateCalculator({ labels }))`.

@@ -45,7 +45,7 @@ beforeEach(() => {
   mocks.getSessions.mockReturnValue([]);
 });
 
-describe('createRecordsApp (D8)', () => {
+describe('createRecordsApp', () => {
   it('reports no data when no completed set exists', () => {
     const app = create();
     app.init();

@@ -1,5 +1,5 @@
 /**
- * Barrel re-export for the storage layer (C1, plan-execution.md).
+ * Barrel re-export for the storage layer.
  * Legacy imports `from '.../lib/storage'` resolve to this index.
  * C3 will progressively migrate callers to the precise module.
  */

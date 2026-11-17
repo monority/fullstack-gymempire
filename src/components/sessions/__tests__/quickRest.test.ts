@@ -46,7 +46,7 @@ function setup(duration = 90) {
   };
 }
 
-describe('createRestTimer (D1)', () => {
+describe('createRestTimer', () => {
   it('starts from the injected duration and schedules a tick', () => {
     const s = setup(60);
     s.timer.start();

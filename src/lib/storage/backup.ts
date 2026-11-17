@@ -1,5 +1,5 @@
 /**
- * Data export / import / reset (C1 + C4, plan-execution.md).
+ * Data export / import / reset.
  * Snapshot versioning with a migration table: any future schema change
  * (e.g. new `unit` semantics) must ship a tested migration here.
  */
@@ -104,7 +104,7 @@ export function importAllData(snapshot: unknown): void {
   if (data.exercises) setStore(STORAGE_KEYS.exercises, data.exercises.filter(isExercise));
   if (data.sessions)
     setStore(STORAGE_KEYS.sessions, data.sessions.filter(isSession).map(normalizeSession));
-  // C5 (plan-execution.md) — progress is filtered like exercises/sessions/body:
+  // progress is filtered like exercises/sessions/body:
   // corrupted records are dropped instead of persisted silently.
   if (data.progress) setStore(STORAGE_KEYS.progress, data.progress.filter(isProgressRecord));
   if (data.body) setStore(STORAGE_KEYS.body, data.body.filter(isBodyRecord));

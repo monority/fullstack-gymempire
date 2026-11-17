@@ -56,7 +56,7 @@ beforeEach(() => {
   mocks.getSessions.mockReturnValue([]);
 });
 
-describe('createHistoryApp (D7)', () => {
+describe('createHistoryApp', () => {
   it('marks not found without an id', () => {
     const app = create('');
     app.init();

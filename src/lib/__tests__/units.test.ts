@@ -9,7 +9,7 @@ import {
 } from '../units';
 import { formatVolume, formatWeight, formatWeightValue, weightFromInput } from '../format';
 
-describe('units (F1)', () => {
+describe('units', () => {
   it('converts kg ↔ lbs with the international factor', () => {
     expect(KG_PER_LB).toBe(0.45359237);
     expect(toDisplayWeight(100, 'lbs')).toBeCloseTo(220.4623, 3);

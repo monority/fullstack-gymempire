@@ -122,7 +122,7 @@ beforeEach(() => {
   );
 });
 
-describe('createExercisesApp (D6)', () => {
+describe('createExercisesApp', () => {
   it('loads exercises, sessions and set counts on init', () => {
     const { app } = create();
     app.init();

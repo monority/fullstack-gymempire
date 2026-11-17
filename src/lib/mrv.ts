@@ -54,13 +54,6 @@ import { calculate1RM } from './storage/store';
 import type { Session, SessionSet } from './storage/types';
 import { completedSets } from './session-utils';
 
-/** Description textuelle de la formule V1 (transparence roadmap / UI). */
-export const MRV_FORMULA =
-  'V1 linéaire — base = max poids séries terminées de la dernière séance ' +
-  'terminée (repli : lastLoad) ; × (1 − 0.04 × trunc(|Δreps|/2)), clamp ±10 % ; ' +
-  '× 1.025 si RPE ≥ 8.5, × 0.975 si RPE ≤ 6.5 ; plafonné à 95 % du 1RM Epley ; ' +
-  'arrondi à 2,5 kg.';
-
 /** Code raison de la suggestion, à localiser côté UI (fr/en). */
 export type MrvReason = 'history' | 'epley-cap' | 'none';
 

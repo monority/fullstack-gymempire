@@ -9,7 +9,7 @@ const labels: MoodLabels = {
   bad: 'Bad',
 };
 
-describe('mood (D5)', () => {
+describe('mood', () => {
   it('returns no visual for a missing mood', () => {
     expect(moodSvg(null)).toBe('');
     expect(moodSvg(undefined)).toBe('');

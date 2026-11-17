@@ -1,6 +1,5 @@
 /**
  * Domain types shared across the storage layer.
- * Moved verbatim from `src/lib/storage.ts` (C1, plan-execution.md).
  */
 
 export interface Exercise {

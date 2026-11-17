@@ -43,7 +43,7 @@ beforeEach(() => {
   mocks.getSessions.mockReturnValue([]);
 });
 
-describe('createTrendsApp (D8)', () => {
+describe('createTrendsApp', () => {
   it('selects the first exercise by default', () => {
     const app = create();
     app.init();

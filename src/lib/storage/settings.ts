@@ -1,6 +1,5 @@
 /**
  * Settings read/write with defaults merging.
- * Moved verbatim from `src/lib/storage.ts` (C1, plan-execution.md).
  */
 
 import { DEFAULT_SETTINGS, STORAGE_KEYS } from './defaults';

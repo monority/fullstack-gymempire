@@ -1,5 +1,5 @@
 /**
- * D6 (plan-execution.md) — logique Alpine de la page Exercices.
+ * logique Alpine de la page Exercices.
  *
  * Le template reste dans `src/pages/exercises/index.astro` (convention
  * AGENTS.md). Ce module contient uniquement l'état et les transformations.

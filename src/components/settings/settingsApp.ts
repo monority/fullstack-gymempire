@@ -1,5 +1,5 @@
 /**
- * D4 (plan-execution.md) — settings page Alpine logic, extracted as a pure
+ * settings page Alpine logic, extracted as a pure
  * factory. The page keeps only the wiring (real DOM / localStorage / fetch
  * implementations) and its template.
  */

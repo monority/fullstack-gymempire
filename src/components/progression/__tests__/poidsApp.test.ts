@@ -50,7 +50,7 @@ beforeEach(() => {
   mocks.getSessions.mockReturnValue([]);
 });
 
-describe('createPoidsApp (D7)', () => {
+describe('createPoidsApp', () => {
   it('starts with today injected into the form', () => {
     const { app } = create();
     expect(app.form.date).toBe('2026-11-17');

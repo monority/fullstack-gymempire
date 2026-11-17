@@ -1,5 +1,5 @@
 /**
- * D6b (plan-execution.md) — état du builder de séance.
+ * état du builder de séance.
  *
  * Toute la logique déjà extraite (exerciseCard, exercisePicker, sessionMeta,
  * sessionSave, superset, builderState) est réutilisée ici. Ce factory ne fait

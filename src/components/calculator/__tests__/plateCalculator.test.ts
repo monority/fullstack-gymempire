@@ -19,7 +19,7 @@ function calc() {
   return createPlateCalculator({ labels: LABELS });
 }
 
-describe('createPlateCalculator (D0 pattern)', () => {
+describe('createPlateCalculator', () => {
   it('starts in bar mode with default target 80 / bar 20', () => {
     const c = calc();
     expect(c.mode).toBe('bar');

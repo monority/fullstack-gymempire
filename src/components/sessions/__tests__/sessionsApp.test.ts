@@ -87,7 +87,7 @@ beforeEach(() => {
   ]);
 });
 
-describe('createSessionsApp (D7)', () => {
+describe('createSessionsApp', () => {
   it('sorts sessions by date descending', () => {
     const { app } = create();
     app.init();

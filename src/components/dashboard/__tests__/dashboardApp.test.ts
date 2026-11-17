@@ -93,7 +93,7 @@ beforeEach(() => {
   mocks.getSettings.mockReturnValue({ weeklyGoal: 3 });
 });
 
-describe('createDashboardApp (D8)', () => {
+describe('createDashboardApp', () => {
   it('loads sessions newest first and clears the loading state', () => {
     mocks.getSessions.mockReturnValue([
       session('s1', '2026-11-01T10:00:00Z'),

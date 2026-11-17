@@ -1,5 +1,5 @@
 /**
- * D1 (plan-execution.md) — rest timer state machine for the quick session.
+ * rest timer state machine for the quick session.
  *
  * Pure state transitions with an injectable clock: no DOM, no Alpine.
  * The Alpine component owns the reactive fields (`restRemaining`,

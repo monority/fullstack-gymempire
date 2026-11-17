@@ -49,7 +49,7 @@ beforeEach(() => {
   mocks.getSessions.mockReturnValue([]);
 });
 
-describe('createCalendarApp (D7)', () => {
+describe('createCalendarApp', () => {
   it('starts on the injected month', () => {
     const app = create();
     expect(app.currentYear).toBe(2026);

@@ -1,6 +1,5 @@
 /**
  * Exercises CRUD with lazy seeding of the default catalog.
- * Moved verbatim from `src/lib/storage.ts` (C1, plan-execution.md).
  */
 
 import { DEFAULT_EXERCISES, STORAGE_KEYS } from './defaults';

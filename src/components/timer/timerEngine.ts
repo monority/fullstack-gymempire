@@ -1,5 +1,5 @@
 /**
- * D2 (plan-execution.md) — pure countdown/stopwatch engine.
+ * pure countdown/stopwatch engine.
  *
  * Clock is injected so start/pause/resume/reset/negative-overflow are
  * testable without jsdom. The Alpine component owns the reactive fields

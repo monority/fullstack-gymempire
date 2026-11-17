@@ -1,5 +1,5 @@
 /**
- * Pure CSV serialization for sessions (C2, plan-execution.md).
+ * Pure CSV serialization for sessions.
  * No DOM, no window — safe to unit-test without jsdom.
  */
 

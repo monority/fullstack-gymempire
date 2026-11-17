@@ -1,5 +1,5 @@
 /**
- * D3 (plan-execution.md) — pure SVG/HTML renderers for the stats page.
+ * pure SVG/HTML renderers for the stats page.
  *
  * No Alpine, no localStorage, no Date.now(): data, labels and DOM-dependent
  * helpers are injected. Renderers return deterministic strings so they can

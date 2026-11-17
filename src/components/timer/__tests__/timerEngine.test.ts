@@ -68,7 +68,7 @@ function makeCountdown(duration = 90) {
   };
 }
 
-describe('createCountdown (D2)', () => {
+describe('createCountdown', () => {
   it('start sets endTime, flips running and schedules ticks', () => {
     const c = makeCountdown(90);
     c.engine.start();
@@ -138,7 +138,7 @@ describe('createCountdown (D2)', () => {
   });
 });
 
-describe('createStopwatch (D2)', () => {
+describe('createStopwatch', () => {
   it('start/stop accumulate elapsed ms', () => {
     const clock = fakeClock();
     const state = {

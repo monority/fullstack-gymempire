@@ -1,6 +1,5 @@
 /**
  * Runtime validators — guard against corrupted localStorage / bad imports.
- * Moved verbatim from `src/lib/storage.ts` (C1, plan-execution.md).
  */
 
 import type { BodyRecord, Exercise, ProgressRecord, Session, SessionSet } from './types';

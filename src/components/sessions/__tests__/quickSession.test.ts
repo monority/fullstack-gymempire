@@ -84,7 +84,7 @@ function makeDeps(overrides: Partial<QuickSessionDeps> = {}): QuickSessionDeps &
   } as QuickSessionDeps & typeof state;
 }
 
-describe('createQuickSession (D1)', () => {
+describe('createQuickSession', () => {
   let deps: ReturnType<typeof makeDeps>;
 
   beforeEach(() => {

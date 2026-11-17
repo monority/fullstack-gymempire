@@ -140,7 +140,7 @@ beforeEach(() => {
   mocks.syncPull.mockReturnValue({ version: 1 });
 });
 
-describe('createSettingsApp (D4)', () => {
+describe('createSettingsApp', () => {
   it('initializes from storage and fills the WebDAV form', () => {
     mocks.getSettings.mockReturnValue({
       ...DEFAULT_SETTINGS,

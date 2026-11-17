@@ -19,13 +19,10 @@
 
 import type { ReferenceLift } from './benchmarks';
 
-/** Statut des données chargées : toujours `'reference'` tant que le serveur n'est pas branché. */
-export const BENCHMARKS_DATA_STATUS: 'reference' | 'community' = 'reference';
-
 /**
  * Tables de référence par exercice — 1RM estimée (kg, Epley) aux percentiles
  * p25/p50/p75/p90. Les `name` correspondent EXACTEMENT aux noms du catalogue
- * FR (`src/lib/storage.ts`, `DEFAULT_EXERCISES`).
+ * FR (`src/lib/storage/defaults.ts`, `DEFAULT_EXERCISES`).
  */
 export const REFERENCE_DATA: ReadonlyArray<ReferenceLift> = [
   {

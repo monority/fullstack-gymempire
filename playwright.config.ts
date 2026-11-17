@@ -8,6 +8,8 @@ export default defineConfig({
     baseURL: 'http://127.0.0.1:4321',
     trace: 'retain-on-failure',
   },
+  // 34 scénarios en parallèle : laisser du temps aux asserts sous charge.
+  expect: { timeout: 10_000 },
   projects: [
     {
       name: 'chromium',

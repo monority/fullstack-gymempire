@@ -105,7 +105,7 @@ beforeEach(() => {
   mocks.translateExercise.mockImplementation((name: string) => name);
 });
 
-describe('createSessionDetailApp (D5)', () => {
+describe('createSessionDetailApp', () => {
   it('marks not found when no id is present', () => {
     const { app } = create('');
     app.init();

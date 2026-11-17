@@ -35,7 +35,7 @@ import { icons } from '../lib/icons';
 import WorkoutCard from '../components/workout/WorkoutCard.astro';
 const L = t();
 
-// B1 (plan-execution.md) — page design-system réservée au dev :
+// page design-system réservée au dev :
 // en production, /ui renvoie la page 404 (route non destinée au public).
 if (import.meta.env.PROD) {
   return Astro.rewrite('/404');

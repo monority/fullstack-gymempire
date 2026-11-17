@@ -28,7 +28,7 @@ export interface SessionStats {
 
 // ── Formatting helpers ──────────────────────────────────────────
 
-/** Re-exported from lib/format — single implementation (B4, plan-execution.md). */
+/** Re-exported from lib/format — single implementation. */
 export { formatWeightValue } from './format';
 
 /** Format seconds into duration string. */
