@@ -64,3 +64,7 @@ git diff --check -> vert
 ```
 
 Une fonctionnalité n'est pas terminée si elle fonctionne uniquement dans le cas nominal.
+
+## Plan d'exécution
+
+Le détail technique (lots, tâches, critères d'acceptation, séquencement, KPI) est maintenu dans [`plan-execution.md`](./plan-execution.md).

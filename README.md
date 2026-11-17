@@ -9,7 +9,7 @@ Offline-first strength training log. 100% client-side — no backend, no account
 - **Framework:** [Astro 7](https://astro.build/) (static output)
 - **UI:** [Alpine.js 3.14](https://alpinejs.dev/) (client-side interactivity)
 - **Styles:** CSS custom properties + Tailwind CSS v4
-- **Tests:** [Vitest](https://vitest.dev/) (457 tests)
+- **Tests:** [Vitest](https://vitest.dev/) (461 tests)
 - **Language:** TypeScript
 - **Package manager:** pnpm
 
@@ -21,15 +21,33 @@ pnpm install
 
 Requires Node.js ≥ 22.13.0.
 
+## Documentation
+
+- [`plan.md`](./plan.md) — ambition et priorités produit.
+- [`plan-execution.md`](./plan-execution.md) — plan de chantier technique détaillé (lots, tâches, critères).
+- [`rules.md`](./rules.md) — règles de qualité et contraintes UI.
+- [`roadmap.md`](./roadmap.md) — historique de livraison.
+
 ## Scripts
 
-| Command | Description |
-|---------|-------------|
-| `pnpm dev` | Start dev server |
-| `pnpm build` | Production build |
-| `pnpm preview` | Preview production build |
-| `pnpm test` | Run tests |
-| `pnpm check` | TypeScript check |
+| Command               | Description                                       |
+| --------------------- | ------------------------------------------------- |
+| `pnpm dev`            | Start dev server                                  |
+| `pnpm build`          | Production build                                  |
+| `pnpm preview`        | Preview production build                          |
+| `pnpm test`           | Run tests                                         |
+| `pnpm test:coverage`  | Run tests + enforce coverage thresholds           |
+| `pnpm check`          | TypeScript check                                  |
+| `pnpm check:strict`   | TypeScript check — fails on any hint (CI gate)    |
+| `pnpm lint`           | oxlint (0 error required; `any` stays warn)       |
+| `pnpm check:colors`   | No raw hex/rgb outside tokens (CI gate)           |
+| `pnpm check:contrast` | WCAG AA contrast of tokens, both themes (CI gate) |
+| `pnpm format`         | Prettier — writes only files changed in the diff  |
+| `pnpm format:check`   | Prettier — checks only files changed in the diff  |
+| `pnpm test:smoke`     | Smoke-test critical routes                        |
+| `pnpm test:e2e`       | Playwright (Chromium)                             |
+
+> Quality gates and the refactor roadmap live in [plan-execution.md](./plan-execution.md).
 
 ## Architecture
 
@@ -42,12 +60,12 @@ src/
 │   ├── layout/     # AppShell, Header, Sidebar, QuickSearch
 │   └── workout/    # Session builder components
 ├── lib/            # Pure TypeScript (no DOM)
-│   ├── storage.ts  # localStorage CRUD + validation
+│   ├── storage/    # localStorage CRUD + validation
 │   ├── sync.ts     # WebDAV sync client
-│   ├── auth.ts     # Fake auth gate (dev only)
+│   ├── units.ts    # kg ↔ lbs conversion
 │   └── *.ts        # Stats, format, calculator, etc.
 ├── i18n/           # fr/ + en/ dictionaries
-└── styles/         # tokens.css, reset.css, utilities.css
+└── styles/         # global.css + layers : tokens/, base/, components/, utilities.css
 ```
 
 ### Alpine Componentization Rule
@@ -61,13 +79,13 @@ src/
 
 All data lives in `localStorage`:
 
-| Key | Type | Description |
-|-----|------|-------------|
-| `muscu:exercises` | `Exercise[]` | Exercise catalog |
-| `muscu:sessions` | `Session[]` | Workout sessions |
-| `muscu:progress` | `ProgressRecord[]` | 1RM history |
-| `muscu:body` | `BodyRecord[]` | Weight/measurements |
-| `muscu-settings` | `Settings` | User preferences |
+| Key               | Type               | Description         |
+| ----------------- | ------------------ | ------------------- |
+| `muscu:exercises` | `Exercise[]`       | Exercise catalog    |
+| `muscu:sessions`  | `Session[]`        | Workout sessions    |
+| `muscu:progress`  | `ProgressRecord[]` | 1RM history         |
+| `muscu:body`      | `BodyRecord[]`     | Weight/measurements |
+| `muscu-settings`  | `Settings`         | User preferences    |
 
 ### Migrations
 
@@ -102,19 +120,19 @@ Service worker (`public/sw.js`) precaches all routes:
 
 ## Routes
 
-| FR | EN | Description |
-|----|----|-------------|
-| `/` | `/en` | Dashboard |
-| `/sessions` | `/en/sessions` | Session list |
-| `/sessions/create` | `/en/sessions/create` | Create session |
-| `/sessions/detail` | `/en/sessions/detail` | Session detail |
-| `/sessions/quick` | `/en/sessions/quick` | Quick session |
-| `/exercises` | `/en/exercises` | Exercise list |
-| `/progression` | `/en/progression` | Progression hub |
-| `/calendar` | `/en/calendar` | Calendar |
-| `/timer` | `/en/timer` | Rest timer |
-| `/settings` | `/en/settings` | Settings |
-| `/calculator` | `/en/calculator` | Plate calculator |
+| FR                 | EN                    | Description      |
+| ------------------ | --------------------- | ---------------- |
+| `/`                | `/en`                 | Dashboard        |
+| `/sessions`        | `/en/sessions`        | Session list     |
+| `/sessions/create` | `/en/sessions/create` | Create session   |
+| `/sessions/detail` | `/en/sessions/detail` | Session detail   |
+| `/sessions/quick`  | `/en/sessions/quick`  | Quick session    |
+| `/exercises`       | `/en/exercises`       | Exercise list    |
+| `/progression`     | `/en/progression`     | Progression hub  |
+| `/calendar`        | `/en/calendar`        | Calendar         |
+| `/timer`           | `/en/timer`           | Rest timer       |
+| `/settings`        | `/en/settings`        | Settings         |
+| `/calculator`      | `/en/calculator`      | Plate calculator |
 
 ## i18n
 
@@ -134,8 +152,10 @@ Service worker (`public/sw.js`) precaches all routes:
 ## Tests
 
 ```bash
-pnpm test        # Run all 457 tests
+pnpm test        # Run all 461 tests (Vitest)
 pnpm test:watch  # Watch mode
+pnpm test:e2e    # Playwright, Chromium (2 scenarios)
+pnpm test:smoke  # Critical routes
 ```
 
 Coverage: auth, storage, sync, stats (6 modules), builder, calculator, timer, benchmarks, body-chart, calendar-grid, exercises-stats, rest-times, settings-stats, session-utils.
@@ -170,9 +190,7 @@ No server runtime required.
 - No real auth (fake dev gate only)
 - No merge strategy (last-write-wins)
 - Password stored in plain localStorage
-- No E2E tests
-- No accessibility automation
-- No lint/format configured
+- No accessibility automation yet (planned, lot H — see `plan-execution.md`)
 
 ## License
 
