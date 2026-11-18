@@ -12,6 +12,35 @@ const ROUTES = [
   { name: 'settings', path: '/settings', data: {} },
   { name: 'timer', path: '/timer', data: {} },
   { name: 'exercises', path: '/exercises', data: {} },
+  {
+    name: 'stats',
+    path: '/progression/stats',
+    data: {
+      'muscu:sessions': [
+        makeSession({
+          id: 'stats-1',
+          status: 'completed',
+          exercises: [
+            {
+              exerciseId: 'e1',
+              name: 'Développé couché barre',
+              muscle: 'Pectoraux',
+              sets: [
+                {
+                  exerciseId: 'e1',
+                  setNumber: 1,
+                  type: 'work',
+                  weight: 60,
+                  reps: 8,
+                  completed: true,
+                },
+              ],
+            },
+          ],
+        }),
+      ],
+    },
+  },
   { name: 'login', path: '/login', data: {}, noAuth: true },
 ];
 

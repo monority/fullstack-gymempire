@@ -19,6 +19,19 @@ export async function seed(page: Page, data: Record<string, unknown> = {}) {
   );
 }
 
+/** Attend qu'Alpine ait initialisé les composants x-data de la page. */
+export async function waitForAlpine(page: Page) {
+  await page.waitForFunction(() => {
+    const root = document.querySelector<HTMLElement>('[x-data]');
+    const alpine = (window as { Alpine?: unknown }).Alpine;
+    return Boolean(
+      alpine &&
+      root &&
+      Array.isArray((root as unknown as { _x_dataStack?: unknown[] })._x_dataStack)
+    );
+  });
+}
+
 /** Storage vide et aucun auth — pour la page de connexion. */
 export async function seedNoAuth(page: Page) {
   await page.addInitScript(() => {

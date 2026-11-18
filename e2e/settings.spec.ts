@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { makeSession, seed } from './helpers';
+import { makeSession, seed, waitForAlpine } from './helpers';
 
 test.beforeEach(async ({ page }) => {
   await seed(page, { 'muscu-settings': { weeklyGoal: 3 } });
@@ -7,7 +7,10 @@ test.beforeEach(async ({ page }) => {
 
 test('settings exports a JSON backup', async ({ page }) => {
   await page.goto('/settings');
-  const tile = page.locator('.set__data-tile').filter({ hasText: /exporter en json/i });
+  await waitForAlpine(page);
+  const tile = page
+    .locator('.set__data-tile')
+    .filter({ hasText: /exporter en json|export as json/i });
   const downloadPromise = page.waitForEvent('download');
   await tile.getByRole('button').click();
   const download = await downloadPromise;

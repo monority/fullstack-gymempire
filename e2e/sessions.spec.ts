@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { makeSession, seed } from './helpers';
+import { makeSession, seed, waitForAlpine } from './helpers';
 
 test.beforeEach(async ({ page }) => {
   await seed(page, {
@@ -9,6 +9,7 @@ test.beforeEach(async ({ page }) => {
 
 test('session list filters by search and clears the filter', async ({ page }) => {
   await page.goto('/sessions');
+  await waitForAlpine(page);
   await expect(page.locator('.sess__card').first()).toBeVisible();
 
   const search = page.locator('.sess-list__search input, input[type=search]').first();
@@ -22,19 +23,20 @@ test('session list filters by search and clears the filter', async ({ page }) =>
 test('session list duplicates a session then deletes it after confirmation', async ({ page }) => {
   page.on('dialog', (dialog) => dialog.accept());
   await page.goto('/sessions');
+  await waitForAlpine(page);
   const cards = page.locator('.sess__card');
   await expect(cards).toHaveCount(1);
 
-  const more = cards.first().getByRole('button', { name: /plus d'actions/i });
+  const more = cards.first().getByRole('button', { name: /plus d'actions|more actions/i });
   await expect(more).toBeVisible();
   await more.click();
 
-  const duplicate = page.getByRole('button', { name: /dupliquer/i });
+  const duplicate = page.getByRole('button', { name: /dupliquer|duplicate/i });
   await expect(duplicate).toBeVisible();
   await duplicate.click();
   await expect(cards).toHaveCount(2);
 
-  const remove = cards.first().getByRole('button', { name: /supprimer/i });
+  const remove = cards.first().getByRole('button', { name: /supprimer|delete/i });
   await expect(remove).toBeVisible();
   await remove.click();
   await expect(cards).toHaveCount(1);

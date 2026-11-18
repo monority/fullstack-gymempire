@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-const ROUTES = ['/', '/sessions', '/settings', '/timer', '/exercises'];
+const ROUTES = ['/', '/sessions', '/settings', '/timer', '/exercises', '/progression/stats'];
 const THEMES = ['dark', 'light'] as const;
 
 for (const theme of THEMES) {
