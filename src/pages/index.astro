@@ -1,10 +1,7 @@
 ---
 import AppLayout from '../layouts/AppLayout.astro';
-import PageHeader from '../components/layout/PageHeader.astro';
 import Button from '../components/ui/Button.astro';
-import Icon from '../components/ui/Icon.astro';
 import KpiItem from '../components/ui/KpiItem.astro';
-import HeroSection from '../components/dashboard/HeroSection.astro';
 import WeeklyGoal from '../components/dashboard/WeeklyGoal.astro';
 import NextSession from '../components/dashboard/NextSession.astro';
 import VolumeTrend from '../components/dashboard/VolumeTrend.astro';
@@ -15,14 +12,16 @@ const L = t();
 ---
 
 <AppLayout title={L.dashboard.title}>
-  <PageHeader
-    title={L.dashboard.title}
-    description={L.dashboard.description}
-    actionLabel={L.dashboard.newSession}
-    actionHref={localizedPath('/sessions/create')}
-  />
-
   <div class="dash" x-data="dashboardApp()" x-init="init()" x-cloak>
+    <header class="dash__header">
+      <h1 class="dash__title" x-text="greeting()">
+        {L.dashboard.title}
+      </h1>
+      <a class="dash__header-action" href={localizedPath('/sessions/create')}>
+        {L.dashboard.newSession}
+      </a>
+    </header>
+
     <div class="dash__state" x-show="isLoading" role="status" aria-live="polite">
       <span class="dash__state-mark" aria-hidden="true"></span>
       <span x-text="labels.loading">{L.dashboard.loading}</span>
@@ -34,15 +33,13 @@ const L = t();
         {L.dashboard.retry}
       </button>
     </div>
-    {/* ── Main dashboard (once training has started) ── */}
+
     <div x-show="!isLoading && !loadError && hasSessions">
-      <div class="dash__overview dash__signal">
-        <HeroSection />
-        <WeeklyGoal />
+      <div class="dash__hero-row">
         <NextSession />
+        <WeeklyGoal />
       </div>
 
-      {/* ── KPI band ── */}
       <section class="dash__kpis" aria-label={L.dashboard.kpisAria}>
         <KpiItem
           icon="dumbbell"
@@ -80,35 +77,21 @@ const L = t();
         />
       </section>
 
-      {/* ── Weekly volume trend ── */}
-      <VolumeTrend />
-
-      {/* ── Recent sessions ── */}
-      <RecentSessions />
+      <div class="dash__charts">
+        <VolumeTrend />
+        <RecentSessions />
+      </div>
     </div>
 
-    {/* ── Empty (first run: no sessions yet) — decorative, no zeros ── */}
     <div class="dash__empty" x-show="!isLoading && !loadError && !hasSessions">
-      <div class="dash__empty-ring" aria-hidden="true">
-        <svg viewBox="0 0 100 100" class="dash__empty-ring-svg">
-          <circle cx="50" cy="50" r="46" class="dash__empty-ring-track"></circle>
-          <circle cx="50" cy="50" r="46" class="dash__empty-ring-fill"></circle>
-        </svg>
-        <div class="dash__empty-disc">
-          <Icon name="dumbbell" size={48} class="dash__empty-dumbbell" />
-        </div>
-      </div>
-
       <h2 class="dash__empty-title">{L.dashboard.emptyTitle}</h2>
       <p class="dash__empty-desc">{L.dashboard.emptyDesc}</p>
 
       <div class="dash__empty-actions">
         <Button variant="primary" size="md" href={localizedPath('/sessions/create')}>
-          <Icon name="plus" size={16} />
           <span>{L.dashboard.createFirst}</span>
         </Button>
         <Button variant="secondary" size="md" href={localizedPath('/timer')}>
-          <Icon name="clockStopwatch" size={16} />
           <span>{L.dashboard.stopwatch}</span>
         </Button>
         <a href={localizedPath('/exercises')} class="dash__empty-link">
@@ -161,6 +144,52 @@ const L = t();
     max-width: 96rem;
     margin: 0 auto;
     padding-bottom: 8rem;
+  }
+
+  .dash__header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 2.4rem;
+    margin-bottom: 4rem;
+  }
+
+  .dash__title {
+    margin: 0;
+    color: var(--color-text);
+    font-family: var(--font-display);
+    font-size: var(--text-display);
+    font-weight: 700;
+    line-height: var(--leading-display);
+    letter-spacing: var(--tracking-display);
+    text-wrap: balance;
+  }
+
+  .dash__header-action {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    min-height: 4.4rem;
+    padding: 0 1.2rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    color: var(--color-muted);
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition:
+      color var(--transition-fast),
+      border-color var(--transition-fast);
+  }
+
+  .dash__header-action:hover {
+    color: var(--color-text);
+    border-color: var(--color-border-strong);
+  }
+
+  .dash__header-action:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
   }
 
   .dash__state {
@@ -220,33 +249,19 @@ const L = t();
     }
   }
 
-  .dash__overview {
+  .dash__hero-row {
     display: grid;
     gap: 0;
-    margin-bottom: 4rem;
-  }
-
-  .dash__signal {
+    margin-bottom: 2.4rem;
     border-top: 1px solid var(--color-border);
   }
 
   .dash__kpis {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 0;
-    margin-bottom: 4rem;
-  }
-
-  @media (min-width: 480px) {
-    .dash__kpis {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  @media (min-width: 1024px) {
-    .dash__kpis {
-      grid-template-columns: repeat(4, 1fr);
-    }
+    margin-bottom: 2.4rem;
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
   }
 
   .dash__kpi {
@@ -263,101 +278,53 @@ const L = t();
     background-color: var(--alpha-bg-subtle);
   }
 
+  .dash__charts {
+    display: grid;
+    gap: 0;
+  }
+
   .dash__empty {
-    max-width: 48rem;
+    max-width: 52rem;
     margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 2.4rem;
-    padding: 4rem 0 6rem;
-  }
-
-  .dash__empty-ring {
-    position: relative;
-    width: 12rem;
-    height: 12rem;
-    flex-shrink: 0;
-  }
-
-  .dash__empty-ring-svg {
-    width: 100%;
-    height: 100%;
-    transform: rotate(-90deg);
-    overflow: visible;
-  }
-
-  .dash__empty-ring-track {
-    fill: none;
-    stroke: var(--color-surface-3);
-    stroke-width: 6;
-  }
-
-  .dash__empty-ring-fill {
-    fill: none;
-    stroke: var(--color-accent);
-    stroke-width: 6;
-    stroke-linecap: round;
-    opacity: 0.25;
-    stroke-dasharray: 82 244;
-  }
-
-  .dash__empty-disc {
-    position: absolute;
-    inset: 0;
-    margin: auto;
-    width: 5rem;
-    height: 5rem;
-    border-radius: 50%;
-    background-color: var(--color-surface-2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--color-muted);
-  }
-
-  .dash__empty-dumbbell {
-    width: 3.2rem;
-    height: 3.2rem;
+    padding: 6rem 0 8rem;
   }
 
   .dash__empty-title {
-    font-family: var(--font-display);
-    font-size: clamp(2rem, 4vw, 2.8rem);
-    font-weight: 700;
-    line-height: 1.15;
+    margin: 0 0 1.2rem;
     color: var(--color-text);
-    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--text-h1);
+    font-weight: 700;
+    line-height: var(--leading-heading);
+    letter-spacing: var(--tracking-heading);
     text-wrap: balance;
   }
 
   .dash__empty-desc {
-    font-size: 1.4rem;
-    line-height: 1.5;
+    max-width: 42rem;
+    margin: 0 0 3.2rem;
     color: var(--color-muted);
-    max-width: 36rem;
-    margin: 0;
+    font-size: var(--text-body);
+    line-height: var(--leading-body);
   }
 
   .dash__empty-actions {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    justify-content: center;
     gap: 1.2rem;
   }
 
   .dash__empty-link {
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: var(--color-muted);
-    text-decoration: none;
-    border-radius: var(--radius-sm);
-    padding: 0.4rem 0.8rem;
     display: inline-flex;
     align-items: center;
     min-height: 4.4rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: var(--radius-sm);
+    color: var(--color-muted);
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-decoration: none;
     transition: color var(--transition-base);
   }
 
@@ -370,20 +337,47 @@ const L = t();
     box-shadow: var(--focus-ring);
   }
 
+  @media (min-width: 480px) {
+    .dash__kpis {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .dash__kpi:nth-child(odd) {
+      border-right: 1px solid var(--color-border);
+    }
+
+    .dash__kpi:nth-child(-n + 2) {
+      border-bottom: 1px solid var(--color-border);
+    }
+  }
+
   @media (min-width: 760px) {
-    .dash__overview {
-      grid-template-columns: minmax(0, 1.25fr) minmax(28rem, 0.75fr);
-      align-items: stretch;
+    .dash__hero-row {
+      grid-template-columns: minmax(0, 1.5fr) minmax(26rem, 0.8fr);
     }
   }
 
   @media (min-width: 1024px) {
-    .dash__kpi {
+    .dash__kpis {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .dash__kpi:nth-child(odd) {
+      border-right: 0;
+    }
+
+    .dash__kpi:nth-child(-n + 2) {
       border-bottom: 0;
     }
 
-    .dash__kpi:nth-child(3) {
+    .dash__kpi + .dash__kpi {
       border-left: 1px solid var(--color-border);
+    }
+
+    .dash__charts {
+      grid-template-columns: minmax(0, 2fr) minmax(28rem, 1fr);
+      gap: 3.2rem;
+      align-items: start;
     }
   }
 </style>

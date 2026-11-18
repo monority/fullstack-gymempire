@@ -1,8 +1,9 @@
 /**
- * D8 — logique Alpine du dashboard.
+ * Logique Alpine du dashboard.
  * L'horloge et la locale sont injectées : aucun `new Date()` dans la factory.
  */
 
+import { getAuth } from '../../lib/auth';
 import type { Dictionary } from '../../i18n/types';
 import { getSessions, getSessionsThisWeek } from '../../lib/storage/sessions';
 import { getExercises } from '../../lib/storage/exercises';
@@ -60,9 +61,11 @@ export interface DashboardApp {
     top1RM: number;
     streak: number;
   };
+  greeting(): string;
   remainingHintText(): string;
   sessionVolume(s: Session): number;
   sessionExercisesCount(s: Session): number;
+  sessionSetsCount(s: Session): number;
   sessionPrimaryMuscle(s: Session): string;
   statusLabel(s: Session['status']): string;
   muscleLabel(name: string): string;
@@ -166,6 +169,11 @@ export function createDashboardApp(
       };
     },
 
+    greeting() {
+      const name = getAuth()?.name?.trim();
+      return name ? labels.greeting.replace('{name}', name) : labels.greetingFallback;
+    },
+
     remainingHintText() {
       const remaining = Math.max(0, this.settings.weeklyGoal - this.weeklyDone);
       const unit = remaining === 1 ? labels.weeklyMoreSingular : labels.sessionsUnit;
@@ -177,6 +185,9 @@ export function createDashboardApp(
     },
     sessionExercisesCount(s) {
       return s.exercises.length;
+    },
+    sessionSetsCount(s) {
+      return s.exercises.reduce((total, exercise) => total + (exercise.sets?.length ?? 0), 0);
     },
     statusLabel(s) {
       return statusLabel(s, labels.status);
