@@ -35,11 +35,7 @@ const {
   ...rest
 } = Astro.props;
 
-const wrapperClasses = [
-  'toggle-wrapper',
-  disabled ? 'disabled' : '',
-  className,
-]
+const wrapperClasses = ['toggle-wrapper', disabled ? 'disabled' : '', className]
   .filter(Boolean)
   .join(' ');
 ---
@@ -68,7 +64,7 @@ const wrapperClasses = [
     align-items: center;
     gap: 0.8rem;
     cursor: pointer;
-    min-height: 44px;
+    min-height: 4.4rem;
   }
   .toggle-wrapper.disabled {
     opacity: 0.5;
@@ -81,13 +77,21 @@ const wrapperClasses = [
   }
   .toggle-track {
     position: relative;
-    width: 44px;
-    height: 24px;
-    border-radius: 999px;
+    width: 4.4rem;
+    height: 2.4rem;
+    border-radius: var(--radius-pill);
     background: var(--color-surface-2);
     border: 1px solid var(--color-border);
-    transition: background-color 200ms ease, border-color 200ms ease;
+    transition:
+      background-color var(--transition-base),
+      border-color var(--transition-base);
     flex-shrink: 0;
+  }
+  .toggle-wrapper:hover:not(.disabled) .toggle-track {
+    border-color: var(--color-border-strong);
+  }
+  .toggle-wrapper:active:not(.disabled) .toggle-track {
+    box-shadow: var(--shadow-1);
   }
   .toggle-input:checked + .toggle-track {
     background: var(--color-accent);
@@ -95,17 +99,17 @@ const wrapperClasses = [
   }
   .toggle-thumb {
     position: absolute;
-    top: 2px;
-    left: 3px;
-    width: 18px;
-    height: 18px;
+    top: 0.2rem;
+    left: 0.3rem;
+    width: 1.8rem;
+    height: 1.8rem;
     border-radius: 50%;
-    background: white;
-    transition: transform 200ms ease;
+    background: var(--color-surface);
+    transition: transform var(--transition-base);
     box-shadow: var(--shadow-1);
   }
   .toggle-input:checked + .toggle-track .toggle-thumb {
-    transform: translateX(20px);
+    transform: translateX(2rem);
   }
   .toggle-input:focus-visible + .toggle-track {
     box-shadow: var(--focus-ring);

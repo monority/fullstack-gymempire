@@ -15,31 +15,25 @@ const { tabs, activeTab, class: className = '' } = Astro.props;
 ---
 
 <div role="tablist" aria-orientation="horizontal" class:list={['tab-list', className]}>
-  {
-    tabs.map((tab) => {
-      const isActive = activeTab !== undefined && tab.id === activeTab;
-      return (
-        <button
-          type="button"
-          role="tab"
-          id={`tab-${tab.id}`}
-          aria-selected={isActive ? 'true' : 'false'}
-          aria-controls={tab.id}
-          tabindex={isActive ? 0 : -1}
-          disabled={tab.disabled}
-          data-tab-trigger
-          data-tab-id={tab.id}
-          class:list={[
-            'tab-list__trigger',
-            isActive && 'is-active',
-            tab.disabled && 'is-disabled',
-          ]}
-        >
-          {tab.label}
-        </button>
-      );
-    })
-  }
+  {tabs.map((tab) => {
+    const isActive = activeTab !== undefined && tab.id === activeTab;
+    return (
+      <button
+        type="button"
+        role="tab"
+        id={`tab-${tab.id}`}
+        aria-selected={isActive ? 'true' : 'false'}
+        aria-controls={tab.id}
+        tabindex={isActive ? 0 : -1}
+        disabled={tab.disabled}
+        data-tab-trigger
+        data-tab-id={tab.id}
+        class:list={['tab-list__trigger', isActive && 'is-active', tab.disabled && 'is-disabled']}
+      >
+        {tab.label}
+      </button>
+    );
+  })}
 </div>
 
 <style>
@@ -54,6 +48,7 @@ const { tabs, activeTab, class: className = '' } = Astro.props;
 
   .tab-list__trigger {
     position: relative;
+    min-height: 4.4rem;
     padding: 1rem 1.6rem;
     font-size: 1.2rem;
     font-weight: 500;
@@ -66,8 +61,12 @@ const { tabs, activeTab, class: className = '' } = Astro.props;
     background: none;
     color: var(--color-muted);
     cursor: pointer;
-    transition: color 160ms ease;
+    transition: color var(--transition-fast);
     outline: none;
+  }
+
+  .tab-list__trigger:focus-visible {
+    box-shadow: var(--focus-ring);
   }
 
   .tab-list__trigger:hover {
@@ -91,12 +90,8 @@ const { tabs, activeTab, class: className = '' } = Astro.props;
   function initTabs() {
     const roots = document.querySelectorAll<HTMLElement>('[data-tabs-root]');
     roots.forEach((root) => {
-      const triggers = Array.from(
-        root.querySelectorAll<HTMLButtonElement>('[data-tab-trigger]'),
-      );
-      const panels = Array.from(
-        root.querySelectorAll<HTMLElement>('[data-tab-panel]'),
-      );
+      const triggers = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-tab-trigger]'));
+      const panels = Array.from(root.querySelectorAll<HTMLElement>('[data-tab-panel]'));
       if (triggers.length === 0) return;
 
       const activate = (trigger: HTMLButtonElement) => {

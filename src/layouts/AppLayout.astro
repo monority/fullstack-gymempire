@@ -1,7 +1,6 @@
 ---
 import '../styles/global.css';
 import AppShell from '../components/layout/AppShell.astro';
-import Background from '../components/layout/Background.astro';
 import QuickSearch from '../components/layout/QuickSearch.astro';
 import Toast from '../components/ui/Toast.astro';
 import { ClientRouter } from 'astro:transitions';
@@ -159,9 +158,6 @@ const groupsWithActive = groups.map((g) => ({
     </style>
   </head>
   <body>
-    {/* Decorative layer — sits behind the shell (fixed, z-index: -1);
-        the sidebar/topbar/drawer let it show through via translucency. */}
-    <Background />
     {groupsWithActive.length > 0 ? (
       <AppShell groups={groupsWithActive} title={title}>
         <slot />

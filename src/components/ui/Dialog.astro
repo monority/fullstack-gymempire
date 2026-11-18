@@ -79,20 +79,27 @@ const { id = 'dialog', title, class: className = '' } = Astro.props;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 3.2rem;
-    height: 3.2rem;
-    border-radius: 50%;
-    background: hsl(0 0% 100% / 0.05);
+    width: 4.4rem;
+    height: 4.4rem;
+    border-radius: var(--radius-pill);
+    background: var(--alpha-bg-subtle);
     color: var(--color-muted);
     border: none;
     cursor: pointer;
     transition:
-      background-color 160ms ease,
-      color 160ms ease;
+      background-color var(--transition-fast),
+      color var(--transition-fast);
   }
   .dialog__close:hover {
-    background: hsl(0 0% 100% / 0.1);
+    background: var(--alpha-bg-soft);
     color: var(--color-text);
+  }
+  .dialog__close:active {
+    transform: translateY(1px);
+  }
+  .dialog__close:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
   }
 
   .dialog__body {

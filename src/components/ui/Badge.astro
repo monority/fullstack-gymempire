@@ -2,14 +2,7 @@
 import './Badge.css';
 
 type Variant =
-  | 'default'
-  | 'success'
-  | 'warning'
-  | 'danger'
-  | 'info'
-  | 'accent'
-  | 'category'
-  | 'superset';
+  'default' | 'success' | 'warning' | 'danger' | 'info' | 'accent' | 'category' | 'superset';
 
 type Tone = 'chest' | 'back' | 'shoulders' | 'arms' | 'legs' | 'core' | 'other';
 type Group = 'g1' | 'g2' | 'g3' | 'g4' | 'g5' | 'none';
@@ -59,7 +52,7 @@ const {
   /* Sizes */
   .badge--sm {
     padding: 0 0.6rem;
-    font-size: 1.0rem;
+    font-size: 1rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
   }
@@ -70,27 +63,27 @@ const {
 
   /* Variants */
   .badge--default {
-    background-color: hsl(0 0% 100% / 0.05);
+    background-color: var(--alpha-bg-subtle);
     color: var(--color-muted);
   }
   .badge--success {
-    background-color: hsl(142 71% 45% / 0.10);
+    background-color: color-mix(in srgb, var(--color-success) 12%, transparent);
     color: var(--color-success);
   }
   .badge--warning {
-    background-color: hsl(48 96% 50% / 0.10);
+    background-color: color-mix(in srgb, var(--color-warning) 12%, transparent);
     color: var(--color-warning);
   }
   .badge--danger {
-    background-color: hsl(0 84% 60% / 0.10);
+    background-color: color-mix(in srgb, var(--color-destructive) 12%, transparent);
     color: var(--color-destructive);
   }
   .badge--info {
-    background-color: hsl(217 91% 60% / 0.10);
+    background-color: color-mix(in srgb, var(--color-info) 12%, transparent);
     color: var(--color-info);
   }
   .badge--accent {
-    background-color: hsl(25 95% 53% / 0.10);
+    background-color: color-mix(in srgb, var(--color-accent) 12%, transparent);
     color: var(--color-accent);
   }
 

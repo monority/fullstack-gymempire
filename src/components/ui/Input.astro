@@ -107,17 +107,31 @@ const isBare = bare || (!label && !hint && !error);
     color: var(--color-text);
     outline: none;
     transition:
-      border-color 160ms ease,
-      box-shadow 160ms ease;
+      border-color var(--transition-fast),
+      box-shadow var(--transition-fast);
+  }
+
+  .input:hover:not(:disabled) {
+    border-color: var(--color-border-strong);
+  }
+
+  .input:focus-visible {
+    border-color: var(--color-accent);
+    box-shadow: var(--focus-ring);
+  }
+
+  .input:active:not(:disabled) {
+    border-color: var(--color-accent);
   }
 
   .input--sm {
-    height: 3.6rem;
+    height: 4.4rem;
     padding: 0 1rem;
     font-size: 1.3rem;
   }
 
   .input--md {
+    min-height: 4.4rem;
     padding: 0.8rem 1.2rem;
     font-size: 1.4rem;
   }
