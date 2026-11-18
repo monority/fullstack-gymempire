@@ -56,14 +56,14 @@
   /* Métadonnées discrètes. */
   :where(.hist__table-meta, .trend__chart-meta, .kpi-item__unit, .panel-header__meta) {
     color: var(--color-muted);
-    font-size: 1.2rem;
+    font-size: var(--text-small);
     font-weight: 500;
   }
 
   /* Sur-titre en majuscules. */
   :where(.poids__record-count, .rec__sort-label, .stats__chart-meta, .quick__stat-label) {
     color: var(--color-muted);
-    font-size: 1.1rem;
+    font-size: var(--text-caption);
     font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -80,7 +80,7 @@
   /* Textes d'aide sous un libellé. */
   :where(.stats__bench-optin-hint, .set__label-desc, .rem__row-desc) {
     color: var(--color-muted);
-    font-size: 1.1rem;
+    font-size: var(--text-caption);
     line-height: 1.3;
   }
 
@@ -88,7 +88,7 @@
   :where(.stats__bench-optin-title, .set__label-title, .rem__row-title) {
     color: var(--color-text);
     font-family: var(--font-display);
-    font-size: 1.4rem;
+    font-size: var(--text-body);
     font-weight: 600;
     line-height: 1.2;
   }

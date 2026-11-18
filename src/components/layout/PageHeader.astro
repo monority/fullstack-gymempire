@@ -43,18 +43,18 @@ const hasAction = Boolean(actionLabel && actionHref);
     margin: 0;
     color: var(--color-text);
     font-family: var(--font-display);
-    font-size: clamp(3rem, 5vw, 5.6rem);
+    font-size: var(--text-display);
     font-weight: 700;
-    letter-spacing: -0.03em;
-    line-height: 0.98;
+    letter-spacing: var(--tracking-display);
+    line-height: var(--leading-display);
     text-wrap: balance;
   }
   .page-header__description {
     max-width: 58rem;
     margin: 1.2rem 0 0;
     color: var(--color-muted);
-    font-size: 1.4rem;
-    line-height: 1.5;
+    font-size: var(--text-body);
+    line-height: var(--leading-body);
   }
   .page-header__action {
     flex: 0 0 auto;
@@ -67,6 +67,9 @@ const hasAction = Boolean(actionLabel && actionHref);
       gap: 2rem;
       margin-bottom: 2.8rem;
       padding-bottom: 1.8rem;
+    }
+    .page-header__title {
+      font-size: var(--text-h1);
     }
     .page-header__action {
       width: 100%;
