@@ -1,6 +1,6 @@
 /** Utilitaires partagés (type-pill, tones, grids). Couche: utilities. */
 @layer utilities {
-  /* ════ Harmonized set-type pill (global) ════════════════════
+  /*  Harmonized set-type pill (global)
  * One language for set-type badges across detail / comparer /
  * historique / SetRow. Driven by Alpine `:class="'type-pill--'+t"`.
  * Replaces the duplicated .X__type / .X__type-pill blocks. */
@@ -43,7 +43,7 @@
     color: var(--color-destructive);
   }
 
-  /* ════ Reusable tone badges ═══════════════════════════════════
+  /*  Reusable tone badges
  * Shared color-mix patterns for set types, RPE levels, and status
  * indicators. Pages apply via  :class="'tone--' + value". */
   .tone--warmup {
@@ -107,7 +107,6 @@
     font-family: var(--font-display);
   }
 
-  /* ── Definition list label (WorkoutCard dt) ───────────────── */
   .dt-label {
     font-size: 0.95rem;
     font-weight: 700;
@@ -117,7 +116,6 @@
     line-height: 1;
   }
 
-  /* ── Workout grids ───────────────────────────────────────── */
   .set-row-grid {
     display: grid;
     grid-template-columns: 3.2rem minmax(6rem, 1fr) 2rem minmax(6rem, 1fr) auto 2.4rem;
@@ -132,7 +130,7 @@
     }
   }
 
-  /* ════ RPE value display ═══════════════════════════════════════
+  /*  RPE value display
  * Global primitive for rendering RPE/uRPE numbers with tone colours.
  * Usage: <span class="rpe-value tone--hard">7.5</span>
  * Add /10 separator manually or use .rpe-value__sep child. */

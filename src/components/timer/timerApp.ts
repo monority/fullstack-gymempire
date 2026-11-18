@@ -1,5 +1,5 @@
 /**
- * D8 — logique Alpine de la page Timer.
+ * logique Alpine de la page Timer.
  *
  * Le pont pop-out (BroadcastChannel / Picture-in-Picture) vit hors du store
  * réactif Alpine, exactement comme dans l'implémentation d'origine. Seule

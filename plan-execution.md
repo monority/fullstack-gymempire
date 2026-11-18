@@ -146,7 +146,7 @@ Voir §7.5. Toute tâche `⏸` reste bloquée tant que la décision n'y est pas 
 
 - Séparation nette `src/lib` (logique pure) / `src/components` (UI) / `src/pages` (composition).
 - i18n typé : `Dictionary = typeof fr`, donc l'EN ne peut pas diverger structurellement.
-- `PageHeader`, `AppLayout`, tokens CSS centralisés (`tokens.css`, `utilities.css`).
+- `PageHeader`, `AppLayout`, tokens CSS centralisés (`tokens/colors.css`, `tokens/scale.css`, `utilities.css`).
 - Chaîne de validation complète : Vitest + `astro check` + build + smoke + E2E, branchée en CI.
 - Convention builder déjà exemplaire : `src/components/builder/*.ts` + template inline.
 - Validation d'import (`importAllData`) et `SNAPSHOT_VERSION` déjà en place.
@@ -616,7 +616,7 @@ export function createPlateCalculator(deps: PlateCalculatorDeps) {
 
 #### E6 — Typographie et échelle (`S`)
 
-- **Action** : vérifier l'échelle dans `tokens.css`, les tailles fluides, le comportement à 200 % de zoom.
+- **Action** : vérifier l'échelle dans `tokens/scale.css`, les tailles fluides, le comportement à 200 % de zoom.
 - **Critères**
   - [ ] Aucun débordement à 200 %
   - [ ] Aucune taille < 12 px pour du texte lisible
@@ -841,13 +841,13 @@ export function createPlateCalculator(deps: PlateCalculatorDeps) {
 
 Suite de la refonte technique : le langage visuel est remplacé (direction éditoriale retenue, dashboard d'abord), la vérité produit restant inchangée. Le plan détaillé et le barème sont dans [`plan-design.md`](./plan-design.md) ; la vérité produit dans [`PRODUCT.md`](./PRODUCT.md) ; le système livré dans [`DESIGN.md`](./DESIGN.md).
 
-| Lot | Contenu | Commit |
-|---|---|---|
-| 0 — Fondations | tokens de type, Archivo + Inter, suppression de l'eyebrow global, correcs CSS dupliquées, docs | `2ad5451`, `87843cd` |
-| 1 — Shell & composants | fond décoratif supprimé, 7 états des interactifs, cibles 44 px, token hygiene | `8bb1b2e` |
-| 2 — Dashboard | titre nu, héros « prochaine séance », objectif en arc, 3 métriques à barres hebdo, état vide épuré | `52db68d` |
-| 3 — Réplication | échelle fixe propagée aux en-têtes et motifs partagés | `467c01f` |
-| 4 — Finition | review indépendante (disposition `ship`), `DESIGN.md` + sidecar, vérification visuelle 4 vues | ce lot |
+| Lot                    | Contenu                                                                                            | Commit               |
+| ---------------------- | -------------------------------------------------------------------------------------------------- | -------------------- |
+| 0 — Fondations         | tokens de type, Archivo + Inter, suppression de l'eyebrow global, correcs CSS dupliquées, docs     | `2ad5451`, `87843cd` |
+| 1 — Shell & composants | fond décoratif supprimé, 7 états des interactifs, cibles 44 px, token hygiene                      | `8bb1b2e`            |
+| 2 — Dashboard          | titre nu, héros « prochaine séance », objectif en arc, 3 métriques à barres hebdo, état vide épuré | `52db68d`            |
+| 3 — Réplication        | échelle fixe propagée aux en-têtes et motifs partagés                                              | `467c01f`            |
+| 4 — Finition           | review indépendante (disposition `ship`), `DESIGN.md` + sidecar, vérification visuelle 4 vues      | ce lot               |
 
 **État final** : 632 tests / 51 fichiers, `check:strict` 0/0/0, lint/colors/contrast/format/budget/smoke verts, build 42 pages, 34 E2E, `git diff --check` vert. Revue indépendante : 7 correctifs appliqués puis dispositions `fix` → `ship`.
 

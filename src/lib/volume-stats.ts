@@ -4,7 +4,7 @@
  * Roadmap P2 « Répartition volume par groupe musculaire »: camembert/donut of
  * Σ volume per muscle group, filtered by period (week / month / all).
  *
- * ── Grouping rule ─────────────────────────────────────────────────────────
+ * ── Grouping rule
  * Each completed set is attributed to `SessionExercise.muscle` — the muscle
  * group snapshot recorded when the session was logged (source:
  * `Exercise.muscle` from the exercise catalog, e.g. "Pectoraux", "Dos").
@@ -14,13 +14,13 @@
  * (no catalog re-resolution by id). A set whose muscle is missing/blank
  * falls back into the "Autre" bucket.
  *
- * ── Volume ────────────────────────────────────────────────────────────────
+ * ── Volume
  * Σ weight × reps over completed sets (of any type, warmups included) in
  * completed sessions only — identical convention to the rest of the stats
  * page. Returns one record per muscle, biggest volume first, plus the
  * share (0..100) of the period's total volume.
  *
- * ── Periods ───────────────────────────────────────────────────────────────
+ * ── Periods
  * - 'week':  rolling last 7 days (from N-6 to N) — matches « 7 derniers jours ».
  * - 'month': rolling last 30 days (from N-29 to N) — matches « 30 derniers jours ».
  * - 'all':   no date filter.

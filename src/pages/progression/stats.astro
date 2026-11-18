@@ -23,7 +23,6 @@ const L = t();
     </div>
 
     <div class="stats__content" x-show="hasCompletedSessions" x-cloak>
-      {/* ═══ Top summary row ═══ */}
       <div class="stats__summary">
         <div class="stats__sum stats__sum--hero">
           <span class="stats__sum-label">{L.stats.volumeTotal}</span>
@@ -68,7 +67,6 @@ const L = t();
         </div>
       </div>
 
-      {/* ═══ Volume chart (12 weeks) ═══ */}
       <Card>
         <PanelHeader title={L.stats.volumeChart} meta={L.stats.last12wKg} />
         <CardContent>
@@ -76,7 +74,6 @@ const L = t();
         </CardContent>
       </Card>
 
-      {/* ═══ Two-col: muscle distribution + training frequency ═══ */}
       <div class="stats__grid">
         <Card>
           <div class="stats__card-header">
@@ -106,7 +103,6 @@ const L = t();
         </Card>
       </div>
 
-      {/* ═══ Top 5 exercises ═══ */}
       <Card>
         <PanelHeader title={L.stats.topExercises} meta={L.stats.volumeTotalMeta} />
         <CardContent>
@@ -114,7 +110,6 @@ const L = t();
         </CardContent>
       </Card>
 
-      {/* ═══ Benchmarks vs reference data (opt-in local, aucun réseau) ═══ */}
       <Card>
         <PanelHeader
           title={L.stats.benchmarksTitle}

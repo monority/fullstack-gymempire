@@ -1,5 +1,5 @@
 /**
- * D7 — logique Alpine des records (meilleurs 1RM par exercice).
+ * logique Alpine des records (meilleurs 1RM par exercice).
  * L'horloge est injectée pour la fenêtre « 30 derniers jours ».
  */
 

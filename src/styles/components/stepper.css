@@ -1,6 +1,6 @@
 /** Stepper numérique injecté par AppLayout. Couche: components. */
 @layer components {
-  /* ── Number input steppers ──────────────────────────────────────────────
+  /* ── Number input steppers
  * Native number-input spinners are hidden here and replaced by the custom
  * .input-stepper chevron buttons injected by AppLayout.astro.
  *

@@ -62,8 +62,6 @@ function daysAgo(n: number): string {
   return dateKey(d);
 }
 
-// ── dateKey ──────────────────────────────────────────────────────
-
 describe('dateKey', () => {
   it('returns YYYY-MM-DD format', () => {
     const d = new Date(2026, 0, 5);
@@ -75,8 +73,6 @@ describe('dateKey', () => {
     expect(dateKey(d)).toBe('2026-01-01');
   });
 });
-
-// ── computeSessionVolume ─────────────────────────────────────────
 
 describe('computeSessionVolume', () => {
   it('sums weight × reps for completed sets', () => {
@@ -101,8 +97,6 @@ describe('computeSessionVolume', () => {
   });
 });
 
-// ── computeSessionPrimaryMuscle ──────────────────────────────────
-
 describe('computeSessionPrimaryMuscle', () => {
   it('returns most frequent muscle', () => {
     const s = makeSession(today(), [
@@ -119,8 +113,6 @@ describe('computeSessionPrimaryMuscle', () => {
   });
 });
 
-// ── computeTotalVolume ───────────────────────────────────────────
-
 describe('computeTotalVolume', () => {
   it('sums volume across sessions', () => {
     const sessions = [
@@ -135,8 +127,6 @@ describe('computeTotalVolume', () => {
   });
 });
 
-// ── computeTodayVolume ───────────────────────────────────────────
-
 describe('computeTodayVolume', () => {
   it('sums today sessions volume', () => {
     const sessions = [makeSession(today(), [{ muscle: 'A', weight: 100, reps: 5 }])];
@@ -149,8 +139,6 @@ describe('computeTodayVolume', () => {
   });
 });
 
-// ── computeTodaySessions ─────────────────────────────────────────
-
 describe('computeTodaySessions', () => {
   it('counts today sessions', () => {
     const sessions = [
@@ -161,8 +149,6 @@ describe('computeTodaySessions', () => {
     expect(computeTodaySessions(sessions)).toBe(2);
   });
 });
-
-// ── computeTodayExercises ────────────────────────────────────────
 
 describe('computeTodayExercises', () => {
   it('counts distinct exercises across today sessions', () => {
@@ -180,8 +166,6 @@ describe('computeTodayExercises', () => {
     expect(computeTodayExercises(sessions)).toBe(0);
   });
 });
-
-// ── computeBestPRs ───────────────────────────────────────────────
 
 describe('computeBestPRs', () => {
   it('counts unique exercises with at least one completed set', () => {
@@ -201,8 +185,6 @@ describe('computeBestPRs', () => {
     expect(computeBestPRs(sessions)).toBe(0);
   });
 });
-
-// ── computeTop1RM ────────────────────────────────────────────────
 
 describe('computeTop1RM', () => {
   it('returns highest estimated 1RM', () => {
@@ -224,8 +206,6 @@ describe('computeTop1RM', () => {
   });
 });
 
-// ── computeWeeklyVolumeByDay ─────────────────────────────────────
-
 describe('computeWeeklyVolumeByDay', () => {
   it('returns 7-element array with this week volumes', () => {
     const sessions = [makeSession(today(), [{ muscle: 'A', weight: 100, reps: 5 }])];
@@ -240,8 +220,6 @@ describe('computeWeeklyVolumeByDay', () => {
     expect(arr.every((v) => v === 0)).toBe(true);
   });
 });
-
-// ── computeStreak ────────────────────────────────────────────────
 
 describe('computeStreak', () => {
   it('returns 0 for no completed sessions', () => {

@@ -8,7 +8,7 @@ Offline-first strength training log. 100% client-side — no backend, no account
 
 - **Framework:** [Astro 7](https://astro.build/) (static output)
 - **UI:** [Alpine.js 3.14](https://alpinejs.dev/) (client-side interactivity)
-- **Styles:** CSS custom properties + Tailwind CSS v4
+- **Styles:** CSS custom properties (couches tokens/base/components/utilities)
 - **Tests:** [Vitest](https://vitest.dev/) (461 tests)
 - **Language:** TypeScript
 - **Package manager:** pnpm
@@ -191,7 +191,7 @@ No server runtime required.
 - No real auth (fake dev gate only)
 - No merge strategy (last-write-wins)
 - Password stored in plain localStorage
-- No accessibility automation yet (planned, lot H — see `plan-execution.md`)
+- Accessibility is automated in E2E (axe: WCAG AA in both themes, critical violations gate CI).
 
 ## License
 

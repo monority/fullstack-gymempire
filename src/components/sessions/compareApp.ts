@@ -1,5 +1,5 @@
 /**
- * D7 — logique Alpine de la comparaison de deux séances.
+ * logique Alpine de la comparaison de deux séances.
  * Toutes les fonctions de calcul sont pures ; l'URL est injectée.
  */
 

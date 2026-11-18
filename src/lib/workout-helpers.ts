@@ -7,8 +7,6 @@
 
 import type { SessionExercise, RpeType, SetType } from './storage/types';
 
-// ── Type labels ────────────────────────────────────────────────
-
 export interface TypeLabels {
   warmup: string;
   work: string;
@@ -33,8 +31,6 @@ export function typeLabel(type: SetType, labels: TypeLabels): string {
   }
 }
 
-// ── RPE display ────────────────────────────────────────────────
-
 /**
  * Per-set RPE display label: "RPE 7.5" or "uRPE 7".
  * Sets without a value render '—'.
@@ -44,8 +40,6 @@ export function formatSetRpe(rpe: number | string | null | undefined, rpeType?: 
   if (v == null || !Number.isFinite(v)) return '—';
   return (rpeType === 'urpe' ? 'uRPE ' : 'RPE ') + v.toString();
 }
-
-// ── Volume ─────────────────────────────────────────────────────
 
 /** Total volume (kg × reps) of completed sets for one exercise. */
 export function exerciseVolume(ex: SessionExercise): number {

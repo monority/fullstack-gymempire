@@ -1,5 +1,5 @@
 /**
- * D8 — logique Alpine de la page tendances d'un exercice.
+ * logique Alpine de la page tendances d'un exercice.
  * Les helpers de graphique viennent de `lib/trends-stats` (déjà purs).
  */
 

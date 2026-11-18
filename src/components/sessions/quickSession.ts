@@ -39,7 +39,7 @@ export interface QuickSessionDeps {
   storage: QuickSessionStorage;
   /** Default rest duration (seconds) — Settings.defaultRestTime. */
   defaultRestSeconds: () => number;
-  /** Suggested rest override per exercise (rest-times B2) — returns seconds. */
+  /** Suggested rest override per exercise — returns seconds. */
   restSecondsFor: (exerciseName: string, fallback: number) => number;
   unit: () => 'kg' | 'lbs';
   confirm: (message: string) => boolean;

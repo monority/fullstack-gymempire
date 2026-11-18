@@ -14,8 +14,6 @@ import {
   DEFAULT_MUSCLES,
 } from '../exercises-stats';
 
-// ── Helpers ──────────────────────────────────────────────────────
-
 function makeExercise(overrides: Partial<Exercise> = {}): Exercise {
   return {
     id: 'e1',
@@ -48,8 +46,6 @@ function makeSession(exercises: { exerciseId: string; setCount: number }[] = [])
     })),
   };
 }
-
-// ── resolveForm ──────────────────────────────────────────────────
 
 describe('resolveForm', () => {
   it('returns null for empty name', () => {
@@ -89,8 +85,6 @@ describe('resolveForm', () => {
   });
 });
 
-// ── computeSetCounts ─────────────────────────────────────────────
-
 describe('computeSetCounts', () => {
   it('returns empty for no sessions', () => {
     expect(computeSetCounts([])).toEqual({});
@@ -109,8 +103,6 @@ describe('computeSetCounts', () => {
     expect(counts['e2']).toBe(2);
   });
 });
-
-// ── filterExercises ──────────────────────────────────────────────
 
 describe('filterExercises', () => {
   const exercises = [
@@ -154,8 +146,6 @@ describe('filterExercises', () => {
   });
 });
 
-// ── computeMuscleGroups ──────────────────────────────────────────
-
 describe('computeMuscleGroups', () => {
   it('returns defaults when no exercises', () => {
     const groups = computeMuscleGroups([]);
@@ -178,8 +168,6 @@ describe('computeMuscleGroups', () => {
   });
 });
 
-// ── muscleOptionsForSelect ───────────────────────────────────────
-
 describe('muscleOptionsForSelect', () => {
   it('appends custom option', () => {
     const options = muscleOptionsForSelect(['Dos', 'Pectoraux'], 'Autre');
@@ -188,16 +176,12 @@ describe('muscleOptionsForSelect', () => {
   });
 });
 
-// ── buildTrendUrl ────────────────────────────────────────────────
-
 describe('buildTrendUrl', () => {
   it('builds URL with exercise name', () => {
     const url = buildTrendUrl('Bench Press', '/exercises/trends');
     expect(url).toBe('/exercises/trends?ex=Bench+Press');
   });
 });
-
-// ── hasWorkingWeight ─────────────────────────────────────────────
 
 describe('hasWorkingWeight', () => {
   it('returns false for empty', () => {
@@ -221,8 +205,6 @@ describe('hasWorkingWeight', () => {
   });
 });
 
-// ── generateWarmupRows ───────────────────────────────────────────
-
 describe('generateWarmupRows', () => {
   it('returns empty for no working weight', () => {
     expect(generateWarmupRows([{ type: 'work', weight: 0, reps: 10 }])).toEqual([]);
@@ -244,8 +226,6 @@ describe('generateWarmupRows', () => {
     expect(result[0].weight).toBe(40); // 100 * 0.4
   });
 });
-
-// ── formatCountLabel ─────────────────────────────────────────────
 
 describe('formatCountLabel', () => {
   it('uses singular for 1', () => {

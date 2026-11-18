@@ -8,8 +8,6 @@
 import { calculate1RM } from './storage/store';
 import type { Session } from './storage/types';
 
-// ── Types ───────────────────────────────────────────────────────
-
 export interface TrendPoint {
   date: string;
   value: number;
@@ -17,8 +15,6 @@ export interface TrendPoint {
 
 export type Metric = 'volume' | 'rm';
 export type Period = 'all' | '3m' | '1y';
-
-// ── Helpers ─────────────────────────────────────────────────────
 
 export const CHART_W = 800;
 export const CHART_H = 300;
@@ -29,8 +25,6 @@ export function monthAgo(months: number, now = new Date()): number {
   d.setMonth(d.getMonth() - months);
   return d.getTime();
 }
-
-// ── Points computation ──────────────────────────────────────────
 
 /**
  * Compute trend points for a given exercise across sessions.
@@ -80,8 +74,6 @@ export function computeTrendPoints(
 
   return pts.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 }
-
-// ── Chart helpers ───────────────────────────────────────────────
 
 /** Max Y-axis value: peak × 1.1 with floor of 10. */
 export function chartMax(points: TrendPoint[]): number {

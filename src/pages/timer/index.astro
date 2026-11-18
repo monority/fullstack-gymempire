@@ -28,10 +28,7 @@ const L = t();
         <span x-text="popupOpen ? labels.popoutOpen : labels.popout">{L.timer.popout}</span>
       </Button>
     </div>
-
-    {/* ════════════════════════════════════════════════════
-        HERO — current mode + big clock + start CTA
-        ════════════════════════════════════════════════════ */}
+    HERO — current mode + big clock + start CTA
     <section class="timer__hero">
       <div class="timer__hero-mode">
         <span class="timer__hero-icon" aria-hidden="true">
@@ -106,10 +103,7 @@ const L = t();
         </Button>
       </div>
     </section>
-
-    {/* ════════════════════════════════════════════════════
-        MODE + PRESETS — same row, segmented + 4 quick pills
-        ════════════════════════════════════════════════════ */}
+    MODE + PRESETS — same row, segmented + 4 quick pills
     <section class="timer__presets-section" aria-label={L.timer.modeAria}>
       <div class="timer__presets-segmented">
         <Segmented
@@ -139,10 +133,7 @@ const L = t();
         </template>
       </div>
     </section>
-
-    {/* ════════════════════════════════════════════════════
-        CUSTOM INPUT + LAPS — two cards side by side (countdown / stopwatch)
-        ════════════════════════════════════════════════════ */}
+    CUSTOM INPUT + LAPS — two cards side by side (countdown / stopwatch)
     <section class="timer__panels">
       {/* Custom time — countdown only */}
       <Card padding="md" class="timer__panel-card" x-show="mode === 'countdown'">
@@ -217,10 +208,7 @@ const L = t();
         </div>
       </Card>
     </section>
-
-    {/* ════════════════════════════════════════════════════
-        SHORTCUTS — kbd hints, subtle row
-        ════════════════════════════════════════════════════ */}
+    SHORTCUTS — kbd hints, subtle row
     <div class="timer__shortcuts" aria-hidden="true">
       <span class="timer__shortcut">
         <kbd class="timer__kbd" x-text="labels.spaceKey">
@@ -233,10 +221,7 @@ const L = t();
         <span x-text="labels.shortcutsReset">{L.timer.shortcutsReset}</span>
       </span>
     </div>
-
-    {/* ════════════════════════════════════════════════════
-        SOUND TOGGLE — subtle footer
-        ════════════════════════════════════════════════════ */}
+    SOUND TOGGLE — subtle footer
     <div class="timer__sound">
       <label class="timer__sound-label">
         <input

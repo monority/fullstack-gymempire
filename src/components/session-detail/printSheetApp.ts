@@ -1,5 +1,5 @@
 /**
- * D8 — logique Alpine de la feuille d'impression (page autonome).
+ * logique Alpine de la feuille d'impression (page autonome).
  * `window`, le dialogue d'impression et la locale sont injectés.
  */
 

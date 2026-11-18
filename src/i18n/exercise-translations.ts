@@ -2,7 +2,7 @@
  * FR → EN dictionaries for user-stored exercise data.
  *
  * Exercise names, muscles and categories are stored in French in the
- * user's localStorage (see `src/lib/storage.ts` DEFAULT_EXERCISES).
+ * user's localStorage (see `src/lib/storage/defaults.ts` DEFAULT_EXERCISES).
  * These are DATA, not UI strings — they are also used as lookup keys
  * (exercise tips, rest times, template matching, etc.). So instead of
  * mutating the stored records, we translate at render time: keep the

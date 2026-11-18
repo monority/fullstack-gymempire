@@ -20,8 +20,6 @@ export function currentUnit(): WeightUnit {
   return getSettings().unit === 'lbs' ? 'lbs' : 'kg';
 }
 
-// ── Date formatters ─────────────────────────────────────────────
-
 /** "lundi 12 août 2025" — full date + weekday. */
 export function formatDateLong(iso: string): string {
   const d = new Date(iso);
@@ -95,8 +93,6 @@ export function formatTime(iso: string): string {
     minute: '2-digit',
   });
 }
-
-// ── Number formatters ───────────────────────────────────────────
 
 /** Locale-formatted integer: "1 234". */
 export function formatNumber(n: number): string {

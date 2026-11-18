@@ -2,8 +2,6 @@ import { describe, expect, it } from 'vitest';
 import { primaryMuscle, filterSessions, sortByDateDesc, countLabel } from '../session-list-stats';
 import type { Session, SessionExercise } from '../storage/types';
 
-// ── Helpers ─────────────────────────────────────────────────────
-
 function makeSession(
   overrides: Partial<Session> & { id: string; name: string; date: string } = {
     id: 's1',
@@ -26,8 +24,6 @@ function makeExercise(muscle: string): SessionExercise {
     sets: [],
   };
 }
-
-// ── primaryMuscle ───────────────────────────────────────────────
 
 describe('primaryMuscle', () => {
   it('returns most frequent muscle', () => {
@@ -66,8 +62,6 @@ describe('primaryMuscle', () => {
   });
 });
 
-// ── filterSessions ──────────────────────────────────────────────
-
 describe('filterSessions', () => {
   const sessions = [
     makeSession({ id: 's1', name: 'Push Day', date: '2026-01-15T12:00:00Z' }),
@@ -94,8 +88,6 @@ describe('filterSessions', () => {
   });
 });
 
-// ── sortByDateDesc ──────────────────────────────────────────────
-
 describe('sortByDateDesc', () => {
   it('sorts newest first', () => {
     const sessions = [
@@ -117,8 +109,6 @@ describe('sortByDateDesc', () => {
     expect(sessions.map((s) => s.id)).toEqual(original.map((s) => s.id));
   });
 });
-
-// ── countLabel ──────────────────────────────────────────────────
 
 describe('countLabel', () => {
   const labels = {

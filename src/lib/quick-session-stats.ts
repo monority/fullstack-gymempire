@@ -8,8 +8,6 @@
 
 import type { Session, SetType } from './storage/types';
 
-// ── Types ───────────────────────────────────────────────────────
-
 export interface QuickSessionInfo {
   id: string;
   label: string;
@@ -25,8 +23,6 @@ export interface SessionStats {
   completedExercises: number;
   totalVolume: number;
 }
-
-// ── Formatting helpers ──────────────────────────────────────────
 
 /** Re-exported from lib/format — single implementation. */
 export { formatWeightValue } from './format';
@@ -71,14 +67,10 @@ export function typeLabel(t: SetType, labels: Record<string, string>): string {
   }
 }
 
-// ── Date helper ─────────────────────────────────────────────────
-
 /** Today's date as ISO string YYYY-MM-DD. */
 export function todayISO(): string {
   return new Date().toISOString().split('T')[0];
 }
-
-// ── Session filtering ───────────────────────────────────────────
 
 /** Filter and compute info for available quick-session candidates. */
 export function computeAvailableSessions(sessions: Session[]): QuickSessionInfo[] {
@@ -104,8 +96,6 @@ export function computeAvailableSessions(sessions: Session[]): QuickSessionInfo[
     })
     .sort((a, b) => (a.label < b.label ? 1 : -1));
 }
-
-// ── Session stats ───────────────────────────────────────────────
 
 /** Compute aggregate stats for a session. */
 export function computeSessionStats(session: Session): SessionStats {
@@ -148,8 +138,6 @@ export function computeProgressPercent(
   return Math.min(100, Math.round((done / total) * 100));
 }
 
-// ── Navigation helpers ──────────────────────────────────────────
-
 /** Check if navigation to previous set is possible. */
 export function canGoPrev(currentExerciseIndex: number, currentSetIndex: number): boolean {
   return currentExerciseIndex > 0 || currentSetIndex > 0;
@@ -168,8 +156,6 @@ export function canGoNext(
   );
 }
 
-// ── Rest label ──────────────────────────────────────────────────
-
 /** Build "next up" label for rest period. */
 export function restNextLabel(
   session: Session,
@@ -186,8 +172,6 @@ export function restNextLabel(
   const weight = formatWeightFn(set.weight);
   return `${nextUpLabel} ${weight} ${unit} × ${set.reps}`;
 }
-
-// ── Completion messages ─────────────────────────────────────────
 
 /** Get completion title based on recorded vs total sets. */
 export function completionTitle(

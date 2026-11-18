@@ -12,8 +12,6 @@ import { type BuilderExercise } from '../../lib/session-builder-stats';
 
 const TEMPLATE_FALLBACK_CATEGORY = 'Autre';
 
-// ── Transient exercise persistence ─────────────────────────────
-
 export function persistTransientExercises(exercises: BuilderExercise[]): Map<string, string> {
   const transient = exercises.filter((e) => e.exerciseId.startsWith('template:'));
   const idMap = new Map<string, string>();
@@ -29,8 +27,6 @@ export function persistTransientExercises(exercises: BuilderExercise[]): Map<str
   return idMap;
 }
 
-// ── Exercise cleaning ──────────────────────────────────────────
-
 export function cleanExercises(
   exercises: BuilderExercise[],
   idMap: Map<string, string>
@@ -44,8 +40,6 @@ export function cleanExercises(
     })),
   }));
 }
-
-// ── Superset building ──────────────────────────────────────────
 
 export function buildSupersets(
   exercises: BuilderExercise[],
@@ -64,8 +58,6 @@ export function buildSupersets(
   }
   return supersets;
 }
-
-// ── Payload building ───────────────────────────────────────────
 
 export interface SessionPayload {
   name: string;
@@ -113,8 +105,6 @@ export function buildPayload(opts: {
 
   return payload;
 }
-
-// ── Save / discard ─────────────────────────────────────────────
 
 export function saveSessionBuilder(opts: {
   name: string;

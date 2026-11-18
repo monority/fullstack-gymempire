@@ -8,8 +8,6 @@
 
 import type { Exercise, Session, SetType } from './storage/types';
 
-// ── Types ───────────────────────────────────────────────────────
-
 export interface FormState {
   name: string;
   muscle: string;
@@ -29,8 +27,6 @@ export interface AddSetRow {
   reps: number;
 }
 
-// ── Constants ───────────────────────────────────────────────────
-
 /** Sentinel value for custom muscle input. */
 export const CUSTOM_MUSCLE = '__custom__';
 
@@ -49,8 +45,6 @@ export const DEFAULT_MUSCLES = [
   'Avant-bras',
 ] as const;
 
-// ── Form ────────────────────────────────────────────────────────
-
 /** Resolve form state into clean exercise data. Returns null if invalid. */
 export function resolveForm(form: FormState): ResolvedForm | null {
   const name = form.name.trim();
@@ -59,8 +53,6 @@ export function resolveForm(form: FormState): ResolvedForm | null {
   if (!name || !muscle || !category) return null;
   return { name, muscle, category };
 }
-
-// ── Set counts ──────────────────────────────────────────────────
 
 /** Compute per-exercise set counts across all sessions. */
 export function computeSetCounts(sessions: Session[]): Record<string, number> {
@@ -72,8 +64,6 @@ export function computeSetCounts(sessions: Session[]): Record<string, number> {
   }
   return counts;
 }
-
-// ── Filtering ───────────────────────────────────────────────────
 
 /** Filter exercises by search query, muscle group, and favorites flag. */
 export function filterExercises(
@@ -108,15 +98,11 @@ export function muscleOptionsForSelect(
   ];
 }
 
-// ── URL builder ─────────────────────────────────────────────────
-
 /** Build deep-link URL to trend chart for a specific exercise. */
 export function buildTrendUrl(exerciseName: string, basePath: string): string {
   const q = new URLSearchParams({ ex: exerciseName });
   return `${basePath}?${q.toString()}`;
 }
-
-// ── Warmup generation ───────────────────────────────────────────
 
 const WARMUP_PERCENTS = [0.4, 0.6, 0.8] as const;
 const WARMUP_REPS = [12, 8, 5] as const;
@@ -138,8 +124,6 @@ export function generateWarmupRows(sets: AddSetRow[]): AddSetRow[] {
     reps: WARMUP_REPS[i],
   }));
 }
-
-// ── Count label ─────────────────────────────────────────────────
 
 /** Format exercise count label. */
 export function formatCountLabel(count: number, singular: string, plural: string): string {

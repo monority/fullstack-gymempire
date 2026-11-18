@@ -37,7 +37,7 @@ Nom : **Gym Empire**. Accent ambre existant `hsl(30 100% 66%)` (`--color-accent`
 
 ## Evidence on Hand
 
-Code source, 630 tests unitaires (51 fichiers), 34 scénarios E2E, 14 pages × 2 thèmes capturées, palette de tokens documentée dans `src/styles/`. Aucune donnée commerciale réelle (pas de témoignages, prix, clients ou chiffres) — ne pas en inventer. _(confirmé)_
+Code source, 632 tests unitaires (51 fichiers), 34 scénarios E2E, 14 pages × 2 thèmes capturées, palette de tokens documentée dans `src/styles/`. Aucune donnée commerciale réelle (pas de témoignages, prix, clients ou chiffres) — ne pas en inventer. _(confirmé)_
 
 ## Product Principles
 

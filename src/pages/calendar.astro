@@ -17,7 +17,6 @@ const L = t();
   <PageHeader title={L.calendrier.title} description={L.calendrier.description} />
 
   <div class="cal" x-data="calendarApp()" x-init="init()" x-cloak>
-    {/* ═══ Month controls ═══ */}
     <div class="cal__controls">
       <IconButton
         variant="ghost"
@@ -40,7 +39,6 @@ const L = t();
       </Button>
     </div>
 
-    {/* ═══ Calendar grid ═══ */}
     <Card>
       <CardContent>
         {/* Weekday header */}
@@ -105,7 +103,6 @@ const L = t();
       </CardContent>
     </Card>
 
-    {/* ═══ Selected day sessions ═══ */}
     <template x-if="selectedDate">
       <Card>
         <CardHeader>
@@ -150,7 +147,6 @@ const L = t();
       </Card>
     </template>
 
-    {/* ═══ Monthly stats ═══ */}
     <Card>
       <CardHeader>
         <CardTitle>{L.calendrier.monthlyStats}</CardTitle>

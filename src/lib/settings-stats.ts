@@ -8,32 +8,25 @@
 
 import type { SyncErrorCode } from './sync';
 
-// ── Rest presets ────────────────────────────────────────────────
-
 const REST_PRESETS = [30, 45, 60, 90, 120, 180, 240, 300] as const;
 
 /** Compute rest time option labels from preset seconds. */
 export function formatRestOptions(
-  presets: readonly number[] = REST_PRESETS,
+  presets: readonly number[] = REST_PRESETS
 ): { value: string; label: string }[] {
   return presets.map((s) => {
     const mins = Math.floor(s / 60);
     const secs = s % 60;
-    const label =
-      secs === 0
-        ? `${mins} min`
-        : `${mins} min ${secs.toString().padStart(2, '0')} s`;
+    const label = secs === 0 ? `${mins} min` : `${mins} min ${secs.toString().padStart(2, '0')} s`;
     return { value: String(s), label };
   });
 }
-
-// ── Sync labels ─────────────────────────────────────────────────
 
 /** Format last sync timestamp into human label. */
 export function formatSyncLastLabel(
   lastSyncAt: string | undefined,
   neverLabel: string,
-  lastSyncLabel: string,
+  lastSyncLabel: string
 ): string {
   if (!lastSyncAt) return neverLabel;
   const d = new Date(lastSyncAt);
@@ -45,7 +38,7 @@ export function formatSyncLastLabel(
 export function formatSyncErrorLabel(
   err: unknown,
   errorLabels: Record<string, string>,
-  fallbackLabel: string,
+  fallbackLabel: string
 ): string {
   if (err && typeof err === 'object' && 'code' in err) {
     const code = (err as { code: SyncErrorCode }).code;
@@ -59,8 +52,6 @@ export function formatSyncErrorLabel(
   return fallbackLabel;
 }
 
-// ── Rest time validation ────────────────────────────────────────
-
 /** Validate and clamp rest time value. Returns null if invalid. */
 export function parseRestTime(value: string): number | null {
   const rest = parseInt(value, 10);
@@ -68,15 +59,11 @@ export function parseRestTime(value: string): number | null {
   return rest;
 }
 
-// ── Weekly goal clamping ────────────────────────────────────────
-
 /** Clamp weekly goal to [1, 7]. Returns null if not a finite number. */
 export function clampWeeklyGoal(value: number): number | null {
   if (!Number.isFinite(value)) return null;
   return Math.min(7, Math.max(1, Math.round(value)));
 }
-
-// ── Export filename ─────────────────────────────────────────────
 
 /** Build export filename with date. */
 export function exportFilename(prefix: string, ext: string): string {

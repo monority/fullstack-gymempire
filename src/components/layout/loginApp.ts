@@ -1,5 +1,5 @@
 /**
- * D8 — logique Alpine de la page de connexion (faux gate local).
+ * logique Alpine de la page de connexion (faux gate local).
  * Le DOM, localStorage et la navigation sont injectés.
  */
 

@@ -14,8 +14,6 @@ import {
   DUMBBELL_PLATE_INVENTORY,
 } from '../calculator';
 
-// ── computePlatesPerSide ───────────────────────────────────────
-
 describe('computePlatesPerSide', () => {
   it('returns empty for negative target', () => {
     const r = computePlatesPerSide(-10, 20);
@@ -92,8 +90,6 @@ describe('computePlatesPerSide', () => {
   });
 });
 
-// ── computeDumbbells ───────────────────────────────────────────
-
 describe('computeDumbbells', () => {
   it('returns empty for negative target', () => {
     const r = computeDumbbells(-5, 2);
@@ -160,8 +156,6 @@ describe('computeDumbbells', () => {
   });
 });
 
-// ── groupPlates ────────────────────────────────────────────────
-
 describe('groupPlates', () => {
   it('returns empty for empty input', () => {
     expect(groupPlates([])).toEqual([]);
@@ -190,8 +184,6 @@ describe('groupPlates', () => {
   });
 });
 
-// ── groupDumbbellPlates ────────────────────────────────────────
-
 describe('groupDumbbellPlates', () => {
   it('returns empty for empty input', () => {
     expect(groupDumbbellPlates([])).toEqual([]);
@@ -206,8 +198,6 @@ describe('groupDumbbellPlates', () => {
     ]);
   });
 });
-
-// ── formatKg ───────────────────────────────────────────────────
 
 describe('formatKg', () => {
   it('formats integer value', () => {
@@ -235,8 +225,6 @@ describe('formatKg', () => {
   });
 });
 
-// ── formatTemplate ─────────────────────────────────────────────
-
 describe('formatTemplate', () => {
   it('replaces single placeholder', () => {
     expect(formatTemplate('target is {target}', { target: 100 })).toBe('target is 100');
@@ -254,8 +242,6 @@ describe('formatTemplate', () => {
     expect(formatTemplate('{val}', { val: 3.14 })).toBe('3.14');
   });
 });
-
-// ── Visual helpers ─────────────────────────────────────────────
 
 describe('plateHeight', () => {
   it('returns 160 for 25 kg', () => {
@@ -308,8 +294,6 @@ describe('dumbbellWidth', () => {
     expect(dumbbellWidth(50)).toBe(80);
   });
 });
-
-// ── Inventory sanity ───────────────────────────────────────────
 
 describe('inventories', () => {
   it('PLATE_INVENTORY is sorted biggest first', () => {

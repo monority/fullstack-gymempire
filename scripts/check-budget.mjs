@@ -1,4 +1,4 @@
-// G1 — budget de poids du build (gzip). Garde-fou simple, sans dépendance.
+// budget de poids du build (gzip). Garde-fou simple, sans dépendance.
 import { readdirSync, readFileSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
 

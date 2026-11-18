@@ -9,8 +9,6 @@
 import type { Session } from './storage/types';
 import { exerciseVolume } from './workout-helpers';
 
-// ── Types ───────────────────────────────────────────────────────
-
 export interface RpeStats {
   count: number;
   avg: number;
@@ -23,8 +21,6 @@ export interface RpeSuggestion {
   detail: string;
   tone: 'up' | 'maintain' | 'down';
 }
-
-// ── RPE Stats ───────────────────────────────────────────────────
 
 /**
  * Aggregates RPE values across the whole session (completed sets only).
@@ -53,8 +49,6 @@ export function computeRpeStats(session: Session | null): RpeStats {
   if (count === 0) return { count: 0, avg: 0, max: 0, allTen: false };
   return { count, avg: sum / count, max, allTen };
 }
-
-// ── RPE Suggestion ──────────────────────────────────────────────
 
 export interface SuggestionLabels {
   allTenHeadline: string;
@@ -110,8 +104,6 @@ export function computeRpeSuggestion(
   };
 }
 
-// ── Session Stats ───────────────────────────────────────────────
-
 /** Total volume across all exercises in a session. */
 export function computeSessionTotalVolume(session: Session | null): number {
   if (!session) return 0;
@@ -124,8 +116,6 @@ export function computeTotalSets(session: Session | null): number {
   return session.exercises.reduce((sum, ex) => sum + ex.sets.length, 0);
 }
 
-// ── Notes Check ─────────────────────────────────────────────────
-
 /** Check if session has any notes (RPE, fatigue, mood, or free text). */
 export function hasNotes(session: Session | null): boolean {
   if (!session) return false;
@@ -136,8 +126,6 @@ export function hasNotes(session: Session | null): boolean {
     (session.notes != null && session.notes.trim() !== '')
   );
 }
-
-// ── RPE Tone/Label Helpers ──────────────────────────────────────
 
 export type RpeTone = 'easy' | 'moderate' | 'hard' | 'max' | 'none';
 
@@ -166,8 +154,6 @@ export function rpeLabel(rpe: number | undefined | null, labels: RpeLabels): str
   if (tone === 'max') return labels.max;
   return '—';
 }
-
-// ── Fatigue Label ───────────────────────────────────────────────
 
 export interface FatigueLabels {
   veryFresh: string;

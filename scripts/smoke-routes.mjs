@@ -34,7 +34,7 @@ for (const route of criticalRoutes) {
 const serviceWorker = join(dist, 'sw.js');
 if (!existsSync(serviceWorker)) failures.push('/sw.js: missing service worker');
 
-// B1 (plan-execution.md) — the design-system page /ui is dev-only:
+// the design-system page /ui is dev-only:
 // in the production build it must not contain any UI-kit content.
 const uiPage = join(dist, 'ui', 'index.html');
 if (existsSync(uiPage)) {

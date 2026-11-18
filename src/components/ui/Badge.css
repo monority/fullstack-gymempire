@@ -1,6 +1,5 @@
 /** Badges. Couche: components. */
 @layer components {
-  /* ── Badge component ────────────────────────────────────── */
   /* Category + superset tones come from styles/tokens/colors.css (dark + light).
    Backgrounds use the 10% wash (-bg tokens) so the hue reads as a
    tint, not a fill. A category badge without a tone falls back to

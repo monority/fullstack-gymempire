@@ -80,7 +80,6 @@ const categories = [
         </template>
       </div>
     </div>
-
     {/* ── Meta row: count + add button ── */}
     <div class="exo__meta">
       <span class="exo__count" x-text="countLabel"></span>
@@ -89,7 +88,6 @@ const categories = [
         <span>{L.exercices.add}</span>
       </button>
     </div>
-
     {/* ── Grid ── */}
     <template x-if="filtered.length > 0">
       <div class="exo__grid">
@@ -209,7 +207,6 @@ const categories = [
         </template>
       </div>
     </template>
-
     {/* ── Empty state: library has no exercises at all ── */}
     <template x-if="exercises.length === 0">
       <Card>
@@ -227,12 +224,10 @@ const categories = [
         </div>
       </Card>
     </template>
-
     {/* ── Empty state: favFilter active, no favorites ── */}
     <template x-if="exercises.length > 0 && favFilter && filtered.length === 0">
       <EmptyFilterState title={L.exercices.favorites} text={L.exercices.noResults} hideReset />
     </template>
-
     {/* ── Empty state: search/filters match nothing ── */}
     <template x-if="exercises.length > 0 && !favFilter && filtered.length === 0">
       <EmptyFilterState
@@ -242,10 +237,7 @@ const categories = [
         resetClick="search = ''; muscleFilter = ''; favFilter = false"
       />
     </template>
-
-    {/* ════════════════════════════════════════════════════
-        ADD / EDIT DIALOG
-        ════════════════════════════════════════════════════ */}
+    ADD / EDIT DIALOG
     <Dialog id="exo-form-dialog" :title="editingId ? labels.editTitle : labels.addTitle">
       <form class="exo__form" @submit.prevent="save()">
         <Input
@@ -310,10 +302,7 @@ const categories = [
         </div>
       </form>
     </Dialog>
-
-    {/* ════════════════════════════════════════════════════
-        DELETE CONFIRMATION DIALOG
-        ════════════════════════════════════════════════════ */}
+    DELETE CONFIRMATION DIALOG
     <Dialog id="exo-delete-dialog" title={L.exercices.deleteTitle}>
       <p class="exo__confirm-text">
         <strong x-text="deletingName || 'cet exercice'"></strong>
@@ -328,10 +317,7 @@ const categories = [
         />
       </div>
     </Dialog>
-
-    {/* ════════════════════════════════════════════════════
-        ADD TO SESSION DIALOG
-        ════════════════════════════════════════════════════ */}
+    ADD TO SESSION DIALOG
     <Dialog id="exo-add-to-session-dialog" class="exo__add-dialog-host">
       <div class="exo__add-dialog">
         <header class="exo__add-header">

@@ -6,7 +6,7 @@
  * la même convention de filtre que le reste des stats (voir
  * `src/lib/volume-stats.ts`). V2 (algorithme intelligent) reste en P2.
  *
- * ── V1 — formule documentée (triée pour la transparence) ────────────────────
+ * ── V1 — formule documentée (triée pour la transparence)
  *
  *   1. Base : top set du dernier historique — on parcourt les séances
  *      terminées contenant l'exercice de la plus récente à la plus ancienne
@@ -45,7 +45,7 @@
  *   5. Arrondi à la plus proche plaque : 2,5 kg par défaut (pas de 1,25 kg
  *      possible via `roundStep` — inventaire du calculateur).
  *
- * ── Convention ──────────────────────────────────────────────────────────────
+ * ── Convention
  * Module i18n-agnostic : renvoie un CHIFFRE + un code raison
  * ('history' | 'epley-cap' | 'none') que l'UI localise (fr/en).
  */

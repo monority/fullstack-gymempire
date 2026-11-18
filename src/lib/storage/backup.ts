@@ -94,7 +94,7 @@ export function importAllData(snapshot: unknown): void {
     throw new Error('Réglages invalides.');
   }
 
-  // C4 — run sequential migrations for older snapshot versions.
+  // run sequential migrations for older snapshot versions.
   for (const migration of MIGRATIONS) {
     if (data.version < migration.to) {
       migration.migrate(data as Record<string, unknown>);

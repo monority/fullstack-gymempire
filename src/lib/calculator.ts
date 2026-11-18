@@ -6,15 +6,13 @@
  * can localise the messages via i18n.
  */
 
-// ── Constants ───────────────────────────────────────────────────
-
 /** Available plate weights (kg), biggest first for greedy algo. */
 export const PLATE_INVENTORY: readonly number[] = [25, 20, 15, 10, 5, 2.5, 2, 1.5, 1.25, 1];
 
 /** Available dumbbell plate weights (kg), biggest first for greedy algo. */
-export const DUMBBELL_PLATE_INVENTORY: readonly number[] = [10, 7.5, 5, 4, 3, 2.5, 2, 1.5, 1.25, 1, 0.5];
-
-// ── Types ───────────────────────────────────────────────────────
+export const DUMBBELL_PLATE_INVENTORY: readonly number[] = [
+  10, 7.5, 5, 4, 3, 2.5, 2, 1.5, 1.25, 1, 0.5,
+];
 
 export interface PlateCount {
   weight: number;
@@ -35,8 +33,6 @@ export interface DumbbellResult {
   error: string | null;
 }
 
-// ── Helpers ─────────────────────────────────────────────────────
-
 /** Substitute `{key}` placeholders in a template string. */
 export function formatTemplate(tpl: string, vars: Record<string, string | number>): string {
   return tpl.replace(/\{(\w+)\}/g, (_, key: string) => String(vars[key]));
@@ -47,8 +43,6 @@ export function formatKg(value: number): string {
   if (!Number.isFinite(value)) return '0 kg';
   return Math.round(value * 100) / 100 + ' kg';
 }
-
-// ── Plate height map (visual scaling) ──────────────────────────
 
 const PLATE_HEIGHT_MAP: Record<number, number> = {
   25: 160,
@@ -73,8 +67,6 @@ export function plateClass(weight: number): string {
   return 'calc__plate--' + weight.toString().replace('.', '_');
 }
 
-// ── Dumbbell visual scaling ────────────────────────────────────
-
 const DUMB_MIN_W = 2;
 const DUMB_MIN_H = 80;
 const DUMB_MAX_W = 50;
@@ -94,8 +86,6 @@ export function dumbbellWidth(weight: number): number {
   return Math.round(DUMB_MIN_WPX + ratio * (DUMB_MAX_WPX - DUMB_MIN_WPX));
 }
 
-// ── Barbell calculation ────────────────────────────────────────
-
 /**
  * Compute plates needed per side for a barbell.
  *
@@ -104,10 +94,7 @@ export function dumbbellWidth(weight: number): number {
  *
  * @returns BarbellResult with plates, remainder, and error key (or null).
  */
-export function computePlatesPerSide(
-  target: number,
-  bar: number,
-): BarbellResult {
+export function computePlatesPerSide(target: number, bar: number): BarbellResult {
   if (!Number.isFinite(target) || target < 0) {
     return { plates: [], remainder: 0, error: null };
   }
@@ -137,8 +124,6 @@ export function computePlatesPerSide(
   return { plates, remainder, error: null };
 }
 
-// ── Dumbbell calculation ───────────────────────────────────────
-
 /**
  * Compute plates for a single dumbbell (user takes 2 identical).
  *
@@ -148,10 +133,7 @@ export function computePlatesPerSide(
  *
  * @returns DumbbellResult with plates, weights, remainder, and error key (or null).
  */
-export function computeDumbbells(
-  target: number,
-  barWeight: number,
-): DumbbellResult {
+export function computeDumbbells(target: number, barWeight: number): DumbbellResult {
   if (!Number.isFinite(target) || target < 0) {
     return { plates: [], plateWeight: 0, dumbbellWeight: 0, remainder: 0, error: null };
   }
@@ -195,8 +177,6 @@ export function computeDumbbells(
   const remainder = +(dumbbellWeight - target).toFixed(2);
   return { plates, plateWeight, dumbbellWeight, remainder, error: null };
 }
-
-// ── Grouping ───────────────────────────────────────────────────
 
 /** Group plates by weight, ordered by PLATE_INVENTORY (biggest first). */
 export function groupPlates(plates: number[]): PlateCount[] {

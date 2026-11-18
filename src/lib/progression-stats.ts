@@ -8,8 +8,6 @@
 import { calculate1RM } from './storage/store';
 import type { Session, ProgressRecord } from './storage/types';
 
-// ── Types ───────────────────────────────────────────────────────
-
 export interface ExerciseProgression {
   exerciseId: string;
   name: string;
@@ -22,8 +20,6 @@ export interface ExerciseProgression {
   sessionCount: number;
   history: ProgressRecord[];
 }
-
-// ── Aggregation ─────────────────────────────────────────────────
 
 /**
  * Compute per-exercise progression stats across all sessions.
@@ -95,8 +91,6 @@ function accumulateExercise(
     }
   }
 }
-
-// ── Helpers ─────────────────────────────────────────────────────
 
 /** Global max 1RM across all exercise progressions. */
 export function computeMax1RM(stats: ExerciseProgression[]): number {

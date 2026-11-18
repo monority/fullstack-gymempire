@@ -1,6 +1,5 @@
 /** Cartes plates. Couche: components. */
 @layer components {
-  /* ── Card component ─────────────────────────────────────── */
   .card {
     min-width: 0;
     background: transparent;

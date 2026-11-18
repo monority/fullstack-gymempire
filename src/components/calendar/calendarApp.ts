@@ -1,5 +1,5 @@
 /**
- * D7 — logique Alpine du calendrier.
+ * logique Alpine du calendrier.
  * Aucun `new Date()` direct : le jour courant est injecté (tests deterministes).
  */
 

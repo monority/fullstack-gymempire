@@ -1,4 +1,4 @@
-// A3 — Prettier sur les fichiers modifiés uniquement (pas de reformat global).
+// Prettier sur les fichiers modifiés uniquement (pas de reformat global).
 // Usage : node scripts/format-changed.mjs [--write]
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';

@@ -9,8 +9,6 @@
 import { calculate1RM } from './storage/store';
 import type { Session } from './storage/types';
 
-// ── Date helpers ───────────────────────────────────────────────
-
 /** ISO date key YYYY-MM-DD (local-tz) — day-level comparisons. */
 export function dateKey(d: Date): string {
   const y = d.getFullYear();
@@ -18,8 +16,6 @@ export function dateKey(d: Date): string {
   const day = d.getDate().toString().padStart(2, '0');
   return `${y}-${m}-${day}`;
 }
-
-// ── Per-session ────────────────────────────────────────────────
 
 /** Sum of weight × reps over completed sets. */
 export function computeSessionVolume(session: Session): number {
@@ -50,8 +46,6 @@ export function computeSessionPrimaryMuscle(session: Session): string {
   }
   return best;
 }
-
-// ── Aggregate stats ────────────────────────────────────────────
 
 /** Total volume across all sessions. */
 export function computeTotalVolume(sessions: Session[]): number {
@@ -111,8 +105,6 @@ export function computeTop1RM(sessions: Session[]): number {
   return best;
 }
 
-// ── Weekly trend ───────────────────────────────────────────────
-
 /** Per-day volume sums (index = getDay(), 0 = Sunday), this week. */
 export function computeWeeklyVolumeByDay(sessions: Session[]): number[] {
   const arr = Array.from({ length: 7 }, () => 0);
@@ -153,8 +145,6 @@ export function computeWeeklyActivityByDay(
   }
   return { sessions: sessionCounts, sets: setCounts };
 }
-
-// ── Streak ─────────────────────────────────────────────────────
 
 /**
  * Consecutive-day streak ending today (or yesterday if today has

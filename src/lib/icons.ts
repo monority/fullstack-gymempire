@@ -29,7 +29,6 @@ function svgCustom(body: string, attrs: string, w?: number, h?: number): string 
 }
 
 export const icons = {
-  // ── Navigation / Layout ──────────────────────────────────────
   dashboard: (w?: number, h?: number) =>
     svg(
       '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/>',
@@ -77,7 +76,6 @@ export const icons = {
   zap: (w?: number, h?: number) =>
     svg('<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>', w, h),
 
-  // ── Arrows / Navigation ──────────────────────────────────────
   arrowLeft: (w?: number, h?: number) =>
     svg('<line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>', w, h),
   arrowDown: (w?: number, h?: number) =>
@@ -97,7 +95,6 @@ export const icons = {
   chevronRight: (w?: number, h?: number) => svg('<polyline points="9 18 15 12 9 6"/>', w, h),
   chevronDown: (w?: number, h?: number) => svg('<polyline points="6 9 12 15 18 9"/>', w, h),
 
-  // ── Actions ──────────────────────────────────────────────────
   plus: (w?: number, h?: number) =>
     svgCustom(
       '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
@@ -154,10 +151,8 @@ export const icons = {
       h
     ),
 
-  // ── Media ─────────────────────────────────────────────────
   play: (w?: number, h?: number) => svg('<polygon points="6 4 20 12 6 20 6 4"/>', w, h),
 
-  // ── Star / Rating ──────────────────────────────────────────
   star: (w?: number, h?: number) =>
     svg(
       '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>',
@@ -172,7 +167,6 @@ export const icons = {
       h
     ),
 
-  // ── Close / Dismiss ──────────────────────────────────────────
   closeX: (w?: number, h?: number) =>
     svg('<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>', w, h),
   closeCross: (w?: number, h?: number) =>
@@ -183,7 +177,6 @@ export const icons = {
       h
     ),
 
-  // ── Search ───────────────────────────────────────────────────
   search: (w?: number, h?: number) =>
     svg('<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>', w, h),
   searchX: (w?: number, h?: number) =>
@@ -195,7 +188,6 @@ export const icons = {
   searchLine: (w?: number, h?: number) =>
     svg('<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>', w, h),
 
-  // ── Content ──────────────────────────────────────────────────
   list: (w?: number, h?: number) =>
     svg(
       '<line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>',
@@ -217,7 +209,6 @@ export const icons = {
       h
     ),
 
-  // ── Theme / UI ───────────────────────────────────────────────
   sun: (w?: number, h?: number) =>
     svgCustom(
       '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>',
@@ -261,7 +252,6 @@ export const icons = {
       h
     ),
 
-  // ── Timer / Clock ────────────────────────────────────────────
   clockStopwatch: (w?: number, h?: number) =>
     svg(
       '<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M5 3 2 6"/><path d="m22 6-3-3"/><path d="M6.38 18.7 4 21"/><path d="M17.64 18.67 20 21"/>',
@@ -291,7 +281,6 @@ export const icons = {
       h
     ),
 
-  // ── Dumbbell variants ────────────────────────────────────────
   dumbbellBox: (w?: number, h?: number) =>
     svg(
       '<path d="M6.5 6.5h11v11h-11z"/><path d="M2 9v6"/><path d="M22 9v6"/><path d="M6.5 6.5L2 9"/><path d="M17.5 6.5L22 9"/><path d="M6.5 17.5L2 15"/><path d="M17.5 17.5L22 15"/>',
@@ -313,7 +302,6 @@ export const icons = {
       h
     ),
 
-  // ── Trend variants ───────────────────────────────────────────
   trendingUpLine: (w?: number, h?: number) =>
     svg('<path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-5"/>', w, h),
   chartBar: (w?: number, h?: number) =>
@@ -336,7 +324,6 @@ export const icons = {
       h
     ),
 
-  // ── Volume / Box ─────────────────────────────────────────────
   volumeBox: (w?: number, h?: number) =>
     svg(
       '<path d="M6.5 6.5h11"/><path d="M6.5 17.5h11"/><path d="M3 9v6"/><path d="M21 9v6"/><path d="M6.5 6.5 3 9v6l3.5 2.5h11L21 15V9l-3.5-2.5Z"/>',
@@ -344,7 +331,6 @@ export const icons = {
       h
     ),
 
-  // ── Stats / Achievement ────────────────────────────────────
   award: (w?: number, h?: number) =>
     svg(
       '<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>',
@@ -412,7 +398,6 @@ export const icons = {
       h
     ),
 
-  // ── User / Profile ───────────────────────────────────────────
   user: (w?: number, h?: number) =>
     svgCustom(
       '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
@@ -434,7 +419,6 @@ export const icons = {
       h
     ),
 
-  // ── Settings / Data ──────────────────────────────────────────
   ruler: (w?: number, h?: number) =>
     svgCustom(
       '<path d="M6.5 6.5h11"/><path d="M6.5 17.5h11"/><path d="M3 12h18"/>',

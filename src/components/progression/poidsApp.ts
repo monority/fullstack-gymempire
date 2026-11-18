@@ -1,5 +1,5 @@
 /**
- * D7 — logique Alpine de la page Poids.
+ * logique Alpine de la page Poids.
  * Le calendrier et les notifications sont injectés (tests deterministes).
  */
 

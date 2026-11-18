@@ -1,4 +1,4 @@
-// E1 — aucun littéral de couleur hors tokens et exceptions documentées.
+// aucun littéral de couleur hors tokens et exceptions documentées.
 // Les valeurs ci-dessous sont des choix explicites, pas des oublis :
 //  - tokens/ : définition des tokens (source de vérité)
 //  - debug.astro : page autonome volontairement indépendante des tokens

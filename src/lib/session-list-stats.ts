@@ -10,8 +10,6 @@ import type { Session } from './storage/types';
 // Re-export computeSessionStats from quick-session-stats for convenience
 export { computeSessionStats } from './quick-session-stats';
 
-// ── Functions ───────────────────────────────────────────────────
-
 /**
  * Find the most frequent muscle group across a session's exercises.
  * Returns empty string if no muscle data.

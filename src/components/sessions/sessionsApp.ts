@@ -1,5 +1,5 @@
 /**
- * D7 — logique Alpine de la liste des séances.
+ * logique Alpine de la liste des séances.
  * Le markup `x-for` reste dans `src/pages/sessions/index.astro`.
  */
 

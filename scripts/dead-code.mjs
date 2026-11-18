@@ -1,4 +1,4 @@
-// B5 (plan-execution.md) — liste les modules src/ non importés hors tests.
+// liste les modules src/ non importés hors tests.
 // Usage : node scripts/dead-code.mjs
 import { readdirSync, statSync, readFileSync } from 'node:fs';
 import { join, relative } from 'node:path';

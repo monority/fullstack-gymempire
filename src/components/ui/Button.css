@@ -1,6 +1,6 @@
 /** Système de boutons. Couche: components. */
 @layer components {
-  /* ── Shared button system ──────────────────────────────────
+  /* ── Shared button system
  * Imported by global.css (for raw HTML) AND Button.astro (component).
  * Single source of truth: variants, sizes, states, loading spinner. */
 

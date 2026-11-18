@@ -1,4 +1,4 @@
-// A5 — serveur de dev dédié à Playwright.
+// serveur de dev dédié à Playwright.
 //
 // Astro 7 détecte automatiquement les environnements agent/IA et démonise
 // `astro dev`. Le CLI rend la main immédiatement, ce qui fait croire à

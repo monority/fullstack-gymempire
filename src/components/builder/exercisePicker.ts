@@ -12,8 +12,6 @@ import { buildExerciseFromTemplate, type BuilderExercise } from '../../lib/sessi
 
 const TEMPLATE_FALLBACK_CATEGORY = 'Autre';
 
-// ── Search / filter ────────────────────────────────────────────
-
 export function filterExercises(
   available: Exercise[],
   addedIds: Set<string>,
@@ -36,8 +34,6 @@ export function filterExercises(
       return a.name.localeCompare(b.name, 'fr');
     });
 }
-
-// ── Exercise addition ──────────────────────────────────────────
 
 export function buildNewExercise(exercise: Exercise): BuilderExercise {
   return {
@@ -65,8 +61,6 @@ export function buildFromTemplate(exercise: Exercise, template: TemplateExercise
 export function findExerciseByName(available: Exercise[], name: string): Exercise | undefined {
   return available.find((e) => e.name === name);
 }
-
-// ── Template loading ───────────────────────────────────────────
 
 export interface TemplateLoadResult {
   exercises: BuilderExercise[];
@@ -99,8 +93,6 @@ export function loadTemplate(templateId: string, available: Exercise[]): Templat
 
   return result;
 }
-
-// ── Exercise tips ──────────────────────────────────────────────
 
 export function hasExerciseTip(name: string): boolean {
   return getExerciseTip(name) != null;

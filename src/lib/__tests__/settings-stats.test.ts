@@ -8,8 +8,6 @@ import {
   exportFilename,
 } from '../settings-stats';
 
-// ── formatRestOptions ────────────────────────────────────────────
-
 describe('formatRestOptions', () => {
   it('formats presets with whole minutes', () => {
     const opts = formatRestOptions([60, 120]);
@@ -32,8 +30,6 @@ describe('formatRestOptions', () => {
   });
 });
 
-// ── formatSyncLastLabel ──────────────────────────────────────────
-
 describe('formatSyncLastLabel', () => {
   it('returns never when undefined', () => {
     expect(formatSyncLastLabel(undefined, 'Jamais', 'Dernière')).toBe('Jamais');
@@ -48,8 +44,6 @@ describe('formatSyncLastLabel', () => {
     expect(result).toMatch(/^Dernière — /);
   });
 });
-
-// ── formatSyncErrorLabel ─────────────────────────────────────────
 
 describe('formatSyncErrorLabel', () => {
   it('returns message for Error', () => {
@@ -79,8 +73,6 @@ describe('formatSyncErrorLabel', () => {
   });
 });
 
-// ── parseRestTime ────────────────────────────────────────────────
-
 describe('parseRestTime', () => {
   it('parses valid rest time', () => {
     expect(parseRestTime('90')).toBe(90);
@@ -107,8 +99,6 @@ describe('parseRestTime', () => {
   });
 });
 
-// ── clampWeeklyGoal ──────────────────────────────────────────────
-
 describe('clampWeeklyGoal', () => {
   it('clamps to [1, 7]', () => {
     expect(clampWeeklyGoal(0)).toBe(1);
@@ -124,8 +114,6 @@ describe('clampWeeklyGoal', () => {
     expect(clampWeeklyGoal(NaN)).toBeNull();
   });
 });
-
-// ── exportFilename ───────────────────────────────────────────────
 
 describe('exportFilename', () => {
   it('builds filename with date', () => {

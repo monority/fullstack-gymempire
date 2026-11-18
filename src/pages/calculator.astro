@@ -108,7 +108,6 @@ const L = t();
       </CardContent>
     </Card>
 
-    {/* ═══ Result card ═══ */}
     <Card>
       <CardHeader>
         <CardTitle x-text="resultTitle">{L.calculateur.perSideTitle}</CardTitle>
@@ -129,7 +128,6 @@ const L = t();
           />
         </template>
 
-        {/* ═══ Dumbbell mode ═══ */}
         <template x-if="!errorMessage && mode === 'dumbbell'">
           <DumbbellResult
             perDumbbell={L.calculateur.perDumbbell}

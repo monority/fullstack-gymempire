@@ -14,8 +14,6 @@ import {
   type BuilderExercise,
 } from '../session-builder-stats';
 
-// ── Helpers ──────────────────────────────────────────────────────
-
 function set(overrides: Partial<SessionSet> = {}): SessionSet {
   return {
     exerciseId: 'e1',
@@ -46,8 +44,6 @@ const LABELS = {
   top: 'Top',
 };
 
-// ── rpeTone ─────────────────────────────────────────────────────
-
 describe('rpeTone', () => {
   it('classifies easy', () => {
     expect(rpeTone(1)).toBe('easy');
@@ -66,8 +62,6 @@ describe('rpeTone', () => {
     expect(rpeTone(10)).toBe('max');
   });
 });
-
-// ── computeExerciseSummary ───────────────────────────────────────
 
 describe('computeExerciseSummary', () => {
   it('returns zeros for empty sets', () => {
@@ -104,8 +98,6 @@ describe('computeExerciseSummary', () => {
   });
 });
 
-// ── formatExerciseSummary ────────────────────────────────────────
-
 describe('formatExerciseSummary', () => {
   it('returns noSets for empty', () => {
     const ex = builderEx({ sets: [] });
@@ -131,8 +123,6 @@ describe('formatExerciseSummary', () => {
     expect(result).toContain('Top 90 kg');
   });
 });
-
-// ── generateWarmupSets ───────────────────────────────────────────
 
 describe('generateWarmupSets', () => {
   it('returns empty for no working weight', () => {
@@ -176,8 +166,6 @@ describe('generateWarmupSets', () => {
   });
 });
 
-// ── buildExerciseFromTemplate ────────────────────────────────────
-
 describe('buildExerciseFromTemplate', () => {
   it('creates exercise with correct sets', () => {
     const result = buildExerciseFromTemplate(
@@ -201,8 +189,6 @@ describe('buildExerciseFromTemplate', () => {
     expect(result.sets).toHaveLength(1);
   });
 });
-
-// ── hasWorkingWeight ─────────────────────────────────────────────
 
 describe('hasWorkingWeight', () => {
   it('returns false for empty sets', () => {
@@ -238,8 +224,6 @@ describe('hasWorkingWeight', () => {
   });
 });
 
-// ── createNextSet ────────────────────────────────────────────────
-
 describe('createNextSet', () => {
   it('inherits from last set', () => {
     const last = set({ weight: 80, reps: 8 });
@@ -257,8 +241,6 @@ describe('createNextSet', () => {
     expect(next.reps).toBe(0);
   });
 });
-
-// ── superset helpers ─────────────────────────────────────────────
 
 describe('getSupersetIds', () => {
   it('returns empty for no supersets', () => {

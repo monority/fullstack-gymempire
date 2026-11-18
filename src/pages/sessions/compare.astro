@@ -16,12 +16,8 @@ const L = t();
 <AppLayout title={L.comparer.title}>
   <div class="comp" x-data="comparisonApp()" x-init="init()" x-cloak>
     <PageHeader title={L.comparer.title} description={L.comparer.description} />
-
     <BackLink href={localizedPath('/sessions')} label={L.comparer.back} />
-
-    {/* ═══════════════════════════════════════════════════
-        SESSION PICKERS
-        ═══════════════════════════════════════════════════ */}
+    SESSION PICKERS
     <Card>
       <CardHeader>
         <CardTitle>{L.comparer.selection}</CardTitle>
@@ -83,10 +79,7 @@ const L = t();
         </div>
       </CardContent>
     </Card>
-
-    {/* ═══════════════════════════════════════════════════
-        HINT — show "select both" message
-        ═══════════════════════════════════════════════════ */}
+    HINT — show "select both" message
     <template x-if="allSessions.length < 2">
       <Card>
         <div class="comp__hint">
@@ -102,7 +95,6 @@ const L = t();
         </div>
       </Card>
     </template>
-
     <template x-if="allSessions.length >= 2 && (!session1 || !session2)">
       <Card>
         <div class="comp__hint">
@@ -113,10 +105,7 @@ const L = t();
         </div>
       </Card>
     </template>
-
-    {/* ═══════════════════════════════════════════════════
-        COMPARISON COLUMNS
-        ═══════════════════════════════════════════════════ */}
+    COMPARISON COLUMNS
     <template x-if="session1 && session2">
       <div class="comp__results">
         {/* ── Summary deltas at the top ── */}

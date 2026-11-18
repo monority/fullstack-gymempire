@@ -9,8 +9,6 @@
 import type { SessionExercise, SessionSet, SetType } from './storage/types';
 import type { TemplateExercise } from './templates';
 
-// ── Types ───────────────────────────────────────────────────────
-
 export type RpeLevel = 'easy' | 'moderate' | 'hard' | 'max';
 
 export interface ExerciseSummaryParts {
@@ -25,8 +23,6 @@ export interface BuilderExercise extends SessionExercise {
   supersetId: number | null;
 }
 
-// ── RPE helpers ─────────────────────────────────────────────────
-
 /** Classify RPE value into tone category. */
 export function rpeTone(rpe: number): RpeLevel {
   if (rpe <= 3) return 'easy';
@@ -34,8 +30,6 @@ export function rpeTone(rpe: number): RpeLevel {
   if (rpe <= 8) return 'hard';
   return 'max';
 }
-
-// ── Exercise summary ────────────────────────────────────────────
 
 /** Compute raw summary data for a single exercise. */
 export function computeExerciseSummary(exercise: SessionExercise): ExerciseSummaryParts {
@@ -68,8 +62,6 @@ export function formatExerciseSummary(
   return `${setCount} ${setLabel} \u2014 ${totalReps} reps \u2014 ${volume} kg${topLine}`;
 }
 
-// ── Warmup generation ───────────────────────────────────────────
-
 const WARMUP_PERCENTS = [0.4, 0.6, 0.8] as const;
 const WARMUP_REPS = [12, 8, 5] as const;
 
@@ -96,8 +88,6 @@ export function generateWarmupSets(exerciseId: string, sets: SessionSet[]): Sess
     })),
   ];
 }
-
-// ── Template helpers ────────────────────────────────────────────
 
 /** Create a BuilderExercise from a template exercise definition. */
 export function buildExerciseFromTemplate(
@@ -126,8 +116,6 @@ export function buildExerciseFromTemplate(
   };
 }
 
-// ── Set helpers ─────────────────────────────────────────────────
-
 /** Check if exercise has at least one work/top set with weight > 0. */
 export function hasWorkingWeight(exercise: SessionExercise): boolean {
   return exercise.sets.some((s) => (s.type === 'work' || s.type === 'top') && s.weight > 0);
@@ -149,8 +137,6 @@ export function createNextSet(
     completed: false,
   };
 }
-
-// ── Superset helpers ────────────────────────────────────────────
 
 /** Get unique superset IDs from exercises. */
 export function getSupersetIds(exercises: BuilderExercise[]): number[] {

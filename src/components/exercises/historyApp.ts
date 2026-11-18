@@ -1,5 +1,5 @@
 /**
- * D7 — logique Alpine de l'historique d'un exercice.
+ * logique Alpine de l'historique d'un exercice.
  * Aucune dépendance DOM : `search`, `getSessions` et `getExerciseById`
  * sont injectés. Les helpers de graphique sont purs.
  */

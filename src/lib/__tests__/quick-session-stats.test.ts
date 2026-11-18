@@ -16,8 +16,6 @@ import {
   completionMessage,
 } from '../quick-session-stats';
 
-// ── Helpers ──────────────────────────────────────────────────────
-
 function makeSet(overrides: Partial<SessionSet> = {}): SessionSet {
   return {
     exerciseId: 'e1',
@@ -57,8 +55,6 @@ const TYPE_LABELS = {
   typeFailure: 'Échec',
 };
 
-// ── formatWeightValue ─────────────────────────────────────────────────
-
 describe('formatWeightValue', () => {
   it('returns 0 for zero', () => {
     expect(formatWeightValue(0)).toBe('0');
@@ -80,8 +76,6 @@ describe('formatWeightValue', () => {
   });
 });
 
-// ── formatDuration ───────────────────────────────────────────────
-
 describe('formatDuration', () => {
   it('returns 0m for undefined', () => {
     expect(formatDuration(undefined, DURATION_LABELS)).toBe('0m');
@@ -97,8 +91,6 @@ describe('formatDuration', () => {
   });
 });
 
-// ── formatRestTime ───────────────────────────────────────────────
-
 describe('formatRestTime', () => {
   it('formats 0 as 0:00', () => {
     expect(formatRestTime(0)).toBe('0:00');
@@ -110,8 +102,6 @@ describe('formatRestTime', () => {
     expect(formatRestTime(5)).toBe('0:05');
   });
 });
-
-// ── typeLabel ────────────────────────────────────────────────────
 
 describe('typeLabel', () => {
   it('returns correct label for each type', () => {
@@ -126,16 +116,12 @@ describe('typeLabel', () => {
   });
 });
 
-// ── todayISO ─────────────────────────────────────────────────────
-
 describe('todayISO', () => {
   it('returns YYYY-MM-DD format', () => {
     const result = todayISO();
     expect(result).toMatch(/^\d{4}-\d{2}-\d{2}$/);
   });
 });
-
-// ── computeAvailableSessions ─────────────────────────────────────
 
 describe('computeAvailableSessions', () => {
   it('excludes completed sessions', () => {
@@ -161,8 +147,6 @@ describe('computeAvailableSessions', () => {
     expect(info[0].totalVolume).toBe(80 * 8 * 2); // 2 completed sets
   });
 });
-
-// ── computeSessionStats ──────────────────────────────────────────
 
 describe('computeSessionStats', () => {
   it('computes all stats', () => {
@@ -191,8 +175,6 @@ describe('computeSessionStats', () => {
   });
 });
 
-// ── computeProgressPercent ───────────────────────────────────────
-
 describe('computeProgressPercent', () => {
   it('returns 0 at start', () => {
     const session = makeSession();
@@ -207,8 +189,6 @@ describe('computeProgressPercent', () => {
     expect(computeProgressPercent(session, 1, 0)).toBe(100);
   });
 });
-
-// ── canGoPrev / canGoNext ────────────────────────────────────────
 
 describe('canGoPrev', () => {
   it('returns false at start', () => {
@@ -231,8 +211,6 @@ describe('canGoNext', () => {
   });
 });
 
-// ── restNextLabel ────────────────────────────────────────────────
-
 describe('restNextLabel', () => {
   it('builds label with weight and reps', () => {
     const session = makeSession();
@@ -245,8 +223,6 @@ describe('restNextLabel', () => {
     expect(result).toBe('');
   });
 });
-
-// ── completionTitle / completionMessage ──────────────────────────
 
 describe('completionTitle', () => {
   it('shows all done when complete', () => {

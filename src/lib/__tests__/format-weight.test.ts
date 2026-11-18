@@ -28,7 +28,7 @@ describe('formatWeight', () => {
     expect(formatWeight(0)).toBe('0 kg');
   });
 
-  it('converts stored kg to the explicit unit (F1)', () => {
+  it('converts stored kg to the explicit unit', () => {
     expect(formatWeight(80, 'lbs')).toMatch(/^176[.,]4 lbs$/);
     expect(formatWeight(0, 'lbs')).toBe('0 lbs');
   });

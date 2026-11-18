@@ -10,8 +10,6 @@ import { exerciseVolume } from './workout-helpers';
 import { formatDateTime, formatVolume } from './format';
 import { statusLabel as statusLabelFn, type StatusLabels } from './session-utils';
 
-// ── Types ───────────────────────────────────────────────────────
-
 export interface ShareCardLabels {
   exercises: string;
   shareSetsLabel: string;
@@ -29,8 +27,6 @@ export interface ShareCardLabels {
 export interface ShareCardOptions {
   labels: ShareCardLabels;
 }
-
-// ── Canvas Helpers ──────────────────────────────────────────────
 
 /** Truncate text with ellipsis until it fits within maxWidth. */
 export function truncateForCanvas(
@@ -68,8 +64,6 @@ export function drawRoundRect(
   ctx.quadraticCurveTo(x, y, x + radius, y);
   ctx.closePath();
 }
-
-// ── Main ────────────────────────────────────────────────────────
 
 /**
  * Generate a 1080x1080 PNG share card for a session.

@@ -1,6 +1,5 @@
 /** Avatars. Couche: components. */
 @layer components {
-  /* ── Avatar component ───────────────────────────────────── */
   .avatar {
     position: relative;
     display: inline-flex;
