@@ -4,6 +4,7 @@ import { join } from 'node:path';
 const dist = join(process.cwd(), 'dist');
 const criticalRoutes = [
   '/',
+  '/demo/',
   '/en/',
   '/login/',
   '/en/login/',

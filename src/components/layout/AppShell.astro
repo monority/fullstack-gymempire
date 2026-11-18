@@ -17,9 +17,10 @@ interface Props {
   groups: NavGroup[];
   title?: string;
   class?: string;
+  skipAuth?: boolean;
 }
 
-const { groups, title, class: className = '' } = Astro.props as unknown as Props;
+const { groups, title, class: className = '', skipAuth = false } = Astro.props as unknown as Props;
 const L = t();
 
 const classes = ['app-shell', className].filter(Boolean).join(' ');
@@ -35,7 +36,12 @@ const drawerItems = groups.map((group) => ({
 }));
 ---
 
-<div class={classes} x-data="themeApp()" x-init="init()">
+<div
+  class={classes}
+  data-skip-auth={skipAuth ? 'true' : undefined}
+  x-data="themeApp()"
+  x-init="init()"
+>
   <Sidebar groups={groups} />
 
   <div class="main-area">
@@ -208,6 +214,8 @@ const drawerItems = groups.map((group) => ({
     btn.addEventListener('click', logout);
   });
 
+  const skipAuthForPage =
+    document.querySelector<HTMLElement>('.app-shell')?.dataset.skipAuth === 'true';
   const auth = getAuth();
   if (auth) {
     document.querySelectorAll<HTMLElement>('[data-user-name]').forEach((el) => {
@@ -219,7 +227,7 @@ const drawerItems = groups.map((group) => ({
     document.querySelectorAll<HTMLElement>('[data-user-zone]').forEach((el) => {
       el.removeAttribute('hidden');
     });
-  } else {
+  } else if (!skipAuthForPage) {
     window.location.replace('/login');
   }
 
@@ -441,7 +449,7 @@ const drawerItems = groups.map((group) => ({
     justify-content: center;
     width: 3.4rem;
     height: 3.4rem;
-    border-radius: 0.8rem;
+    border-radius: var(--radius-md);
     background-color: var(--color-surface-2);
     border: 1px solid var(--color-border);
     color: var(--color-accent);
@@ -490,11 +498,11 @@ const drawerItems = groups.map((group) => ({
   }
 
   .drawer__group-label {
-    font-family: var(--font-display);
-    font-size: 0.85rem;
+    font-family: var(--font-body);
+    font-size: var(--text-caption);
     color: var(--color-muted);
     text-transform: uppercase;
-    letter-spacing: 0.18em;
+    letter-spacing: var(--tracking-caption);
     padding: 0.8rem 1.2rem 0.4rem;
     font-weight: 600;
   }
@@ -516,7 +524,7 @@ const drawerItems = groups.map((group) => ({
     color: var(--color-muted);
     text-decoration: none;
     font-family: var(--font-body);
-    font-size: 1.3rem;
+    font-size: var(--text-small);
     font-weight: 500;
     line-height: 1.2;
     position: relative;
@@ -536,9 +544,9 @@ const drawerItems = groups.map((group) => ({
     left: 0;
     top: 0.8rem;
     bottom: 0.8rem;
-    width: 0.3rem;
+    width: 0.1rem;
     background: var(--color-accent);
-    border-radius: 0 2px 2px 0;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
   }
 
   .drawer__item-icon {
@@ -607,7 +615,7 @@ const drawerItems = groups.map((group) => ({
 
   .drawer__user-label {
     font-family: var(--font-display);
-    font-size: 0.9rem;
+    font-size: var(--text-caption);
     color: var(--color-muted);
     text-transform: uppercase;
     letter-spacing: 0.14em;
@@ -648,7 +656,7 @@ const drawerItems = groups.map((group) => ({
     border-radius: var(--radius-sm);
     color: var(--color-muted);
     font-family: var(--font-body);
-    font-size: 1.3rem;
+    font-size: var(--text-small);
     font-weight: 600;
     cursor: pointer;
     -webkit-appearance: none;
