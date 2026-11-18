@@ -182,15 +182,6 @@ const { title, class: className = '' } = Astro.props as Props;
     padding: 0 var(--page-padding-tablet);
   }
 
-  .topbar__context-kicker {
-    color: var(--color-accent);
-    font-size: 0.9rem;
-    font-weight: 800;
-    letter-spacing: 0.16em;
-    line-height: 1;
-    text-transform: uppercase;
-  }
-
   .topbar__title {
     font-family: var(--font-display);
     font-size: 1.5rem;
@@ -421,9 +412,6 @@ const { title, class: className = '' } = Astro.props as Props;
     .topbar__inner {
       padding: 0 var(--page-padding-mobile);
     }
-    .topbar__context-kicker {
-      display: none;
-    }
     .topbar__title {
       font-size: 1.3rem;
     }
@@ -444,13 +432,6 @@ const { title, class: className = '' } = Astro.props as Props;
     }
   }
 
-  .topbar {
-    background: color-mix(in srgb, var(--color-bg) 94%, transparent);
-    backdrop-filter: blur(12px);
-  }
-  .topbar__inner {
-    gap: 1.6rem;
-  }
   .topbar__context {
     border-left: 1px solid var(--color-border);
     padding-left: 1.6rem;

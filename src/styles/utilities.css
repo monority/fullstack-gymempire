@@ -100,12 +100,9 @@
     border-color: color-mix(in srgb, var(--color-destructive) 34%, transparent);
   }
 
-  /* ════ Semantic utility classes ═══════════════════════════════
- * Replace repeated inline class combinations across components.
- * One class = one intent. Keep Tailwind for layout; use these for
- * shared visual tokens (text hierarchy, separators, grids). */
+  /* Classes utilitaires — une classe = une intention. */
 
-  /* ── Display font family (replaces Tailwind arbitrary font-[var(--font-display)]) ── */
+  /* Famille d'affichage */
   .text-display {
     font-family: var(--font-display);
   }
@@ -113,7 +110,7 @@
   /* ── Definition list label (WorkoutCard dt) ───────────────── */
   .dt-label {
     font-size: 0.95rem;
-    font-weight: 800;
+    font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--color-muted);
@@ -148,7 +145,7 @@
     min-width: 3.2rem;
     font-family: var(--font-display);
     font-size: 1.8rem;
-    font-weight: 800;
+    font-weight: 700;
     font-variant-numeric: tabular-nums;
     line-height: 1;
   }

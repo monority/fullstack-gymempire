@@ -20,7 +20,6 @@ export default {
   langFr: 'Français',
   langEn: 'English',
   appTagline: 'Application de musculation',
-  workspaceKicker: 'Espace actuel',
   railLabel: 'Système d’entraînement',
   railStatus: 'Local · prêt',
 };

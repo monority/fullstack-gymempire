@@ -72,6 +72,7 @@
     --alpha-highlight: hsl(0 0% 100% / 0.22);
     --shadow-1: 0 1px 2px hsl(220 30% 2% / 0.28);
     --shadow-2: 0 12px 28px hsl(220 30% 2% / 0.22);
+    --shadow-overlay: 0 24px 48px hsl(220 30% 2% / 0.45);
     --bg-aurora-1: hsl(30 92% 58% / 0.07);
     --bg-aurora-2: hsl(190 55% 48% / 0.07);
     --bg-aurora-3: hsl(260 48% 58% / 0.05);
@@ -134,6 +135,7 @@
     --alpha-highlight: hsl(0 0% 100% / 0);
     --shadow-1: 0 1px 2px hsl(0 0% 0% / 0.08);
     --shadow-2: 0 6px 14px hsl(0 0% 0% / 0.08);
+    --shadow-overlay: 0 24px 48px hsl(0 0% 0% / 0.18);
     --bg-aurora-1: hsl(30 78% 46% / 0.08);
     --bg-aurora-2: hsl(190 45% 42% / 0.06);
     --bg-aurora-3: hsl(260 42% 52% / 0.05);

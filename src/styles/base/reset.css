@@ -11,8 +11,13 @@
 
   body {
     font-family: var(--font-body);
+    caret-color: var(--color-accent);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+
+  a {
+    text-underline-offset: 0.25em;
   }
 
   h1,

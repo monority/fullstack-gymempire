@@ -21,16 +21,30 @@ const ariaLabel = `${index} · ${weight} ${L.common.kg} × ${reps} ${L.common.re
   role="listitem"
   aria-label={ariaLabel}
 >
-  <span class:list={['set-row__index', { 'set-row__index--completed': completed }]} aria-hidden="true">{String(index).padStart(2, '0')}</span>
+  <span
+    class:list={['set-row__index', { 'set-row__index--completed': completed }]}
+    aria-hidden="true"
+  >
+    {String(index).padStart(2, '0')}
+  </span>
   <span class:list={['set-row__weight', { 'set-row__weight--completed': completed }]}>
-    {weight}<small class="set-row__unit">{L.common.kg}</small>
+    {weight}
+    <small class="set-row__unit">{L.common.kg}</small>
   </span>
-  <span class="set-row__x" aria-hidden="true">×</span>
+  <span class="set-row__x" aria-hidden="true">
+    ×
+  </span>
   <span class:list={['set-row__reps', { 'set-row__reps--completed': completed }]}>
-    {reps}<small class="set-row__unit">{L.common.reps}</small>
+    {reps}
+    <small class="set-row__unit">{L.common.reps}</small>
   </span>
-  {type && <span class:list={['set-row__type', { 'set-row__type--completed': completed }]}>{type}</span>}
-  <span class:list={['set-row__check', { 'set-row__check--completed': completed }]} aria-hidden="true">
+  {type && (
+    <span class:list={['set-row__type', { 'set-row__type--completed': completed }]}>{type}</span>
+  )}
+  <span
+    class:list={['set-row__check', { 'set-row__check--completed': completed }]}
+    aria-hidden="true"
+  >
     {completed ? '✓' : '—'}
   </span>
 </div>
@@ -43,15 +57,19 @@ const ariaLabel = `${index} · ${weight} ${L.common.kg} × ${reps} ${L.common.re
     color: var(--color-muted);
   }
 
-  .set-row:last-child { border-bottom: 0; }
+  .set-row:last-child {
+    border-bottom: 0;
+  }
 
   .set-row__index {
     color: var(--color-muted);
     font-size: 1.1rem;
-    font-weight: 800;
+    font-weight: 700;
     letter-spacing: 0.06em;
   }
-  .set-row__index--completed { color: var(--color-text); }
+  .set-row__index--completed {
+    color: var(--color-text);
+  }
 
   .set-row__weight,
   .set-row__reps {
@@ -78,7 +96,7 @@ const ariaLabel = `${index} · ${weight} ${L.common.kg} × ${reps} ${L.common.re
     padding: 0.4rem 0.6rem;
     color: var(--color-info);
     font-size: 0.95rem;
-    font-weight: 800;
+    font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
   }
@@ -88,10 +106,16 @@ const ariaLabel = `${index} · ${weight} ${L.common.kg} × ${reps} ${L.common.re
     font-size: 1.3rem;
     text-align: center;
   }
-  .set-row__check--completed { color: var(--color-accent); }
+  .set-row__check--completed {
+    color: var(--color-accent);
+  }
 
   @media (max-width: 480px) {
-    .set-row { padding: 0 0.4rem; }
-    .set-row__type { font-size: 0.85rem; }
+    .set-row {
+      padding: 0 0.4rem;
+    }
+    .set-row__type {
+      font-size: 0.85rem;
+    }
   }
 </style>

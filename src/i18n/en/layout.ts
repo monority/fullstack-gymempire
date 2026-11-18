@@ -20,7 +20,6 @@ export default {
   langFr: 'Français',
   langEn: 'English',
   appTagline: 'Workout tracking app',
-  workspaceKicker: 'Current workspace',
   railLabel: 'Training system',
   railStatus: 'Local · ready',
 };

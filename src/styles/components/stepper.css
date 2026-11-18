@@ -4,14 +4,8 @@
  * Native number-input spinners are hidden here and replaced by the custom
  * .input-stepper chevron buttons injected by AppLayout.astro.
  *
- * WHY THIS FILE IS IN /public:
- *   Astro copies public/ verbatim, so this CSS is NOT touched by Vite /
- *   LightningCSS. The build minifier strips -webkit- prefixes for "modern
- *   browsers", but Chromium only honors -webkit-appearance on the
- *   ::-webkit-inner-spin-button pseudo-element (the bare `appearance`
- *   property is ignored there on several Chrome versions) - which made the
- *   native arrows reappear on top of our custom ones. Shipping it raw keeps
- *   both prefixed and unprefixed declarations intact.
+ * Les déclarations préfixées et non préfixées sont conservées ensemble :
+ * Chromium n’honore que -webkit-appearance sur ::-webkit-inner-spin-button.
  *
  * !important so it also defeats component styles that set
  * `appearance: none` on the INPUT itself (which re-enables the native
