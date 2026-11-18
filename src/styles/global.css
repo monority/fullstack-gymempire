@@ -19,7 +19,8 @@
 @import './tokens/colors.css';
 @import './tokens/scale.css';
 
-/* 3. Bases : racine, accessibilité */
+/* 3. Bases : polices, racine, accessibilité */
+@import './base/fonts.css';
 @import './base/root.css';
 @import './base/a11y.css';
 

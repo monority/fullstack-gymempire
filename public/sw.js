@@ -15,7 +15,7 @@
  * and navigate between cached pages without a connection.
  * ───────────────────────────────────────────────────────────── */
 
-const VERSION = "muscu-app-v7";
+const VERSION = 'muscu-app-v8';
 const STATIC_CACHE = `${VERSION}-shell`;
 const RUNTIME_CACHE = `${VERSION}-runtime`;
 
@@ -24,47 +24,49 @@ const RUNTIME_CACHE = `${VERSION}-runtime`;
 // /sessions/<id> URLs are NOT precached; they're cached on first
 // visit and served from RUNTIME_CACHE.
 const APP_SHELL = [
-  "/",
-  "/sessions",
-  "/sessions/create",
-  "/sessions/detail",
-  "/sessions/quick",
-  "/sessions/print",
-  "/sessions/compare",
-  "/exercises",
-  "/exercises/trends",
-  "/exercises/history",
-  "/progression",
-  "/progression/stats",
-  "/progression/records",
-  "/progression/poids",
-  "/settings",
-  "/timer",
-  "/timer/pop",
-  "/calendar",
-  "/calculator",
-  "/login",
-  "/en",
-  "/en/sessions",
-  "/en/sessions/create",
-  "/en/sessions/detail",
-  "/en/sessions/quick",
-  "/en/sessions/print",
-  "/en/sessions/compare",
-  "/en/exercises",
-  "/en/exercises/trends",
-  "/en/exercises/history",
-  "/en/progression",
-  "/en/progression/stats",
-  "/en/progression/records",
-  "/en/progression/poids",
-  "/en/settings",
-  "/en/timer",
-  "/en/calendar",
-  "/en/calculator",
-  "/en/login",
-  "/manifest.json",
-  "/favicon.svg",
+  '/fonts/archivo-latin.woff2',
+  '/fonts/inter-latin.woff2',
+  '/',
+  '/sessions',
+  '/sessions/create',
+  '/sessions/detail',
+  '/sessions/quick',
+  '/sessions/print',
+  '/sessions/compare',
+  '/exercises',
+  '/exercises/trends',
+  '/exercises/history',
+  '/progression',
+  '/progression/stats',
+  '/progression/records',
+  '/progression/poids',
+  '/settings',
+  '/timer',
+  '/timer/pop',
+  '/calendar',
+  '/calculator',
+  '/login',
+  '/en',
+  '/en/sessions',
+  '/en/sessions/create',
+  '/en/sessions/detail',
+  '/en/sessions/quick',
+  '/en/sessions/print',
+  '/en/sessions/compare',
+  '/en/exercises',
+  '/en/exercises/trends',
+  '/en/exercises/history',
+  '/en/progression',
+  '/en/progression/stats',
+  '/en/progression/records',
+  '/en/progression/poids',
+  '/en/settings',
+  '/en/timer',
+  '/en/calendar',
+  '/en/calculator',
+  '/en/login',
+  '/manifest.json',
+  '/favicon.svg',
 ];
 
 // Inline offline fallback. Kept tiny and dependency-free so it
@@ -126,7 +128,7 @@ const OFFLINE_HTML = `<!doctype html>
 </html>`;
 
 /* ── Install: precache the app shell ─────────────────────── */
-self.addEventListener("install", (event) => {
+self.addEventListener('install', (event) => {
   self.skipWaiting();
   event.waitUntil(
     (async () => {
@@ -135,7 +137,7 @@ self.addEventListener("install", (event) => {
       // abort the whole precache.
       await Promise.all(
         APP_SHELL.map((url) =>
-          cache.add(new Request(url, { cache: "reload" })).catch(() => {
+          cache.add(new Request(url, { cache: 'reload' })).catch(() => {
             /* route not available yet — skip silently */
           })
         )
@@ -145,31 +147,27 @@ self.addEventListener("install", (event) => {
 });
 
 /* ── Activate: drop old caches, claim open clients ───────── */
-self.addEventListener("activate", (event) => {
+self.addEventListener('activate', (event) => {
   event.waitUntil(
     (async () => {
       const keys = await caches.keys();
-      await Promise.all(
-        keys
-          .filter((k) => !k.startsWith(VERSION))
-          .map((k) => caches.delete(k))
-      );
+      await Promise.all(keys.filter((k) => !k.startsWith(VERSION)).map((k) => caches.delete(k)));
       await self.clients.claim();
     })()
   );
 });
 
 /* ── Fetch: route by request type ────────────────────────── */
-self.addEventListener("fetch", (event) => {
+self.addEventListener('fetch', (event) => {
   const { request } = event;
-  if (request.method !== "GET") return;
+  if (request.method !== 'GET') return;
 
   const url = new URL(request.url);
   // Cross-origin (CDN, fonts, analytics…) — let the browser handle it.
   if (url.origin !== self.location.origin) return;
 
   // 1) API calls — network-first, cached fallback, hard 503 last.
-  if (url.pathname.startsWith("/api/")) {
+  if (url.pathname.startsWith('/api/')) {
     event.respondWith(networkFirst(request));
     return;
   }
@@ -181,15 +179,13 @@ self.addEventListener("fetch", (event) => {
   //    instead of stale cached CSS/JS.
   if (isStaticAsset(request, url)) {
     event.respondWith(
-      url.pathname.includes("/_astro/")
-        ? cacheFirst(request)
-        : networkFirst(request)
+      url.pathname.includes('/_astro/') ? cacheFirst(request) : networkFirst(request)
     );
     return;
   }
 
   // 3) HTML navigations — network-first, cached page, then /.
-  if (request.mode === "navigate") {
+  if (request.mode === 'navigate') {
     event.respondWith(navigationHandler(request));
     return;
   }
@@ -202,20 +198,18 @@ self.addEventListener("fetch", (event) => {
 
 function isStaticAsset(request, url) {
   if (
-    request.destination === "style" ||
-    request.destination === "script" ||
-    request.destination === "image" ||
-    request.destination === "font"
+    request.destination === 'style' ||
+    request.destination === 'script' ||
+    request.destination === 'image' ||
+    request.destination === 'font'
   ) {
     return true;
   }
-  return /\.(css|js|svg|png|jpg|jpeg|webp|gif|ico|woff2?|ttf|otf)(\?.*)?$/i.test(
-    url.pathname
-  );
+  return /\.(css|js|svg|png|jpg|jpeg|webp|gif|ico|woff2?|ttf|otf)(\?.*)?$/i.test(url.pathname);
 }
 
 async function cacheFirst(request) {
-  const cached = await caches.match(request);
+  const cached = (await caches.match(request)) ?? (await caches.match(request.url));
   if (cached) return cached;
   try {
     const res = await fetch(request);
@@ -238,11 +232,11 @@ async function networkFirst(request) {
     }
     return res;
   } catch {
-    const cached = await caches.match(request);
+    const cached = (await caches.match(request)) ?? (await caches.match(request.url));
     if (cached) return cached;
-    return new Response(JSON.stringify({ error: "offline" }), {
+    return new Response(JSON.stringify({ error: 'offline' }), {
       status: 503,
-      headers: { "Content-Type": "application/json" },
+      headers: { 'Content-Type': 'application/json' },
     });
   }
 }
@@ -257,15 +251,15 @@ async function navigationHandler(request) {
     return res;
   } catch {
     // Cached version of the exact page?
-    const cached = await caches.match(request);
+    const cached = (await caches.match(request)) ?? (await caches.match(request.url));
     if (cached) return cached;
     // Otherwise fall back to the dashboard (always in APP_SHELL).
-    const fallback = await caches.match("/");
+    const fallback = await caches.match('/');
     if (fallback) return fallback;
     // No shell cached yet — render the inline offline page.
     return new Response(OFFLINE_HTML, {
       status: 200,
-      headers: { "Content-Type": "text/html; charset=utf-8" },
+      headers: { 'Content-Type': 'text/html; charset=utf-8' },
     });
   }
 }

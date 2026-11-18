@@ -134,7 +134,7 @@ The palette is restraint with a single signal: neutral graphite (or paper in lig
 **Display Font:** Archivo (with system sans fallback)
 **Body Font:** Inter (with system sans fallback)
 
-**Character:** Archivo is a sturdy, slightly condensed grotesk with enough character to carry a page on its own; Inter is the neutral workhorse that disappears into the task. Their widths and weight make the distinction visible without a second "decorative" face.
+**Character:** Archivo is a sturdy, slightly condensed grotesk with enough character to carry a page on its own; Inter is the neutral workhorse that disappears into the task. Their widths and weight make the distinction visible without a second "decorative" face. Both are variable woff2 files served locally from `/fonts/` and precached by the service worker: the typography survives offline and makes no external request.
 
 ### Hierarchy
 

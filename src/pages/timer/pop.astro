@@ -10,9 +10,7 @@ const lang = Astro.currentLocale ?? defaultLocale;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#0d0d0d" />
     <title>Timer</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    {/* Fonts come from the <link> in AppLayout or global.css — no separate link needed. */}
+    {/* Polices auto-hébergées via global.css — aucune requête externe. */}
     <script is:inline src="/theme-bootstrap.js" data-meta-var="--color-bg"></script>
   </head>
   <body>

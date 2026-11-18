@@ -25,6 +25,7 @@ src/styles/
     colors.css                # couleurs + ombres, dark et light
     scale.css                 # espacements, rayons, type, mouvement, layout
   base/
+    fonts.css                 # @font-face Archivo + Inter (woff2 locaux)
     reset.css                 # box-sizing, body, caret, scrollbar
     a11y.css                  # focus-visible, sr-only, reduced-motion, tactile
     root.css                  # html 62.5%, taille des icônes
