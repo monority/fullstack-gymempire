@@ -16,6 +16,7 @@ import {
   computeBestPRs,
   computeTop1RM,
   computeWeeklyVolumeByDay,
+  computeWeeklyActivityByDay,
   computeStreak,
 } from '../dashboard-stats';
 import type { Session } from '../storage/types';
@@ -276,5 +277,35 @@ describe('computeStreak', () => {
       makeSession(daysAgo(2), [{ muscle: 'A', weight: 50, reps: 5 }]),
     ];
     expect(computeStreak(sessions)).toBe(2);
+  });
+});
+
+describe('computeWeeklyActivityByDay', () => {
+  it('counts sessions and completed sets on their weekday', () => {
+    const now = new Date(2026, 10, 17); // mardi
+    const sessions = [
+      makeSession('2026-11-17T10:00:00.000Z', [
+        { muscle: 'A', weight: 50, reps: 5, completed: true },
+        { muscle: 'A', weight: 50, reps: 5, completed: false },
+      ]),
+      makeSession('2026-11-15T10:00:00.000Z', [
+        { muscle: 'B', weight: 40, reps: 8, completed: true },
+      ]),
+    ];
+    const activity = computeWeeklyActivityByDay(sessions, now);
+    expect(activity.sessions[2]).toBe(1);
+    expect(activity.sets[2]).toBe(1);
+    expect(activity.sessions[0]).toBe(1);
+    expect(activity.sets[0]).toBe(1);
+    expect(activity.sessions.reduce((a, b) => a + b, 0)).toBe(2);
+  });
+
+  it('ignores sessions outside the current week', () => {
+    const now = new Date(2026, 10, 17);
+    const sessions = [
+      makeSession('2026-11-01T10:00:00.000Z', [{ muscle: 'A', weight: 50, reps: 5 }]),
+    ];
+    const activity = computeWeeklyActivityByDay(sessions, now);
+    expect(activity.sessions.every((n) => n === 0)).toBe(true);
   });
 });

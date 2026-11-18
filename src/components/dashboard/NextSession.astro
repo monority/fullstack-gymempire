@@ -16,6 +16,8 @@ const L = t();
         <span x-text="nextSession ? sessionExercisesCount(nextSession) + ' ' + labels.exercisesUnit : ''"></span>
         <span aria-hidden="true">·</span>
         <span x-text="nextSession ? sessionSetsCount(nextSession) + ' ' + labels.setsUnit : ''"></span>
+        <span aria-hidden="true">·</span>
+        <span x-text="nextDurationLabel()" title={L.dashboard.durationHint}></span>
       </p>
       <p
         class="dash__next-hint"
@@ -113,7 +115,7 @@ const L = t();
     font-weight: 700;
     text-decoration: none;
     white-space: nowrap;
-    transition: background-color var(--transition-fast);
+    transition: background-color 200ms var(--ease-out);
   }
 
   .dash__next-action:hover {

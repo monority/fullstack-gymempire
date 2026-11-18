@@ -128,6 +128,32 @@ export function computeWeeklyVolumeByDay(sessions: Session[]): number[] {
   return arr;
 }
 
+/**
+ * Sessions and completed sets per weekday (index = getDay(), 0 = Sunday).
+ * `now` is injectable so the dashboard can use its own clock.
+ */
+export function computeWeeklyActivityByDay(
+  sessions: Session[],
+  now: Date = new Date()
+): { sessions: number[]; sets: number[] } {
+  const sessionCounts = Array.from({ length: 7 }, () => 0);
+  const setCounts = Array.from({ length: 7 }, () => 0);
+  const startOfWeek = new Date(now);
+  startOfWeek.setDate(now.getDate() - now.getDay());
+  startOfWeek.setHours(0, 0, 0, 0);
+  for (const session of sessions) {
+    const date = new Date(session.date);
+    if (date < startOfWeek) continue;
+    const day = date.getDay();
+    sessionCounts[day] += 1;
+    setCounts[day] += session.exercises.reduce(
+      (total, exercise) => total + exercise.sets.filter((set) => set.completed).length,
+      0
+    );
+  }
+  return { sessions: sessionCounts, sets: setCounts };
+}
+
 // ── Streak ─────────────────────────────────────────────────────
 
 /**

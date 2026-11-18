@@ -20,6 +20,7 @@ import {
   computeTop1RM,
   computeStreak,
   computeWeeklyVolumeByDay,
+  computeWeeklyActivityByDay,
   computeSessionPrimaryMuscle,
 } from '../../lib/dashboard-stats';
 import { formatDateShort, formatNumPositive } from '../../lib/format';
@@ -50,6 +51,9 @@ export interface DashboardApp {
   todaySessions: number;
   todayExercises: number;
   weeklyVolumeByDay: number[];
+  weeklySessionsByDay: number[];
+  weeklySetsByDay: number[];
+  weeklySetsTotal: number;
   todayIdx: number;
   weeklyVolumeTotal: number;
   maxVol: number;
@@ -62,6 +66,7 @@ export interface DashboardApp {
     streak: number;
   };
   greeting(): string;
+  nextDurationLabel(): string;
   remainingHintText(): string;
   sessionVolume(s: Session): number;
   sessionExercisesCount(s: Session): number;
@@ -146,6 +151,15 @@ export function createDashboardApp(
     get weeklyVolumeByDay() {
       return computeWeeklyVolumeByDay(this.sessions);
     },
+    get weeklySessionsByDay() {
+      return computeWeeklyActivityByDay(this.sessions, deps.today()).sessions;
+    },
+    get weeklySetsByDay() {
+      return computeWeeklyActivityByDay(this.sessions, deps.today()).sets;
+    },
+    get weeklySetsTotal() {
+      return this.weeklySetsByDay.reduce((sum, count) => sum + count, 0);
+    },
     get todayIdx() {
       return deps.today().getDay();
     },
@@ -172,6 +186,12 @@ export function createDashboardApp(
     greeting() {
       const name = getAuth()?.name?.trim();
       return name ? labels.greeting.replace('{name}', name) : labels.greetingFallback;
+    },
+
+    nextDurationLabel() {
+      if (!this.nextSession) return '';
+      const minutes = Math.max(15, Math.round(this.sessionSetsCount(this.nextSession) * 3));
+      return labels.estimatedDuration.replace('{count}', String(minutes));
     },
 
     remainingHintText() {
