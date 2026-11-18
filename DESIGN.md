@@ -32,6 +32,34 @@ typography:
     fontWeight: 700
     lineHeight: 1.05
     letterSpacing: '-0.03em'
+  h1:
+    fontFamily: 'Archivo, system-ui, sans-serif'
+    fontSize: '2.8rem'
+    fontWeight: 700
+    lineHeight: 1.15
+    letterSpacing: '-0.02em'
+  h2:
+    fontFamily: 'Inter, system-ui, sans-serif'
+    fontSize: '2.2rem'
+    fontWeight: 700
+    lineHeight: 1.2
+    letterSpacing: '-0.02em'
+  h3:
+    fontFamily: 'Inter, system-ui, sans-serif'
+    fontSize: '1.8rem'
+    fontWeight: 700
+    lineHeight: 1.25
+    letterSpacing: '-0.01em'
+  body-lg:
+    fontFamily: 'Inter, system-ui, sans-serif'
+    fontSize: '1.6rem'
+    fontWeight: 400
+    lineHeight: 1.5
+  small:
+    fontFamily: 'Inter, system-ui, sans-serif'
+    fontSize: '1.2rem'
+    fontWeight: 400
+    lineHeight: 1.4
   body:
     fontFamily: 'Inter, system-ui, sans-serif'
     fontSize: '1.4rem'
