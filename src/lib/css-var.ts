@@ -27,5 +27,8 @@ export function cssVar(name: string): string {
  */
 export function cssVarAlpha(name: string, alpha: number): string {
   const value = cssVar(name);
-  return value.endsWith(')') ? value.replace(/\)$/, ` / ${alpha})`) : value;
+  // `hsl(30, 100%, 66%)` (virgules) + ` / alpha` est invalide en CSS :
+  // on normalise en `hsl(30 100% 66% / alpha)` avant d'ajouter l'alpha.
+  const normalized = value.replace(/,\s*/g, ' ');
+  return normalized.endsWith(')') ? normalized.replace(/\)$/, ` / ${alpha})`) : normalized;
 }

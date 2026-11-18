@@ -24,12 +24,11 @@ const { title, meta, class: className = '' } = Astro.props;
   }
 
   .panel-header__title {
-    font-family: var(--font-display);
-    font-size: 1.4rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-    color: var(--color-text);
     margin: 0;
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: var(--text-body);
+    font-weight: 700;
+    line-height: var(--leading-body);
   }
 </style>
