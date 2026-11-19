@@ -1,6 +1,6 @@
-# Plan de componentisation — Gym Empire (v2, « 10/10 »)
+# Plan de componentisation — Gym Empire
 
-> Version approfondie du 2026-11-18. Complément opérationnel de
+> Complément opérationnel de
 > [`componentization-rules.md`](./componentization-rules.md), qui reste la référence normative.
 >
 > **Vision.** Passer d'un site où la page possède le markup, le style et la logique à un **système de
@@ -29,29 +29,29 @@
 - Changer le design system, les tokens ou la charte (`.impeccable/design.json` reste souverain).
 - Remplacer Alpine par un autre framework, ou bundler Alpine (contrainte matérielle documentée dans
   `AppLayout.astro:271-290` : rolldown crash et pas de `.d.ts` pour la 3.14.1 auto-hébergée).
-- Refondre l'i18n dans ce plan (lot ADR dédié, §8.3) — on garde les 21 stubs `en/**` jusqu'à décision.
+- Refondre l'i18n dans ce plan (lot ADR dédié, §8) — on garde les 20 stubs de routes `src/pages/en/**` et les 25 modules de traduction `src/i18n/en/**` jusqu'à décision.
 - Réécrire `print.astro` autrement que par un travail de tokenisation ciblé (T4.4).
 
 ---
 
 ## 1. Baseline et KPI
 
-| #   | Indicateur (définition exacte)                                   |  Baseline **mesurée** le 2026-11-19 |                                    Cible | Outil de mesure                               |
-| --- | ---------------------------------------------------------------- | ----------------------------------: | ---------------------------------------: | --------------------------------------------- |
-| K1  | Lignes de `<style>` dans `src/pages`                             |          8 785 (22 blocs, 18 > 150) |                                    ≤ 400 | `check-components.mjs`                        |
-| K2  | Pages > 1 000 lignes                                             |                                   7 |                                        0 | `wc -l`                                       |
-| K3  | Page la plus longue                                              |           `sessions/create` — 1 489 |                                    ≤ 250 | `wc -l`                                       |
-| K4  | Occurrences de `alpine:init` dans `src`                          |                                  29 |                                        1 | `grep -r "alpine:init" src \| wc -l`          |
-| K5  | Occurrences de `(window as any)`                                 |                                  55 |                                        0 | `grep -r "(window as any)" src \| wc -l`      |
-| K6  | Occurrences de `Alpine.data(` dans `src/pages` (enregistrements) |                                  21 |                         0 (dans `pages`) | `grep -r "Alpine.data" src/pages \| wc -l`    |
-| K7  | Occurrences de `is:global`                                       |                                   5 |                         0 hors whitelist | `check-components.mjs`                        |
-| K8  | Domaines sans composant `.astro`                                 |                                   7 |                                        0 | `find src/components -name '*.astro'`         |
-| K9  | Familles de helpers de formatage dupliqués                       |                                   6 |                                        0 | `grep -r "function fmt\|function format" src` |
-| K10 | Globaux `window.*` pour UI (toast/dialog)                        |                            5+ sites |                        0 (stores Alpine) | `grep -r "window.showToast\|openDialog" src`  |
-| K11 | Littéraux de couleur                                             |        100 (`print`) + 21 (`debug`) |                        whitelist réduite | `pnpm check:colors`                           |
-| K12 | JS / CSS / plus gros fichier gzip                                |     **108 280 / 45 917 / 26 942 B** |            ≤ 140k / 60k / 40k (↓ de 5 %) | `pnpm check:budget`                           |
-| K13 | Couverture statements / branches / functions / lines             | **64,68 / 58,47 / 62,27 / 66,64 %** | **69,7 / 63,5 / 67,3 / 71,6 %** (+5 pts) | `pnpm test:coverage`                          |
-| K14 | Violations a11y `serious`/`critical`                             |                     non mesuré (P0) |                          0 sur 14 routes | axe-core + `scripts/check-a11y.mjs` (P6)      |
+| #   | Indicateur (définition exacte)                                     |  Baseline **mesurée** le 2026-11-19 |                                    Cible | Outil de mesure                               |
+| --- | ------------------------------------------------------------------ | ----------------------------------: | ---------------------------------------: | --------------------------------------------- |
+| K1  | Lignes de `<style>` dans `src/pages`                               |          8 785 (22 blocs, 18 > 150) |                                    ≤ 400 | `check-components.mjs`                        |
+| K2  | Pages > 1 000 lignes                                               |                                   7 |                                        0 | `wc -l`                                       |
+| K3  | Page la plus longue                                                |           `sessions/create` — 1 489 |                                    ≤ 250 | `wc -l`                                       |
+| K4  | Occurrences de `alpine:init` dans `src`                            |                                  29 |                                        1 | `grep -r "alpine:init" src \| wc -l`          |
+| K5  | Occurrences de `(window as any)`                                   |                                  55 |                                        0 | `grep -r "(window as any)" src \| wc -l`      |
+| K6  | Fichiers de `src/pages` contenant `Alpine.data(` (enregistrements) |                                  20 |                         0 (dans `pages`) | `grep -rl "Alpine.data" src/pages \| wc -l`   |
+| K7  | Occurrences de `is:global`                                         |                                   5 |                         0 hors whitelist | `check-components.mjs`                        |
+| K8  | Domaines sans composant `.astro`                                   |                                   7 |                                        0 | `find src/components -name '*.astro'`         |
+| K9  | Familles de helpers de formatage dupliqués                         |                                   6 |                                        0 | `grep -r "function fmt\|function format" src` |
+| K10 | Globaux `window.*` pour UI (toast/dialog)                          |                            5+ sites |                        0 (stores Alpine) | `grep -r "window.showToast\|openDialog" src`  |
+| K11 | Littéraux de couleur                                               |        100 (`print`) + 21 (`debug`) |                        whitelist réduite | `pnpm check:colors`                           |
+| K12 | JS / CSS / plus gros fichier gzip                                  |     **108 280 / 45 917 / 26 942 B** |            ≤ 140k / 60k / 40k (↓ de 5 %) | `pnpm check:budget`                           |
+| K13 | Couverture statements / branches / functions / lines               | **64,68 / 58,47 / 62,27 / 66,64 %** | **69,7 / 63,5 / 67,3 / 71,6 %** (+5 pts) | `pnpm test:coverage`                          |
+| K14 | Violations a11y `serious`/`critical`                               |                     non mesuré (P0) |                          0 sur 14 routes | axe-core + `scripts/check-a11y.mjs` (P6)      |
 
 > Les chiffres K4–K7 et K12–K13 ont été **relevés dans le dépôt** (et non estimés) : ne pas les
 > remplacer par les valeurs de l'audit initial, qui comptait des _fichiers_ là où on mesure désormais
@@ -333,17 +333,17 @@ jamais par une saisie utilisateur — à documenter en commentaire à chaque usa
 
 ## 3. Patterns — avant / après (mémo d'exécution)
 
-| Pattern               | ❌ Aujourd'hui                                            | ✅ Cible                                                             |
-| --------------------- | --------------------------------------------------------- | -------------------------------------------------------------------- |
-| Enregistrement Alpine | 24 blocs `(window as any).Alpine` + `alpine:init` + garde | `registerAlpine(name, factory)` (1 seul bridge typé)                 |
-| Globaux UI            | `window.showToast(...)`, `window.openDialog(id)`          | `$store.ui.notify()`, `$store.ui.openDialog(id)`                     |
-| Props                 | `interface Props { [key: string]: unknown }` + spread     | `HTMLAttributes<'article'>`, `as`, `class:list`, slots conditionnels |
-| Variantes             | `button--primary`, `button--secondary`, … 6 classes       | map `as const satisfies` → variables CSS                             |
-| Rendu conditionnel    | `x-if` en cascade / tables dupliquées par page            | registre typé `Record<Kind, AstroComponentFactory>`                  |
-| Styles                | 958 lignes dans la page + `is:global`                     | `<style>` scopé dans chaque fragment, BEM par composant              |
-| Logique               | `statsApp` de 187 lignes inline dans `stats.astro`        | `components/progression/statsApp.ts` + helpers `lib/` + tests        |
-| Listes longues        | 38 nœuds rendus d'un coup, tous réactifs                  | `content-visibility` + registre + widget lazy                        |
-| Tests                 | factories non testées dans les pages                      | 1 test par factory, mocks injectés, + axe-core                       |
+| Pattern               | ❌ Aujourd'hui                                        | ✅ Cible                                                             |
+| --------------------- | ----------------------------------------------------- | -------------------------------------------------------------------- |
+| Enregistrement Alpine | 55 `(window as any)` + 29 `alpine:init` + garde       | `registerAlpine(name, factory)` (1 seul bridge typé)                 |
+| Globaux UI            | `window.showToast(...)`, `window.openDialog(id)`      | `$store.ui.notify()`, `$store.ui.openDialog(id)`                     |
+| Props                 | `interface Props { [key: string]: unknown }` + spread | `HTMLAttributes<'article'>`, `as`, `class:list`, slots conditionnels |
+| Variantes             | `button--primary`, `button--secondary`, … 6 classes   | map `as const satisfies` → variables CSS                             |
+| Rendu conditionnel    | `x-if` en cascade / tables dupliquées par page        | registre typé `Record<Kind, AstroComponentFactory>`                  |
+| Styles                | 958 lignes dans la page + `is:global`                 | `<style>` scopé dans chaque fragment, BEM par composant              |
+| Logique               | `statsApp` de 187 lignes inline dans `stats.astro`    | `components/progression/statsApp.ts` + helpers `lib/` + tests        |
+| Listes longues        | 38 nœuds rendus d'un coup, tous réactifs              | `content-visibility` + registre + widget lazy                        |
+| Tests                 | factories non testées dans les pages                  | 1 test par factory, mocks injectés, + axe-core                       |
 
 ---
 
@@ -356,12 +356,12 @@ verte (KPI mesuré + captures validées).
 
 | ID   | Tâche                                                           | Livrable / cible                                                                                                                                                |
 | ---- | --------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| P0.1 | Créer `src/styles/README.md` (référence cassée `global.css:11`) | doc courte qui pointe vers les règles et décrit les 5 layers                                                                                                    |
-| P0.2 | `scripts/check-components.mjs`                                  | mesure K1–K8, **mode avertissement**, sortie JSON + texte                                                                                                       |
-| P0.3 | Scripts package + CI non bloquants                              | `check:components`, `dead-code`, étapes CI correspondantes                                                                                                      |
-| P0.4 | Baseline                                                        | `docs/componentization-baseline.txt` (K1–K14 + captures)                                                                                                        |
-| P0.5 | Template de composant                                           | `docs/templates/Component.astro` + `docs/templates/xApp.ts` (copiables)                                                                                         |
-| P0.6 | **Spike / go-no-go store UI**                                   | POC : enregistrer un store Alpine factice, ouvrir un dialog, naviguer 2× avec `ClientRouter`, vérifier que `$store.ui` survit et qu'il n'y a pas de double init |
+| P0.1 | Créer `src/styles/README.md` (référence cassée `global.css:11`) | ✅ fait — doc courte qui pointe vers les règles et décrit les 5 layers                                                                                          |
+| P0.2 | `scripts/check-components.mjs`                                  | ✅ fait — mesure K1–K8, **mode avertissement**, sortie JSON + texte (`STRICT=1` bloque)                                                                         |
+| P0.3 | Scripts package + CI non bloquants                              | ✅ fait — `check:components` dans `package.json` + CI (avertissement). `dead-code` reste à câbler en P6.10                                                      |
+| P0.4 | Baseline                                                        | ✅ fait — `docs/componentization-baseline.txt` (tailles, patterns, budgets, couverture)                                                                         |
+| P0.5 | Template de composant                                           | ✅ fait — `docs/templates/Component.astro` + `docs/templates/xApp.ts` (copiables)                                                                               |
+| P0.6 | **Spike / go-no-go store UI**                                   | ✅ **GO** — store enregistré puis navigation `ClientRouter` : l'état survit (41 → 41). `Alpine.store()` est l'accès global, `$store` l'accès dans les templates |
 
 **Acceptation** : `pnpm check:components` s'exécute et affiche la dette ; CI verte ; baseline archivée ;
 le spike P0.6 est **go** (sinon ADR-001 est réévalué avant P1).
@@ -439,18 +439,18 @@ dupliquée ; galerie `/ui` à jour ; captures identiques.
 
 ### P6 — Qualité, performance et accessibilité _(M)_
 
-| ID    | Tâche                     | Cible                                                                                                             |
-| ----- | ------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| P6.1  | Consolidation des helpers | K9 → 0 (`formatDuration`, `formatRestTime`, `formatSetRpe`, `fmtTime/fmtShort/fmtMs`)                             |
-| P6.2  | Types partagés            | `SessionStatus`, `ExerciseCategory`, `Unit`, `SessionMood`, `ChartKind`, `SettingSection` dans `lib/types.ts`     |
-| P6.3  | Icônes                    | convention `<Icon name>` ; migration des `set:html={icons.*}` statiques (K cible : 0 hors `x-html`)               |
-| P6.4  | `print.astro`             | tokenisation ou restriction documentée de la whitelist (K11)                                                      |
-| P6.5  | Lazy charts               | `lib/lazy.ts` + IntersectionObserver sur les graphes                                                              |
-| P6.6  | Mémoïsation SVG           | caches dans `statsCharts.ts` / `body-chart.ts`                                                                    |
-| P6.7  | a11y                      | axe-core sur 14 routes, K14 → 0                                                                                   |
-| P6.8  | e2e réel                  | `playwright.config.ts` pointe sur `./e2e` inexistant : 3 parcours (demo login, création séance, navigation FR/EN) |
-| P6.9  | Budgets par route         | HTML gzip + nœuds DOM ajoutés à `check-budget.mjs`                                                                |
-| P6.10 | `dead-code.mjs`           | script + CI, orphelins traités                                                                                    |
+| ID    | Tâche                     | Cible                                                                                                         |
+| ----- | ------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| P6.1  | Consolidation des helpers | K9 → 0 (`formatDuration`, `formatRestTime`, `formatSetRpe`, `fmtTime/fmtShort/fmtMs`)                         |
+| P6.2  | Types partagés            | `SessionStatus`, `ExerciseCategory`, `Unit`, `SessionMood`, `ChartKind`, `SettingSection` dans `lib/types.ts` |
+| P6.3  | Icônes                    | convention `<Icon name>` ; migration des `set:html={icons.*}` statiques (K cible : 0 hors `x-html`)           |
+| P6.4  | `print.astro`             | tokenisation ou restriction documentée de la whitelist (K11)                                                  |
+| P6.5  | Lazy charts               | `lib/lazy.ts` + IntersectionObserver sur les graphes                                                          |
+| P6.6  | Mémoïsation SVG           | caches dans `statsCharts.ts` / `body-chart.ts`                                                                |
+| P6.7  | a11y                      | axe-core sur 14 routes, K14 → 0                                                                               |
+| P6.8  | e2e réel                  | ✅ fait en P0 : `e2e/` avec 3 parcours (demo login, création séance, navigation FR/EN + thème)                |
+| P6.9  | Budgets par route         | HTML gzip + nœuds DOM ajoutés à `check-budget.mjs`                                                            |
+| P6.10 | `dead-code.mjs`           | script + CI, orphelins traités                                                                                |
 
 **Acceptation** : K9–K14 atteints ; CI verte ; aucune régression de budget.
 
@@ -468,7 +468,7 @@ dupliquée ; galerie `/ui` à jour ; captures identiques.
 
 ### 4.1 Chiffrage et chemin critique
 
-Estimation **humain-équivalent** (un agent exécute plus vite, mais le séquencement reste le même).
+Estimation **humain-équivalent** (l'automatisation accélère l'exécution, mais le séquencement reste le même).
 Les tailles sont celles du plan initial, réévaluées avec la dépendance P1 → tout le reste.
 
 | Phase                | Taille | Effort | Dépend de                         | Parallélisable avec         |
@@ -593,13 +593,13 @@ captures. Aucune migration de données localStorage n'est prévue.
 
 ## 8. Décisions à prendre (ADR backlog)
 
-| #       | Décision           | Options                                                               | Recommandation                                                    | À trancher avant          |
-| ------- | ------------------ | --------------------------------------------------------------------- | ----------------------------------------------------------------- | ------------------------- |
-| ADR-001 | Alpine             | garder l'ESM auto-hébergé + pont typé **vs** tenter un bundlage       | garder (crash rolldown documenté, pas de types)                   | **P1** (go du spike P0.6) |
-| ADR-002 | i18n               | 21 stubs + `setLocale` global **vs** `Astro.currentLocale`/middleware | étudier en lot séparé après P7 (impact build)                     | P7 / lot dédié            |
-| ADR-003 | CSS                | tout scopé **vs** motifs partagés en `@layer components`              | hybride : layer pour les motifs stables, scope pour le spécifique | **P4**                    |
-| ADR-004 | Registre dynamique | partout **vs** uniquement les listes > 3 variantes                    | uniquement là où l'exhaustivité compile apporte une valeur        | **P2**                    |
-| ADR-005 | `print.astro`      | tokens partagés **vs** palette autonome imprimable                    | documenter l'exception, réduire la whitelist au minimum           | **P6**                    |
+| #       | Décision           | Options                                                                                                    | Recommandation                                                    | À trancher avant          |
+| ------- | ------------------ | ---------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- | ------------------------- |
+| ADR-001 | Alpine             | garder l'ESM auto-hébergé + pont typé **vs** tenter un bundlage                                            | garder (crash rolldown documenté, pas de types)                   | **P1** (go du spike P0.6) |
+| ADR-002 | i18n               | 20 stubs de routes + 25 modules de traduction + `setLocale` global **vs** `Astro.currentLocale`/middleware | étudier en lot séparé après P7 (impact build)                     | P7 / lot dédié            |
+| ADR-003 | CSS                | tout scopé **vs** motifs partagés en `@layer components`                                                   | hybride : layer pour les motifs stables, scope pour le spécifique | **P4**                    |
+| ADR-004 | Registre dynamique | partout **vs** uniquement les listes > 3 variantes                                                         | uniquement là où l'exhaustivité compile apporte une valeur        | **P2**                    |
+| ADR-005 | `print.astro`      | tokens partagés **vs** palette autonome imprimable                                                         | documenter l'exception, réduire la whitelist au minimum           | **P6**                    |
 
 Une ADR non tranchée bloque la phase concernée : elle est écrite en 10 lignes dans `docs/adr/`
 (contexte, options, décision, conséquences) avant de commencer la phase.
@@ -608,19 +608,20 @@ Une ADR non tranchée bloque la phase concernée : elle est écrite en 10 lignes
 
 ## 9. Suivi
 
-| Phase                  | Statut | KPI cible                          | PR  |
-| ---------------------- | ------ | ---------------------------------- | --- |
-| P0 — Fondations        | ☐      | outils en place, baseline          | —   |
-| P1 — Socle Alpine      | ☐      | K4, K5, K10 → 0                    | —   |
-| P2 — Contrat universel | ☐      | primitives typées, registre helper | —   |
-| P3 — Headless          | ☐      | K6 → 0, K13 +5 pts                 | —   |
-| P4 — Styles            | ☐      | K1 ≤ 400, K7 → 0                   | —   |
-| P5 — Domaines          | ☐      | K2, K3, K8 → 0                     | —   |
-| P6 — Qualité           | ☐      | K9, K11, K12, K14                  | —   |
-| P7 — Verrouillage      | ☐      | CI stricte, ADR                    | —   |
+| Phase                  | Statut | KPI cible                                                          | PR                                    |
+| ---------------------- | ------ | ------------------------------------------------------------------ | ------------------------------------- |
+| P0 — Fondations        | ☑      | garde-fou, baseline, templates, spike GO, git, e2e, gate de format | `fa4289a`, `59129c2` + commit courant |
+| P1 — Socle Alpine      | ☐      | K4, K5, K10 → 0                                                    | —                                     |
+| P2 — Contrat universel | ☐      | primitives typées, registre helper                                 | —                                     |
+| P3 — Headless          | ☐      | K6 → 0, K13 +5 pts                                                 | —                                     |
+| P4 — Styles            | ☐      | K1 ≤ 400, K7 → 0                                                   | —                                     |
+| P5 — Domaines          | ☐      | K2, K3, K8 → 0                                                     | —                                     |
+| P6 — Qualité           | ☐      | K9, K11, K12, K14                                                  | —                                     |
+| P7 — Verrouillage      | ☐      | CI stricte, ADR                                                    | —                                     |
 
-> Prochaine action recommandée : **P0** (garde-fou + baseline + templates), puis **P1** dès que P0 est
-> vert. Le plan est prêt à exécution ; aucune ligne de production n'a été modifiée par ce document.
+> **P0 terminé** : garde-fou `check-components`, baseline archivée, templates copiables, spike store UI
+> **GO**, git initialisé, e2e réel, gate de format corrigé, README des styles créé. Prochaine action :
+> **P1** (socle Alpine typé + stores UI), dès que les décisions ADR-001 et ADR-004 sont prises.
 
 ---
 
@@ -632,7 +633,7 @@ Même après correction, ces points ne sont **pas** garantis par le document et 
 1. **Chiffrage non validé** : les 21 j du chemin critique sont une estimation humain-équivalent,
    sans retour d'expérience sur ce dépôt. À recalibrer après P1.
 2. **Baseline a11y absente** (K14) : le nombre exact de violations n'est pas connu ; il sera mesuré
-   en P0/P6 et pourrait révéler un lot de travail supplémentaire.
+   en P6 et pourrait révéler un lot de travail supplémentaire.
 3. **Captures déterministes à mettre en place** : `page.clock` + seed figé (§6.2) doivent être
    validés sur les 14 routes avant de servir de référence ; sinon le diff visuel donnera des faux
    positifs (dates relatives).
@@ -640,5 +641,5 @@ Même après correction, ces points ne sont **pas** garantis par le document et 
    recommandations, l'utilisateur peut les invalider (surtout ADR-002/i18n).
 5. **`ComponentType` était une erreur** : corrigé en `AstroComponentFactory` après vérification dans
    `node_modules` (§1.1). Toute API future citée dans ce doc doit être vérifiée de la même manière.
-6. **Aucune review humaine** : ce plan a été relu par son auteur uniquement ; une relecture avant P0
-   reste la meilleure garantie qu'il est réellement « 10/10 ».
+6. **Aucune relecture indépendante** : une relecture avant exécution reste la meilleure garantie que le
+   plan est complet.

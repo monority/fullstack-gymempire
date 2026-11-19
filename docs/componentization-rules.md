@@ -57,8 +57,8 @@ callbacks. Seule la couche `pages/` connaît l'assemblage complet.
 | `is:global`                                     | **interdit** hors `global.css` et whitelist explicite | Utiliser un `<style>` scopé dans le composant             |
 | Bloc de markup identique                        | 2 occurrences → composant ; 3 → **obligatoire**       | Extraire vers `ui/` ou le domaine                         |
 
-État initial (audit 2026-11-18) : **8 785 lignes de CSS inline dans les pages**, 18 blocs > 150
-lignes, 7 pages > 1 000 lignes, 24 blocs d'enregistrement Alpine dupliqués. Ces chiffres sont la
+État initial (mesures relevées dans le dépôt) : **8 785 lignes de CSS inline dans les pages**,
+18 blocs > 150 lignes, 7 pages > 1 000 lignes, 55 `(window as any)` et 29 `alpine:init`. Ces chiffres sont la
 cible du plan, pas un état acceptable.
 
 ---

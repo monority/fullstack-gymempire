@@ -19,6 +19,7 @@
     "check:colors": "node scripts/check-colors.mjs",
     "check:contrast": "node scripts/check-contrast.mjs",
     "check:budget": "node scripts/check-budget.mjs",
+    "check:components": "node scripts/check-components.mjs",
     "screens": "node scripts/capture-screens.mjs",
     "test": "vitest run",
     "test:e2e": "playwright test",

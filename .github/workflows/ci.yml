@@ -44,6 +44,9 @@ jobs:
       - name: Lint
         run: pnpm lint
 
+      - name: Dette de componentisation (avertissement)
+        run: pnpm check:components
+
       - name: Tokens de couleur
         run: pnpm check:colors
 

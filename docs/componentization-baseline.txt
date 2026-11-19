@@ -1,0 +1,39 @@
+# Baseline de componentisation — générée localement
+
+## Tailles
+ 16011 total
+  1488 src/pages/sessions/create/index.astro
+  1226 src/pages/exercises/index.astro
+  1225 src/pages/settings/index.astro
+  1130 src/pages/sessions/detail.astro
+  1070 src/pages/sessions/quick.astro
+  1060 src/pages/ui.astro
+  1015 src/pages/sessions/compare.astro
+   790 src/pages/progression/stats.astro
+   787 src/pages/sessions/print.astro
+   704 src/pages/timer/index.astro
+   642 src/pages/progression/poids.astro
+
+Lignes de style dans les pages : 8785
+Pages > 1000 lignes : 7
+
+## Patterns
+(window as any) : 55
+alpine:init : 29
+pages avec Alpine.data : 20
+is:global : 5
+domaines sans .astro : builder calendar exercises progression sessions settings timer 
+
+## Budgets
+jsGzip: 108280 B / 140000 B
+cssGzip: 45917 B / 60000 B
+i18n.CsIqjYd9.js (gzip): 26942 B / 40000 B
+check:budget — budgets respectés.
+
+## Couverture
+=============================== Coverage summary ===============================
+Statements   : 64.71% ( 2646/4089 )
+Branches     : 58.51% ( 1336/2283 )
+Functions    : 62.27% ( 685/1100 )
+Lines        : 66.62% ( 2322/3485 )
+================================================================================
