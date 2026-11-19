@@ -119,43 +119,38 @@ const { title, class: className = '' } = Astro.props as Props;
 </header>
 
 <script>
-  import { getAlpine } from '../../lib/alpine';
+  import { registerAlpine } from '../../lib/alpine';
   import { t } from '../../i18n';
 
   const L = t();
 
-  document.addEventListener('alpine:init', () => {
-    const Alpine = getAlpine();
-    if (!Alpine) return;
+  registerAlpine('localeApp', () => ({
+    get locale(): string {
+      const l = (window as { __LOCALE__?: string }).__LOCALE__;
+      return l === 'en' ? 'en' : 'fr';
+    },
+    switchToLight: L.layout.switchToLight,
+    switchToDark: L.layout.switchToDark,
+    switchLocaleAria: L.layout.switchLocale,
 
-    Alpine.data('localeApp', () => ({
-      get locale(): string {
-        const l = (window as { __LOCALE__?: string }).__LOCALE__;
-        return l === 'en' ? 'en' : 'fr';
-      },
-      switchToLight: L.layout.switchToLight,
-      switchToDark: L.layout.switchToDark,
-      switchLocaleAria: L.layout.switchLocale,
+    get localeLabel(): string {
+      return this.locale === 'en' ? L.layout.langEn : L.layout.langFr;
+    },
 
-      get localeLabel(): string {
-        return this.locale === 'en' ? L.layout.langEn : L.layout.langFr;
-      },
-
-      switchLocale() {
-        const path = window.location.pathname;
-        const search = window.location.search;
-        const hash = window.location.hash;
-        let target: string;
-        if (this.locale === 'en') {
-          target = path.startsWith('/en') ? path.slice(3) : path;
-          if (!target) target = '/';
-        } else {
-          target = '/en' + (path === '/' ? '' : path);
-        }
-        window.location.href = target + search + hash;
-      },
-    }));
-  });
+    switchLocale() {
+      const path = window.location.pathname;
+      const search = window.location.search;
+      const hash = window.location.hash;
+      let target: string;
+      if (this.locale === 'en') {
+        target = path.startsWith('/en') ? path.slice(3) : path;
+        if (!target) target = '/';
+      } else {
+        target = '/en' + (path === '/' ? '' : path);
+      }
+      window.location.href = target + search + hash;
+    },
+  }));
 </script>
 
 <style>

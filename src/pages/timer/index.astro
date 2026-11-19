@@ -240,24 +240,20 @@ const L = t();
 
 <script>
   import { createTimerApp } from '../../components/timer/timerApp';
-  import { getAlpine } from '../../lib/alpine';
+  import { registerAlpine } from '../../lib/alpine';
   import { t, localizedPath } from '../../i18n';
 
   const LABELS = t();
 
-  const registerTimer = () => {
-    getAlpine()?.data('timerApp', () =>
-      createTimerApp({
-        labels: LABELS.timer,
-        labelSource: LABELS,
-        now: () => Date.now(),
-        randomId: () => Math.random().toString(36).slice(2, 10),
-        localizedPath,
-      })
-    );
-  };
-  document.addEventListener('alpine:init', registerTimer);
-  if (getAlpine()) registerTimer();
+  registerAlpine('timerApp', () =>
+    createTimerApp({
+      labels: LABELS.timer,
+      labelSource: LABELS,
+      now: () => Date.now(),
+      randomId: () => Math.random().toString(36).slice(2, 10),
+      localizedPath,
+    })
+  );
 </script>
 
 <style>

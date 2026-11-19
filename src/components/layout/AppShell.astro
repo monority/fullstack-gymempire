@@ -126,7 +126,7 @@ const drawerItems = groups.map((group) => ({
 </div>
 
 <script>
-  import { getAlpine } from '../../lib/alpine';
+  import { registerAlpine } from '../../lib/alpine';
   // Mobile drawer toggle
   (() => {
     const toggle = document.querySelector<HTMLButtonElement>('[data-mobile-toggle]');
@@ -276,65 +276,60 @@ const drawerItems = groups.map((group) => ({
   document.addEventListener('astro:after-swap', syncSidebarActiveState);
 
   // Theme + nav accordion Alpine data factory
-  document.addEventListener('alpine:init', () => {
-    const Alpine = getAlpine();
-    if (!Alpine) return;
+  const ACCORDION_KEY = 'muscu:nav:collapsed';
 
-    const ACCORDION_KEY = 'muscu:nav:collapsed';
-
-    function readCollapsed(): string[] {
-      try {
-        const raw = window.localStorage.getItem(ACCORDION_KEY);
-        const saved = raw ? JSON.parse(raw) : [];
-        return Array.isArray(saved) ? saved : [];
-      } catch {
-        return [];
-      }
+  function readCollapsed(): string[] {
+    try {
+      const raw = window.localStorage.getItem(ACCORDION_KEY);
+      const saved = raw ? JSON.parse(raw) : [];
+      return Array.isArray(saved) ? saved : [];
+    } catch {
+      return [];
     }
+  }
 
-    Alpine.data('themeApp', () => ({
-      theme: 'dark' as 'dark' | 'light',
-      collapsed: [] as string[],
-      navReady: false,
+  registerAlpine('themeApp', () => ({
+    theme: 'dark' as 'dark' | 'light',
+    collapsed: [] as string[],
+    navReady: false,
 
-      init() {
-        const current = document.documentElement.getAttribute('data-theme') || 'dark';
-        this.theme = current === 'light' ? 'light' : 'dark';
-        this.collapsed = readCollapsed();
+    init() {
+      const current = document.documentElement.getAttribute('data-theme') || 'dark';
+      this.theme = current === 'light' ? 'light' : 'dark';
+      this.collapsed = readCollapsed();
 
-        // Let Alpine apply the restored accordion state without a transition;
-        // transitions are enabled again for subsequent user interactions.
-        requestAnimationFrame(() => {
-          this.navReady = true;
-        });
-      },
+      // Let Alpine apply the restored accordion state without a transition;
+      // transitions are enabled again for subsequent user interactions.
+      requestAnimationFrame(() => {
+        this.navReady = true;
+      });
+    },
 
-      toggleTheme() {
-        this.theme = this.theme === 'dark' ? 'light' : 'dark';
-        document.documentElement.setAttribute('data-theme', this.theme);
-        try {
-          window.localStorage.setItem('muscu-theme', this.theme);
-        } catch {}
-      },
+    toggleTheme() {
+      this.theme = this.theme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', this.theme);
+      try {
+        window.localStorage.setItem('muscu-theme', this.theme);
+      } catch {}
+    },
 
-      isDark(): boolean {
-        return this.theme === 'dark';
-      },
+    isDark(): boolean {
+      return this.theme === 'dark';
+    },
 
-      isExpanded(id: string): boolean {
-        return !this.collapsed.includes(id);
-      },
+    isExpanded(id: string): boolean {
+      return !this.collapsed.includes(id);
+    },
 
-      toggleNav(id: string) {
-        const i = this.collapsed.indexOf(id);
-        if (i >= 0) this.collapsed.splice(i, 1);
-        else this.collapsed.push(id);
-        try {
-          window.localStorage.setItem(ACCORDION_KEY, JSON.stringify(this.collapsed));
-        } catch {}
-      },
-    }));
-  });
+    toggleNav(id: string) {
+      const i = this.collapsed.indexOf(id);
+      if (i >= 0) this.collapsed.splice(i, 1);
+      else this.collapsed.push(id);
+      try {
+        window.localStorage.setItem(ACCORDION_KEY, JSON.stringify(this.collapsed));
+      } catch {}
+    },
+  }));
 </script>
 
 <style>

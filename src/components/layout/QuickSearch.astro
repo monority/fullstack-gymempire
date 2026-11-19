@@ -344,7 +344,7 @@ const L = t();
 </style>
 
 <script>
-  import { getAlpine } from '../../lib/alpine';
+  import { registerAlpine } from '../../lib/alpine';
   import { t, getLocale, localizedPath, trExercise, trMuscle } from '../../i18n';
   import { getExercises } from '../../lib/storage/exercises';
   import { getSessions } from '../../lib/storage/sessions';
@@ -377,247 +377,240 @@ const L = t();
   /** Prefix hits rank above substring hits (0 < 1). */
   const rankScore = (name: string, q: string): number => (normalize(name).startsWith(q) ? 0 : 1);
 
-  document.addEventListener('alpine:init', () => {
-    const Alpine = getAlpine();
-    if (!Alpine) return;
+  registerAlpine('commandMenu', () => {
+    const L = t();
+    const locale = getLocale();
+    const base = (p: string) => localizedPath(p);
 
-    Alpine.data('commandMenu', () => {
-      const L = t();
-      const locale = getLocale();
-      const base = (p: string) => localizedPath(p);
+    // Static page catalogue (labels localized at init).
+    const pages: QItem[] = [
+      { index: 0, key: 'page:/', kind: 'page', label: L.nav.dashboard, href: base('/') },
+      {
+        index: 0,
+        key: 'page:/sessions/quick',
+        kind: 'page',
+        label: L.nav.rapide,
+        href: base('/sessions/quick'),
+      },
+      {
+        index: 0,
+        key: 'page:/sessions/create',
+        kind: 'page',
+        label: L.nav.creer,
+        href: base('/sessions/create'),
+      },
+      {
+        index: 0,
+        key: 'page:/exercises',
+        kind: 'page',
+        label: L.nav.exercices,
+        href: base('/exercises'),
+      },
+      {
+        index: 0,
+        key: 'page:/progression',
+        kind: 'page',
+        label: L.nav.progression,
+        href: base('/progression'),
+      },
+      {
+        index: 0,
+        key: 'page:/progression/poids',
+        kind: 'page',
+        label: L.nav.poidsMesures,
+        href: base('/progression/poids'),
+      },
+      {
+        index: 0,
+        key: 'page:/progression/records',
+        kind: 'page',
+        label: L.nav.records,
+        href: base('/progression/records'),
+      },
+      {
+        index: 0,
+        key: 'page:/progression/stats',
+        kind: 'page',
+        label: L.nav.statistiques,
+        href: base('/progression/stats'),
+      },
+      {
+        index: 0,
+        key: 'page:/calculator',
+        kind: 'page',
+        label: L.nav.calculateur,
+        href: base('/calculator'),
+      },
+      {
+        index: 0,
+        key: 'page:/calendar',
+        kind: 'page',
+        label: L.nav.calendrier,
+        href: base('/calendar'),
+      },
+      {
+        index: 0,
+        key: 'page:/sessions',
+        kind: 'page',
+        label: L.nav.seances,
+        href: base('/sessions'),
+      },
+      { index: 0, key: 'page:/timer', kind: 'page', label: L.nav.timer, href: base('/timer') },
+      {
+        index: 0,
+        key: 'page:/settings',
+        kind: 'page',
+        label: L.nav.settings,
+        href: base('/settings'),
+      },
+    ];
 
-      // Static page catalogue (labels localized at init).
-      const pages: QItem[] = [
-        { index: 0, key: 'page:/', kind: 'page', label: L.nav.dashboard, href: base('/') },
-        {
-          index: 0,
-          key: 'page:/sessions/quick',
-          kind: 'page',
-          label: L.nav.rapide,
-          href: base('/sessions/quick'),
-        },
-        {
-          index: 0,
-          key: 'page:/sessions/create',
-          kind: 'page',
-          label: L.nav.creer,
-          href: base('/sessions/create'),
-        },
-        {
-          index: 0,
-          key: 'page:/exercises',
-          kind: 'page',
-          label: L.nav.exercices,
-          href: base('/exercises'),
-        },
-        {
-          index: 0,
-          key: 'page:/progression',
-          kind: 'page',
-          label: L.nav.progression,
-          href: base('/progression'),
-        },
-        {
-          index: 0,
-          key: 'page:/progression/poids',
-          kind: 'page',
-          label: L.nav.poidsMesures,
-          href: base('/progression/poids'),
-        },
-        {
-          index: 0,
-          key: 'page:/progression/records',
-          kind: 'page',
-          label: L.nav.records,
-          href: base('/progression/records'),
-        },
-        {
-          index: 0,
-          key: 'page:/progression/stats',
-          kind: 'page',
-          label: L.nav.statistiques,
-          href: base('/progression/stats'),
-        },
-        {
-          index: 0,
-          key: 'page:/calculator',
-          kind: 'page',
-          label: L.nav.calculateur,
-          href: base('/calculator'),
-        },
-        {
-          index: 0,
-          key: 'page:/calendar',
-          kind: 'page',
-          label: L.nav.calendrier,
-          href: base('/calendar'),
-        },
-        {
-          index: 0,
-          key: 'page:/sessions',
-          kind: 'page',
-          label: L.nav.seances,
-          href: base('/sessions'),
-        },
-        { index: 0, key: 'page:/timer', kind: 'page', label: L.nav.timer, href: base('/timer') },
-        {
-          index: 0,
-          key: 'page:/settings',
-          kind: 'page',
-          label: L.nav.settings,
-          href: base('/settings'),
-        },
-      ];
+    const formatDate = (iso: string): string => {
+      const d = new Date(iso);
+      if (Number.isNaN(d.getTime())) return iso;
+      return d.toLocaleDateString(locale === 'en' ? 'en-GB' : 'fr-FR');
+    };
 
-      const formatDate = (iso: string): string => {
-        const d = new Date(iso);
-        if (Number.isNaN(d.getTime())) return iso;
-        return d.toLocaleDateString(locale === 'en' ? 'en-GB' : 'fr-FR');
-      };
+    return {
+      keyword: '',
+      highlight: 0,
+      placeholder: L.command.placeholder,
+      emptyTitle: L.command.noResults,
+      emptyHint: L.command.noResultsHint,
+      hintOpen: L.command.hintOpen,
+      hintNav: L.command.hintNav,
+      hintSelect: L.command.hintSelect,
+      hintClose: L.command.hintClose,
+      exercises: [] as Exercise[],
+      sessions: [] as Session[],
 
-      return {
-        keyword: '',
-        highlight: 0,
-        placeholder: L.command.placeholder,
-        emptyTitle: L.command.noResults,
-        emptyHint: L.command.noResultsHint,
-        hintOpen: L.command.hintOpen,
-        hintNav: L.command.hintNav,
-        hintSelect: L.command.hintSelect,
-        hintClose: L.command.hintClose,
-        exercises: [] as Exercise[],
-        sessions: [] as Session[],
+      init() {
+        // Loaded once when the component boots, then filtered reactively.
+        this.exercises = getExercises();
+        this.sessions = getSessions();
+      },
 
-        init() {
-          // Loaded once when the component boots, then filtered reactively.
-          this.exercises = getExercises();
-          this.sessions = getSessions();
-        },
+      get query(): string {
+        return normalize(this.keyword);
+      },
 
-        get query(): string {
-          return normalize(this.keyword);
-        },
+      get flatItems(): QItem[] {
+        return this.groups.reduce((acc: QItem[], g) => acc.concat(g.items), []);
+      },
 
-        get flatItems(): QItem[] {
-          return this.groups.reduce((acc: QItem[], g) => acc.concat(g.items), []);
-        },
+      get noResults(): boolean {
+        return this.query.length > 0 && this.flatItems.length === 0;
+      },
 
-        get noResults(): boolean {
-          return this.query.length > 0 && this.flatItems.length === 0;
-        },
+      get groups(): QGroup[] {
+        const q = this.query;
+        const result: QGroup[] = [];
 
-        get groups(): QGroup[] {
-          const q = this.query;
-          const result: QGroup[] = [];
+        // 1. Pages (shown unfiltered when the query is empty)
+        const pageHits = q ? pages.filter((p) => matches(p.label, q)) : pages;
+        if (pageHits.length) {
+          result.push({ id: 'pages', title: L.command.pages, items: pageHits });
+        }
 
-          // 1. Pages (shown unfiltered when the query is empty)
-          const pageHits = q ? pages.filter((p) => matches(p.label, q)) : pages;
-          if (pageHits.length) {
-            result.push({ id: 'pages', title: L.command.pages, items: pageHits });
+        //    (so the EN locale can find "bench press"), and the muscle
+        //    group. When the query matches a muscle (fr key or en
+        //    translation via trMuscle), the exercises of that muscle are
+        //    prefix-rank-boosted; an exact muscle query ("Pectoraux" /
+        //    "chest") turns the group header into that muscle's name.
+        if (q) {
+          const muscleKeys = this.exercises
+            .map((e) => e.muscle)
+            .filter((m, i, arr) => arr.indexOf(m) === i);
+          const muscleHits = new Set(
+            muscleKeys.filter((m) => matches(m, q) || matches(trMuscle(m), q))
+          );
+          const exactMuscle = muscleHits.size === 1 ? [...muscleHits][0] : null;
+
+          const exo = this.exercises
+            .map((e) => ({ e, tr: trExercise(e.name) }))
+            .filter(({ e, tr }) => matches(e.name, q) || matches(tr, q) || muscleHits.has(e.muscle))
+            .sort((a, b) => {
+              const score = (item: { e: Exercise; tr: string }): number =>
+                (muscleHits.has(item.e.muscle) ? 0 : 1) * 2 +
+                Math.min(rankScore(item.e.name, q), rankScore(item.tr, q));
+              return score(a) - score(b);
+            })
+            .slice(0, 8)
+            .map(({ e, tr }) => ({
+              index: 0,
+              key: `exo:${e.id}`,
+              kind: 'exercise' as const,
+              label: tr,
+              sub: trMuscle(e.muscle),
+              href: base('/exercises'),
+            }));
+          if (exo.length) {
+            result.push({
+              id: 'exercises',
+              // Exact muscle query ("Pectoraux" / "chest") becomes the
+              // group header; substring hits only get the rank boost.
+              title:
+                exactMuscle !== null &&
+                (normalize(exactMuscle) === q || normalize(trMuscle(exactMuscle)) === q)
+                  ? trMuscle(exactMuscle)
+                  : L.command.exercises,
+              items: exo,
+            });
           }
+        }
 
-          //    (so the EN locale can find "bench press"), and the muscle
-          //    group. When the query matches a muscle (fr key or en
-          //    translation via trMuscle), the exercises of that muscle are
-          //    prefix-rank-boosted; an exact muscle query ("Pectoraux" /
-          //    "chest") turns the group header into that muscle's name.
-          if (q) {
-            const muscleKeys = this.exercises
-              .map((e) => e.muscle)
-              .filter((m, i, arr) => arr.indexOf(m) === i);
-            const muscleHits = new Set(
-              muscleKeys.filter((m) => matches(m, q) || matches(trMuscle(m), q))
-            );
-            const exactMuscle = muscleHits.size === 1 ? [...muscleHits][0] : null;
-
-            const exo = this.exercises
-              .map((e) => ({ e, tr: trExercise(e.name) }))
-              .filter(
-                ({ e, tr }) => matches(e.name, q) || matches(tr, q) || muscleHits.has(e.muscle)
-              )
-              .sort((a, b) => {
-                const score = (item: { e: Exercise; tr: string }): number =>
-                  (muscleHits.has(item.e.muscle) ? 0 : 1) * 2 +
-                  Math.min(rankScore(item.e.name, q), rankScore(item.tr, q));
-                return score(a) - score(b);
-              })
-              .slice(0, 8)
-              .map(({ e, tr }) => ({
-                index: 0,
-                key: `exo:${e.id}`,
-                kind: 'exercise' as const,
-                label: tr,
-                sub: trMuscle(e.muscle),
-                href: base('/exercises'),
-              }));
-            if (exo.length) {
-              result.push({
-                id: 'exercises',
-                // Exact muscle query ("Pectoraux" / "chest") becomes the
-                // group header; substring hits only get the rank boost.
-                title:
-                  exactMuscle !== null &&
-                  (normalize(exactMuscle) === q || normalize(trMuscle(exactMuscle)) === q)
-                    ? trMuscle(exactMuscle)
-                    : L.command.exercises,
-                items: exo,
-              });
-            }
+        if (q) {
+          const sess = this.sessions
+            .filter((s) => matches(s.name, q))
+            .sort((a, b) => rankScore(a.name, q) - rankScore(b.name, q))
+            .slice(0, 8)
+            .map((s) => ({
+              index: 0,
+              key: `ses:${s.id}`,
+              kind: 'session' as const,
+              label: s.name,
+              sub: formatDate(s.date),
+              href: base(`/sessions/detail?id=${encodeURIComponent(s.id)}`),
+            }));
+          if (sess.length) {
+            result.push({ id: 'sessions', title: L.command.sessions, items: sess });
           }
+        }
 
-          if (q) {
-            const sess = this.sessions
-              .filter((s) => matches(s.name, q))
-              .sort((a, b) => rankScore(a.name, q) - rankScore(b.name, q))
-              .slice(0, 8)
-              .map((s) => ({
-                index: 0,
-                key: `ses:${s.id}`,
-                kind: 'session' as const,
-                label: s.name,
-                sub: formatDate(s.date),
-                href: base(`/sessions/detail?id=${encodeURIComponent(s.id)}`),
-              }));
-            if (sess.length) {
-              result.push({ id: 'sessions', title: L.command.sessions, items: sess });
-            }
-          }
+        // Assign a flat index so keyboard navigation spans all groups.
+        let i = 0;
+        for (const g of result) {
+          for (const it of g.items) it.index = i++;
+        }
+        return result;
+      },
 
-          // Assign a flat index so keyboard navigation spans all groups.
-          let i = 0;
-          for (const g of result) {
-            for (const it of g.items) it.index = i++;
-          }
-          return result;
-        },
+      move(dir: number) {
+        const n = this.flatItems.length;
+        if (!n) return;
+        this.highlight = (this.highlight + dir + n) % n;
+        const alpine = this as unknown as AlpineMagicThis;
+        alpine.$nextTick(() => {
+          const el = alpine.$el.querySelector(`[data-qsi="${this.highlight}"]`);
+          if (el) el.scrollIntoView({ block: 'nearest' });
+        });
+      },
 
-        move(dir: number) {
-          const n = this.flatItems.length;
-          if (!n) return;
-          this.highlight = (this.highlight + dir + n) % n;
-          const alpine = this as unknown as AlpineMagicThis;
-          alpine.$nextTick(() => {
-            const el = alpine.$el.querySelector(`[data-qsi="${this.highlight}"]`);
-            if (el) el.scrollIntoView({ block: 'nearest' });
-          });
-        },
+      selectCurrent() {
+        const items = this.flatItems;
+        if (!items.length) return;
+        this.selectItem(items[this.highlight] ?? items[0]);
+      },
 
-        selectCurrent() {
-          const items = this.flatItems;
-          if (!items.length) return;
-          this.selectItem(items[this.highlight] ?? items[0]);
-        },
+      selectItem(item: QItem) {
+        window.location.href = item.href;
+      },
 
-        selectItem(item: QItem) {
-          window.location.href = item.href;
-        },
-
-        reset() {
-          this.keyword = '';
-          this.highlight = 0;
-        },
-      };
-    });
+      reset() {
+        this.keyword = '';
+        this.highlight = 0;
+      },
+    };
   });
 
   let qsBound = false;

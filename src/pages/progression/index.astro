@@ -150,74 +150,10 @@ const L = t();
 </AppLayout>
 
 <script>
-  import { getAlpine } from '../../lib/alpine';
-  import { getSessions } from '../../lib/storage/sessions';
-  import type { ProgressRecord } from '../../lib/storage/types';
-  import { formatNumPositive, formatDateShort } from '../../lib/format';
-  import {
-    computeExerciseProgression,
-    computeMax1RM,
-    historyBarHeight as calcHistoryBarHeight,
-    type ExerciseProgression,
-  } from '../../lib/progression-stats';
+  import { createProgressionApp } from '../../components/progression/progressionApp';
+  import { registerAlpine } from '../../lib/alpine';
 
-  document.addEventListener('alpine:init', () => {
-    const Alpine = getAlpine();
-    if (!Alpine) return;
-
-    Alpine.data('progressionApp', () => ({
-      exerciseStats: [] as ExerciseProgression[],
-
-      init() {
-        this.recompute();
-      },
-
-      get totalSessions(): number {
-        return getSessions().length;
-      },
-
-      get max1RM(): number {
-        return computeMax1RM(this.exerciseStats);
-      },
-
-      recompute() {
-        this.exerciseStats = computeExerciseProgression(getSessions());
-      },
-
-      formatNumber(n: number): string {
-        return formatNumPositive(n);
-      },
-
-      formatDate(iso: string): string {
-        if (!iso) return '—';
-        return formatDateShort(iso);
-      },
-
-      historyDelta(stat: ExerciseProgression): number | null {
-        if (stat.history.length < 2) return null;
-        const current = stat.history[stat.history.length - 1]?.estimated1RM;
-        const previous = stat.history[stat.history.length - 2]?.estimated1RM;
-        if (typeof current !== 'number' || typeof previous !== 'number') return null;
-        return current - previous;
-      },
-
-      formatDelta(delta: number | null): string {
-        if (delta === null) return '';
-        const sign = delta > 0 ? '+' : '';
-        return `${sign}${formatNumPositive(delta)} kg`;
-      },
-
-      historyBarHeight(history: ProgressRecord[], value: number): number {
-        return calcHistoryBarHeight(history, value);
-      },
-
-      historyTooltip(history: ProgressRecord[]): string {
-        return history
-          .map((r) => `${formatNumPositive(r.estimated1RM)} kg · ${formatDateShort(r.date)}`)
-          .join('\n');
-      },
-    }));
-  });
+  registerAlpine('progressionApp', () => createProgressionApp());
 </script>
 
 <style>
