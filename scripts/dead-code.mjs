@@ -14,7 +14,10 @@ function* walk(dir) {
   }
 }
 
-const files = [...walk(SRC)].filter((f) => !f.includes('__tests__') && !f.includes('i18n'));
+// env.d.ts est une déclaration ambiante : jamais importée par design.
+const files = [...walk(SRC)].filter(
+  (f) => !f.includes('__tests__') && !f.includes('i18n') && !f.endsWith('env.d.ts')
+);
 
 // Collecte de tous les spécificateurs d'import/export-from/dynamic import.
 const importRe =

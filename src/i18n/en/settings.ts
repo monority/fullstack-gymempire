@@ -155,7 +155,7 @@ export default {
     conflict: 'v1 — last write wins: the latest action overwrites the remote data.',
     error: {
       'sync-unavailable': 'Sync is not available in this browser.',
-      'sync-invalid-url': 'Invalid WebDAV URL (use an http:// or https:// address).',
+      'sync-invalid-url': 'Invalid WebDAV URL (https required; http only for localhost).',
       'sync-unauthorized': 'Access denied (wrong credentials).',
       'sync-forbidden': 'Access forbidden by the server (folder permissions?).',
       'sync-notfound': 'Backup file not found on the server.',

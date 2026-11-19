@@ -81,7 +81,9 @@ export function buildBasicAuthHeader(username: string, password: string): string
  * Normalizes the user-configured URL into a concrete resource URL.
  * - URL ending with '/' (directory) → the backup filename is appended.
  * - Any other value → treated as the exact file target.
- * Only http/https is accepted; anything else is `sync-invalid-url`.
+ * Only https is accepted (Basic-auth credentials must not travel in
+ * cleartext). Plain http is tolerated for localhost only, for local dev.
+ * Anything else is `sync-invalid-url`.
  */
 export function normalizeResourceUrl(url: string): string {
   const trimmed = url.trim();
@@ -92,7 +94,8 @@ export function normalizeResourceUrl(url: string): string {
   } catch {
     throw new SyncError('sync-invalid-url');
   }
-  if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+  const localHost = parsed.hostname === 'localhost' || parsed.hostname === '127.0.0.1';
+  if (parsed.protocol !== 'https:' && !(parsed.protocol === 'http:' && localHost)) {
     throw new SyncError('sync-invalid-url');
   }
   if (parsed.pathname.endsWith('/')) {

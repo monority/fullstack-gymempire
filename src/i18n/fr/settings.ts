@@ -157,7 +157,7 @@ export default {
     conflict: 'v1 — dernier écrit gagnant : la dernière action écrase les données distantes.',
     error: {
       'sync-unavailable': 'La synchronisation n’est pas disponible dans ce navigateur.',
-      'sync-invalid-url': 'URL WebDAV invalide (utilisez une adresse http:// ou https://).',
+      'sync-invalid-url': 'URL WebDAV invalide (https requis ; http uniquement pour localhost).',
       'sync-unauthorized': 'Accès refusé (identifiants incorrects).',
       'sync-forbidden': 'Accès interdit par le serveur (permissions du dossier ?).',
       'sync-notfound': 'Fichier de sauvegarde introuvable sur le serveur.',

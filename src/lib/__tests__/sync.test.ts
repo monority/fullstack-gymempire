@@ -96,8 +96,19 @@ describe('normalizeResourceUrl', () => {
     );
   });
 
+  it('accepte http uniquement pour localhost (développement)', () => {
+    expect(normalizeResourceUrl('http://localhost:8080/dav/')).toContain('localhost:8080');
+    expect(normalizeResourceUrl('http://127.0.0.1:8080/dav/')).toContain('127.0.0.1:8080');
+  });
+
   it('rejects empty, unparsable and non-http(s) URLs', () => {
-    for (const bad of ['', '   ', 'not-a-url', 'ftp://ex.com/file']) {
+    for (const bad of [
+      '',
+      '   ',
+      'not-a-url',
+      'ftp://ex.com/file',
+      'http://ex.com/dav/file', // credentials Basic en clair interdits
+    ]) {
       expect(() => normalizeResourceUrl(bad)).toThrow(
         expect.objectContaining({ code: 'sync-invalid-url' })
       );

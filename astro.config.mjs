@@ -22,9 +22,9 @@ export default defineConfig({
       // issued by a previous dev-server instance. After a server restart, pages
       // still open (or a cached preview webview) keep the old token and get
       // 400 → "TypeError: can't access property 'send', ws is undefined" in the
-      // console, and HMR stays dead until a hard reload. The server binds
-      // loopback-only, so skipping the token check is acceptable here; remove
-      // this if the dev server is ever exposed beyond 127.0.0.1.
+      // console, and HMR stays dead until a hard reload. skipWebSocketTokenCheck
+      // is only acceptable while the dev server is bound to 127.0.0.1 — start
+      // it with `pnpm dev --host 127.0.0.1`, never 0.0.0.0.
       skipWebSocketTokenCheck: true,
     },
   },

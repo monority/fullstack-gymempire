@@ -47,6 +47,9 @@ jobs:
       - name: Dette de componentisation (avertissement)
         run: pnpm check:components
 
+      - name: Modules orphelins (inventaire)
+        run: pnpm check:dead-code
+
       - name: Tokens de couleur
         run: pnpm check:colors
 
