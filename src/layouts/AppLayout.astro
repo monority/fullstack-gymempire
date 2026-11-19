@@ -134,10 +134,10 @@ const groupsWithActive = groups.map((g) => ({
     <script>
       import { trExercise, trMuscle, trCategory } from '../i18n';
       import { muscleHue } from '../lib/colors';
-      (window as any).trExercise = trExercise;
-      (window as any).trMuscle = trMuscle;
-      (window as any).trCategory = trCategory;
-      (window as any).muscleHue = muscleHue;
+      (window as Window & { trExercise?: typeof trExercise }).trExercise = trExercise;
+      (window as Window & { trMuscle?: typeof trMuscle }).trMuscle = trMuscle;
+      (window as Window & { trCategory?: typeof trCategory }).trCategory = trCategory;
+      (window as Window & { muscleHue?: typeof muscleHue }).muscleHue = muscleHue;
     </script>
 
     {/* ── Theme bootstrap ──
@@ -304,8 +304,10 @@ const groupsWithActive = groups.map((g) => ({
 
     {/* Lifecycle ClientRouter (theme, x-ignore, re-registration) — module typé, ADR-001. */}
     <script>
-      import { installAlpineLifecycle } from '../lib/alpine';
+      import { installAlpineLifecycle, registerStore } from '../lib/alpine';
+      import { singleton as uiStore } from '../lib/ui-store';
       installAlpineLifecycle();
+      registerStore('ui', uiStore);
     </script>
   </body>
 </html>

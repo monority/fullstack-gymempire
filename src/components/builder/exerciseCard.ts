@@ -1,3 +1,4 @@
+import { singleton as uiStore } from '../../lib/ui-store';
 /**
  * exerciseCard — Alpine component for a single exercise in session builder.
  *
@@ -47,7 +48,10 @@ export function exerciseCard(exercise: BuilderExercise, exerciseIndex: number) {
     },
 
     get summary(): string {
-      return formatExerciseSummary(this.exercise, (window as any).__builderLabels ?? {});
+      return formatExerciseSummary(
+        this.exercise,
+        (window.__builderLabels ?? {}) as NonNullable<Window['__builderLabels']>
+      );
     },
 
     /** Poids affiché dans l'unité choisie ; le stockage reste en kg. */
@@ -96,7 +100,7 @@ export function exerciseCard(exercise: BuilderExercise, exerciseIndex: number) {
       if (!set) return null;
       const key = `${this.exercise.exerciseId}:${setIndex}:${set.reps}:${set.weight}`;
       if (this._mrvCache.has(key)) return this._mrvCache.get(key)!;
-      const allSessions = (window as any).__builderSessions ?? [];
+      const allSessions = window.__builderSessions ?? [];
       const result = suggestLoadSuggestion(this.exercise.exerciseId, allSessions, {
         targetReps: set.reps > 0 ? set.reps : undefined,
         lastLoad: set.weight > 0 ? set.weight : undefined,
@@ -111,7 +115,7 @@ export function exerciseCard(exercise: BuilderExercise, exerciseIndex: number) {
     },
 
     mrvTitle(setIndex: number): string {
-      const labels = (window as any).__builderLabels ?? {};
+      const labels = window.__builderLabels ?? ({} as NonNullable<Window['__builderLabels']>);
       const s = this.mrvSuggestion(setIndex);
       if (!s || s.reason === 'none') return labels.mrvNoHistory ?? '';
       if (s.reason === 'epley-cap') return labels.mrvCapped ?? '';
@@ -119,7 +123,7 @@ export function exerciseCard(exercise: BuilderExercise, exerciseIndex: number) {
     },
 
     applyMrv(setIndex: number) {
-      const labels = (window as any).__builderLabels ?? {};
+      const labels = window.__builderLabels ?? ({} as NonNullable<Window['__builderLabels']>);
       const set = this.exercise.sets[setIndex];
       const s = this.mrvSuggestion(setIndex);
       if (!set || !s) return;
@@ -135,8 +139,7 @@ export function exerciseCard(exercise: BuilderExercise, exerciseIndex: number) {
     },
 
     showToast(message: string, variant = 'info') {
-      const fn = (window as any).showToast as ((m: string, v?: string) => void) | undefined;
-      if (fn) fn(message, variant);
+      uiStore.notify(message, variant);
     },
   };
 }

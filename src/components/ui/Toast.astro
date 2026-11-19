@@ -28,175 +28,37 @@ import Icon from './Icon.astro';
 ---
 
 <div x-data="toastApp()" data-duration={duration} class="toast-root">
-  <div
-    x-show="open"
-    x-cloak
-    x-transition.opacity.duration.200ms
-    role="status"
-    aria-live="polite"
-    aria-atomic="true"
-    class="toast"
-    :class="`toast--${variant}`"
-  >
-    <!-- Variant icons -->
-    <span class="toast__icon" x-show="variant === 'success'" x-cloak aria-hidden="true">
-      <Icon name="check" size={18} />
-    </span>
-    <span class="toast__icon" x-show="variant === 'error'" x-cloak aria-hidden="true">
-      <Icon name="closeX" size={18} />
-    </span>
-    <span class="toast__icon" x-show="variant === 'info'" x-cloak aria-hidden="true">
-      <Icon name="infoCircle" size={18} />
-    </span>
-    <span class="toast__icon" x-show="variant === 'warning'" x-cloak aria-hidden="true">
-      <Icon name="alertTriangle" size={18} />
-    </span>
-
-    <p class="toast__message" x-text="message"></p>
-
-    <button type="button" class="toast__close" @click="dismiss()" aria-label="Close">
-      <Icon name="closeX" size={16} />
-    </button>
-  </div>
+  <template x-for="toast in $store.ui.toasts" :key="toast.id">
+    <div
+      x-cloak
+      x-transition.opacity.duration.200ms
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
+      class="toast"
+      :class="`toast--${toast.variant}`"
+    >
+      <span class="toast__icon" x-show="toast.variant === 'success'" x-cloak aria-hidden="true">
+        <Icon name="check" size={18} />
+      </span>
+      <span class="toast__icon" x-show="toast.variant === 'error'" x-cloak aria-hidden="true">
+        <Icon name="closeX" size={18} />
+      </span>
+      <span class="toast__icon" x-show="toast.variant === 'info'" x-cloak aria-hidden="true">
+        <Icon name="infoCircle" size={18} />
+      </span>
+      <span class="toast__icon" x-show="toast.variant === 'warning'" x-cloak aria-hidden="true">
+        <Icon name="alertTriangle" size={18} />
+      </span>
+      <p class="toast__message" x-text="toast.message"></p>
+      <button
+        type="button"
+        class="toast__close"
+        @click="$store.ui.dismiss(toast.id)"
+        aria-label="Close"
+      >
+        <Icon name="closeX" size={16} />
+      </button>
+    </div>
+  </template>
 </div>
-
-<style>
-  .toast-root {
-    position: fixed;
-    bottom: calc(var(--bottom-nav-height, 5.6rem) + 1.2rem);
-    right: 2.4rem;
-    z-index: 8; /* level 8: toasts */
-    max-width: 42rem;
-    font-family: var(--font-body);
-  }
-
-  .toast {
-    display: flex;
-    align-items: flex-start;
-    gap: 1.2rem;
-    padding: 1.2rem 1.4rem;
-    background-color: var(--color-surface-3);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    box-shadow: var(--shadow-2);
-  }
-
-  .toast__icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    margin-top: 0.1rem;
-  }
-
-  .toast__icon svg {
-    width: 18px;
-    height: 18px;
-  }
-
-  .toast__message {
-    margin: 0;
-    flex: 1 1 auto;
-    color: var(--color-text);
-    font-size: 1.4rem;
-    line-height: 1.4;
-    word-break: break-word;
-  }
-
-  .toast__close {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    padding: 0.2rem;
-    background: transparent;
-    border: none;
-    border-radius: var(--radius-sm);
-    color: var(--color-muted);
-    cursor: pointer;
-    transition:
-      color var(--transition-fast),
-      background-color var(--transition-fast);
-  }
-
-  .toast__close svg {
-    width: 16px;
-    height: 16px;
-  }
-
-  .toast__close:hover {
-    color: var(--color-text);
-    background-color: var(--alpha-bg-hover);
-  }
-
-  .toast--success .toast__icon {
-    color: var(--color-success);
-  }
-  .toast--error .toast__icon {
-    color: var(--color-destructive);
-  }
-  .toast--info .toast__icon {
-    color: var(--color-info);
-  }
-  .toast--warning .toast__icon {
-    color: var(--color-warning);
-  }
-
-  @media (max-width: 640px) {
-    .toast-root {
-      bottom: 5.6rem;
-      right: 1.2rem;
-    }
-  }
-</style>
-
-<script>
-  import { getAlpine } from '../../lib/alpine';
-  // Register the Alpine data store. Mirrors the pattern used across the
-  // and registers Alpine.data so any page using the CDN build picks it up.
-  document.addEventListener('alpine:init', () => {
-    const Alpine = getAlpine();
-    if (!Alpine) return;
-
-    Alpine.data('toastApp', () => ({
-      open: false,
-      message: '',
-      variant: 'info',
-      defaultDuration: 3000,
-      _timer: 0,
-
-      init() {
-        // Resolve the configurable duration from the data attribute the
-        // Astro prop rendered (avoids inlining expressions into inline
-        // scripts, which Astro deliberately leaves unevaluated).
-        const root = (this as unknown as { $el: HTMLElement }).$el;
-        const attr = root.getAttribute('data-duration');
-        const parsed = attr ? Number(attr) : NaN;
-        if (Number.isFinite(parsed) && parsed > 0) this.defaultDuration = parsed;
-
-        // Expose the global API: window.showToast(message, variant?)
-        const win = window as Window & {
-          showToast?: (message: string, variant?: string) => void;
-        };
-        win.showToast = (message: string, variant: string = 'info') => {
-          this.show(message, variant);
-        };
-      },
-
-      show(message: string, variant: string = 'info') {
-        this.message = message;
-        this.variant = variant;
-        this.open = true;
-        if (this._timer) window.clearTimeout(this._timer);
-        this._timer = window.setTimeout(() => {
-          this.open = false;
-        }, this.defaultDuration);
-      },
-
-      dismiss() {
-        if (this._timer) window.clearTimeout(this._timer);
-        this.open = false;
-      },
-    }));
-  });
-</script>

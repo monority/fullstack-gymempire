@@ -1,3 +1,4 @@
+import { singleton as uiStore } from '../../lib/ui-store';
 /**
  * builderState — Pure helpers for toggle/expand state management.
  *
@@ -29,13 +30,9 @@ export function allExpanded(exerciseCount: number, expandedCount: number): boole
 }
 
 export function openDialogById(id: string) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const fn = (window as any).openDialog as ((i: string) => void) | undefined;
-  if (fn) fn(id);
+  uiStore.openDialog(id);
 }
 
 export function closeDialogById(id: string) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const fn = (window as any).closeDialog as ((i: string) => void) | undefined;
-  if (fn) fn(id);
+  uiStore.closeDialog(id);
 }

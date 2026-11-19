@@ -1,3 +1,4 @@
+import { singleton as uiStore } from '../../lib/ui-store';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import {
   toggleId,
@@ -76,16 +77,11 @@ describe('openDialogById', () => {
     vi.unstubAllGlobals();
   });
 
-  it('calls window.openDialog with id', () => {
-    const fn = vi.fn();
-    vi.stubGlobal('window', { openDialog: fn });
+  it('delegates to the UI store', () => {
+    const spy = vi.spyOn(uiStore, 'openDialog').mockImplementation(() => {});
     openDialogById('test-dialog');
-    expect(fn).toHaveBeenCalledWith('test-dialog');
-  });
-
-  it('does not throw when openDialog missing', () => {
-    vi.stubGlobal('window', {});
-    expect(() => openDialogById('test')).not.toThrow();
+    expect(spy).toHaveBeenCalledWith('test-dialog');
+    spy.mockRestore();
   });
 });
 
@@ -98,15 +94,10 @@ describe('closeDialogById', () => {
     vi.unstubAllGlobals();
   });
 
-  it('calls window.closeDialog with id', () => {
-    const fn = vi.fn();
-    vi.stubGlobal('window', { closeDialog: fn });
+  it('delegates to the UI store', () => {
+    const spy = vi.spyOn(uiStore, 'closeDialog').mockImplementation(() => {});
     closeDialogById('test-dialog');
-    expect(fn).toHaveBeenCalledWith('test-dialog');
-  });
-
-  it('does not throw when closeDialog missing', () => {
-    vi.stubGlobal('window', {});
-    expect(() => closeDialogById('test')).not.toThrow();
+    expect(spy).toHaveBeenCalledWith('test-dialog');
+    spy.mockRestore();
   });
 });

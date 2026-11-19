@@ -621,17 +621,13 @@ const APP_VERSION = '0.0.1';
 </AppLayout>
 
 <script>
+  import { singleton as uiStore } from '../../lib/ui-store';
   import { registerAlpine } from '../../lib/alpine';
   import { createSettingsApp, buildSettingsLabels } from '../../components/settings/settingsApp';
   import { t, DATE_LOCALE } from '../../i18n';
   import { downloadBlob } from '../../lib/csv-export';
 
   const LABELS = t();
-
-  type DialogWindow = Window & {
-    openDialog?: (id: string) => void;
-    closeDialog?: (id: string) => void;
-  };
 
   function readFile(file: File): Promise<string> {
     return new Promise((resolve, reject) => {
@@ -641,8 +637,6 @@ const APP_VERSION = '0.0.1';
       reader.readAsText(file);
     });
   }
-
-  const dialogs = window as DialogWindow;
   registerAlpine('settingsApp', () =>
     createSettingsApp({
       labels: buildSettingsLabels(LABELS),
@@ -652,11 +646,11 @@ const APP_VERSION = '0.0.1';
         locale: () => DATE_LOCALE(),
       },
       ui: {
-        notify: (message, kind) => window.showToast?.(message, kind),
+        notify: (message, kind) => uiStore.notify(message, kind),
         download: downloadBlob,
         readFile,
-        openDialog: (id) => dialogs.openDialog?.(id),
-        closeDialog: (id) => dialogs.closeDialog?.(id),
+        openDialog: (id) => uiStore.openDialog(id),
+        closeDialog: (id) => uiStore.closeDialog(id),
         pickImportFile: () => {
           const input = document.querySelector<HTMLInputElement>('.set__file-input');
           if (!input) return;

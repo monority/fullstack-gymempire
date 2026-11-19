@@ -566,6 +566,7 @@ const setTypes = [
 </AppLayout>
 
 <script>
+  import { singleton as uiStore } from '../../../lib/ui-store';
   import { registerAlpine } from '../../../lib/alpine';
   import { createSessionBuilderApp } from '../../../components/builder/sessionBuilder';
   import { pickBuilderLabels } from '../../../components/builder/builderLabels';
@@ -583,7 +584,6 @@ const setTypes = [
     openDialog?: (id: string) => void;
     closeDialog?: (id: string) => void;
   };
-
   const host = window as BuilderWindow;
   registerAlpine('exerciseCard', (...args: Parameters<typeof exerciseCard>) =>
     exerciseCard(...args)
@@ -607,8 +607,8 @@ const setTypes = [
             listener(e.detail.exerciseId, e.detail.expanded);
           }) as EventListener);
         },
-        openDialog: (id) => host.openDialog?.(id),
-        closeDialog: (id) => host.closeDialog?.(id),
+        openDialog: (id) => uiStore.openDialog(id),
+        closeDialog: (id) => uiStore.closeDialog(id),
         dispatch: (name) => window.dispatchEvent(new CustomEvent(name)),
         confirm: (message) => window.confirm(message),
         navigate: (href) => {

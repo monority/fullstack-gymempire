@@ -457,6 +457,7 @@ const categories = [
   </div>
 
   <script>
+    import { singleton as uiStore } from '../../lib/ui-store';
     import { registerAlpine } from '../../lib/alpine';
     import {
       createExercisesApp,
@@ -466,14 +467,7 @@ const categories = [
     import { icons } from '../../lib/icons';
 
     const LABELS = t();
-    (window as any).icons = icons;
-
-    type DialogWindow = Window & {
-      openDialog?: (id: string) => void;
-      closeDialog?: (id: string) => void;
-    };
-
-    const dialogs = window as DialogWindow;
+    (window as Window & { icons?: typeof icons }).icons = icons;
     registerAlpine('exercisesApp', () =>
       createExercisesApp({
         labels: buildExercisesLabels(LABELS),
@@ -483,9 +477,9 @@ const categories = [
           locale: () => DATE_LOCALE(),
         },
         ui: {
-          notify: (message, kind) => window.showToast?.(message, kind),
-          openDialog: (id) => dialogs.openDialog?.(id),
-          closeDialog: (id) => dialogs.closeDialog?.(id),
+          notify: (message, kind) => uiStore.notify(message, kind),
+          openDialog: (id) => uiStore.openDialog(id),
+          closeDialog: (id) => uiStore.closeDialog(id),
         },
       })
     );

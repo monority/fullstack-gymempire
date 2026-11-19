@@ -230,19 +230,13 @@ const L = t();
 </AppLayout>
 
 <script>
+  import { singleton as uiStore } from '../../lib/ui-store';
   import { registerAlpine } from '../../lib/alpine';
   import { createSessionsApp, buildSessionsLabels } from '../../components/sessions/sessionsApp';
   import { t, localizedPath } from '../../i18n';
 
   const LABELS = t();
-
-  type DialogWindow = Window & {
-    openDialog?: (id: string) => void;
-    closeDialog?: (id: string) => void;
-    trMuscle?: (name: string) => string;
-  };
-
-  const host = window as DialogWindow;
+  const host = window as Window & { trMuscle?: (name: string) => string };
   registerAlpine('sessionsApp', () =>
     createSessionsApp({
       labels: buildSessionsLabels(LABELS),
@@ -254,8 +248,8 @@ const L = t();
           window.location.href = href;
         },
         translateMuscle: (name) => host.trMuscle?.(name) ?? name,
-        openDialog: (id) => host.openDialog?.(id),
-        closeDialog: (id) => host.closeDialog?.(id),
+        openDialog: (id) => uiStore.openDialog(id),
+        closeDialog: (id) => uiStore.closeDialog(id),
       },
     })
   );

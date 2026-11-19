@@ -4,7 +4,9 @@ interface AlpineBridge {
   // les factories, comme quand Alpine était typé `any` (comportement précédent).
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   data: Function;
-  store: (name: string, value: unknown) => void;
+  // Getter (`store(name)`) et setter (`store(name, value)`) — build sans .d.ts.
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+  store: Function;
   initTree(root: Element): void;
   $data?: (el: Element) => unknown;
 }
@@ -14,6 +16,15 @@ interface Window {
   /** Fourni par /theme-bootstrap.js pour les swaps ClientRouter. */
   __applyStoredTheme?: (doc: Document) => void;
   showToast?: (message: string, variant?: string) => void;
+  /** Exposés par la page du builder pour les sous-composants Alpine. */
+  __builderLabels?: {
+    noSets: string;
+    setsSingular: string;
+    setsPlural: string;
+    top: string;
+    [key: string]: string;
+  };
+  __builderSessions?: import('./lib/storage/types').Session[];
 }
 
 interface AlpineMagicThis {

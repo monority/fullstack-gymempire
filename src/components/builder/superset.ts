@@ -36,6 +36,6 @@ export function buildSupersetChain(
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function trName(ex: BuilderExercise): string {
-  const fn = (window as any).trExercise as ((n: string) => string) | undefined;
+  const fn = (window as Window & { trExercise?: (n: string) => string }).trExercise;
   return fn ? fn(ex.name) : ex.name;
 }

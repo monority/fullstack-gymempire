@@ -178,7 +178,7 @@ const title = `${L.detail.title} — Gym Empire`;
       const LABELS = t();
 
       // Helper de traduction identique aux autres pages (celle-ci est autonome).
-      (window as any).trExercise = trExercise;
+      (window as Window & { trExercise?: typeof trExercise }).trExercise = trExercise;
 
       if (!getAuth()) {
         window.location.replace(localizedPath('/login'));

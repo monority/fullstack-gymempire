@@ -128,6 +128,7 @@ const L = t();
 </AppLayout>
 
 <script>
+  import { singleton as uiStore } from '../../lib/ui-store';
   import { registerAlpine } from '../../lib/alpine';
   import {
     createSessionDetailApp,
@@ -136,13 +137,6 @@ const L = t();
   import { t, localizedPath, trExercise } from '../../i18n';
 
   const LABELS = t();
-
-  type DialogWindow = Window & {
-    openDialog?: (id: string) => void;
-    closeDialog?: (id: string) => void;
-  };
-
-  const dialogs = window as DialogWindow;
   const labels = buildSessionDetailLabels(LABELS);
   labels.printHref = localizedPath('/sessions/print');
   registerAlpine('sessionDetailApp', () =>
@@ -151,9 +145,9 @@ const L = t();
       search: window.location.search,
       localizedPath,
       ui: {
-        notify: (message, kind) => window.showToast?.(message, kind),
-        openDialog: (id) => dialogs.openDialog?.(id),
-        closeDialog: (id) => dialogs.closeDialog?.(id),
+        notify: (message, kind) => uiStore.notify(message, kind),
+        openDialog: (id) => uiStore.openDialog(id),
+        closeDialog: (id) => uiStore.closeDialog(id),
         navigate: (href) => {
           window.location.href = href;
         },

@@ -144,13 +144,7 @@ const { id = 'dialog', title, class: className = '' } = Astro.props;
 </style>
 
 <script>
-  declare global {
-    interface Window {
-      openDialog?: (id: string) => void;
-      closeDialog?: (id: string) => void;
-    }
-  }
-
+  import { singleton as uiStore } from '../../lib/ui-store';
   const FOCUSABLE_SELECTOR = [
     'a[href]',
     'area[href]',
@@ -221,7 +215,7 @@ const { id = 'dialog', title, class: className = '' } = Astro.props;
     });
   }
 
-  function openDialog(id: string) {
+  function openDialogElement(id: string) {
     const dialog = document.getElementById(id) as HTMLDialogElement | null;
     if (!dialog || dialog.tagName !== 'DIALOG') return;
     attach(dialog);
@@ -234,13 +228,19 @@ const { id = 'dialog', title, class: className = '' } = Astro.props;
     }
   }
 
-  function closeDialog(id: string) {
+  function closeDialogElement(id: string) {
     const dialog = document.getElementById(id) as HTMLDialogElement | null;
     if (dialog?.open) dialog.close();
   }
 
-  window.openDialog = openDialog;
-  window.closeDialog = closeDialog;
+  uiStore.setDialogAdapter({
+    open: (id) => openDialogElement(id),
+    close: () => {
+      document
+        .querySelectorAll<HTMLDialogElement>('dialog[open]')
+        .forEach((dialog) => closeDialogElement(dialog.id));
+    },
+  });
 
   function bindTriggers() {
     document.querySelectorAll<HTMLElement>('[data-dialog-trigger]').forEach((el) => {
@@ -249,7 +249,7 @@ const { id = 'dialog', title, class: className = '' } = Astro.props;
       el.addEventListener('click', (e) => {
         e.preventDefault();
         const id = el.dataset.dialogTrigger;
-        if (id) openDialog(id);
+        if (id) uiStore.openDialog(id);
       });
     });
 
