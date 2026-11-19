@@ -36,22 +36,22 @@
 
 ## 1. Baseline et KPI
 
-| #   | Indicateur (définition exacte)                                     |  Baseline **mesurée** le 2026-11-19 |                                    Cible | Outil de mesure                               |
-| --- | ------------------------------------------------------------------ | ----------------------------------: | ---------------------------------------: | --------------------------------------------- |
-| K1  | Lignes de `<style>` dans `src/pages`                               |          8 785 (22 blocs, 18 > 150) |                                    ≤ 400 | `check-components.mjs`                        |
-| K2  | Pages > 1 000 lignes                                               |                                   7 |                                        0 | `wc -l`                                       |
-| K3  | Page la plus longue                                                |           `sessions/create` — 1 489 |                                    ≤ 250 | `wc -l`                                       |
-| K4  | Occurrences de `alpine:init` dans `src`                            |                    29 → **11** (P1) |                                        1 | `grep -r "alpine:init" src \| wc -l`          |
-| K5  | Occurrences de `(window as any)`                                   |                  55 → **0** (P1) ✅ |                                        0 | `grep -r "(window as any)" src \| wc -l`      |
-| K6  | Fichiers de `src/pages` contenant `Alpine.data(` (enregistrements) |                                  20 |                         0 (dans `pages`) | `grep -rl "Alpine.data" src/pages \| wc -l`   |
-| K7  | Occurrences de `is:global`                                         |                                   5 |                         0 hors whitelist | `check-components.mjs`                        |
-| K8  | Domaines sans composant `.astro`                                   |                                   7 |                                        0 | `find src/components -name '*.astro'`         |
-| K9  | Familles de helpers de formatage dupliqués                         |                                   6 |                                        0 | `grep -r "function fmt\|function format" src` |
-| K10 | Globaux `window.*` pour UI (toast/dialog)                          |                  5+ → **0** (P1) ✅ |                        0 (stores Alpine) | `grep -r "window.showToast\|openDialog" src`  |
-| K11 | Littéraux de couleur                                               |        100 (`print`) + 21 (`debug`) |                        whitelist réduite | `pnpm check:colors`                           |
-| K12 | JS / CSS / plus gros fichier gzip                                  |     **108 280 / 45 917 / 26 942 B** |            ≤ 140k / 60k / 40k (↓ de 5 %) | `pnpm check:budget`                           |
-| K13 | Couverture statements / branches / functions / lines               | **64,68 / 58,47 / 62,27 / 66,64 %** | **69,7 / 63,5 / 67,3 / 71,6 %** (+5 pts) | `pnpm test:coverage`                          |
-| K14 | Violations a11y `serious`/`critical`                               |                     non mesuré (P0) |                          0 sur 14 routes | axe-core + `scripts/check-a11y.mjs` (P6)      |
+| #   | Indicateur (définition exacte)                       |  Baseline **mesurée** le 2026-11-19 |                                    Cible | Outil de mesure                               |
+| --- | ---------------------------------------------------- | ----------------------------------: | ---------------------------------------: | --------------------------------------------- |
+| K1  | Lignes de `<style>` dans `src/pages`                 |          8 785 (22 blocs, 18 > 150) |                                    ≤ 400 | `check-components.mjs`                        |
+| K2  | Pages > 1 000 lignes                                 |                                   7 |                                        0 | `wc -l`                                       |
+| K3  | Page la plus longue                                  |           `sessions/create` — 1 489 |                                    ≤ 250 | `wc -l`                                       |
+| K4  | Occurrences de `alpine:init` dans `src`              |                  29 → **0** (P3) ✅ |                                        1 | `grep -r "alpine:init" src \| wc -l`          |
+| K5  | Occurrences de `(window as any)`                     |                  55 → **0** (P1) ✅ |                                        0 | `grep -r "(window as any)" src \| wc -l`      |
+| K6  | Fichiers de `src/pages` contenant `Alpine.data(`     |                  20 → **0** (P3) ✅ |                         0 (dans `pages`) | `grep -rl "Alpine.data" src/pages \| wc -l`   |
+| K7  | Occurrences de `is:global`                           |                                   5 |                         0 hors whitelist | `check-components.mjs`                        |
+| K8  | Domaines sans composant `.astro`                     |                                   7 |                                        0 | `find src/components -name '*.astro'`         |
+| K9  | Familles de helpers de formatage dupliqués           |                                   6 |                                        0 | `grep -r "function fmt\|function format" src` |
+| K10 | Globaux `window.*` pour UI (toast/dialog)            |                  5+ → **0** (P1) ✅ |                        0 (stores Alpine) | `grep -r "window.showToast\|openDialog" src`  |
+| K11 | Littéraux de couleur                                 |        100 (`print`) + 21 (`debug`) |                        whitelist réduite | `pnpm check:colors`                           |
+| K12 | JS / CSS / plus gros fichier gzip                    |     **108 280 / 45 917 / 26 942 B** |            ≤ 140k / 60k / 40k (↓ de 5 %) | `pnpm check:budget`                           |
+| K13 | Couverture statements / branches / functions / lines | **64,68 / 58,47 / 62,27 / 66,64 %** | **69,7 / 63,5 / 67,3 / 71,6 %** (+5 pts) | `pnpm test:coverage`                          |
+| K14 | Violations a11y `serious`/`critical`                 |                     non mesuré (P0) |                          0 sur 14 routes | axe-core + `scripts/check-a11y.mjs` (P6)      |
 
 > Les chiffres K4–K7 et K12–K13 ont été **relevés dans le dépôt** (et non estimés) : ne pas les
 > remplacer par les valeurs de l'audit initial, qui comptait des _fichiers_ là où on mesure désormais
@@ -608,18 +608,18 @@ Une ADR non tranchée bloque la phase concernée : elle est écrite en 10 lignes
 
 ## 9. Suivi
 
-| Phase                  | Statut | KPI cible                                                          | PR                                    |
-| ---------------------- | ------ | ------------------------------------------------------------------ | ------------------------------------- |
-| P0 — Fondations        | ☑      | garde-fou, baseline, templates, spike GO, git, e2e, gate de format | `fa4289a`, `59129c2` + commit courant |
-| P1 — Socle Alpine      | ◐      | K5, K10 → 0 ✅ ; K4 29→11 ; K6 20→3                                | `425563b`, `8ecb412`, `3736605`       |
-| P2 — Contrat universel | ☐      | primitives typées, registre helper                                 | —                                     |
-| P3 — Headless          | ☐      | K6 → 0, K13 +5 pts                                                 | —                                     |
-| P4 — Styles            | ☐      | K1 ≤ 400, K7 → 0                                                   | —                                     |
-| P5 — Domaines          | ☐      | K2, K3, K8 → 0                                                     | —                                     |
-| P6 — Qualité           | ☐      | K9, K11, K12, K14                                                  | —                                     |
-| P7 — Verrouillage      | ☐      | CI stricte, ADR                                                    | —                                     |
+| Phase                  | Statut | KPI cible                                                              | PR                                    |
+| ---------------------- | ------ | ---------------------------------------------------------------------- | ------------------------------------- |
+| P0 — Fondations        | ☑      | garde-fou, baseline, templates, spike GO, git, e2e, gate de format     | `fa4289a`, `59129c2` + commit courant |
+| P1 — Socle Alpine      | ☑      | K4, K5, K6, K10 → 0 ✅                                                 | `425563b`…`eafe4b7`                   |
+| P2 — Contrat universel | ☐      | primitives typées, registre helper                                     | —                                     |
+| P3 — Headless          | ◐      | factories inline extraites + 11 tests ✅ ; P3.4 (gros modules) restant | `eafe4b7`                             |
+| P4 — Styles            | ☐      | K1 ≤ 400, K7 → 0                                                       | —                                     |
+| P5 — Domaines          | ☐      | K2, K3, K8 → 0                                                         | —                                     |
+| P6 — Qualité           | ☐      | K9, K11, K12, K14                                                      | —                                     |
+| P7 — Verrouillage      | ☐      | CI stricte, ADR                                                        | —                                     |
 
-> **P0 terminé**. **P1 largement avancé** : pont Alpine typé, lifecycle centralisé, store UI (toasts +
+> **P0, P1 et P3 (extraction) terminés**. **P1** : pont Alpine typé, lifecycle centralisé, store UI (toasts +
 > dialogs) et globals `window.*` supprimés (K5, K10 à 0). Restent 11 `alpine:init` (dont 3 pages à
 > factories inline, traitées en P3). Prochaine action : **P3** (factories headless) puis **P4** (styles).
 
