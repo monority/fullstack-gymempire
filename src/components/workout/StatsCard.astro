@@ -1,0 +1,111 @@
+---
+import Card from '../ui/Card.astro';
+
+interface Props {
+  label: string;
+  value: string | number;
+  unit?: string;
+  trend?: 'up' | 'down' | 'neutral';
+  trendValue?: string;
+  icon?: string;
+  class?: string;
+}
+
+const { label, value, unit, trend, trendValue, icon, class: className = '' } = Astro.props;
+
+const trendArrowMap: Record<NonNullable<Props['trend']>, string> = {
+  up: 'â†‘',
+  down: 'â†“',
+  neutral: 'â†’',
+};
+
+const trendArrow = trend ? trendArrowMap[trend] : '';
+---
+
+<Card class={className}>
+  <div class="stats-card">
+    <div class="stats-card__header">
+      {icon && <span class="stats-card__icon" aria-hidden="true" set:html={icon} />}
+      <span class="stats-card__label">{label}</span>
+    </div>
+
+    <div class="stats-card__value-row">
+      <span class="stats-card__value">{value}</span>
+      {unit && <span class="stats-card__unit">{unit}</span>}
+    </div>
+
+    {(trend || trendValue) && (
+      <div class:list={['stats-card__trend', trend && `stats-card__trend--${trend}`]}>
+        {trend && <span aria-hidden="true">{trendArrow}</span>}
+        {trendValue && <span>{trendValue}</span>}
+      </div>
+    )}
+  </div>
+</Card>
+
+<style>
+  .stats-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .stats-card__header {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .stats-card__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.8rem;
+    height: 1.8rem;
+    color: var(--color-muted);
+  }
+
+  .stats-card__label {
+    font-size: 1.1rem;
+    color: var(--color-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .stats-card__value-row {
+    display: flex;
+    align-items: baseline;
+  }
+
+  .stats-card__value {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(2rem, 5vw, 2.4rem);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .stats-card__unit {
+    font-size: 1.1rem;
+    color: var(--color-muted);
+    margin-left: 0.4rem;
+  }
+
+  .stats-card__trend {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 1.1rem;
+  }
+
+  .stats-card__trend--up {
+    color: var(--color-success);
+  }
+
+  .stats-card__trend--down {
+    color: var(--color-destructive);
+  }
+
+  .stats-card__trend--neutral {
+    color: var(--color-muted);
+  }
+</style>

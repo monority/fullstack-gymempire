@@ -1,0 +1,336 @@
+---
+import '../styles/global.css';
+import AppShell from '../components/layout/AppShell.astro';
+import QuickSearch from '../components/layout/QuickSearch.astro';
+import Toast from '../components/ui/Toast.astro';
+import { ClientRouter } from 'astro:transitions';
+import { t, setLocale, getLocale, localizedPath } from '../i18n';
+import type { NavTree } from '../lib/types';
+
+interface Props {
+  title: string;
+  description?: string;
+  groups?: NavTree;
+}
+
+const currentPath = Astro.url.pathname;
+const currentLocale = currentPath.startsWith('/en') ? 'en' : 'fr';
+setLocale(currentLocale);
+
+const L = t();
+
+const defaultGroups: NavTree = [
+  {
+    label: L.nav.groups.primary,
+    items: [
+      { label: L.nav.dashboard, href: localizedPath('/'), icon: 'dashboard' },
+      {
+        label: L.nav.seances,
+        href: localizedPath('/sessions'),
+        icon: 'clipboard',
+        children: [
+          { label: L.nav.historique, href: localizedPath('/sessions'), icon: 'clock' },
+          { label: L.nav.creer, href: localizedPath('/sessions/create'), icon: 'plus' },
+        ],
+      },
+      { label: L.nav.rapide, href: localizedPath('/sessions/quick'), icon: 'zap' },
+      {
+        label: L.nav.progression,
+        href: localizedPath('/progression'),
+        icon: 'trending-up',
+        children: [
+          { label: L.nav.force, href: localizedPath('/progression'), icon: 'target' },
+          { label: L.nav.poidsMesures, href: localizedPath('/progression/poids'), icon: 'scale' },
+          { label: L.nav.records, href: localizedPath('/progression/records'), icon: 'award' },
+          {
+            label: L.nav.statistiques,
+            href: localizedPath('/progression/stats'),
+            icon: 'chartBar',
+          },
+        ],
+      },
+    ],
+  },
+  {
+    label: L.nav.groups.secondary,
+    items: [
+      { label: L.nav.exercices, href: localizedPath('/exercises'), icon: 'dumbbell' },
+      { label: L.nav.calendrier, href: localizedPath('/calendar'), icon: 'calendar' },
+      { label: L.nav.timer, href: localizedPath('/timer'), icon: 'timer' },
+      { label: L.nav.calculateur, href: localizedPath('/calculator'), icon: 'calculator' },
+    ],
+  },
+  {
+    label: L.nav.groups.utility,
+    items: [{ label: L.nav.settings, href: localizedPath('/settings'), icon: 'settings' }],
+  },
+];
+
+const { title, description, groups = defaultGroups } = Astro.props;
+
+// Mark active state on each item (and its children when present)
+// so the Sidebar and the mobile drawer can highlight the right
+// link without recomputing on the client.
+const groupsWithActive = groups.map((g) => ({
+  label: g.label,
+  items: g.items.map((it) => {
+    const isActive =
+      currentPath === it.href || (it.href !== '/' && currentPath.startsWith(it.href + '/'));
+    const children = it.children?.map((c) => ({
+      ...c,
+      // Leaves are terminal links, so they only highlight on an exact
+      // match. Using prefix matching here made the first child (whose
+      // href duplicates the parent, e.g. /progression) stay active on
+      // every deeper page (e.g. /progression/records).
+      active: currentPath === c.href,
+    }));
+    return {
+      ...it,
+      active: isActive,
+      children,
+      // "parent-active" — a collapsible group whose deepest active child
+      // is the current page gets accent TEXT only (the pill stays on the
+      // active leaf, never on the toggle).
+      parentActive: (children ?? []).some((c) => c.active),
+    };
+  }),
+}));
+---
+
+<html lang={getLocale()}>
+  <head>
+    <ClientRouter />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title} — Gym Empire</title>
+    <meta name="description" content={description || L.layout.appTagline} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/archivo-latin.woff2" crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/inter-latin.woff2" crossorigin />
+    {/* theme-color cannot read CSS vars at rest — the attribute below is a
+        static fallback; the theme bootstrap script overwrites it with the
+        real --color-accent value (pop.astro precedent). */}
+    <meta name="theme-color" content="#F59A3D" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Gym Empire" />
+
+    {/* ── Locale bootstrap ──
+        Exposes the server-rendered locale so client-side Alpine
+        components (via t()/getLocale()) resolve the same language
+        as the HTML they live in. Runs before the theme block.
+        NOTE: expressions are NOT evaluated inside is:inline scripts,
+        so we read the locale from the <html lang="..."> attribute. */}
+    <script is:inline>
+      window.__LOCALE__ = document.documentElement.getAttribute('lang');
+    </script>
+
+    {/* ── Exercise translation helpers ──
+        Exposed on window so Alpine expressions can translate stored
+        French exercise names/muscles/categories at render time on the
+        EN locale, while stored data stays untouched (it is used as a
+        lookup key by tips / rest-times / templates). */}
+    <script>
+      import { trExercise, trMuscle, trCategory } from '../i18n';
+      import { muscleHue } from '../lib/colors';
+      (window as any).trExercise = trExercise;
+      (window as any).trMuscle = trMuscle;
+      (window as any).trCategory = trCategory;
+      (window as any).muscleHue = muscleHue;
+    </script>
+
+    {/* ── Theme bootstrap ──
+        Runs synchronously in the head, BEFORE first paint, so the
+        page never flashes the wrong palette when the user has
+        chosen the light theme. The Alpine-side toggle lives in
+        AppShell.astro; this block is the only thing that needs to
+        be inline to avoid a flash. */}
+    <script is:inline src="/theme-bootstrap.js" data-meta-var="--color-accent"></script>
+    <style is:inline>
+      html {
+        background-color: var(--color-bg);
+      }
+    </style>
+  </head>
+  <body>
+    {groupsWithActive.length > 0 ? (
+      <AppShell groups={groupsWithActive} title={title}>
+        <slot />
+      </AppShell>
+    ) : (
+      <main>
+        <slot />
+      </main>
+    )}
+
+    {/* Global command palette — searches pages/exercises/sessions.
+        Opened by the sidebar search field, "/", or Ctrl/Cmd+K. */}
+    <QuickSearch />
+
+    {/* Global toast — persists across page navigations. */}
+    <Toast />
+
+    <script is:inline>
+      // Register the service worker for offline use (gym wifi is spotty).
+      // Deferred until the load event so it doesn't compete with first paint.
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').catch((err) => {
+            console.warn('[muscu] service worker registration failed:', err);
+          });
+        });
+      }
+    </script>
+
+    <script>
+      import { t } from '../i18n';
+
+      // Native number spinners are hidden in src/styles/components/stepper.css (they
+      // can't be themed reliably cross-browser). Here we inject designed
+      // chevron buttons inside the right edge of every standalone
+      // number input. Inputs that already ship their own +/- steppers
+      // opt out via the `.no-spinner` class.
+      const L = t();
+
+      const CHEVRON_UP = '<polyline points="6 14 12 8 18 14"/>';
+      const CHEVRON_DOWN = '<polyline points="6 10 12 16 18 10"/>';
+
+      const svg = (body: string): string =>
+        `<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${body}</svg>`;
+
+      function enhance(input: HTMLInputElement): void {
+        if (input.dataset.stepper === 'true') return;
+        input.dataset.stepper = 'true';
+
+        const wrap = document.createElement('div');
+        wrap.className = 'input-stepper';
+        input.parentNode?.insertBefore(wrap, input);
+        wrap.appendChild(input);
+
+        const makeBtn = (cls: string, label: string, icon: string, fn: () => void) => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = cls;
+          btn.setAttribute('aria-label', label);
+          btn.innerHTML = svg(icon);
+          // preventDefault keeps focus on the input (no blur, no submit).
+          btn.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            fn();
+          });
+          wrap.appendChild(btn);
+        };
+
+        makeBtn('input-stepper__btn input-stepper__btn--up', L.common.increase, CHEVRON_UP, () =>
+          input.stepUp()
+        );
+        makeBtn(
+          'input-stepper__btn input-stepper__btn--down',
+          L.common.decrease,
+          CHEVRON_DOWN,
+          () => input.stepDown()
+        );
+      }
+
+      const isTarget = (el: Element | null): boolean =>
+        !!el &&
+        el instanceof HTMLInputElement &&
+        el.type === 'number' &&
+        !el.classList.contains('no-spinner');
+
+      const init = (): void => {
+        document
+          .querySelectorAll<HTMLInputElement>('input[type="number"]:not(.no-spinner)')
+          .forEach(enhance);
+      };
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        init();
+      }
+
+      // Also enhance inputs added later by Alpine (e.g. session set
+      // rows). enhance() is idempotent via the data-stepper marker.
+      const observer = new MutationObserver((records) => {
+        for (const record of records) {
+          for (const node of record.addedNodes) {
+            if (node.nodeType !== Node.ELEMENT_NODE) continue;
+            const el = node as HTMLElement;
+            if (isTarget(el)) enhance(el as HTMLInputElement);
+            el.querySelectorAll<HTMLInputElement>('input[type="number"]:not(.no-spinner)').forEach(
+              enhance
+            );
+          }
+        }
+      });
+      observer.observe(document.body, { childList: true, subtree: true });
+    </script>
+
+    {/* Alpine — imported from a self-hosted ESM build via an inline
+        module script (NOT the jsdelivr CDN, and NOT bundled by Astro).
+
+        Why not the CDN cdn.min.js build here: it auto-starts via
+        queueMicrotask the instant it executes. Astro hoists this
+        layout's scripts ahead of the page's deferred alpine:init
+        listener modules (which land after </html>), so Alpine.start()
+        fired before loginApp/commandMenu/etc. were registered
+        ("loginApp is not defined"). The ESM build does NOT auto-start.
+
+        Why not `import Alpine from 'alpinejs'` in a processed
+        <script>: Astro/rolldown native-crashes bundling it on this
+        machine, and 3.14.1 ships no .d.ts. The self-hosted ESM file
+        is self-contained (inlines @vue/reactivity) and exports
+        default Alpine.
+
+        We call Alpine.start() on DOMContentLoaded — which only fires
+        after every deferred page/module alpine:init listener has
+        attached, so Alpine.data() registrations run before the
+        component graph is walked. */}
+    <script is:inline type="module">
+      import Alpine from '/vendor/alpinejs-3.14.1.esm.js';
+      window.Alpine = Alpine;
+      // Astro hoists child-page alpine:init listener modules AFTER
+      // this layout's scripts (after </html>), but ALL deferred
+      // module scripts still run before DOMContentLoaded. So booting
+      // on DCL — never inline — guarantees those listeners attach
+      // before Alpine walks the graph. (Do NOT use the
+      // readyState==='loading' / else boot() pattern: at module
+      // execution time readyState is already 'interactive', so the
+      // else branch would boot before the post-</html> listeners.)
+      document.addEventListener('DOMContentLoaded', () => Alpine.start(), { once: true });
+
+      // Keep Alpine's mutation observer from initializing a swapped page
+      // before that page's module has registered its data factory.
+      document.addEventListener('astro:before-swap', (event) => {
+        // The inline theme bootstrap only runs on a full page load. On a
+        // ClientRouter swap Astro replaces <html> attributes with those of
+        // the server-rendered document, which has no data-theme -> the app
+        // silently fell back to dark. Re-apply the stored theme before swap.
+        if (typeof window.__applyStoredTheme === 'function') {
+          window.__applyStoredTheme(event.newDocument);
+        }
+        event.newDocument.querySelectorAll('main [x-data]').forEach((root) => {
+          root.setAttribute('x-ignore', '');
+        });
+      });
+
+      // ClientRouter swaps page content without reloading Alpine. Re-fire
+      // registrations for scripts introduced by the new page, then initialise
+      // only the new Alpine roots. Persisted components (notably the sidebar)
+      // already have an Alpine state stack and are deliberately skipped.
+      document.addEventListener('astro:page-load', () => {
+        document.dispatchEvent(new CustomEvent('alpine:init'));
+        window.setTimeout(() => {
+          document.querySelectorAll('main [x-data][x-ignore]').forEach((root) => {
+            root.removeAttribute('x-ignore');
+            delete root._x_ignore;
+            delete root._x_ignoreSelf;
+            Alpine.initTree(root);
+          });
+        }, 50);
+      });
+    </script>
+  </body>
+</html>

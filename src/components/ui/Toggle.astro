@@ -1,0 +1,136 @@
+---
+/**
+ * Toggle — design-system primitive.
+ *
+ * Accessible switch built on a hidden <input type="checkbox" role="switch">
+ * + custom-styled track and thumb. Visual state is driven entirely by the
+ * sibling `+` selector: `.toggle-input:checked + .toggle-track` and
+ * `.toggle-input:checked + .toggle-track .toggle-thumb`, so no JS is needed
+ * for hover/checked/focus/disabled.
+ *
+ * A tiny script keeps `aria-checked` in sync with `checked` on user toggle
+ * for assistive tech. The value is also set initially in the HTML so the
+ * first paint is correct without waiting for hydration.
+ *
+ * Sizes:
+ *   - track: 44 × 24px
+ *   - thumb: 18 × 18px, offset 3px from the edge, slides 20px when checked
+ */
+interface Props {
+  label?: string;
+  checked?: boolean;
+  disabled?: boolean;
+  name?: string;
+  id?: string;
+  class?: string;
+}
+
+const {
+  label,
+  checked = false,
+  disabled = false,
+  name,
+  id,
+  class: className = '',
+  ...rest
+} = Astro.props;
+
+const wrapperClasses = ['toggle-wrapper', disabled ? 'disabled' : '', className]
+  .filter(Boolean)
+  .join(' ');
+---
+
+<label class={wrapperClasses}>
+  <input
+    type="checkbox"
+    id={id}
+    name={name}
+    checked={checked}
+    disabled={disabled}
+    class="toggle-input sr-only"
+    role="switch"
+    aria-checked={checked ? 'true' : 'false'}
+    {...rest}
+  />
+  <span class="toggle-track">
+    <span class="toggle-thumb"></span>
+  </span>
+  {label && <span class="toggle-label">{label}</span>}
+</label>
+
+<style>
+  .toggle-wrapper {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+    cursor: pointer;
+    min-height: 4.4rem;
+  }
+  .toggle-wrapper.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+  .toggle-label {
+    font-size: 1.3rem;
+    color: var(--color-text);
+    line-height: 1;
+  }
+  .toggle-track {
+    position: relative;
+    width: 4.4rem;
+    height: 2.4rem;
+    border-radius: var(--radius-pill);
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-border);
+    transition:
+      background-color var(--transition-base),
+      border-color var(--transition-base);
+    flex-shrink: 0;
+  }
+  .toggle-wrapper:hover:not(.disabled) .toggle-track {
+    border-color: var(--color-border-strong);
+  }
+  .toggle-wrapper:active:not(.disabled) .toggle-track {
+    box-shadow: var(--shadow-1);
+  }
+  .toggle-input:checked + .toggle-track {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+  .toggle-thumb {
+    position: absolute;
+    top: 0.2rem;
+    left: 0.3rem;
+    width: 1.8rem;
+    height: 1.8rem;
+    border-radius: 50%;
+    background: var(--color-surface);
+    transition: transform var(--transition-base);
+    box-shadow: var(--shadow-1);
+  }
+  .toggle-input:checked + .toggle-track .toggle-thumb {
+    transform: translateX(2rem);
+  }
+  .toggle-input:focus-visible + .toggle-track {
+    box-shadow: var(--focus-ring);
+  }
+</style>
+
+<script>
+  function initToggles() {
+    document.querySelectorAll<HTMLInputElement>('.toggle-input[role="switch"]').forEach((input) => {
+      if (input.dataset.init) return;
+      input.dataset.init = '1';
+
+      const update = () => {
+        input.setAttribute('aria-checked', input.checked ? 'true' : 'false');
+      };
+
+      input.addEventListener('change', update);
+      update(); // sync on init
+    });
+  }
+
+  initToggles();
+  document.addEventListener('astro:page-load', initToggles);
+</script>

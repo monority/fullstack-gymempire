@@ -1,0 +1,37 @@
+---
+import { defaultLocale } from '../../i18n';
+import '../../styles/global.css';
+const lang = Astro.currentLocale ?? defaultLocale;
+---
+
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0d0d0d" />
+    <title>Timer</title>
+    {/* Polices auto-hébergées via global.css — aucune requête externe. */}
+    <script is:inline src="/theme-bootstrap.js" data-meta-var="--color-bg"></script>
+  </head>
+  <body>
+    <div id="tw-mount" class="w-full min-h-screen"></div>
+
+    <script>
+      import { mountTimerWidget, widgetLabelsFrom } from '../../lib/timer-widget';
+      import { t, setLocale } from '../../i18n';
+
+      setLocale(document.documentElement.getAttribute('lang') || 'fr');
+      const LABELS = widgetLabelsFrom(t());
+
+      const root = document.getElementById('tw-mount');
+      if (root) {
+        const widget = mountTimerWidget(root, LABELS);
+        // Ask the main timer page (if open) to send its state. Retry until it
+        // answers — the popup may have been opened before the main window.
+        const hello = () => widget.sendHello();
+        hello();
+        window.setInterval(hello, 2500);
+      }
+    </script>
+  </body>
+</html>

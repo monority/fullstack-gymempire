@@ -1,0 +1,549 @@
+---
+/**
+ * Session reminders — settings card + notification watcher.
+ */
+import Card from '../ui/Card.astro';
+import CardHeader from '../ui/CardHeader.astro';
+import CardTitle from '../ui/CardTitle.astro';
+import CardContent from '../ui/CardContent.astro';
+import Button from '../ui/Button.astro';
+import Toggle from '../ui/Toggle.astro';
+import { t } from '../../i18n';
+import { icons } from '../../lib/icons';
+
+const L = t();
+---
+
+<section class="rem" id="set-reminder" x-data="reminderSettings()" x-init="init()" x-cloak>
+  <Card>
+    <CardHeader>
+      <div class="rem__heading">
+        <span class="rem__heading-icon" aria-hidden="true">
+          <Fragment set:html={icons.bell(24, 24)} />
+        </span>
+        <CardTitle>{L.settings.reminders}</CardTitle>
+      </div>
+      <p class="rem__heading-desc">{L.settings.remindersDesc}</p>
+    </CardHeader>
+
+    <CardContent>
+      <div class="rem__rows" :class="{ 'rem__rows--disabled': !settings.reminders.enabled }">
+        {/* ── Master toggle ── */}
+        <div class="rem__row">
+          <div class="rem__row-label">
+            <span class="rem__row-title">{L.settings.reminderToggleLabel}</span>
+            <span class="rem__row-desc">{L.settings.reminderToggleDesc}</span>
+          </div>
+          <div class="rem__row-value">
+            <Toggle
+              :checked="settings.reminders.enabled"
+              aria-label={L.settings.reminderToggleLabel}
+              :aria-checked="settings.reminders.enabled ? 'true' : 'false'"
+              @change="setEnabled($event.target.checked)"
+            />
+          </div>
+        </div>
+
+        {/* ── Day-of-week pickers ── */}
+        <div class="rem__row rem__row--form">
+          <div class="rem__row-label">
+            <span class="rem__row-title">{L.settings.reminderDaysLabel}</span>
+            <span class="rem__row-desc">{L.settings.reminderDaysDesc}</span>
+          </div>
+          <div class="rem__row-value rem__row-value--days">
+            <div class="rem__days" role="group" :aria-disabled="!settings.reminders.enabled">
+              <template x-for="d in days" :key="d.v">
+                <button
+                  type="button"
+                  class="rem__day"
+                  :class="{ 'rem__day--active': settings.reminders.days.includes(d.v) }"
+                  :aria-pressed="settings.reminders.days.includes(d.v)"
+                  :disabled="!settings.reminders.enabled"
+                  @click="toggleDay(d.v)"
+                  x-text="d.label"
+                ></button>
+              </template>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Time input ── */}
+        <div class="rem__row rem__row--form">
+          <div class="rem__row-label">
+            <span class="rem__row-title">{L.settings.reminderTimeLabel}</span>
+            <span class="rem__row-desc">{L.settings.reminderTimeDesc}</span>
+          </div>
+          <div class="rem__row-value">
+            <div class="rem__time-wrap">
+              <span class="rem__time-icon" aria-hidden="true">
+                <Fragment set:html={icons.clockStopwatch(18, 18)} />
+              </span>
+              <input
+                type="time"
+                class="rem__time"
+                :value="settings.reminders.time"
+                :disabled="!settings.reminders.enabled"
+                @change="setTime($event.target.value)"
+                aria-label={L.settings.reminderTimeLabel}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* ── Permission request / status ── */}
+        <div
+          class="rem__status"
+          x-show="settings.reminders.enabled"
+          x-cloak
+          x-transition.opacity.duration.200ms
+        >
+          <p class="rem__status-text" x-show="!supported" x-cloak x-text="labels.unsupported">
+            {L.settings.reminderUnsupported}
+          </p>
+
+          <template x-if="supported && permission === 'default'">
+            <div>
+              <Button type="button" variant="secondary" size="sm" @click="requestPermission()">
+                {L.settings.reminderEnableNotifications}
+              </Button>
+            </div>
+          </template>
+
+          <p
+            class="rem__status-text rem__status-text--success"
+            x-show="supported && permission === 'granted'"
+            x-cloak
+            x-text="labels.granted"
+          >
+            {L.settings.reminderGranted}
+          </p>
+
+          <template x-if="supported && permission === 'denied'">
+            <div>
+              <p class="rem__status-text rem__status-text--warning" x-text="labels.denied">
+                {L.settings.reminderDenied}
+              </p>
+              <p class="rem__status-desc" x-text="labels.deniedDesc">
+                {L.settings.reminderDeniedDesc}
+              </p>
+            </div>
+          </template>
+        </div>
+      </div>
+    </CardContent>
+  </Card>
+</section>
+
+<script>
+  import { getSettings, updateSettings } from '../../lib/storage/settings';
+  import { getSessions } from '../../lib/storage/sessions';
+  import { getStore, setStore } from '../../lib/storage/store';
+  import { STORAGE_KEYS } from '../../lib/storage/defaults';
+  import { t } from '../../i18n';
+
+  const L = t();
+
+  let lastNotifiedSlot = '';
+
+  const registerReminderSettings = () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const Alpine = (window as any).Alpine;
+
+    Alpine.data('reminderSettings', () => ({
+      settings: getSettings(),
+      days: [
+        { v: 1, label: L.settings.reminderDayMon },
+        { v: 2, label: L.settings.reminderDayTue },
+        { v: 3, label: L.settings.reminderDayWed },
+        { v: 4, label: L.settings.reminderDayThu },
+        { v: 5, label: L.settings.reminderDayFri },
+        { v: 6, label: L.settings.reminderDaySat },
+        { v: 0, label: L.settings.reminderDaySun },
+      ],
+      supported: typeof Notification !== 'undefined',
+      permission: typeof Notification !== 'undefined' ? Notification.permission : 'unsupported',
+      labels: {
+        granted: L.settings.reminderGranted,
+        denied: L.settings.reminderDenied,
+        deniedDesc: L.settings.reminderDeniedDesc,
+        unsupported: L.settings.reminderUnsupported,
+        notifTitle: L.settings.reminderTitle,
+        notifBody: L.settings.reminderBody,
+      },
+      _timer: 0,
+
+      init() {
+        this.settings = getSettings();
+        this.syncPermission();
+        this.check();
+        this._timer = window.setInterval(() => this.check(), 30000);
+      },
+
+      syncPermission() {
+        this.supported = typeof Notification !== 'undefined';
+        this.permission = this.supported ? Notification.permission : 'unsupported';
+      },
+
+      requestPermission() {
+        if (!this.supported || typeof Notification.requestPermission !== 'function') {
+          return;
+        }
+        try {
+          const result = Notification.requestPermission();
+          if (result && typeof result.then === 'function') {
+            result.then((p: NotificationPermission) => {
+              this.permission = p;
+            });
+          } else {
+            this.permission = Notification.permission;
+          }
+        } catch {
+          this.syncPermission();
+        }
+      },
+
+      setEnabled(checked: boolean) {
+        this.settings = updateSettings({
+          reminders: { ...this.settings.reminders, enabled: checked },
+        });
+      },
+
+      toggleDay(v: number) {
+        const days = new Set(this.settings.reminders.days);
+        if (days.has(v)) days.delete(v);
+        else days.add(v);
+        this.settings = updateSettings({
+          reminders: { ...this.settings.reminders, days: [...days] },
+        });
+      },
+
+      setTime(value: string) {
+        if (typeof value !== 'string' || !/^(\d{2}):(\d{2})$/.test(value)) return;
+        this.settings = updateSettings({
+          reminders: { ...this.settings.reminders, time: value },
+        });
+      },
+
+      check() {
+        const r = this.settings?.reminders;
+        if (!r || !r.enabled) return;
+
+        const now = new Date();
+        if (!r.days.includes(now.getDay())) return;
+
+        const match = /^(\d{1,2}):(\d{2})$/.exec(r.time || '');
+        if (!match) return;
+        const slotMin = Number(match[1]) * 60 + Number(match[2]);
+        const curMin = now.getHours() * 60 + now.getMinutes();
+        if (slotMin !== curMin) return;
+
+        const key = this.slotKey(now);
+        if (lastNotifiedSlot === key) return;
+        if (getStore<string>(STORAGE_KEYS.reminderNotified, '') === key) return;
+
+        if (this.hasCompletedSessionToday(now)) return;
+
+        lastNotifiedSlot = key;
+        setStore(STORAGE_KEYS.reminderNotified, key);
+        this.fire();
+      },
+
+      slotKey(d: Date): string {
+        const p = (n: number) => String(n).padStart(2, '0');
+        return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
+      },
+
+      hasCompletedSessionToday(d: Date): boolean {
+        const p = (n: number) => String(n).padStart(2, '0');
+        const today = `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+        return getSessions().some((s) => s.status === 'completed' && s.date === today);
+      },
+
+      fire() {
+        if (this.supported && this.permission === 'granted') {
+          try {
+            const n = new Notification(this.labels.notifTitle, {
+              body: this.labels.notifBody,
+              tag: 'muscu-reminder',
+            });
+            void n;
+            return;
+          } catch {}
+        }
+        if (
+          typeof (window as { showToast?: (m: string, v?: string) => void }).showToast ===
+          'function'
+        ) {
+          (window as { showToast?: (m: string, v?: string) => void }).showToast?.(
+            this.labels.notifTitle,
+            'info'
+          );
+        }
+      },
+    }));
+  };
+  document.addEventListener('alpine:init', registerReminderSettings);
+  if ((window as any).Alpine) registerReminderSettings();
+</script>
+
+<style>
+  .rem {
+    scroll-margin-top: calc(var(--topbar-height, 6.4rem) + 1rem);
+  }
+
+  .rem__heading {
+    display: flex;
+    align-items: center;
+    gap: 1.6rem;
+    min-width: 0;
+  }
+
+  .rem__heading-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.6rem;
+    height: 3.6rem;
+    flex-shrink: 0;
+    color: var(--color-accent);
+    border-radius: var(--radius-md);
+    border: 1px solid color-mix(in srgb, var(--color-accent) 28%, transparent);
+    background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+  }
+
+  .rem__heading-desc {
+    font-size: 1.2rem;
+    color: var(--color-muted);
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  .rem__rows {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-top: 1.2rem;
+  }
+
+  .rem__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 3.2rem;
+    padding: 1.6rem 0;
+    border-bottom: 1px solid var(--alpha-bg-soft);
+  }
+  .rem__row:first-child {
+    padding-top: 0;
+  }
+  .rem__row:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .rem__row-label {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-1);
+    min-width: 0;
+    flex: 1;
+  }
+
+  .rem__row-value {
+    flex-shrink: 0;
+    text-align: right;
+    font-size: 1.3rem;
+    color: var(--color-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .rem__row-value--days {
+    max-width: 24rem;
+  }
+
+  .rem__days {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    justify-content: flex-end;
+  }
+
+  .rem__day {
+    appearance: none;
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-pill);
+    color: var(--color-muted);
+    font-family: var(--font-body);
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    height: 4.4rem;
+    min-width: 4.8rem;
+    padding: 0 0.8rem;
+    cursor: pointer;
+    transition:
+      background-color var(--transition-fast),
+      color var(--transition-fast),
+      border-color var(--transition-fast),
+      transform var(--transition-fast);
+  }
+
+  .rem__day:active:not(:disabled) {
+    transform: scale(0.95);
+  }
+
+  .rem__day--active {
+    background-color: var(--color-accent);
+    border-color: var(--color-accent);
+    color: var(--color-accent-foreground);
+    box-shadow: var(--shadow-1);
+  }
+
+  .rem__day:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+  }
+
+  .rem__day:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .rem__time-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    height: 4.4rem;
+    padding: 0 1.2rem;
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    transition:
+      border-color var(--transition-fast),
+      box-shadow var(--transition-fast),
+      background-color var(--transition-fast);
+  }
+
+  .rem__time-wrap:hover {
+    background-color: var(--alpha-bg-subtle);
+  }
+
+  .rem__time-wrap:focus-within {
+    border-color: var(--color-accent);
+    box-shadow: var(--focus-ring);
+    background-color: var(--color-surface-2);
+  }
+
+  .rem__time-wrap:has(.rem__time:disabled) {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .rem__time-icon {
+    display: inline-flex;
+    align-items: center;
+    color: var(--color-muted);
+    flex-shrink: 0;
+  }
+
+  .rem__time {
+    appearance: none;
+    -webkit-appearance: none;
+    background: transparent;
+    border: 0;
+    color: var(--color-text);
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    outline: none;
+    width: 8rem;
+    cursor: pointer;
+    transition: color var(--transition-fast);
+  }
+
+  .rem__time:focus {
+    color: var(--color-accent);
+  }
+
+  .rem__time:disabled {
+    cursor: not-allowed;
+  }
+
+  .rem__time::-webkit-calendar-picker-indicator {
+    filter: invert(0.6);
+    cursor: pointer;
+    margin-left: 0.4rem;
+    opacity: 0.7;
+    transition: opacity var(--transition-fast);
+  }
+
+  .rem__time::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+  }
+
+  .rem__status {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-top: 1.6rem;
+    padding-top: 1.4rem;
+    border-top: 1px solid var(--alpha-bg-soft);
+  }
+
+  .rem__status-text {
+    font-size: 1.2rem;
+    line-height: 1.4;
+    margin: 0;
+    color: var(--color-muted);
+  }
+
+  .rem__status-text--success {
+    color: var(--color-success);
+    font-weight: 600;
+  }
+
+  .rem__status-text--warning {
+    color: var(--color-warning);
+    font-weight: 600;
+  }
+
+  .rem__status-desc {
+    font-size: 1.1rem;
+    color: var(--color-muted);
+    line-height: 1.4;
+    margin: 0;
+  }
+
+  .rem__rows--disabled .rem__row-label,
+  .rem__rows--disabled .rem__row-title,
+  .rem__rows--disabled .rem__row-desc,
+  .rem__rows--disabled .rem__row-value {
+    opacity: 0.55;
+  }
+
+  @media (max-width: 640px) {
+    .rem__row {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.8rem;
+    }
+    .rem__row-value {
+      text-align: left;
+      max-width: 100%;
+      width: 100%;
+    }
+    .rem__row-value--days {
+      max-width: 100%;
+      width: 100%;
+    }
+    .rem__days {
+      justify-content: flex-start;
+    }
+    .rem__heading-icon {
+      width: 3.2rem;
+      height: 3.2rem;
+    }
+  }
+</style>

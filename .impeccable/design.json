@@ -1,0 +1,203 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-18T04:00:00.000Z",
+  "title": "Design System: Gym Empire",
+  "extensions": {
+    "colorMeta": {
+      "graphite-ground": {
+        "role": "neutral",
+        "displayName": "Graphite Ground",
+        "canonical": "#080b0f",
+        "tonalRamp": [
+          "#05070a",
+          "#080b0f",
+          "#0d1218",
+          "#131a22",
+          "#1a232d",
+          "#24303c",
+          "#334250",
+          "#4a5c6c"
+        ]
+      },
+      "amber-accent": {
+        "role": "primary",
+        "displayName": "Amber Accent",
+        "canonical": "hsl(30 100% 66%)",
+        "tonalRamp": [
+          "hsl(30 80% 18%)",
+          "hsl(30 85% 30%)",
+          "hsl(30 90% 42%)",
+          "hsl(30 95% 54%)",
+          "hsl(30 100% 66%)",
+          "hsl(30 100% 76%)",
+          "hsl(30 100% 86%)",
+          "hsl(30 100% 94%)"
+        ]
+      },
+      "paper-ground": {
+        "role": "neutral",
+        "displayName": "Paper Ground",
+        "canonical": "#f5f7f5",
+        "tonalRamp": [
+          "#e8ede8",
+          "#f5f7f5",
+          "#ffffff",
+          "#dde5de",
+          "#cbd5cc",
+          "#aebcaf",
+          "#647266",
+          "#172018"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#f2f5f4",
+        "tonalRamp": [
+          "#0d1218",
+          "#334250",
+          "#647266",
+          "#8c9898",
+          "#b9c4c2",
+          "#d7e0dd",
+          "#f2f5f4",
+          "#ffffff"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Greeting and hero session title only." },
+      "metric": { "displayName": "Metric", "purpose": "Tabular numeric values in display voice." },
+      "body": { "displayName": "Body", "purpose": "All interface copy, labels, and data." }
+    },
+    "shadows": [
+      {
+        "name": "overlay",
+        "value": "0 24px 48px hsl(220 30% 2% / 0.45)",
+        "purpose": "Dialogs and popovers only; no shadows at rest."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "The single authored curve: goal arc, bar height, primary action."
+      },
+      { "name": "transition-fast", "value": "140ms", "purpose": "Hover and colour changes." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "760px" },
+      { "name": "lg", "value": "1024px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The single primary action of a viewport.",
+      "html": "<button class=\"ds-btn-primary\">Démarrer la séance</button>",
+      "css": ".ds-btn-primary { display:inline-flex; align-items:center; justify-content:center; min-height:44px; padding:0 16px; border:1px solid transparent; border-radius:4px; background:var(--color-accent); color:var(--color-accent-foreground); font-family:var(--font-body); font-size:12px; font-weight:700; cursor:pointer; transition:background-color 200ms var(--ease-out); } .ds-btn-primary:hover { background:var(--color-accent-hover); } .ds-btn-primary:active { transform:translateY(1px); } .ds-btn-primary:focus-visible { outline:none; box-shadow:var(--focus-ring); }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Quiet companion action with a hairline border.",
+      "html": "<button class=\"ds-btn-secondary\">Nouvelle séance</button>",
+      "css": ".ds-btn-secondary { display:inline-flex; align-items:center; justify-content:center; min-height:44px; padding:0 12px; border:1px solid var(--color-border); border-radius:4px; background:transparent; color:var(--color-muted); font-family:var(--font-body); font-size:12px; font-weight:600; cursor:pointer; transition:color 140ms ease, border-color 140ms ease; } .ds-btn-secondary:hover { color:var(--color-text); border-color:var(--color-border-strong); } .ds-btn-secondary:focus-visible { outline:none; box-shadow:var(--focus-ring); }"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Standard form field with visible focus and error states.",
+      "html": "<label class=\"ds-field\"><span>Pseudo</span><input class=\"ds-input\" placeholder=\"Ex. Alex\" /></label>",
+      "css": ".ds-field { display:flex; flex-direction:column; gap:8px; color:var(--color-text); font-family:var(--font-body); font-size:12px; } .ds-input { width:100%; min-height:44px; padding:8px 12px; border:1px solid var(--color-border); border-radius:6px; background:var(--color-surface-2); color:var(--color-text); font-family:var(--font-body); font-size:14px; outline:none; transition:border-color 140ms ease, box-shadow 140ms ease; } .ds-input:hover { border-color:var(--color-border-strong); } .ds-input:focus-visible { border-color:var(--color-accent); box-shadow:var(--focus-ring); } .ds-input:disabled { opacity:.5; cursor:not-allowed; }"
+    },
+    {
+      "name": "Flat Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Borderless at rest; hairline panel when a boundary is needed.",
+      "html": "<section class=\"ds-card\"><h2 class=\"ds-card-title\">Séances récentes</h2><p class=\"ds-card-body\">Votre historique.</p></section>",
+      "css": ".ds-card { padding:24px; border:1px solid var(--color-border); border-radius:16px; background:transparent; color:var(--color-text); } .ds-card-title { margin:0 0 12px; font-family:var(--font-body); font-size:18px; font-weight:700; } .ds-card-body { margin:0; color:var(--color-muted); font-family:var(--font-body); font-size:14px; line-height:1.5; }"
+    },
+    {
+      "name": "Week Bar Metric",
+      "kind": "custom",
+      "refersTo": "metric-bar",
+      "description": "Seven real day-values; the current day is the only amber bar.",
+      "html": "<div class=\"ds-metric\"><span class=\"ds-metric-label\">Volume · 7 j</span><strong class=\"ds-metric-value\">0 <span class=\"ds-metric-unit\">kg</span></strong><div class=\"ds-metric-bars\"><i></i><i></i><i class=\"ds-metric-today\"></i><i></i><i></i><i></i><i></i></div></div>",
+      "css": ".ds-metric { padding:20px 16px; min-width:0; } .ds-metric-label { display:block; color:var(--color-muted); font-family:var(--font-body); font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; } .ds-metric-value { display:block; margin-top:6px; color:var(--color-text); font-family:var(--font-display); font-size:36px; font-weight:700; line-height:1.05; letter-spacing:-.03em; font-variant-numeric:tabular-nums; } .ds-metric-unit { color:var(--color-muted); font-family:var(--font-body); font-size:12px; font-weight:500; } .ds-metric-bars { display:flex; align-items:flex-end; gap:6px; height:50px; margin-top:16px; } .ds-metric-bars i { flex:1; height:6%; border-radius:4px 4px 0 0; background:var(--color-border-strong); } .ds-metric-bars i.ds-metric-today { background:var(--color-accent); height:100%; transition:height 240ms var(--ease-out); }"
+    },
+    {
+      "name": "Weekly Goal Arc",
+      "kind": "custom",
+      "description": "Single circular progress indicator; no duplicate bar.",
+      "html": "<div class=\"ds-goal\" role=\"progressbar\" aria-valuemin=\"0\" aria-valuemax=\"3\" aria-valuenow=\"1\"><svg viewBox=\"0 0 44 44\" aria-hidden=\"true\"><circle cx=\"22\" cy=\"22\" r=\"18\" class=\"ds-goal-track\"></circle><circle cx=\"22\" cy=\"22\" r=\"18\" class=\"ds-goal-fill\" stroke-dasharray=\"37.7 113.1\"></circle></svg><span class=\"ds-goal-pct\">33%</span></div>",
+      "css": ".ds-goal { position:relative; width:90px; height:90px; } .ds-goal svg { width:100%; height:100%; transform:rotate(-90deg); } .ds-goal circle { fill:none; stroke-width:4; } .ds-goal-track { stroke:var(--color-surface-3); } .ds-goal-fill { stroke:var(--color-accent); stroke-linecap:round; transition:stroke-dasharray 240ms var(--ease-out), stroke 240ms var(--ease-out); } .ds-goal-pct { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-size:18px; font-weight:700; font-variant-numeric:tabular-nums; }"
+    },
+    {
+      "name": "Sidebar Item",
+      "kind": "nav",
+      "description": "Active navigation uses a wash and a one-pixel amber filet.",
+      "html": "<a class=\"ds-nav ds-nav-active\" href=\"/sessions\">Séances</a>",
+      "css": ".ds-nav { display:flex; align-items:center; min-height:44px; padding:0 12px; border-radius:6px; color:var(--color-muted); font-family:var(--font-body); font-size:13px; font-weight:600; text-decoration:none; transition:background-color 140ms ease, color 140ms ease; } .ds-nav:hover { background:var(--alpha-bg-subtle); color:var(--color-text); } .ds-nav-active { position:relative; background:color-mix(in srgb, var(--color-accent) 12%, transparent); color:var(--color-accent); } .ds-nav-active::before { content:''; position:absolute; left:0; top:8px; bottom:8px; width:1px; background:var(--color-accent); } .ds-nav:focus-visible { outline:none; box-shadow:var(--focus-ring); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Quiet Training Log",
+    "overview": "Gym Empire is a local-first training log for someone standing in a gym, sometimes distracted, often in a hurry. The interface behaves like an open notebook: one dominant object on the first screen — the session in front of you — and everything else arranged as quiet context around it.\n\nThe world is graphite and hairlines. Surfaces are flat at rest; depth comes from scale, weight, spacing, and the occasional one-pixel seam. Colour is rationed to a single amber accent used for action and state. Archivo carries the few large moments; Inter carries every label and control.",
+    "keyCharacteristics": [
+      "One dominant object per viewport; the next session leads the dashboard.",
+      "Graphite ground, hairline seams, no decorative background, no shadows at rest.",
+      "One amber accent, reserved for action, selection, and state.",
+      "Two type voices with strict roles; no display face in labels or controls.",
+      "Week-bar metrics instead of equal KPI tiles."
+    ],
+    "rules": [
+      {
+        "name": "The One Accent Rule",
+        "body": "Amber occupies a small fraction of any screen. It marks action, selection, or change — never atmosphere. If two amber elements compete, one is wrong.",
+        "section": "colors"
+      },
+      {
+        "name": "The State-Colour Rule",
+        "body": "Success, destructive, warning, and info colours appear only on state indicators, never as decorative data hues.",
+        "section": "colors"
+      },
+      {
+        "name": "The No-Kicker Rule",
+        "body": "A heading carries its own weight. No small uppercase label above it; dates and context live in the top bar or beside the title.",
+        "section": "typography"
+      },
+      {
+        "name": "The Display-Only Rule",
+        "body": "Archivo appears only at Display and Metric sizes, never in buttons, inputs, tables, or labels.",
+        "section": "typography"
+      },
+      {
+        "name": "The Hairline Rule",
+        "body": "One pixel of border is enough. Give an element more presence through scale or weight, not a heavier edge.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do lead every screen with one dominant object and one primary action.",
+      "Do use Archivo only for display and metric sizes; Inter for everything else.",
+      "Do separate with hairlines and space, and keep surfaces flat.",
+      "Do keep amber rare and meaningful; verify both themes with pnpm check:contrast.",
+      "Do design the empty, loading, error, and singular/plural states before calling a screen finished."
+    ],
+    "donts": [
+      "Don't place a kicker or eyebrow above a heading.",
+      "Don't ship a row of equal icon-and-number KPI tiles on the dashboard; use week-bar metrics.",
+      "Don't add gradients, glow, glass, decorative backgrounds, or shadows at rest.",
+      "Don't use coloured icons as the default treatment for data; reserve colour for state.",
+      "Don't animate a page load. Motion reports state changes only, with --ease-out.",
+      "Don't invent claims, credentials, or data; label estimates honestly."
+    ]
+  }
+}

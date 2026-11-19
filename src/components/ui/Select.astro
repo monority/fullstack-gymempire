@@ -1,0 +1,130 @@
+---
+import FormField from './FormField.astro';
+import Icon from './Icon.astro';
+import { buildDescribedBy } from '../../lib/form-utils';
+
+interface Option {
+  value: string;
+  label: string;
+  disabled?: boolean;
+}
+
+interface Props {
+  label?: string;
+  hint?: string;
+  error?: string;
+  disabled?: boolean;
+  required?: boolean;
+  name?: string;
+  id?: string;
+  value?: string;
+  placeholder?: string;
+  options?: Option[];
+  class?: string;
+  [key: string]: unknown;
+}
+
+const {
+  label,
+  hint,
+  error,
+  disabled = false,
+  required = false,
+  name,
+  id,
+  value,
+  placeholder,
+  options,
+  class: className = '',
+  ...rest
+} = Astro.props;
+
+const describedBy = buildDescribedBy(id, hint, error);
+---
+
+<FormField id={id} label={label} hint={hint} error={error} required={required}>
+  <div class="select-wrapper">
+    <select
+      id={id}
+      name={name}
+      disabled={disabled}
+      required={required}
+      aria-invalid={error ? 'true' : undefined}
+      aria-describedby={describedBy}
+      class:list={['select', error && 'select--error', className]}
+      {...rest}
+    >
+      {placeholder && (
+        <option value="" disabled selected={!value}>
+          {placeholder}
+        </option>
+      )}
+      {options?.map((opt) => (
+        <option value={opt.value} disabled={opt.disabled} selected={opt.value === value}>
+          {opt.label}
+        </option>
+      ))}
+      <slot />
+    </select>
+
+    <span class="select__chevron">
+      <Icon name="chevronDown" size={16} />
+    </span>
+  </div>
+</FormField>
+
+<style>
+  .select-wrapper {
+    position: relative;
+    width: 100%;
+  }
+
+  .select {
+    width: 100%;
+    min-height: 4.4rem;
+    padding: 0.8rem 3.6rem 0.8rem 1.2rem;
+    background-color: var(--color-surface-2);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: 1.4rem;
+    outline: none;
+    appearance: none;
+    cursor: pointer;
+    transition:
+      border-color var(--transition-fast),
+      box-shadow var(--transition-fast);
+  }
+
+  .select:hover:not(:disabled) {
+    border-color: var(--color-border-strong);
+  }
+
+  .select:focus-visible {
+    border-color: var(--color-accent);
+    box-shadow: var(--focus-ring);
+  }
+
+  .select:active:not(:disabled) {
+    border-color: var(--color-accent);
+  }
+
+  .select:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .select--error {
+    border-color: var(--color-destructive);
+  }
+
+  .select__chevron {
+    position: absolute;
+    right: 1.2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: var(--color-muted);
+  }
+</style>

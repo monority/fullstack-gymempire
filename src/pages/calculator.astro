@@ -1,0 +1,160 @@
+---
+import { t } from '../i18n';
+import AppLayout from '../layouts/AppLayout.astro';
+import PageHeader from '../components/layout/PageHeader.astro';
+import Card from '../components/ui/Card.astro';
+import CardHeader from '../components/ui/CardHeader.astro';
+import CardTitle from '../components/ui/CardTitle.astro';
+import CardContent from '../components/ui/CardContent.astro';
+import Input from '../components/ui/Input.astro';
+import Select from '../components/ui/Select.astro';
+import BarbellResult from '../components/calculator/BarbellResult.astro';
+import DumbbellResult from '../components/calculator/DumbbellResult.astro';
+import { icons } from '../lib/icons';
+import '../styles/calculator.css';
+const L = t();
+---
+
+<AppLayout title={L.calculateur.title}>
+  <PageHeader title={L.calculateur.title} description={L.calculateur.description} />
+
+  <div class="calc" x-data="plateCalculator()" x-cloak>
+    <div class="calc__tabs" role="tablist" aria-label={L.calculateur.modeAria}>
+      <button
+        type="button"
+        class="calc__tab"
+        :class="mode === 'bar' ? 'calc__tab--active' : ''"
+        :aria-selected="mode === 'bar'"
+        role="tab"
+        @click="mode = 'bar'"
+      >
+        <Fragment set:html={icons.barbell(18, 18)} />
+        {L.calculateur.modeBarre}
+      </button>
+      <button
+        type="button"
+        class="calc__tab"
+        :class="mode === 'dumbbell' ? 'calc__tab--active' : ''"
+        :aria-selected="mode === 'dumbbell'"
+        role="tab"
+        @click="mode = 'dumbbell'"
+      >
+        <Fragment set:html={icons.dumbbellSimple(18, 18)} />
+        {L.calculateur.modeHaltere}
+      </button>
+    </div>
+
+    <Card>
+      <CardHeader>
+        <CardTitle>{L.calculateur.targetLabel}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div class="calc__inputs">
+          <Input
+            label={L.calculateur.totalWeight}
+            id="calc-target"
+            type="number"
+            required
+            step="0.5"
+            min="0"
+            inputmode="decimal"
+            x-model.number="target"
+            placeholder={L.calculateur.targetPlaceholder}
+          />
+          <div x-show="mode === 'bar'">
+            <Select
+              label={L.calculateur.barWeight}
+              id="calc-bar"
+              options={[
+                { value: '20', label: L.calculateur.barOlympic },
+                { value: '15', label: L.calculateur.barWomen },
+                { value: '10', label: L.calculateur.barTechnique },
+                { value: '7', label: L.calculateur.barShort },
+              ]}
+              x-model.number="barWeight"
+            />
+          </div>
+          <div x-show="mode === 'dumbbell'">
+            <Input
+              label={L.calculateur.dumbbellBar}
+              id="calc-dumbbar"
+              type="number"
+              step="0.5"
+              min="0"
+              inputmode="decimal"
+              x-model.number="dumbbellBarWeight"
+              placeholder={L.calculateur.dumbbellBarPlaceholder}
+            />
+          </div>
+          <div class="calc__shortcuts">
+            <span class="calc__shortcuts-label">{L.calculateur.quickShortcuts}</span>
+            <button type="button" class="calc__shortcut" @click="target = 60" aria-label="60 kg">
+              60
+            </button>
+            <button type="button" class="calc__shortcut" @click="target = 80" aria-label="80 kg">
+              80
+            </button>
+            <button type="button" class="calc__shortcut" @click="target = 100" aria-label="100 kg">
+              100
+            </button>
+            <button type="button" class="calc__shortcut" @click="target = 120" aria-label="120 kg">
+              120
+            </button>
+            <button type="button" class="calc__shortcut" @click="target = 140" aria-label="140 kg">
+              140
+            </button>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+
+    <Card>
+      <CardHeader>
+        <CardTitle x-text="resultTitle">{L.calculateur.perSideTitle}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <template x-if="errorMessage">
+          <div class="calc__error" x-text="errorMessage" role="alert" aria-live="assertive"></div>
+        </template>
+        <template x-if="!errorMessage && mode === 'bar'">
+          <BarbellResult
+            modeBarre={L.calculateur.modeBarre}
+            perSide={L.calculateur.perSide}
+            totalPlates={L.calculateur.totalPlates}
+            remainder={L.calculateur.remainder}
+            breakdownPerSide={L.calculateur.breakdownPerSide}
+            kg={L.calculateur.kg}
+            noPlates={L.calculateur.noPlates}
+          />
+        </template>
+
+        <template x-if="!errorMessage && mode === 'dumbbell'">
+          <DumbbellResult
+            perDumbbell={L.calculateur.perDumbbell}
+            totalX2={L.calculateur.totalX2}
+            remainder={L.calculateur.remainder}
+            breakdownTitle={L.calculateur.breakdownTitle}
+            kg={L.calculateur.kg}
+            noDumbbells={L.calculateur.noDumbbells}
+          />
+        </template>
+      </CardContent>
+    </Card>
+  </div>
+</AppLayout>
+
+<script>
+  import { t } from '../i18n';
+  import { createPlateCalculator } from '../components/calculator/plateCalculator';
+
+  const LABELS = t().calculateur;
+
+  const registerCalculator = () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const Alpine = (window as any).Alpine;
+
+    Alpine.data('plateCalculator', () => createPlateCalculator({ labels: LABELS }));
+  };
+  document.addEventListener('alpine:init', registerCalculator);
+  if ((window as any).Alpine) registerCalculator();
+</script>

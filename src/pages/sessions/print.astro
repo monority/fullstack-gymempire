@@ -1,0 +1,787 @@
+---
+/**
+ * « Fiche de séance » — print-only sheet for one session.
+ *
+ * Deliberately standalone (no AppLayout/AppShell): the page is opened in a new
+ * tab via target=_blank and its only job is to render the session as a clean,
+ * ink-friendly sheet that the browser's print dialog can turn into a PDF. The
+ * session data lives in localStorage, so the sheet is rendered client-side by
+ * the same Alpine pattern used everywhere else in the app.
+ *
+ * Route: /sessions/print?id=<sessionId>  (localized under /en when needed)
+ */
+import { t, setLocale, getLocale } from '../../i18n';
+
+const currentPath = Astro.url.pathname;
+const locale = currentPath.startsWith('/en') ? 'en' : 'fr';
+setLocale(locale);
+const L = t();
+const lang = getLocale();
+const title = `${L.detail.title} — Gym Empire`;
+---
+
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#F59A3D" />
+    <!-- --color-accent (hsl(30 92% 58%)) — meta can't read CSS vars -->
+
+    {/* Locale bootstrap — same convention as AppLayout so `t()` resolves
+        the same language as the <html lang> attribute on the client. */}
+    <script is:inline>
+      window.__LOCALE__ = document.documentElement.getAttribute('lang');
+    </script>
+
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/archivo-latin.woff2" crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/inter-latin.woff2" crossorigin />
+
+    <style is:inline>
+      /* Keep the very first paint light so the browser's print snapshot
+         never flashes a dark frame around the sheet. */
+      html {
+        background-color: #ffffff;
+      }
+    </style>
+  </head>
+  <body>
+    {/* ── Screen-only toolbar (hidden in @media print) ── */}
+    <div class="print-toolbar">
+      <span class="print-toolbar__brand">Gym Empire</span>
+      <button type="button" class="print-toolbar__btn" onclick="window.print()">
+        {L.detail.printPdf}
+      </button>
+    </div>
+
+    {/* ── Sheet (rendered client-side by Alpine) ── */}
+    <main class="sheet-wrap" x-data="printSheetApp()" x-init="init()" x-cloak>
+      <template x-if="notFound">
+        <div class="sheet-error">
+          <h1 class="sheet-error__title" x-text="labels.notFoundTitle"></h1>
+          <p class="sheet-error__text" x-text="labels.notFoundDesc"></p>
+          <a class="sheet-error__link" :href="labels.backHref" x-text="labels.notFoundBack"></a>
+        </div>
+      </template>
+
+      <template x-if="!notFound && session">
+        <article class="sheet">
+          {/* Header */}
+          <header class="sheet__head">
+            <div class="sheet__brand">Gym Empire</div>
+            <div class="sheet__title-row">
+              <h1 class="sheet__title" x-text="session.name"></h1>
+              <span
+                class="sheet__badge"
+                :class="'sheet__badge--' + session.status"
+                x-text="statusLabel(session.status)"
+              ></span>
+            </div>
+            <div class="sheet__meta">
+              <span class="sheet__meta-item">
+                <span class="sheet__meta-label" x-text="labels.date"></span>
+                <span class="sheet__meta-value" x-text="formatDateTime(session.date)"></span>
+              </span>
+              <span class="sheet__meta-item" x-show="session.duration">
+                <span class="sheet__meta-label" x-text="labels.duration"></span>
+                <span class="sheet__meta-value" x-text="formatDuration(session.duration)"></span>
+              </span>
+            </div>
+          </header>
+
+          {/* Stats */}
+          <section class="sheet__stats" aria-label={L.detail.exercises}>
+            <div class="sheet__stat">
+              <span class="sheet__stat-value" x-text="session.exercises.length"></span>
+              <span class="sheet__stat-label" x-text="labels.exercises"></span>
+            </div>
+            <div class="sheet__stat">
+              <span class="sheet__stat-value" x-text="totalSets"></span>
+              <span class="sheet__stat-label" x-text="labels.sets"></span>
+            </div>
+            <div class="sheet__stat">
+              <span class="sheet__stat-value" x-text="formatVolume(totalVolume)"></span>
+              <span class="sheet__stat-label" x-text="labels.volume"></span>
+            </div>
+          </section>
+
+          {/* Free-text notes */}
+          <section class="sheet__notes" x-show="session.notes && session.notes.trim() !== ''">
+            <h2 class="sheet__section-title" x-text="labels.notes"></h2>
+            <p class="sheet__notes-text" x-text="session.notes"></p>
+          </section>
+
+          {/* Per-exercise tables */}
+          <section class="sheet__exercises">
+            <template x-for="(ex, exIdx) in session.exercises" :key="exIdx">
+              <div class="sheet__exercise">
+                <div class="sheet__exercise-head">
+                  <h3 class="sheet__exercise-name" x-text="trExercise(ex.name)"></h3>
+                  <span
+                    class="sheet__exercise-superset"
+                    x-show="groupFor(ex) != null"
+                    x-text="supersetLabelFor(ex)"
+                  ></span>
+                </div>
+                <table class="sheet__table">
+                  <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col" x-text="labels.colWeight"></th>
+                      <th scope="col" x-text="labels.colReps"></th>
+                      <th scope="col">RPE</th>
+                      <th scope="col" x-text="labels.colType"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <template x-for="set in ex.sets" :key="set.setNumber">
+                      <tr>
+                        <td x-text="set.setNumber"></td>
+                        <td x-text="formatWeight(set.weight)"></td>
+                        <td x-text="set.reps"></td>
+                        <td x-text="formatSetRpe(set)"></td>
+                        <td x-text="typeLabel(set.type)"></td>
+                      </tr>
+                    </template>
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <td colspan="5" class="sheet__exercise-volume">
+                        <span x-text="labels.volume"></span>
+                        <strong x-text="formatVolume(exerciseVolume(ex))"></strong>
+                      </td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </template>
+          </section>
+
+          {/* Totals row */}
+          <div class="sheet__total">
+            <span x-text="labels.totalVolume"></span>
+            <strong x-text="formatVolume(totalVolume)"></strong>
+          </div>
+
+          <footer class="sheet__footer" x-text="labels.footer"></footer>
+        </article>
+      </template>
+    </main>
+
+    <script>
+      import { createPrintSheetApp } from '../../components/session-detail/printSheetApp';
+      import { getAuth } from '../../lib/auth';
+      import { t, getLocale, localizedPath, trExercise } from '../../i18n';
+
+      const LABELS = t();
+
+      // Helper de traduction identique aux autres pages (celle-ci est autonome).
+      (window as any).trExercise = trExercise;
+
+      if (!getAuth()) {
+        window.location.replace(localizedPath('/login'));
+      }
+
+      const register = () => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const Alpine = (window as any).Alpine;
+        const sheet = window as Window & { __SHEET_PRINTED__?: boolean };
+
+        Alpine.data('printSheetApp', () =>
+          createPrintSheetApp({
+            search: window.location.search,
+            labels: {
+              common: LABELS.common,
+              detail: LABELS.detail,
+              locale: getLocale,
+              backHref: localizedPath('/sessions'),
+            },
+            ui: {
+              alreadyPrinted: () => Boolean(sheet.__SHEET_PRINTED__),
+              markPrinted: () => {
+                sheet.__SHEET_PRINTED__ = true;
+              },
+              print: () => window.print(),
+              schedule: (fn, ms) => window.setTimeout(fn, ms),
+            },
+          })
+        );
+      };
+
+      document.addEventListener('alpine:init', register);
+      if ((window as any).Alpine) register();
+    </script>
+
+    {/* Alpine.js CDN — MUST be AFTER the app script (type="module" runs before defer) */}
+    <script is:inline defer src="/vendor/alpinejs-3.14.1.min.js"></script>
+
+    <style>
+      [x-cloak] {
+        display: none !important;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        background-color: #050505;
+        color: #f6f6f6;
+        font-family:
+          'Inter',
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          'Segoe UI',
+          Roboto,
+          Helvetica,
+          Arial,
+          sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .print-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        max-width: 90rem;
+        margin: 0 auto;
+        padding: 1.6rem 2.4rem;
+      }
+
+      .print-toolbar__brand {
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        color: #f59a3d;
+      }
+
+      .print-toolbar__btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        height: 4.2rem;
+        padding: 0 1.8rem;
+        border: 1px solid #2a2a2a;
+        border-radius: 0.8rem;
+        background-color: #171717;
+        color: #f6f6f6;
+        font-family: inherit;
+        font-size: 1.3rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition:
+          background-color 0.2s ease,
+          border-color 0.2s ease;
+      }
+
+      .print-toolbar__btn:hover {
+        background-color: #232323;
+        border-color: #f59a3d;
+      }
+
+      .sheet-wrap {
+        max-width: 90rem;
+        margin: 0 auto;
+        padding: 0 2.4rem 4rem;
+      }
+
+      .sheet {
+        background-color: #0d0d0d;
+        border: 1px solid #222222;
+        border-radius: 1.2rem;
+        padding: 3.2rem 3.6rem;
+      }
+
+      /* ── Header ── */
+      .sheet__head {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        padding-bottom: 2rem;
+        border-bottom: 2px solid #f59a3d;
+      }
+
+      .sheet__brand {
+        font-size: 1.4rem;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        color: #f59a3d;
+      }
+
+      .sheet__title-row {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 1.2rem;
+        flex-wrap: wrap;
+      }
+
+      .sheet__title {
+        margin: 0;
+        font-size: 3rem;
+        font-weight: 700;
+        line-height: 1.1;
+        letter-spacing: -0.01em;
+        color: #f6f6f6;
+        word-break: break-word;
+      }
+
+      .sheet__badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        height: 2.8rem;
+        padding: 0 1.2rem;
+        border-radius: 999px;
+        border: 1px solid transparent;
+        font-size: 1.1rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        flex-shrink: 0;
+      }
+
+      .sheet__badge--completed {
+        background-color: hsl(142 70% 45% / 0.12);
+        color: #4ade80;
+        border-color: hsl(142 70% 45% / 0.3);
+      }
+
+      .sheet__badge--in-progress {
+        background-color: hsl(217 80% 55% / 0.12);
+        color: #60a5fa;
+        border-color: hsl(217 80% 55% / 0.3);
+      }
+
+      .sheet__badge--planned {
+        background-color: hsl(0 0% 100% / 0.06);
+        color: #9ca3af;
+        border-color: hsl(0 0% 100% / 0.14);
+      }
+
+      .sheet__meta {
+        display: flex;
+        gap: 2rem;
+        flex-wrap: wrap;
+      }
+
+      .sheet__meta-item {
+        display: inline-flex;
+        align-items: baseline;
+        gap: 0.6rem;
+        min-width: 0;
+      }
+
+      .sheet__meta-label {
+        font-size: 0.95rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: #6b7280;
+      }
+
+      .sheet__meta-value {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #f6f6f6;
+        text-transform: capitalize;
+      }
+
+      /* ── Stats ── */
+      .sheet__stats {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1.2rem;
+        padding: 2rem 0;
+      }
+
+      .sheet__stat {
+        display: flex;
+        flex-direction: column;
+        gap: 0.3rem;
+      }
+
+      .sheet__stat-value {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.1;
+        color: #f59a3d;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .sheet__stat-label {
+        font-size: 0.9rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: #9ca3af;
+      }
+
+      /* ── Section titles / notes ── */
+      .sheet__section-title {
+        margin: 0 0 0.8rem;
+        font-size: 1rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        color: #9ca3af;
+      }
+
+      .sheet__notes {
+        padding-bottom: 2rem;
+      }
+
+      .sheet__notes-text {
+        margin: 0;
+        padding: 1rem 1.2rem;
+        background-color: #111111;
+        border: 1px solid #2a2a2a;
+        border-left: 1px solid #f59a3d;
+        border-radius: 0.6rem;
+        color: #f6f6f6;
+        font-size: 1.3rem;
+        line-height: 1.6;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+
+      /* ── Exercise tables ── */
+      .sheet__exercises {
+        display: flex;
+        flex-direction: column;
+        gap: 2.4rem;
+        padding-top: 0.4rem;
+      }
+
+      .sheet__exercise {
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+
+      .sheet__exercise-head {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+
+      .sheet__exercise-name {
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: 700;
+        line-height: 1.2;
+        color: #f6f6f6;
+      }
+
+      .sheet__exercise-superset {
+        display: inline-flex;
+        align-items: center;
+        height: 2.4rem;
+        padding: 0 1rem;
+        border: 1px solid hsl(271 80% 66% / 0.4);
+        border-radius: 999px;
+        background-color: hsl(271 80% 66% / 0.1);
+        color: #d8b4fe;
+        font-size: 1rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+
+      .sheet__table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 1.2rem;
+        color: #f6f6f6;
+      }
+
+      .sheet__table th,
+      .sheet__table td {
+        text-align: left;
+        padding: 0.7rem 1rem;
+      }
+
+      .sheet__table thead th {
+        background-color: #171717;
+        color: #9ca3af;
+        border-bottom: 1px solid #333333;
+        font-size: 0.9rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+      }
+
+      .sheet__table tbody td {
+        border-bottom: 1px solid #262626;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .sheet__table tbody tr:nth-child(even) {
+        background-color: hsl(0 0% 100% / 0.03);
+      }
+
+      .sheet__exercise-volume {
+        padding: 0.8rem 1rem !important;
+      }
+
+      .sheet__exercise-volume span {
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: #9ca3af;
+        margin-right: 0.6rem;
+      }
+
+      .sheet__exercise-volume strong {
+        color: #f59a3d;
+        font-size: 1.3rem;
+      }
+
+      /* ── Totals row ── */
+      .sheet__total {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-top: 2.4rem;
+        padding: 1.6rem 1.8rem;
+        background-color: #101010;
+        border: 1px solid #2a2a2a;
+        border-radius: 0.8rem;
+      }
+
+      .sheet__total span {
+        font-size: 1rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        color: #9ca3af;
+      }
+
+      .sheet__total strong {
+        font-size: 1.9rem;
+        color: #f59a3d;
+        font-variant-numeric: tabular-nums;
+      }
+
+      /* ── Footer ── */
+      .sheet__footer {
+        margin-top: 2.4rem;
+        padding-top: 1.6rem;
+        border-top: 1px solid #222222;
+        text-align: center;
+        font-size: 1.05rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.2em;
+        color: #6b7280;
+      }
+
+      /* ── Error state ── */
+      .sheet-error {
+        max-width: 40rem;
+        margin: 6rem auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.2rem;
+        text-align: center;
+      }
+
+      .sheet-error__title {
+        margin: 0;
+        font-size: 2.4rem;
+        color: #f6f6f6;
+      }
+
+      .sheet-error__text {
+        margin: 0;
+        color: #9ca3af;
+        font-size: 1.3rem;
+        line-height: 1.5;
+      }
+
+      .sheet-error__link {
+        display: inline-flex;
+        align-items: center;
+        height: 4.2rem;
+        padding: 0 1.8rem;
+        background-color: #f59a3d;
+        color: #1a0e00;
+        border-radius: 0.8rem;
+        font-weight: 700;
+        font-size: 1.3rem;
+        text-decoration: none;
+      }
+
+      @page {
+        size: A4;
+        margin: 1.4cm 1.6cm;
+      }
+
+      @media print {
+        html,
+        body {
+          background: #ffffff !important;
+          color: #111111 !important;
+        }
+
+        .print-toolbar {
+          display: none !important;
+        }
+
+        .sheet-wrap {
+          max-width: none;
+          padding: 0;
+        }
+
+        .sheet {
+          background: #ffffff;
+          border: none;
+          border-radius: 0;
+          padding: 0;
+        }
+
+        .sheet__head {
+          border-bottom: 2px solid #f59a3d;
+        }
+
+        .sheet__brand {
+          color: #f59a3d;
+        }
+
+        .sheet__title {
+          color: #111111;
+        }
+
+        .sheet__badge {
+          background: #ffffff;
+          border: 1px solid #999999;
+        }
+        .sheet__badge--completed {
+          color: #15803d;
+          border-color: #15803d;
+          background: #ffffff;
+        }
+        .sheet__badge--in-progress {
+          color: #1d4ed8;
+          border-color: #1d4ed8;
+          background: #ffffff;
+        }
+        .sheet__badge--planned {
+          color: #555555;
+          border-color: #999999;
+          background: #ffffff;
+        }
+
+        .sheet__meta-label {
+          color: #555555;
+        }
+
+        .sheet__meta-value {
+          color: #111111;
+        }
+
+        .sheet__stat-value {
+          color: #111111;
+        }
+
+        .sheet__stat-label {
+          color: #444444;
+        }
+
+        .sheet__section-title {
+          color: #444444;
+        }
+
+        .sheet__notes-text {
+          background: #f7f7f7;
+          border: 1px solid #cccccc;
+          border-left: 1px solid #f59a3d;
+          color: #111111;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+
+        .sheet__exercise-name {
+          color: #111111;
+        }
+
+        .sheet__exercise-superset {
+          background: #ffffff;
+          border: 1px solid #8b5cf6;
+          color: #6d28d9;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+
+        .sheet__table {
+          color: #111111;
+        }
+
+        .sheet__table thead th {
+          background: #eeeeee;
+          color: #333333;
+          border-bottom: 1px solid #999999;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+
+        .sheet__table tbody td {
+          border-bottom: 1px solid #cccccc;
+        }
+
+        .sheet__table tbody tr:nth-child(even) {
+          background: #fafafa;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+
+        .sheet__exercise-volume strong,
+        .sheet__total strong {
+          color: #111111;
+        }
+
+        .sheet__exercise-volume span {
+          color: #444444;
+        }
+
+        .sheet__total {
+          background: #f4f4f4;
+          border-color: #cccccc;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+
+        .sheet__total span {
+          color: #333333;
+        }
+
+        .sheet__footer {
+          color: #666666;
+          border-top-color: #cccccc;
+        }
+
+        .sheet-error__title {
+          color: #111111;
+        }
+
+        .sheet-error__link {
+          display: none;
+        }
+      }
+    </style>
+  </body>
+</html>

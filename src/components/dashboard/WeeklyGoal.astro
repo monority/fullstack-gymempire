@@ -1,0 +1,186 @@
+---
+/**
+ * WeeklyGoal — progression de l'objectif hebdomadaire.
+ * Renders inside the Alpine dashboardApp scope.
+ */
+import { t } from '../../i18n';
+
+const L = t();
+---
+
+<section class="dash__goal" aria-label={L.dashboard.goalCardAria}>
+  <div
+    class="dash__goal-ring"
+    role="progressbar"
+    aria-label={L.dashboard.goalCardAria}
+    aria-valuemin="0"
+    :aria-valuenow="weeklyDone"
+    :aria-valuemax="settings.weeklyGoal"
+  >
+    <svg viewBox="0 0 44 44" class="dash__goal-ring-svg" aria-hidden="true">
+      <circle cx="22" cy="22" r="18" class="dash__goal-ring-track"></circle>
+      <circle
+        cx="22"
+        cy="22"
+        r="18"
+        class="dash__goal-ring-fill"
+        :class="{ 'dash__goal-ring-fill--complete': weeklyDone >= settings.weeklyGoal }"
+        :stroke-dasharray="`${weeklyProgress * 113.1} 113.1`"
+      ></circle>
+    </svg>
+    <span class="dash__goal-ring-pct" x-text="`${Math.round(weeklyProgress * 100)}%`"></span>
+  </div>
+
+  <div class="dash__goal-text">
+    <h2 class="dash__goal-title">
+      <span class="dash__goal-done" x-text="weeklyDone"></span>
+      <span class="dash__goal-sep" aria-hidden="true">
+        /
+      </span>
+      <span class="dash__goal-target" x-text="settings.weeklyGoal">
+        3
+      </span>
+      <span
+        class="dash__goal-unit"
+        x-text="weeklyDone === 1 ? labels.weeklyMoreSingular : labels.sessionsUnit"
+      >
+        {L.dashboard.sessionsUnit}
+      </span>
+    </h2>
+
+    <p
+      class="dash__goal-hint"
+      x-show="weeklyDone >= settings.weeklyGoal"
+      x-transition.opacity
+      x-cloak
+      x-text="labels.weeklyGoalDone"
+    ></p>
+    <p
+      class="dash__goal-hint dash__goal-hint--muted"
+      x-show="weeklyDone < settings.weeklyGoal && settings.weeklyGoal > 0"
+      x-text="remainingHintText()"
+    ></p>
+  </div>
+</section>
+
+<style>
+  .dash__goal {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    padding: 2.4rem 2.4rem 2.4rem 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .dash__goal-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    min-width: 0;
+    flex: 1;
+  }
+
+  .dash__goal-title {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin: 0;
+    color: var(--color-text);
+    font-family: var(--font-display);
+    font-size: var(--text-metric);
+    font-weight: 700;
+    line-height: var(--leading-display);
+    letter-spacing: var(--tracking-display);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .dash__goal-done {
+    color: var(--color-accent);
+  }
+
+  .dash__goal-sep {
+    color: var(--color-muted);
+    margin: 0 0.2rem;
+  }
+
+  .dash__goal-target {
+    color: var(--color-text);
+  }
+
+  .dash__goal-unit {
+    margin-left: 0.8rem;
+    color: var(--color-muted);
+    font-family: var(--font-body);
+    font-size: 1.4rem;
+    font-weight: 500;
+    letter-spacing: 0;
+  }
+
+  .dash__goal-ring {
+    position: relative;
+    flex-shrink: 0;
+    width: 9rem;
+    height: 9rem;
+  }
+
+  .dash__goal-ring-svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+    overflow: visible;
+  }
+
+  .dash__goal-ring-track {
+    fill: none;
+    stroke: var(--color-surface-3);
+    stroke-width: 4;
+  }
+
+  .dash__goal-ring-fill {
+    fill: none;
+    stroke: var(--color-accent);
+    stroke-width: 4;
+    stroke-linecap: round;
+    transition:
+      stroke 240ms var(--ease-out),
+      stroke-dasharray 240ms var(--ease-out);
+  }
+
+  .dash__goal-ring-fill--complete {
+    stroke: var(--color-success);
+  }
+
+  .dash__goal-ring-pct {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text);
+    font-family: var(--font-display);
+    font-size: 1.8rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+
+  .dash__goal-hint {
+    margin: 0;
+    color: var(--color-success);
+    font-size: 1.2rem;
+    font-weight: 600;
+  }
+
+  .dash__goal-hint--muted {
+    color: var(--color-muted);
+    font-weight: 500;
+  }
+
+  @media (max-width: 640px) {
+    .dash__goal {
+      padding: 2.4rem 1.6rem;
+    }
+  }
+</style>

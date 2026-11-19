@@ -1,0 +1,1488 @@
+---
+import AppLayout from '../../../layouts/AppLayout.astro';
+import PageHeader from '../../../components/layout/PageHeader.astro';
+import Card from '../../../components/ui/Card.astro';
+import CardHeader from '../../../components/ui/CardHeader.astro';
+import CardTitle from '../../../components/ui/CardTitle.astro';
+import CardContent from '../../../components/ui/CardContent.astro';
+import Badge from '../../../components/ui/Badge.astro';
+import Button from '../../../components/ui/Button.astro';
+import IconButton from '../../../components/ui/IconButton.astro';
+import Input from '../../../components/ui/Input.astro';
+import Dialog from '../../../components/ui/Dialog.astro';
+import { TRAINING_TEMPLATES } from '../../../lib/templates';
+import { t, localizedPath, trTemplateName, trTemplateDesc } from '../../../i18n';
+import { icons } from '../../../lib/icons';
+import Icon from '../../../components/ui/Icon.astro';
+
+const L = t();
+const editId = Astro.url.searchParams.get('edit');
+const isEditMode = Boolean(editId);
+const setTypes = [
+  { value: 'warmup', label: L.builder.types.warmup },
+  { value: 'work', label: L.builder.types.work },
+  { value: 'top', label: L.builder.types.top },
+  { value: 'drop', label: L.builder.types.drop },
+  { value: 'failure', label: L.builder.types.failure },
+] as const;
+---
+
+<AppLayout title={isEditMode ? L.builder.editTitle : L.builder.title}>
+  <PageHeader
+    title={isEditMode ? L.builder.editTitle : L.builder.title}
+    description={L.builder.description}
+  />
+
+  <div
+    class="create__main"
+    x-data="sessionBuilder()"
+    x-init="init()"
+    x-cloak
+    @builder:remove-exercise.window="removeExercise($event.detail.index)"
+    @builder:remove-superset.window="removeFromSuperset($event.detail.index)"
+  >
+    <div class="create__action-bar">
+      <div class="create__summary" x-show="exercises.length > 0" aria-live="polite">
+        <span class="create__summary-item">
+          <strong x-text="exercises.length"></strong>
+          <span>{L.builder.exercisesWord}</span>
+        </span>
+        <span class="create__summary-separator" aria-hidden="true">
+          /
+        </span>
+        <span class="create__summary-item">
+          <strong x-text="exercises.reduce((total, exercise) => total + exercise.sets.length, 0)"></strong>
+          <span>{L.builder.setsPlural}</span>
+        </span>
+      </div>
+      <Button variant="secondary" @click="discard()">
+        {L.common.cancel}
+      </Button>
+      <Button
+        variant="ghost"
+        x-show="exercises.length > 1"
+        @click="allExpanded ? collapseAll() : expandAll()"
+        :aria-label="allExpanded ? labels.collapseAll : labels.expandAll"
+      >
+        <span x-text="allExpanded ? labels.collapseAll : labels.expandAll">
+          {L.builder.expandAll}
+        </span>
+      </Button>
+      <Button variant="primary" :disabled="!canSave" @click="save()">
+        <Fragment set:html={icons.save(18, 18)} />
+        <span x-text="editSessionId ? labels.editSaveSession : labels.saveSession">
+          {L.builder.saveSession}
+        </span>
+      </Button>
+    </div>
+
+    <Card>
+      <CardHeader>
+        <CardTitle>{L.builder.infoTitle}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div class="create__info-grid">
+          <Input
+            label={L.builder.name}
+            id="ses-name"
+            type="text"
+            required
+            placeholder={L.builder.namePlaceholder}
+            x-model="sessionName"
+            autocomplete="off"
+            maxlength={80}
+          />
+          <Input label={L.builder.date} id="ses-date" type="date" x-model="sessionDate" />
+        </div>
+      </CardContent>
+    </Card>
+
+    <template x-if="exercises.length === 0">
+      <Card>
+        <div class="create__empty-state">
+          <div class="create__empty-icon" aria-hidden="true">
+            <Fragment set:html={icons.dumbbellBox(48, 48)} />
+          </div>
+          <h3 class="create__empty-title" x-text="labels.noExoAdded">
+            {L.builder.noExoAdded}
+          </h3>
+          <p class="create__empty-desc" x-text="labels.noExoDesc">
+            {L.builder.noExoDesc}
+          </p>
+          <Button class="create__empty-add-btn" @click="openPicker()">
+            <Fragment set:html={icons.plus(20, 20)} />
+            <span>{L.builder.addExercise}</span>
+          </Button>
+        </div>
+      </Card>
+    </template>
+
+    <template x-for="(ex, exIdx) in exercises" :key="ex.exerciseId + '-' + exIdx">
+      <div x-data="exerciseCard(ex, exIdx)">
+        <Card>
+          <div
+            class="ses-ex-superset-bar create__superset-bar"
+            x-show="exercise.supersetId != null"
+            x-cloak
+            :class="'ses-superset-bar--g' + exercise.supersetId"
+          >
+            <span class="ses-superset-dot" aria-hidden="true"></span>
+            <Icon name="link" size={16} class="create__superset-bar-icon" />
+            <span class="create__superset-bar-label">
+              <span x-text="labels.supersetLabel + ' ' + exercise.supersetId">Superset</span>
+            </span>
+            <IconButton
+              variant="ghost"
+              icon={icons.closeX(18, 18)}
+              label={L.builder.supersetRemove}
+              title={L.builder.supersetRemove}
+              @click="$dispatch('builder:remove-superset', { index: exerciseIndex })"
+            />
+          </div>
+
+          <div class="ses-ex-header create__ex-header">
+            <button
+              type="button"
+              class="ses-ex-toggle create__ex-toggle"
+              @click="toggle()"
+              :aria-expanded="expanded.toString()"
+              :aria-controls="'ses-ex-body-' + exerciseIndex"
+            >
+              <div class="create__toggle-body">
+                <div class="ses-ex-head create__ex-head">
+                  <h3 class="create__ex-name" x-text="trExercise(exercise.name)"></h3>
+                  <Badge
+                    variant="category"
+                    :class="'badge--cat-' + muscleHue(exercise.muscle)"
+                    x-text="trMuscle(exercise.muscle)"
+                  />
+                </div>
+                <p class="create__ex-summary" x-show="!expanded" x-cloak x-text="summary"></p>
+              </div>
+              <span class="ses-chevron create__ex-chevron" :class="{ 'is-open': expanded }">
+                <Fragment set:html={icons.chevronDown(20, 20)} />
+              </span>
+            </button>
+            <IconButton
+              variant="danger"
+              icon={icons.trash(18, 18)}
+              label={L.builder.removeExerciseAria}
+              title={L.builder.removeExerciseTitle}
+              @click="remove()"
+            />
+          </div>
+
+          <div
+            :id="'ses-ex-body-' + exerciseIndex"
+            class="create__ex-body"
+            x-show="expanded"
+            x-cloak
+          >
+            <CardContent>
+              <div
+                class="create__sets-scroll"
+                role="table"
+                :aria-label="labels.setsFor + ' ' + exercise.name"
+              >
+                <div class="ses-table-head" role="row">
+                  <div class="ses-cell ses-cell-num" role="columnheader">
+                    #
+                  </div>
+                  <div class="ses-cell ses-cell-type" role="columnheader">
+                    {L.builder.setTypeHeader}
+                  </div>
+                  <div class="ses-cell ses-cell-num" role="columnheader">
+                    {L.builder.weightHeader}
+                  </div>
+                  <div class="ses-cell ses-cell-num" role="columnheader">
+                    Reps
+                  </div>
+                  <div
+                    class="ses-cell ses-cell-action"
+                    role="columnheader"
+                    aria-label="Actions"
+                  ></div>
+                </div>
+                <template x-for="(set, setIdx) in exercise.sets" :key="setIdx">
+                  <div class="ses-table-row" role="row">
+                    <div class="ses-cell ses-cell-num" role="cell" x-text="set.setNumber"></div>
+                    <div class="ses-cell ses-cell-type" role="cell">
+                      <select
+                        class="create__select"
+                        x-model="set.type"
+                        :aria-label="labels.setTypeLabel + ' ' + (setIdx + 1)"
+                      >
+                        {setTypes.map((t) => (
+                          <option value={t.value}>{t.label}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div class="ses-cell ses-cell-num" role="cell">
+                      <input
+                        type="number"
+                        class="create__input ses-input-inline"
+                        min="0"
+                        step="0.5"
+                        :value="displayWeight(set.weight)"
+                        @change="storeWeight($event.target, set)"
+                        inputmode="decimal"
+                        :aria-label="labels.weightForSet + ' ' + (setIdx + 1)"
+                      />
+                    </div>
+                    <div class="ses-cell ses-cell-num" role="cell">
+                      <input
+                        type="number"
+                        class="create__input ses-input-inline"
+                        min="0"
+                        step="1"
+                        x-model.number="set.reps"
+                        inputmode="numeric"
+                        :aria-label="labels.repsForSet + ' ' + (setIdx + 1)"
+                      />
+                    </div>
+                    <div class="ses-cell ses-cell-action" role="cell">
+                      <IconButton
+                        variant="danger"
+                        size="sm"
+                        icon={icons.closeX(18, 18)}
+                        label={L.builder.deleteSet}
+                        :aria-label="labels.deleteSet + ' ' + (setIdx + 1)"
+                        title={L.builder.deleteSet}
+                        :disabled="exercise.sets.length <= 1"
+                        @click="removeSet(setIdx)"
+                      />
+                    </div>
+                  </div>
+                </template>
+              </div>
+
+              <div class="ses-ex-actions create__ex-actions">
+                <Button variant="secondary" size="sm" @click="addSet()">
+                  <Fragment set:html={icons.plus(18, 18)} />
+                  <span>{L.builder.addSet}</span>
+                </Button>
+              </div>
+            </CardContent>
+          </div>
+        </Card>
+      </div>
+    </template>
+
+    <template x-if="exercises.length > 0">
+      <div class="create__add-wrap">
+        <Button class="create__add-btn" @click="openPicker()">
+          <Fragment set:html={icons.plus(20, 20)} />
+          <span>{L.builder.addExercise}</span>
+        </Button>
+      </div>
+    </template>
+
+    <template x-if="exercises.length > 0">
+      <Card>
+        <CardHeader>
+          <CardTitle>{L.builder.notesTitle}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div class="create__notes">
+            <div class="create__field">
+              <div class="create__field-row">
+                <label for="ses-rpe" class="create__label">
+                  {L.builder.rpe}
+                </label>
+                <span class="rpe-value" :class="'tone--' + rpeTone" x-text="sessionRpe"></span>
+              </div>
+              <div class="create__rpe-slider">
+                <input
+                  id="ses-rpe"
+                  type="range"
+                  min="1"
+                  max="10"
+                  step="1"
+                  class="ses-rpe-input create__rpe-input"
+                  :class="'ses-rpe-input--' + rpeTone"
+                  x-model.number="sessionRpe"
+                  aria-label={L.builder.rpeAria}
+                />
+                <div class="create__rpe-label">
+                  <span x-text="rpeLabel"></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="create__field">
+              <label class="create__label">{L.builder.fatigueTitle}</label>
+              <div
+                class="create__fatigue-group"
+                role="radiogroup"
+                aria-label={L.builder.fatigueAria}
+              >
+                <template x-for="i in 5" :key="'fat-' + i">
+                  <button
+                    type="button"
+                    class="ses-fatigue-btn create__fatigue-btn"
+                    :class="{ 'is-active': sessionFatigue >= i }"
+                    :aria-pressed="sessionFatigue >= i"
+                    :aria-label="labels.fatigueOn + ' ' + i + ' ' + labels.fatigueOutOf5"
+                    @click="setFatigue(i)"
+                  >
+                    <Icon name="flame" size={20} />
+                  </button>
+                </template>
+              </div>
+            </div>
+
+            <div class="create__field">
+              <label class="create__label">{L.builder.moodTitle}</label>
+              <div class="create__mood-group" role="radiogroup" aria-label={L.builder.moodAria}>
+                <button
+                  type="button"
+                  class="ses-mood-btn create__mood-btn"
+                  :class="{ 'is-active': sessionMood === 'great' }"
+                  :aria-pressed="sessionMood === 'great'"
+                  :aria-label="labels.moodLabel + ' : ' + labels.moodGreat"
+                  @click="setMood('great')"
+                >
+                  <Icon name="smile" size={22} />
+                </button>
+                <button
+                  type="button"
+                  class="ses-mood-btn create__mood-btn"
+                  :class="{ 'is-active': sessionMood === 'good' }"
+                  :aria-pressed="sessionMood === 'good'"
+                  :aria-label="labels.moodLabel + ' : ' + labels.moodGood"
+                  @click="setMood('good')"
+                >
+                  <Icon name="heart" size={22} />
+                </button>
+                <button
+                  type="button"
+                  class="ses-mood-btn create__mood-btn"
+                  :class="{ 'is-active': sessionMood === 'ok' }"
+                  :aria-pressed="sessionMood === 'ok'"
+                  :aria-label="labels.moodLabel + ' : ' + labels.moodOk"
+                  @click="setMood('ok')"
+                >
+                  <Icon name="Meh" size={22} />
+                </button>
+                <button
+                  type="button"
+                  class="ses-mood-btn create__mood-btn"
+                  :class="{ 'is-active': sessionMood === 'tired' }"
+                  :aria-pressed="sessionMood === 'tired'"
+                  :aria-label="labels.moodLabel + ' : ' + labels.moodTired"
+                  @click="setMood('tired')"
+                >
+                  <Icon name="frown" size={22} />
+                </button>
+                <button
+                  type="button"
+                  class="ses-mood-btn create__mood-btn"
+                  :class="{ 'is-active': sessionMood === 'bad' }"
+                  :aria-pressed="sessionMood === 'bad'"
+                  :aria-label="labels.moodLabel + ' : ' + labels.moodBad"
+                  @click="setMood('bad')"
+                >
+                  <Icon name="sad" size={22} />
+                </button>
+              </div>
+            </div>
+
+            <div class="create__field">
+              <label for="ses-notes" class="create__label">
+                {L.builder.notesLabel}
+              </label>
+              <textarea
+                id="ses-notes"
+                class="create__textarea"
+                x-model="sessionNotes"
+                placeholder={L.builder.notesPlaceholder}
+                rows="3"
+                maxlength="500"
+              ></textarea>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </template>
+
+    <div
+      class="create__validation"
+      x-show="!canSave && (sessionName.trim() || exercises.length > 0)"
+      x-cloak
+    >
+      <template x-if="!sessionName.trim()">
+        <span x-text="labels.needName">{L.builder.needName}</span>
+      </template>
+      <template x-if="sessionName.trim() && exercises.length === 0">
+        <span x-text="labels.needExo">{L.builder.needExo}</span>
+      </template>
+      <template x-if="sessionName.trim() && exercises.length > 0 && exercises.some((exercise) => exercise.sets.length === 0)">
+        <span x-text="labels.needSets">{L.builder.needSets}</span>
+      </template>
+    </div>
+
+    <Dialog id="ses-picker-dialog" title={L.builder.pickerTitle}>
+      <div class="create__picker">
+        <div class="create__picker-search">
+          <span class="create__picker-search-icon">
+            <Fragment set:html={icons.searchLine(20, 20)} />
+          </span>
+          <Input
+            type="search"
+            class="create__picker-input ses-search-input"
+            placeholder={L.builder.searchPlaceholder}
+            x-model="exerciseSearch"
+            aria-label={L.builder.searchAria}
+            x-ref="pickerSearch"
+            @keydown.escape="closeDialogById('ses-picker-dialog')"
+            autocomplete="off"
+          />
+        </div>
+
+        <div class="create__picker-filters" role="group" aria-label={L.builder.allMuscles}>
+          <button
+            type="button"
+            class="create__picker-filter"
+            :class="{ 'is-active': exerciseMuscleFilter === '' }"
+            :aria-pressed="(exerciseMuscleFilter === '').toString()"
+            @click="exerciseMuscleFilter = ''"
+          >
+            {L.builder.allMuscles}
+          </button>
+          <template x-for="muscle in muscleFilters" :key="muscle">
+            <button
+              type="button"
+              class="create__picker-filter"
+              :class="{ 'is-active': exerciseMuscleFilter === muscle }"
+              :aria-pressed="(exerciseMuscleFilter === muscle).toString()"
+              @click="exerciseMuscleFilter = muscle"
+              x-text="trMuscle(muscle)"
+            ></button>
+          </template>
+        </div>
+
+        <div class="create__picker-templates" x-show="exerciseSearch.trim() === ''">
+          <div class="create__picker-templates-head">
+            <span class="create__picker-templates-title">Templates</span>
+            <span class="create__picker-templates-hint">{L.builder.templateHint}</span>
+          </div>
+          <div class="create__picker-templates-grid">
+            {TRAINING_TEMPLATES.map((tpl) => (
+              <button type="button" class="create__picker-tpl" @click={`loadTemplate('${tpl.id}')`}>
+                <span class="create__picker-tpl-name">{trTemplateName(tpl.name)}</span>
+                <span class="create__picker-tpl-desc">{trTemplateDesc(tpl.id)}</span>
+                <span class="create__picker-tpl-count">
+                  {tpl.exercises.length} {L.builder.exercisesWord}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div class="create__picker-list" role="list">
+          <template x-if="availableExercises.length === 0">
+            <div class="create__picker-empty">
+              <p x-text="labels.emptyLibrary">{L.builder.emptyLibrary}</p>
+              <a
+                href={localizedPath('/exercises')}
+                class="create__picker-empty-link"
+                x-text="labels.createExoLink"
+              >
+                {L.builder.createExoLink}
+              </a>
+            </div>
+          </template>
+
+          <template x-if="availableExercises.length > 0 && filteredExercises.length === 0 && exerciseSearch.trim() === ''">
+            <div class="create__picker-empty">
+              <p x-text="labels.allAdded">{L.builder.allAdded}</p>
+            </div>
+          </template>
+
+          <template x-if="availableExercises.length > 0 && filteredExercises.length === 0 && exerciseSearch.trim() !== ''">
+            <div class="create__picker-empty">
+              <p x-text="labels.noSearchMatch">{L.builder.noSearchMatch}</p>
+            </div>
+          </template>
+
+          <template x-for="ex in filteredExercises" :key="ex.id">
+            <div class="create__picker-item" role="listitem">
+              <button
+                type="button"
+                class="create__picker-item-btn"
+                @click="addExercise(ex)"
+                :aria-label="labels.addExoAria + ' ' + ex.name + ' ' + labels.toSession"
+              >
+                <span class="create__picker-item-name" x-text="trExercise(ex.name)"></span>
+                <Badge
+                  variant="category"
+                  size="sm"
+                  :class="'badge--cat-' + muscleHue(ex.muscle)"
+                  x-text="trMuscle(ex.muscle)"
+                />
+              </button>
+              <button
+                type="button"
+                class="create__picker-tip-toggle"
+                @click="toggleTip(ex.id)"
+                :aria-expanded="isTipOpen(ex.id).toString()"
+                :aria-label="labels.showTipAria + ' ' + ex.name"
+                title={L.builder.tipTitle}
+                x-show="hasTip(ex.name)"
+              >
+                <Fragment set:html={icons.infoCircle(18, 18)} />
+              </button>
+              <p
+                class="create__picker-tip ses-picker-tip"
+                x-show="isTipOpen(ex.id) && hasTip(ex.name)"
+                x-cloak
+              >
+                <span x-text="getTip(ex.name)"></span>
+                <a
+                  class="create__picker-tip-video ses-tip-video"
+                  :href="getVideoUrl(ex.name)"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  :aria-label="labels.videoAria + ' ' + ex.name + ' ' + labels.onYoutube"
+                  title={L.builder.videoTitle}
+                >
+                  <Icon name="play" size={20} />
+                  <span x-text="labels.seeTechnique">Voir la technique</span>
+                </a>
+              </p>
+            </div>
+          </template>
+        </div>
+      </div>
+
+      <div slot="footer">
+        <Button variant="secondary" data-dialog-close>
+          {' '}
+          {L.builder.close}{' '}
+        </Button>
+      </div>
+    </Dialog>
+  </div>
+</AppLayout>
+
+<script>
+  import { createSessionBuilderApp } from '../../../components/builder/sessionBuilder';
+  import { pickBuilderLabels } from '../../../components/builder/builderLabels';
+  import { exerciseCard } from '../../../components/builder/exerciseCard';
+  import { t, localizedPath, DATE_LOCALE } from '../../../i18n';
+
+  const LABELS = t();
+  const BUILDER_LABELS = pickBuilderLabels(
+    LABELS as unknown as { builder: Record<string, string> }
+  );
+
+  type BuilderWindow = Window & {
+    __builderSessions?: unknown;
+    __builderLabels?: unknown;
+    openDialog?: (id: string) => void;
+    closeDialog?: (id: string) => void;
+  };
+
+  const register = () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const Alpine = (window as any).Alpine;
+    const host = window as BuilderWindow;
+
+    Alpine.data('exerciseCard', (...args: any[]) => exerciseCard(args[0], args[1]));
+
+    Alpine.data('sessionBuilder', () =>
+      createSessionBuilderApp({
+        labels: BUILDER_LABELS,
+        rpeLabels:
+          LABELS.builder as unknown as import('../../../components/builder/sessionMeta').SessionMetaLabels,
+        search: window.location.search,
+        today: () => new Date().toISOString().split('T')[0],
+        locale: DATE_LOCALE(),
+        localizedPath,
+        host: {
+          expose: (sessions, labels) => {
+            host.__builderSessions = sessions;
+            host.__builderLabels = labels;
+          },
+          onToggle: (listener) => {
+            window.addEventListener('builder:exercise-toggled', ((e: CustomEvent) => {
+              listener(e.detail.exerciseId, e.detail.expanded);
+            }) as EventListener);
+          },
+          openDialog: (id) => host.openDialog?.(id),
+          closeDialog: (id) => host.closeDialog?.(id),
+          dispatch: (name) => window.dispatchEvent(new CustomEvent(name)),
+          confirm: (message) => window.confirm(message),
+          navigate: (href) => {
+            window.location.href = href;
+          },
+          focusPickerSearch: () => {
+            requestAnimationFrame(() => {
+              document.querySelector<HTMLInputElement>('[x-ref="pickerSearch"]')?.focus();
+            });
+          },
+        },
+      })
+    );
+  };
+
+  document.addEventListener('alpine:init', register);
+  if ((window as any).Alpine) register();
+</script>
+
+<style>
+  [x-cloak] {
+    display: none !important;
+  }
+
+  .ses-input-inline::-webkit-outer-spin-button,
+  .ses-input-inline::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .ses-input-inline {
+    -moz-appearance: textfield;
+  }
+
+  .ses-table-head,
+  .ses-table-row {
+    display: grid;
+    grid-template-columns:
+      3.2rem minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, 0.8fr)
+      5.2rem;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0 1.2rem;
+  }
+  .ses-table-head {
+    height: 3.2rem;
+    background-color: var(--color-surface-3);
+    font-size: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-muted);
+  }
+  .ses-table-row {
+    min-height: 5.6rem;
+    border-top: 1px solid var(--color-border);
+    transition: background-color var(--transition-fast);
+  }
+  .ses-table-row:hover {
+    background-color: var(--alpha-bg-subtle);
+  }
+  .ses-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+  }
+  .ses-cell-num {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--color-text);
+    font-variant-numeric: tabular-nums;
+  }
+  .ses-table-head .ses-cell-num {
+    font-size: 1rem;
+    color: var(--color-muted);
+  }
+  .ses-cell-type {
+    justify-content: stretch;
+  }
+  .ses-cell-action {
+    justify-content: flex-end;
+    gap: 0.4rem;
+  }
+
+  .ses-rpe-input::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: 50%;
+    background-color: var(--color-success);
+    border: 3px solid var(--color-surface);
+    box-shadow: var(--shadow-2);
+    cursor: grab;
+    transition:
+      background-color var(--transition-fast),
+      transform var(--transition-fast),
+      box-shadow var(--transition-fast);
+  }
+  .ses-rpe-input:active::-webkit-slider-thumb {
+    cursor: grabbing;
+    transform: scale(1.08);
+  }
+  .ses-rpe-input::-moz-range-thumb {
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: 50%;
+    background-color: var(--color-success);
+    border: 3px solid var(--color-surface);
+    box-shadow: var(--shadow-2);
+    cursor: grab;
+    transition:
+      background-color var(--transition-fast),
+      transform var(--transition-fast);
+  }
+  .ses-rpe-input--easy::-webkit-slider-thumb {
+    background-color: var(--color-success);
+  }
+  .ses-rpe-input--easy::-moz-range-thumb {
+    background-color: var(--color-success);
+  }
+  .ses-rpe-input--moderate::-webkit-slider-thumb {
+    background-color: var(--color-warning);
+  }
+  .ses-rpe-input--moderate::-moz-range-thumb {
+    background-color: var(--color-warning);
+  }
+  .ses-rpe-input--hard::-webkit-slider-thumb {
+    background-color: var(--color-accent);
+  }
+  .ses-rpe-input--hard::-moz-range-thumb {
+    background-color: var(--color-accent);
+  }
+  .ses-rpe-input--max::-webkit-slider-thumb {
+    background-color: var(--color-destructive);
+  }
+  .ses-rpe-input--max::-moz-range-thumb {
+    background-color: var(--color-destructive);
+  }
+
+  .ses-superset-bar--g1 {
+    --ses-super-color: var(--color-superset-g1);
+    background-color: var(--color-superset-g1-bg);
+  }
+  .ses-superset-bar--g2 {
+    --ses-super-color: var(--color-superset-g2);
+    background-color: var(--color-superset-g2-bg);
+  }
+  .ses-superset-bar--g3 {
+    --ses-super-color: var(--color-superset-g3);
+    background-color: var(--color-superset-g3-bg);
+  }
+  .ses-superset-bar--g4 {
+    --ses-super-color: var(--color-superset-g4);
+    background-color: var(--color-superset-g4-bg);
+  }
+  .ses-superset-bar--g5 {
+    --ses-super-color: var(--color-superset-g5);
+    background-color: var(--color-superset-g5-bg);
+  }
+  .ses-superset-dot {
+    width: 0.9rem;
+    height: 0.9rem;
+    border-radius: var(--radius-pill);
+    background-color: var(--ses-super-color, var(--color-muted));
+    flex-shrink: 0;
+  }
+
+  .ses-chevron.is-open {
+    transform: rotate(180deg);
+    color: var(--color-accent);
+  }
+
+  .ses-fatigue-btn.is-active {
+    filter: none;
+    background-color: color-mix(in srgb, var(--color-accent) 12%, transparent);
+    border-color: color-mix(in srgb, var(--color-accent) 40%, transparent);
+  }
+  .ses-fatigue-btn svg,
+  .ses-mood-btn svg {
+    display: block;
+  }
+  .ses-mood-btn.is-active {
+    filter: none;
+    background-color: color-mix(in srgb, var(--color-accent) 14%, transparent);
+    border-color: color-mix(in srgb, var(--color-accent) 45%, transparent);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-accent) 18%, transparent);
+  }
+
+  .ses-picker-tip::before {
+    content: '';
+    display: inline-block;
+    width: 0.9rem;
+    height: 0.9rem;
+    margin-right: 0.7rem;
+    vertical-align: middle;
+    border-radius: var(--radius-pill);
+    background-color: var(--color-accent);
+  }
+
+  .ses-tip-video svg {
+    width: 1.3rem;
+    height: 1.3rem;
+    fill: currentColor;
+    stroke: currentColor;
+    flex-shrink: 0;
+  }
+  .ses-tip-video svg polygon {
+    fill: currentColor;
+    stroke: none;
+  }
+
+  .ses-search-input::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .create__main {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding-bottom: 6rem;
+  }
+
+  .create__action-bar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.5rem;
+  }
+
+  .create__summary {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.8rem;
+    margin-right: auto;
+    color: var(--color-muted);
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .create__summary-item {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+
+  .create__summary-item strong {
+    color: var(--color-text);
+    font-family: var(--font-display);
+    font-size: 1.8rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .create__summary-separator {
+    color: var(--alpha-text-faint);
+  }
+
+  .create__info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .create__empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1.5rem;
+    text-align: center;
+  }
+
+  .create__empty-icon {
+    color: var(--color-muted);
+    margin-bottom: 1rem;
+  }
+
+  .create__empty-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: 0.5rem;
+  }
+
+  .create__empty-desc {
+    font-size: 0.875rem;
+    color: var(--color-muted);
+    margin-bottom: 1.5rem;
+  }
+
+  .create__empty-add-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: var(--color-accent);
+    color: var(--color-accent-foreground);
+    border-radius: var(--radius-md);
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: background-color var(--transition-fast);
+  }
+  .create__empty-add-btn:hover {
+    background-color: var(--color-accent-hover);
+  }
+
+  .create__superset-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+  }
+
+  .create__superset-bar-icon {
+    color: var(--ses-super-color, var(--color-muted));
+  }
+
+  .create__superset-bar-label {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: var(--ses-super-color, var(--color-muted));
+  }
+
+  .create__superset-bar-chain {
+    font-size: 0.75rem;
+    color: var(--color-muted);
+  }
+
+  .create__ex-header {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 1.2rem;
+  }
+
+  .create__ex-toggle {
+    flex: 1 1 0%;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-align: left;
+    min-width: 0;
+    padding: 0;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+  }
+
+  .create__toggle-body {
+    flex: 1 1 0%;
+    min-width: 0;
+  }
+
+  .create__ex-head {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .create__ex-name {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: var(--color-text);
+    line-height: 1.2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .create__ex-summary {
+    font-size: 0.875rem;
+    color: var(--color-muted);
+    margin-top: 0.125rem;
+  }
+
+  .create__ex-chevron {
+    color: var(--color-muted);
+    transition: transform var(--transition-fast);
+  }
+
+  .create__ex-body {
+    border-top: 1px solid var(--color-border);
+  }
+
+  .create__sets-scroll {
+    overflow-x: auto;
+  }
+
+  .create__select {
+    background-color: var(--color-surface-2);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    min-height: 4.4rem;
+    padding: 0.8rem 1rem;
+    color: var(--color-text);
+    font-size: 1.3rem;
+    font-family: var(--font-body);
+    width: 100%;
+    outline: none;
+  }
+  .create__select:focus {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 2px var(--color-accent);
+  }
+
+  .create__input {
+    background-color: var(--color-surface-2);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    min-height: 4.4rem;
+    padding: 0.8rem 1rem;
+    color: var(--color-text);
+    font-size: 1.3rem;
+    font-family: var(--font-body);
+    width: 100%;
+    outline: none;
+  }
+  .create__input:focus {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 2px var(--color-accent);
+  }
+
+  .create__ex-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+  }
+
+  .create__add-wrap {
+    display: flex;
+    justify-content: center;
+    padding: 1rem 0;
+  }
+
+  .create__add-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .create__notes {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .create__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .create__field-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .create__label {
+    font-size: 1.3rem;
+    font-weight: 500;
+    color: var(--color-muted);
+  }
+
+  .create__rpe-slider {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .create__rpe-input {
+    width: 100%;
+  }
+
+  .create__rpe-label {
+    min-width: 4.4rem;
+    font-size: 1.2rem;
+    color: var(--color-muted);
+    text-align: right;
+  }
+
+  .create__fatigue-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .create__fatigue-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 4.4rem;
+    min-height: 4.4rem;
+    padding: 0.5rem;
+    border-radius: 9999px;
+    border: 1px solid var(--color-border);
+    background-color: transparent;
+    color: var(--color-muted);
+    transition:
+      color var(--transition-fast),
+      border-color var(--transition-fast);
+  }
+  .create__fatigue-btn:hover {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+
+  .create__mood-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .create__mood-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 4.4rem;
+    min-height: 4.4rem;
+    padding: 0.5rem;
+    border-radius: 9999px;
+    border: 1px solid var(--color-border);
+    background-color: transparent;
+    color: var(--color-muted);
+    transition:
+      color var(--transition-fast),
+      border-color var(--transition-fast);
+  }
+  .create__mood-btn:hover {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+
+  .create__textarea {
+    background-color: var(--color-surface-2);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    min-height: 10rem;
+    padding: 1rem 1.2rem;
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: 1.4rem;
+    resize: none;
+    width: 100%;
+    outline: none;
+  }
+  .create__textarea:focus {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 2px var(--color-accent);
+  }
+
+  .create__validation {
+    color: var(--color-destructive);
+    font-size: 1.3rem;
+    font-weight: 500;
+    text-align: center;
+    padding: 0.5rem 0;
+  }
+
+  .create__picker {
+    display: flex;
+    flex-direction: column;
+    max-height: 80vh;
+  }
+
+  .create__picker-search {
+    position: relative;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--color-border);
+    padding: 0.8rem 1.2rem;
+  }
+
+  .create__picker-filters {
+    display: flex;
+    gap: 0.6rem;
+    padding: 0.8rem 1.2rem;
+    overflow-x: auto;
+    border-bottom: 1px solid var(--color-border);
+    scrollbar-width: none;
+  }
+
+  .create__picker-filters::-webkit-scrollbar {
+    display: none;
+  }
+
+  .create__picker-filter {
+    flex: 0 0 auto;
+    min-height: 3.6rem;
+    padding: 0 1rem;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    background: transparent;
+    color: var(--color-muted);
+    font: inherit;
+    font-size: 1.2rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+      color var(--transition-fast),
+      border-color var(--transition-fast);
+  }
+
+  .create__picker-filter:hover,
+  .create__picker-filter.is-active {
+    color: var(--color-accent);
+  }
+
+  .create__picker-filter.is-active {
+    border-bottom-color: var(--color-accent);
+  }
+
+  .create__picker-filter:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+  }
+
+  .create__picker-search-icon {
+    color: var(--color-muted);
+    margin-right: 0.8rem;
+    flex-shrink: 0;
+  }
+
+  .create__picker-input {
+    background-color: transparent;
+    border: none;
+    outline: none;
+    color: var(--color-text);
+    font-size: 1.4rem;
+    flex: 1 1 0%;
+    min-width: 0;
+  }
+
+  .create__picker-templates {
+    border-bottom: 1px solid var(--color-border);
+    padding: 1.2rem;
+  }
+
+  .create__picker-templates-head {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+  }
+
+  .create__picker-templates-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-muted);
+  }
+
+  .create__picker-templates-hint {
+    font-size: 1.1rem;
+    color: var(--color-muted);
+  }
+
+  .create__picker-templates-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.8rem;
+  }
+
+  .create__picker-tpl {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 1.2rem;
+    border-radius: 0;
+    border: 1px solid var(--color-border);
+    background-color: transparent;
+    text-align: left;
+    transition:
+      border-color var(--transition-fast),
+      background-color var(--transition-fast);
+  }
+  .create__picker-tpl:hover {
+    border-color: var(--color-accent);
+    background-color: transparent;
+  }
+
+  .create__picker-tpl-name {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--color-text);
+  }
+
+  .create__picker-tpl-desc {
+    font-size: 1.1rem;
+    color: var(--color-muted);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.4;
+  }
+
+  .create__picker-tpl-count {
+    font-size: 1.1rem;
+    color: var(--color-muted);
+    margin-top: 0.2rem;
+  }
+
+  .create__picker-list {
+    flex: 1 1 0%;
+    overflow-y: auto;
+  }
+
+  .create__picker-empty {
+    padding: 2.4rem 1.2rem;
+    text-align: center;
+    font-size: 1.3rem;
+    color: var(--color-muted);
+  }
+
+  .create__picker-empty-link {
+    color: var(--color-accent);
+    text-decoration: underline;
+  }
+
+  .create__picker-item {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .create__picker-item-btn {
+    flex: 1 1 0%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.3rem;
+    padding: 1rem 1.2rem;
+    min-height: 4.8rem;
+    text-align: left;
+    background: none;
+    border: none;
+    border-radius: 0;
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: 1.3rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition:
+      background-color var(--transition-fast),
+      color var(--transition-fast);
+  }
+  .create__picker-item-btn:hover {
+    background-color: var(--alpha-bg-subtle);
+  }
+  .create__picker-item-btn:active {
+    background-color: var(--alpha-bg-soft);
+  }
+  .create__picker-item-btn:focus-visible {
+    outline: none;
+    box-shadow: inset var(--focus-ring);
+  }
+
+  .create__picker-item-name {
+    font-size: 1.3rem;
+    color: var(--color-text);
+  }
+
+  .create__picker-tip-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 4.4rem;
+    min-height: 4.4rem;
+    padding: 0.6rem;
+    border: 0;
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--color-muted);
+    cursor: pointer;
+    transition: color var(--transition-fast);
+  }
+  .create__picker-tip-toggle:hover {
+    color: var(--color-text);
+  }
+  .create__picker-tip-toggle:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+  }
+
+  .create__picker-tip {
+    padding: 1rem 1.2rem;
+    font-size: 1.2rem;
+    color: var(--color-muted);
+    background-color: var(--color-surface-2);
+    border-top: 1px solid var(--color-border);
+    line-height: 1.5;
+  }
+
+  .create__picker-tip-video {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--color-accent);
+    font-size: 1.1rem;
+    margin-top: 0.6rem;
+  }
+
+  @media (max-width: 480px) {
+    .create__summary {
+      display: none;
+    }
+
+    .ses-ex-header {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 4.4rem;
+      align-items: start;
+    }
+    .ses-ex-toggle {
+      grid-column: 1;
+      grid-row: 1;
+      width: 100%;
+    }
+    .ses-ex-header > .icon-btn {
+      grid-column: 2;
+      grid-row: 1;
+      justify-self: end;
+    }
+    .ses-ex-head {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .ses-ex-actions {
+      align-items: stretch;
+      flex-direction: column;
+    }
+    .ses-ex-actions :global(.button) {
+      width: 100%;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .ses-table-head {
+      display: none;
+    }
+    .ses-table-row {
+      grid-template-columns: 1fr 1fr;
+      grid-template-areas: 'num type' 'weight reps' 'action action';
+      gap: 0.6rem;
+      padding: 1rem;
+      min-height: 0;
+    }
+    .ses-table-row .ses-cell-num:nth-of-type(1) {
+      grid-area: num;
+    }
+    .ses-table-row .ses-cell-type {
+      grid-area: type;
+    }
+    .ses-table-row .ses-cell-num:nth-of-type(3) {
+      grid-area: weight;
+    }
+    .ses-table-row .ses-cell-num:nth-of-type(4) {
+      grid-area: reps;
+    }
+    .ses-table-row .ses-cell-action {
+      grid-area: action;
+      justify-content: flex-end;
+      padding-top: 0.4rem;
+      border-top: 1px dashed var(--color-border);
+    }
+  }
+</style>

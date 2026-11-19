@@ -1,0 +1,456 @@
+---
+/**
+ *
+ * AppShell renders a slide-in drawer with the same nav data so
+ * users get the same navigation on every screen size.
+ *
+ * Structure:
+ *   [logo + brand]
+ *   [footer]
+ */
+import { t } from '../../i18n';
+import { navId, renderIcon, chevronDown } from '../../lib/nav';
+import Icon from '../ui/Icon.astro';
+import type { NavGroup } from '../../lib/types';
+
+interface Props {
+  groups: NavGroup[];
+  class?: string;
+}
+
+const { groups, class: className = '' } = Astro.props;
+const L = t();
+---
+
+<aside
+  class:list={['sidebar', className]}
+  :class="{ 'nav-ready': navReady }"
+  x-show="navReady"
+  transition:persist="main-sidebar"
+  aria-label={L.layout.mainNavAria}
+>
+  {/* Logo */}
+  <div class="sidebar__logo">
+    <div class="sidebar__logo-icon" aria-hidden="true">
+      <Icon name="dumbbell" size={22} />
+    </div>
+    <div class="sidebar__logo-text">
+      <span class="sidebar__logo-name">Gym Empire</span>
+      <span class="sidebar__logo-subtitle">{L.layout.brandSubtitle}</span>
+    </div>
+  </div>
+
+  {/* Nav */}
+  <nav class="sidebar__nav">
+    {groups.map((group) => (
+      <div class="nav-group">
+        <div class="nav-group__label">{group.label}</div>
+        {group.items.map((item) => (
+          <div class="nav-item-wrap">
+            {item.children && item.children.length > 0 ? (
+              <>
+                <button
+                  type="button"
+                  class:list={['nav-item nav-item--toggle', item.parentActive && 'is-open']}
+                  :class={`{ 'is-open': isExpanded('${navId(item.href)}'), 'nav-item--parent-active': ${item.parentActive ?? false} }`}
+                  :aria-expanded={`isExpanded('${navId(item.href)}')`}
+                  aria-controls={`nav-children-${navId(item.href)}`}
+                  @click={`toggleNav('${navId(item.href)}')`}
+                >
+                  {item.icon && (
+                    <span
+                      class="nav-item__icon"
+                      aria-hidden="true"
+                      set:html={renderIcon(item.icon)}
+                    />
+                  )}
+                  <span class="nav-item__label">{item.label}</span>
+                  <span class="nav-item__chevron" aria-hidden="true" set:html={chevronDown} />
+                </button>
+                <div
+                  class:list={['nav-children', item.parentActive && 'is-open']}
+                  id={`nav-children-${navId(item.href)}`}
+                  data-nav-group={navId(item.href)}
+                  :class={`{ 'is-open': isExpanded('${navId(item.href)}') }`}
+                  role="region"
+                >
+                  <div class="nav-children-inner">
+                    {item.children.map((child) => (
+                      <a
+                        href={child.href}
+                        class:list={['nav-child', child.active && 'is-active']}
+                        aria-current={child.active ? 'page' : undefined}
+                      >
+                        {child.icon && (
+                          <span
+                            class="nav-child__icon"
+                            aria-hidden="true"
+                            set:html={renderIcon(child.icon)}
+                          />
+                        )}
+                        <span class="nav-child__label">{child.label}</span>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              </>
+            ) : (
+              <a
+                href={item.href}
+                class:list={['nav-item', item.active && 'is-active']}
+                aria-current={item.active ? 'page' : undefined}
+              >
+                {item.icon && (
+                  <span
+                    class="nav-item__icon"
+                    aria-hidden="true"
+                    set:html={renderIcon(item.icon)}
+                  />
+                )}
+                <span class="nav-item__label">{item.label}</span>
+              </a>
+            )}
+          </div>
+        ))}
+      </div>
+    ))}
+  </nav>
+
+  {/* Footer */}
+  <div class="sidebar__footer">
+    <p class="sidebar__tagline">{L.layout.tagline}</p>
+  </div>
+</aside>
+
+<style>
+  /* Fixed on desktop so the sidebar stays pinned while long pages scroll. */
+  .sidebar {
+    width: var(--sidebar-width);
+    /* Translucent so the decorative background shows through the
+       rail; blur keeps text crisp (solid fallback below). */
+    background-color: color-mix(in srgb, var(--color-surface) 64%, transparent);
+    -webkit-backdrop-filter: blur(20px) saturate(1.2);
+    backdrop-filter: blur(20px) saturate(1.2);
+    border-right: 1px solid var(--color-border);
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    flex-shrink: 0;
+    z-index: 4;
+  }
+
+  .sidebar__logo {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    padding: 2rem 1.6rem 1.2rem;
+  }
+
+  .sidebar__logo-icon {
+    width: 4.2rem;
+    height: 4.2rem;
+    border-radius: 1rem;
+    background-color: var(--color-surface-2);
+    border: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-accent);
+    flex-shrink: 0;
+  }
+
+  .sidebar__logo-name {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--color-text);
+    line-height: 1.1;
+    letter-spacing: 0.02em;
+  }
+
+  .sidebar__logo-subtitle {
+    font-size: 0.95rem;
+    color: var(--color-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    line-height: 1;
+  }
+
+  .sidebar__nav {
+    flex: 1;
+    padding: 0 0.8rem;
+  }
+
+  .nav-group {
+    margin-bottom: 1.6rem;
+  }
+
+  .nav-group__label {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    color: var(--color-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 1.2rem 1.2rem 0.4rem;
+    font-weight: 600;
+  }
+
+  .nav-item-wrap {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-height: 4.4rem;
+    padding: 0.8rem 1.2rem;
+    border-radius: var(--radius-md);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+    -webkit-appearance: none;
+    appearance: none;
+    color: var(--color-muted);
+    text-decoration: none;
+    font-family: var(--font-body);
+    font-size: 1.4rem;
+    font-weight: 500;
+    line-height: 1.2;
+    transition:
+      background-color var(--transition-fast),
+      color var(--transition-fast),
+      box-shadow var(--transition-fast);
+  }
+
+  .nav-item.is-active {
+    background-color: color-mix(in srgb, var(--color-accent) 12%, transparent);
+    color: var(--color-accent);
+    box-shadow: 0 1px 3px color-mix(in srgb, var(--color-accent) 15%, transparent);
+  }
+
+  /* Parent with the deepest active child: accent text, no filled pill
+     (only the deepest active leaf carries the pill). */
+  .nav-item--parent-active {
+    color: var(--color-accent);
+  }
+
+  .nav-item__icon {
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: currentColor;
+  }
+
+  .nav-item__icon :global(svg) {
+    display: block;
+  }
+
+  .nav-item__label {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .nav-item__chevron {
+    display: inline-flex;
+    flex-shrink: 0;
+    color: currentColor;
+    transition: transform var(--transition-fast);
+  }
+
+  .nav-item--toggle.is-open .nav-item__chevron {
+    transform: rotate(180deg);
+  }
+
+  /* Accordéon animé via grid-template-rows. */
+  .nav-children {
+    display: grid;
+    grid-template-rows: 0fr;
+    /* The sidebar is rebuilt on page navigation. Animating this initial
+       state sync makes every open group visibly collapse and reopen. */
+    transition: none;
+  }
+
+  .nav-children.is-open {
+    grid-template-rows: 1fr;
+  }
+
+  .nav-children > .nav-children-inner {
+    overflow: hidden;
+    min-height: 0;
+    padding-left: 1.6rem;
+  }
+
+  .nav-child {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-height: 4.4rem;
+    padding: 0.8rem 1.2rem;
+    color: var(--color-muted);
+    text-decoration: none;
+    font-family: var(--font-body);
+    font-size: 1.3rem;
+    font-weight: 500;
+    line-height: 1.2;
+    border-radius: var(--radius-md);
+    transition:
+      background-color var(--transition-fast),
+      color var(--transition-fast),
+      box-shadow var(--transition-fast);
+  }
+
+  .nav-child:hover {
+    color: var(--color-text);
+    background-color: var(--alpha-bg-soft);
+  }
+
+  .nav-child.is-active {
+    background-color: color-mix(in srgb, var(--color-accent) 12%, transparent);
+    color: var(--color-accent);
+    box-shadow: 0 1px 3px color-mix(in srgb, var(--color-accent) 15%, transparent);
+  }
+
+  .nav-child__icon {
+    width: 1.8rem;
+    height: 1.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: currentColor;
+  }
+
+  .nav-child__icon :global(svg) {
+    display: block;
+  }
+
+  .nav-child__label {
+    display: block;
+  }
+
+  .sidebar__footer {
+    padding: 1.6rem;
+    border-top: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+
+  .sidebar__tagline {
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    color: var(--color-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    line-height: 1.4;
+    margin: 0;
+  }
+
+  .nav-item:focus-visible,
+  .nav-item--toggle:focus-visible,
+  .nav-child:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+  }
+
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .sidebar {
+      background-color: var(--color-surface);
+    }
+  }
+
+  @media (max-width: 1023px) {
+    .sidebar {
+      display: none;
+    }
+  }
+
+  .sidebar {
+    width: var(--sidebar-width);
+    background: color-mix(in srgb, var(--color-bg) 92%, transparent);
+    border-right: 1px solid var(--color-border);
+    backdrop-filter: none;
+  }
+  .sidebar__logo {
+    padding: 2.4rem 1.8rem 1.6rem;
+  }
+  .sidebar__logo-icon {
+    width: 3.6rem;
+    height: 3.6rem;
+    border-radius: var(--radius-sm);
+    background: var(--color-accent);
+    color: var(--color-accent-foreground);
+    border: 0;
+  }
+  .sidebar__logo-name {
+    letter-spacing: -0.04em;
+    font-size: 1.8rem;
+  }
+  .sidebar__logo-subtitle {
+    color: var(--color-accent);
+    font-size: 0.8rem;
+  }
+  .sidebar__nav {
+    padding: 0 1rem;
+  }
+  .nav-group {
+    margin-bottom: 2.4rem;
+  }
+  .nav-group__label {
+    padding: 0.8rem 1rem;
+    color: var(--color-muted);
+    font-size: 0.85rem;
+    letter-spacing: 0.18em;
+  }
+  .nav-item {
+    min-height: 4.2rem;
+    border-radius: var(--radius-sm);
+    font-size: 1.3rem;
+  }
+  .nav-item.is-active,
+  .nav-child.is-active {
+    position: relative;
+    background: var(--alpha-bg-soft);
+    color: var(--color-text);
+    box-shadow: none;
+  }
+  .nav-item.is-active::before,
+  .nav-child.is-active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.8rem;
+    bottom: 0.8rem;
+    width: 0.1rem;
+    background: var(--color-accent);
+    border-radius: 0 1px 1px 0;
+  }
+  .nav-item--parent-active {
+    color: var(--color-accent);
+  }
+  .nav-child {
+    min-height: 3.8rem;
+    font-size: 1.2rem;
+    border-radius: var(--radius-sm);
+    color: var(--color-muted);
+  }
+  .sidebar__footer {
+    margin: 1rem;
+    padding: 1.2rem 0;
+    border-top: 1px solid var(--color-border);
+  }
+
+  @media (max-width: 640px) {
+  }
+</style>

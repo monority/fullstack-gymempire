@@ -1,0 +1,69 @@
+---
+import './Avatar.css';
+
+interface Props {
+  src?: string;
+  alt?: string;
+  fallback?: string;
+  size?: 'sm' | 'md' | 'lg';
+  class?: string;
+}
+
+const { src, alt = '', fallback = '', size = 'md', class: className = '' } = Astro.props;
+
+const initials = fallback
+  .trim()
+  .split(/\s+/)
+  .filter(Boolean)
+  .slice(0, 2)
+  .map((word) => word[0]!.toUpperCase())
+  .join('');
+---
+
+<span
+  class:list={['avatar', `avatar--${size}`, className]}
+  aria-label={alt || undefined}
+  role="img"
+  data-avatar
+>
+  {src ? (
+    <img src={src} alt={alt} class="avatar__img" loading="lazy" decoding="async" data-avatar-img />
+  ) : null}
+  <span class:list={['avatar__fallback', `avatar__fallback--${size}`]} data-avatar-fallback>
+    {initials}
+  </span>
+</span>
+
+<script>
+  const avatars = document.querySelectorAll<HTMLElement>('[data-avatar]');
+
+  avatars.forEach((avatar) => {
+    const img = avatar.querySelector<HTMLImageElement>('[data-avatar-img]');
+    const fallback = avatar.querySelector<HTMLElement>('[data-avatar-fallback]');
+
+    if (!img || !fallback) {
+      fallback?.classList.remove('is-hidden');
+      return;
+    }
+
+    fallback.classList.remove('is-hidden');
+    img.classList.add('is-transparent');
+
+    const showImg = () => {
+      img.classList.remove('is-transparent');
+      fallback.classList.add('is-hidden');
+    };
+
+    const showFallback = () => {
+      img.classList.add('is-transparent');
+      fallback.classList.remove('is-hidden');
+    };
+
+    if (img.complete && img.naturalWidth > 0) {
+      showImg();
+    } else {
+      img.addEventListener('load', showImg, { once: true });
+      img.addEventListener('error', showFallback, { once: true });
+    }
+  });
+</script>

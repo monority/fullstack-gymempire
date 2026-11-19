@@ -1,0 +1,141 @@
+---
+interface Props {
+  variant?: 'default' | 'danger' | 'accent' | 'ghost';
+  size?: 'sm' | 'md';
+  icon?: string;
+  label?: string;
+  title?: string;
+  class?: string;
+  disabled?: boolean;
+  loading?: boolean;
+  [key: string]: unknown;
+}
+
+const {
+  variant = 'default',
+  size = 'md',
+  icon,
+  label,
+  title,
+  class: className = '',
+  disabled,
+  loading = false,
+  ...rest
+} = Astro.props;
+
+const sizeClasses = {
+  sm: 'icon-btn--sm',
+  md: 'icon-btn--md',
+};
+
+const variantClasses = {
+  default: '',
+  danger: 'icon-btn--danger',
+  accent: 'icon-btn--accent',
+  ghost: 'icon-btn--ghost',
+};
+---
+
+<button
+  {...rest}
+  type="button"
+  class:list={['icon-btn', sizeClasses[size], variantClasses[variant], className]}
+  aria-label={label}
+  title={title ?? label}
+  aria-busy={loading || undefined}
+  disabled={disabled || loading}
+>
+  {loading ? <span class="icon-btn__spinner" aria-hidden="true" /> : <Fragment set:html={icon} />}
+</button>
+
+<style>
+  .icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--color-muted);
+    cursor: pointer;
+    appearance: none;
+    transition:
+      background-color var(--transition-fast),
+      color var(--transition-fast),
+      border-color var(--transition-fast),
+      transform var(--transition-fast);
+  }
+  .icon-btn :global(svg) {
+    width: 1.8rem;
+    height: 1.8rem;
+    flex-shrink: 0;
+  }
+  .icon-btn--sm {
+    min-width: 4.4rem;
+    min-height: 4.4rem;
+    padding: 0.4rem;
+  }
+  .icon-btn--sm :global(svg) {
+    width: 1.6rem;
+    height: 1.6rem;
+  }
+  .icon-btn--md {
+    min-width: 4.4rem;
+    min-height: 4.4rem;
+    padding: 0.6rem;
+  }
+  .icon-btn:hover {
+    background: var(--alpha-bg-subtle);
+    color: var(--color-text);
+  }
+  .icon-btn:active {
+    transform: scale(0.95);
+  }
+  .icon-btn--danger {
+    color: var(--color-destructive);
+  }
+  .icon-btn--danger:hover {
+    background: color-mix(in srgb, var(--color-destructive) 10%, transparent);
+  }
+  .icon-btn--accent {
+    color: var(--color-accent);
+  }
+  .icon-btn--accent:hover {
+    background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+  }
+  .icon-btn--ghost {
+    color: var(--color-muted);
+  }
+  .icon-btn--ghost:hover {
+    color: var(--color-text);
+    background: var(--alpha-bg-subtle);
+  }
+  .icon-btn:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+  }
+  .icon-btn:disabled,
+  .icon-btn.is-disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    pointer-events: none;
+    box-shadow: none;
+  }
+  .icon-btn[aria-busy='true'] {
+    cursor: progress;
+    opacity: 0.7;
+  }
+  .icon-btn__spinner {
+    width: 1.6rem;
+    height: 1.6rem;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: icon-btn-spin 700ms linear infinite;
+  }
+  @keyframes icon-btn-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+</style>

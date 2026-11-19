@@ -1,0 +1,164 @@
+---
+interface Tab {
+  id: string;
+  label: string;
+  disabled?: boolean;
+}
+
+interface Props {
+  tabs: Tab[];
+  activeTab?: string;
+  class?: string;
+}
+
+const { tabs, activeTab, class: className = '' } = Astro.props;
+---
+
+<div role="tablist" aria-orientation="horizontal" class:list={['tab-list', className]}>
+  {tabs.map((tab) => {
+    const isActive = activeTab !== undefined && tab.id === activeTab;
+    return (
+      <button
+        type="button"
+        role="tab"
+        id={`tab-${tab.id}`}
+        aria-selected={isActive ? 'true' : 'false'}
+        aria-controls={tab.id}
+        tabindex={isActive ? 0 : -1}
+        disabled={tab.disabled}
+        data-tab-trigger
+        data-tab-id={tab.id}
+        class:list={['tab-list__trigger', isActive && 'is-active', tab.disabled && 'is-disabled']}
+      >
+        {tab.label}
+      </button>
+    );
+  })}
+</div>
+
+<style>
+  .tab-list {
+    display: flex;
+    align-items: end;
+    gap: 0.2rem;
+    border-bottom: 1px solid var(--color-border);
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .tab-list__trigger {
+    position: relative;
+    min-height: 4.4rem;
+    padding: 1rem 1.6rem;
+    font-size: 1.2rem;
+    font-weight: 500;
+    white-space: nowrap;
+    user-select: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    background: none;
+    color: var(--color-muted);
+    cursor: pointer;
+    transition: color var(--transition-fast);
+    outline: none;
+  }
+
+  .tab-list__trigger:focus-visible {
+    box-shadow: var(--focus-ring);
+  }
+
+  .tab-list__trigger:hover {
+    color: var(--color-text);
+  }
+
+  .tab-list__trigger.is-active {
+    color: var(--color-text);
+    border-bottom-color: var(--color-accent);
+    font-weight: 600;
+  }
+
+  .tab-list__trigger.is-disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+</style>
+
+<script>
+  function initTabs() {
+    const roots = document.querySelectorAll<HTMLElement>('[data-tabs-root]');
+    roots.forEach((root) => {
+      const triggers = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-tab-trigger]'));
+      const panels = Array.from(root.querySelectorAll<HTMLElement>('[data-tab-panel]'));
+      if (triggers.length === 0) return;
+
+      const activate = (trigger: HTMLButtonElement) => {
+        if (trigger.disabled) return;
+        const id = trigger.dataset.tabId;
+        if (!id) return;
+
+        triggers.forEach((t) => {
+          const active = t === trigger;
+          t.setAttribute('aria-selected', active ? 'true' : 'false');
+          t.setAttribute('tabindex', active ? '0' : '-1');
+        });
+
+        panels.forEach((panel) => {
+          if (panel.id === id) {
+            panel.removeAttribute('hidden');
+          } else {
+            panel.setAttribute('hidden', '');
+          }
+        });
+      };
+
+      const preselected =
+        triggers.find((t) => t.getAttribute('aria-selected') === 'true') ??
+        triggers.find((t) => !t.disabled) ??
+        triggers[0];
+      activate(preselected);
+
+      triggers.forEach((trigger) => {
+        trigger.addEventListener('click', () => activate(trigger));
+      });
+
+      root.addEventListener('keydown', (event) => {
+        const target = event.target as HTMLElement;
+        if (target.getAttribute('role') !== 'tab') return;
+
+        const enabled = triggers.filter((t) => !t.disabled);
+        if (enabled.length === 0) return;
+
+        const currentIndex = enabled.indexOf(target as HTMLButtonElement);
+        if (currentIndex === -1) return;
+
+        let nextIndex: number | null = null;
+        switch (event.key) {
+          case 'ArrowRight':
+            nextIndex = (currentIndex + 1) % enabled.length;
+            break;
+          case 'ArrowLeft':
+            nextIndex = (currentIndex - 1 + enabled.length) % enabled.length;
+            break;
+          case 'Home':
+            nextIndex = 0;
+            break;
+          case 'End':
+            nextIndex = enabled.length - 1;
+            break;
+        }
+
+        if (nextIndex !== null) {
+          event.preventDefault();
+          enabled[nextIndex].focus();
+          activate(enabled[nextIndex]);
+        }
+      });
+    });
+  }
+
+  initTabs();
+  document.addEventListener('astro:page-load', initTabs);
+</script>

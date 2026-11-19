@@ -1,0 +1,26 @@
+export default {
+  title: 'Welcome back',
+  subtitle: 'Sign in to your training space.',
+  email: 'Email',
+  password: 'Password',
+  submit: 'Sign in',
+  loading: 'Signing in…',
+  showPassword: 'Show password',
+  hidePassword: 'Hide password',
+  createAccount: 'No account?',
+  createAccountLink: 'Create account',
+  devMode: 'Development mode',
+  devWarning: 'This is a development account',
+  devLogin: 'Quick sign-in (dev)',
+  demoMode: 'Demo account',
+  demoLogin: 'Demo account (pre-filled data)',
+  demoWarning: 'Fictional read-only account — changes are not saved.',
+  signupMessage:
+    'Sign-up is coming soon. For now, use any email and password to sign in — this is a dev space.',
+  defaultPseudo: 'Athlete',
+  errors: {
+    emailRequired: 'Please enter your email.',
+    emailInvalid: 'Invalid email format.',
+    passwordRequired: 'Please enter your password.',
+  },
+};

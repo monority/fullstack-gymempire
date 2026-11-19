@@ -1,0 +1,84 @@
+---
+interface Props {
+  variant?: 'text' | 'circle' | 'rect';
+  width?: string;
+  height?: string;
+  lines?: number;
+  class?: string;
+}
+
+const { variant = 'text', width, height, lines = 1, class: className = '' } = Astro.props;
+
+const isMultiline = variant === 'text' && lines > 1;
+
+const buildStyle = (w?: string, h?: string): string => {
+  const parts: string[] = [];
+  if (w) parts.push(`width:${w}`);
+  if (h) parts.push(`height:${h}`);
+  return parts.join(';');
+};
+
+const getLineWidth = (index: number, total: number): string => {
+  if (index === total - 1) return '60%';
+  if (index === total - 2) return '90%';
+  return '100%';
+};
+---
+
+{isMultiline ? (
+  <div class:list={['skeleton-group', className]} aria-hidden="true">
+    {Array.from({ length: lines }, (_, i) => (
+      <span
+        class:list={['skeleton', `skeleton--${variant}`]}
+        style={buildStyle(getLineWidth(i, lines), height)}
+      />
+    ))}
+  </div>
+) : (
+  <span
+    class:list={['skeleton', `skeleton--${variant}`, className]}
+    style={buildStyle(width, height)}
+    aria-hidden="true"
+  />
+)}
+
+<style>
+  .skeleton-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .skeleton {
+    display: block;
+    background: linear-gradient(
+      90deg,
+      var(--color-surface-2) 0%,
+      var(--color-surface-3) 50%,
+      var(--color-surface-2) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s ease-in-out infinite;
+  }
+
+  .skeleton--text {
+    height: 1rem;
+    border-radius: var(--radius-sm);
+  }
+  .skeleton--circle {
+    border-radius: 50%;
+    aspect-ratio: 1;
+  }
+  .skeleton--rect {
+    border-radius: var(--radius-md);
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+</style>

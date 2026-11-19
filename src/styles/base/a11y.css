@@ -1,0 +1,54 @@
+/**
+ * Accessibilité : focus, mouvement réduit, cibles tactiles.
+ * Couche CSS : `base`.
+ */
+@layer base {
+  :focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+  }
+
+  /* Le texte destiné aux lecteurs d'écran reste visible pour eux seulement. */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  /* Alpine : évite le flash avant l'initialisation. */
+  [x-cloak] {
+    display: none !important;
+  }
+
+  /* Toucher : suppression du délai de 300 ms sur mobile. */
+  button,
+  [role='button'],
+  a {
+    touch-action: manipulation;
+  }
+
+  /* Focus des champs : une seule règle au lieu de 10 copies dans les pages.
+     Les deux conteneurs entourent un champ sans en être un. */
+  :where(input, select, textarea):focus,
+  :where(.set__goal-wrap, .rec__search):focus-within {
+    border-color: var(--color-accent);
+    box-shadow: var(--focus-ring);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}

@@ -1,0 +1,78 @@
+---
+import Button from '../ui/Button.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  actionLabel?: string;
+  actionHref?: string;
+  class?: string;
+}
+
+const { title, description, actionLabel, actionHref, class: className = '' } = Astro.props as Props;
+const hasAction = Boolean(actionLabel && actionHref);
+---
+
+<header class:list={['page-header', className]}>
+  <div class="page-header__copy">
+    <h1 class="page-header__title">{title}</h1>
+    {description && <p class="page-header__description">{description}</p>}
+  </div>
+  {hasAction && (
+    <Button href={actionHref} variant="primary" size="md" class="page-header__action">
+      {actionLabel}
+    </Button>
+  )}
+</header>
+
+<style>
+  .page-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 2.4rem;
+    max-width: var(--page-max-w, 96rem);
+    margin: 0 auto 4rem;
+    padding-bottom: 2.4rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .page-header__copy {
+    min-width: 0;
+  }
+  .page-header__title {
+    margin: 0;
+    color: var(--color-text);
+    font-family: var(--font-display);
+    font-size: var(--text-display);
+    font-weight: 700;
+    letter-spacing: var(--tracking-display);
+    line-height: var(--leading-display);
+    text-wrap: balance;
+  }
+  .page-header__description {
+    max-width: 58rem;
+    margin: 1.2rem 0 0;
+    color: var(--color-muted);
+    font-size: var(--text-body);
+    line-height: var(--leading-body);
+  }
+  .page-header__action {
+    flex: 0 0 auto;
+  }
+
+  @media (max-width: 640px) {
+    .page-header {
+      align-items: stretch;
+      flex-direction: column;
+      gap: 2rem;
+      margin-bottom: 2.8rem;
+      padding-bottom: 1.8rem;
+    }
+    .page-header__title {
+      font-size: var(--text-h1);
+    }
+    .page-header__action {
+      width: 100%;
+    }
+  }
+</style>

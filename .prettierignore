@@ -1,0 +1,10 @@
+# Build output
+dist/
+.astro/
+
+# Vendored third-party scripts (kept as-is, excluded from typecheck too)
+public/vendor/
+
+# Lockfile and generated files
+pnpm-lock.yaml
+package-lock.json

@@ -1,0 +1,588 @@
+---
+import { t } from '../i18n';
+import AppLayout from '../layouts/AppLayout.astro';
+import PageHeader from '../components/layout/PageHeader.astro';
+import Card from '../components/ui/Card.astro';
+import CardHeader from '../components/ui/CardHeader.astro';
+import CardTitle from '../components/ui/CardTitle.astro';
+import CardContent from '../components/ui/CardContent.astro';
+import EmptyState from '../components/ui/EmptyState.astro';
+import IconButton from '../components/ui/IconButton.astro';
+import Button from '../components/ui/Button.astro';
+import { icons } from '../lib/icons';
+const L = t();
+---
+
+<AppLayout title={L.calendrier.title}>
+  <PageHeader title={L.calendrier.title} description={L.calendrier.description} />
+
+  <div class="cal" x-data="calendarApp()" x-init="init()" x-cloak>
+    <div class="cal__controls">
+      <IconButton
+        variant="ghost"
+        icon={icons.chevronLeft()}
+        label={L.calendrier.prevMonth}
+        @click="prevMonth()"
+      />
+
+      <h2 class="cal__month-name" x-text="monthName()"></h2>
+
+      <IconButton
+        variant="ghost"
+        icon={icons.chevronRight()}
+        label={L.calendrier.nextMonth}
+        @click="nextMonth()"
+      />
+
+      <Button variant="secondary" size="md" @click="goToday()">
+        {L.calendrier.today}
+      </Button>
+    </div>
+
+    <Card>
+      <CardContent>
+        {/* Weekday header */}
+        <div class="cal__weekdays" aria-hidden="true">
+          <template x-for="day in weekdays" :key="day">
+            <div class="cal__weekday" x-text="day"></div>
+          </template>
+        </div>
+
+        {/* Day grid — real <button>s with aria-selected (single-select
+            picker). No role="grid"/"gridcell" here: adding ARIA grid
+            roles to native buttons would mask their button semantics. */}
+        <div class="cal__grid">
+          <template x-for="day in calendarDays" :key="day.date">
+            <button
+              type="button"
+              class="cal__day"
+              :class="{ 'cal__day--other': !day.isCurrentMonth, 'cal__day--today': day.isToday, 'cal__day--selected': selectedDate === day.date }"
+              :disabled="!day.isCurrentMonth"
+              :aria-label="dayAriaLabel(day)"
+              :aria-current="day.isToday ? 'date' : false"
+              :aria-pressed="selectedDate === day.date"
+              @click="selectDate(day)"
+            >
+              <span class="cal__day-num" x-text="day.dayNum"></span>
+              <template x-if="day.sessions.length > 0">
+                <div class="cal__day-dots">
+                  <template x-for="s in day.sessions.slice(0, 3)" :key="s.id">
+                    <span
+                      class="cal__dot"
+                      :class="'cal__dot--' + s.status"
+                      role="img"
+                      :aria-label="statusLabel(s.status)"
+                    ></span>
+                  </template>
+                  <span
+                    class="cal__overcount"
+                    x-show="day.sessions.length > 3"
+                    x-text="'+' + (day.sessions.length - 3)"
+                  ></span>
+                </div>
+              </template>
+            </button>
+          </template>
+        </div>
+
+        {/* Legend */}
+        <div class="cal__legend" aria-hidden="true">
+          <span class="cal__legend-item">
+            <span class="cal__legend-dot cal__legend-dot--success"></span>
+            {L.sessions.completed}
+          </span>
+          <span class="cal__legend-item">
+            <span class="cal__legend-dot cal__legend-dot--info"></span>
+            {L.sessions.inProgress}
+          </span>
+          <span class="cal__legend-item">
+            <span class="cal__legend-dot cal__legend-dot--muted"></span>
+            {L.sessions.planned}
+          </span>
+        </div>
+      </CardContent>
+    </Card>
+
+    <template x-if="selectedDate">
+      <Card>
+        <CardHeader>
+          <CardTitle>
+            {L.calendrier.sessionsOn}
+            <span x-text="formatDate(selectedDate)"></span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <template x-if="selectedSessions.length === 0">
+            <EmptyState
+              iconName="calendar"
+              title={L.calendrier.noSessions}
+              description={L.calendrier.noSessionsHint}
+            />
+          </template>
+          <template x-if="selectedSessions.length > 0">
+            <div class="cal__session-list">
+              <template x-for="s in selectedSessions" :key="s.id">
+                <a
+                  :href="localizedPath('/sessions/detail?id=' + encodeURIComponent(s.id))"
+                  class="cal__session-item"
+                >
+                  <div class="cal__session-info">
+                    <span class="cal__session-name" x-text="s.name"></span>
+                    <span class="cal__session-meta">
+                      <span x-text="s.exercises.length"></span>
+                      {L.sessions.exoSingular}
+                      <span x-show="s.exercises.length > 1">{L.sessions.pluralS}</span>
+                    </span>
+                  </div>
+                  <span
+                    class="cal__session-status"
+                    :class="'cal__session-status--' + s.status"
+                    x-text="statusLabel(s.status)"
+                  ></span>
+                </a>
+              </template>
+            </div>
+          </template>
+        </CardContent>
+      </Card>
+    </template>
+
+    <Card>
+      <CardHeader>
+        <CardTitle>{L.calendrier.monthlyStats}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div class="cal__stats">
+          <div class="cal__stat">
+            <span class="cal__stat-label">{L.calendrier.sessionsThisMonth}</span>
+            <span class="cal__stat-value" x-text="monthSessionCount"></span>
+          </div>
+          <div class="cal__stat">
+            <span class="cal__stat-label">{L.dashboard.totalVolume}</span>
+            <span class="cal__stat-value">
+              <span x-text="formatNumber(monthVolume)"></span>
+              <span class="cal__stat-unit">{L.common.kg}</span>
+            </span>
+          </div>
+          <div class="cal__stat">
+            <span class="cal__stat-label">{L.calendrier.currentStreak}</span>
+            <span class="cal__stat-value">
+              <span x-text="currentStreak"></span>
+              <span class="cal__stat-unit">{L.calendrier.daysShort}</span>
+            </span>
+          </div>
+          <div class="cal__stat">
+            <span class="cal__stat-label">{L.calendrier.longestStreak}</span>
+            <span class="cal__stat-value">
+              <span x-text="longestStreak"></span>
+              <span class="cal__stat-unit">{L.calendrier.daysShort}</span>
+            </span>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  </div>
+</AppLayout>
+
+<script>
+  import { createCalendarApp } from '../components/calendar/calendarApp';
+  import { t, localizedPath } from '../i18n';
+
+  const LABELS = t();
+
+  const registerCalendar = () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const Alpine = (window as any).Alpine;
+
+    Alpine.data('calendarApp', () =>
+      createCalendarApp({
+        labels: {
+          ...LABELS.calendrier,
+          status: {
+            completed: LABELS.sessions.completed,
+            inProgress: LABELS.sessions.inProgress,
+            planned: LABELS.sessions.planned,
+          },
+          seanceSingular: LABELS.sessions.seanceSingular,
+          seancePlural: LABELS.sessions.seancePlural,
+        },
+        today: () => new Date(),
+        localizedPath,
+      })
+    );
+  };
+  document.addEventListener('alpine:init', registerCalendar);
+  if ((window as any).Alpine) registerCalendar();
+</script>
+
+<style>
+  /* ── Layout ── */
+  .cal {
+    display: flex;
+    flex-direction: column;
+    gap: 3.2rem;
+    padding-bottom: 9.6rem;
+  }
+
+  /* ── Controls ── */
+  .cal__controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 1.6rem;
+  }
+
+  .cal__month-name {
+    font-family: var(--font-display);
+    font-weight: 700;
+    color: var(--color-text);
+    margin: 0;
+    flex: 1;
+    text-align: center;
+    text-transform: capitalize;
+    min-width: 12rem;
+    line-height: 1.2;
+    font-size: clamp(1.5rem, 2.4vw, 2rem);
+  }
+
+  /* ── Weekday header ── */
+  .cal__weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1px;
+    margin-bottom: 1.2rem;
+  }
+
+  .cal__weekday {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    color: var(--color-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    text-align: center;
+    padding: 0.4rem 0;
+  }
+
+  /* ── Day grid ── */
+  .cal__grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1px;
+    background: var(--color-border);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+
+  .cal__day {
+    min-height: 10.4rem;
+    padding: 1.2rem 0.7rem;
+    background: var(--color-surface);
+    border: 0;
+    text-align: left;
+    cursor: pointer;
+    font-family: var(--font-body);
+    color: var(--color-text);
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    appearance: none;
+    transition: background-color var(--transition-fast);
+  }
+
+  .cal__day-num {
+    font-size: 1.3rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+
+  .cal__day-dots {
+    display: flex;
+    gap: 3px;
+    flex-wrap: wrap;
+    margin-top: auto;
+    align-items: center;
+  }
+
+  .cal__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    display: inline-block;
+  }
+
+  .cal__overcount {
+    font-size: 0.8rem;
+    color: var(--color-muted);
+    font-weight: 700;
+    margin-left: 2px;
+    line-height: 1;
+  }
+
+  .cal__day:hover:not(:disabled) {
+    background-color: var(--color-surface-2);
+  }
+
+  .cal__day:disabled {
+    cursor: default;
+  }
+
+  .cal__day--other {
+    opacity: 0.3;
+  }
+
+  .cal__day--today {
+    background-color: var(--color-accent);
+    color: var(--color-accent-foreground);
+  }
+
+  .cal__day--today .cal__day-num {
+    color: var(--color-accent-foreground);
+    font-weight: 700;
+  }
+
+  .cal__day--today .cal__overcount {
+    color: var(--color-accent-foreground);
+  }
+
+  .cal__day--selected {
+    outline: 2px solid var(--color-accent);
+    outline-offset: -2px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .cal__day--today.cal__day--selected {
+    outline-color: var(--color-text);
+  }
+
+  .cal__day:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: -2px;
+  }
+
+  .cal__dot--completed {
+    background: var(--color-success);
+  }
+
+  .cal__dot--in-progress {
+    background: var(--color-info);
+  }
+
+  .cal__dot--planned {
+    background: var(--color-muted);
+  }
+
+  /* ── Legend ── */
+  .cal__legend {
+    display: flex;
+    gap: 3.2rem;
+    flex-wrap: wrap;
+    margin-top: 2.4rem;
+    padding-top: 2.4rem;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .cal__legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+    font-size: 1.2rem;
+    color: var(--color-muted);
+    font-weight: 500;
+  }
+
+  .cal__legend-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    display: inline-block;
+  }
+
+  .cal__legend-dot--success {
+    background: var(--color-success);
+  }
+
+  .cal__legend-dot--info {
+    background: var(--color-info);
+  }
+
+  .cal__legend-dot--muted {
+    background: var(--color-muted);
+  }
+
+  /* ── Session list ── */
+  .cal__session-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .cal__session-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.6rem;
+    padding: 2.4rem;
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    color: var(--color-text);
+    min-height: 4.4rem;
+    transition:
+      background-color var(--transition-fast),
+      border-color var(--transition-fast);
+  }
+
+  .cal__session-name {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-weight: 600;
+    line-height: 1.25;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .cal__session-meta {
+    font-size: 1.2rem;
+    color: var(--color-muted);
+    line-height: 1.25;
+  }
+
+  .cal__session-item:hover {
+    border-color: var(--color-accent);
+    background-color: var(--alpha-bg-subtle);
+  }
+
+  .cal__session-item:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+  }
+
+  .cal__session-status {
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 0.8rem 1.6rem;
+    border-radius: var(--radius-sm);
+    flex-shrink: 0;
+  }
+
+  .cal__session-status--completed {
+    background-color: color-mix(in srgb, var(--color-success) 15%, transparent);
+    color: var(--color-success);
+  }
+
+  .cal__session-status--in-progress {
+    background-color: color-mix(in srgb, var(--color-info) 15%, transparent);
+    color: var(--color-info);
+  }
+
+  .cal__session-status--planned {
+    background-color: var(--alpha-bg-hover);
+    color: var(--color-muted);
+  }
+
+  /* ── Stats ── */
+  .cal__stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0;
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .cal__stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    min-width: 0;
+    padding: 2.4rem;
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid var(--color-border);
+    border-radius: 0;
+  }
+
+  .cal__stat-label {
+    font-size: 0.8rem;
+    color: var(--color-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    line-height: 1.25;
+  }
+
+  .cal__stat-value {
+    font-family: var(--font-display);
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--color-text);
+    font-variant-numeric: tabular-nums;
+    line-height: 1.1;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.4rem;
+  }
+
+  .cal__stat-unit {
+    font-family: var(--font-body);
+    font-size: 1.2rem;
+    color: var(--color-muted);
+    font-weight: 600;
+  }
+
+  @media (min-width: 640px) {
+    .cal__stats {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .cal__stat + .cal__stat {
+      border-left: 1px solid var(--color-border);
+    }
+
+    .cal__stat {
+      border-bottom: 0;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .cal__controls {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      align-items: center;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .cal__day {
+      min-height: 5rem;
+      padding: 0.4rem 0.5rem;
+    }
+
+    .cal__day-num {
+      font-size: 1.2rem;
+    }
+
+    .cal__weekday {
+      font-size: 0.95rem;
+    }
+
+    .cal__controls {
+      gap: 0.6rem;
+    }
+
+    .cal__month-name {
+      font-size: 1.4rem;
+      min-width: 8rem;
+    }
+  }
+</style>

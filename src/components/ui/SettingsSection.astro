@@ -1,0 +1,76 @@
+---
+import Icon from './Icon.astro';
+import Card from './Card.astro';
+import CardHeader from './CardHeader.astro';
+import CardTitle from './CardTitle.astro';
+import CardContent from './CardContent.astro';
+import type { IconName } from '../../lib/icons';
+
+interface Props {
+  icon: IconName;
+  title: string;
+  description?: string;
+  id?: string;
+  class?: string;
+}
+
+const { icon, title, description, id, class: className = '' } = Astro.props;
+---
+
+<section class:list={['settings-section', className]} id={id}>
+  <Card>
+    <CardHeader>
+      <div class="settings-section__heading">
+        <span class="settings-section__icon" aria-hidden="true">
+          <Icon name={icon} size={24} />
+        </span>
+        <CardTitle>{title}</CardTitle>
+      </div>
+      {description && <p class="settings-section__desc">{description}</p>}
+    </CardHeader>
+    <CardContent>
+      <slot />
+    </CardContent>
+  </Card>
+</section>
+
+<style>
+  .settings-section__heading {
+    display: flex;
+    align-items: center;
+    gap: 1.6rem;
+    min-width: 0;
+  }
+
+  .settings-section__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.6rem;
+    height: 3.6rem;
+    flex-shrink: 0;
+    border-radius: var(--radius-md);
+    background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+    color: var(--color-accent);
+    border: 1px solid color-mix(in srgb, var(--color-accent) 28%, transparent);
+  }
+
+  .settings-section__icon :global(svg) {
+    width: 1.8rem;
+    height: 1.8rem;
+  }
+
+  .settings-section__desc {
+    font-size: 1.2rem;
+    color: var(--color-muted);
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  @media (max-width: 480px) {
+    .settings-section__icon {
+      width: 3.2rem;
+      height: 3.2rem;
+    }
+  }
+</style>

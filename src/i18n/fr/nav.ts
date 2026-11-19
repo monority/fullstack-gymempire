@@ -1,0 +1,22 @@
+export default {
+  groups: {
+    primary: 'Principal',
+    secondary: 'Analyse',
+    utility: 'Outils',
+  },
+  dashboard: 'Dashboard',
+  seances: 'Séances',
+  creer: 'Nouvelle séance',
+  historique: 'Historique',
+  rapide: 'Séance rapide',
+  timer: 'Timer',
+  calendrier: 'Calendrier',
+  exercices: 'Exercices',
+  progression: 'Progression',
+  force: 'Force',
+  poidsMesures: 'Poids & mesures',
+  records: 'Records',
+  statistiques: 'Statistiques',
+  calculateur: 'Calculateur',
+  settings: 'Réglages',
+};

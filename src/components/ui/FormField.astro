@@ -1,0 +1,83 @@
+---
+/**
+ * FormField — shared label + hint + error wrapper for form controls.
+ *
+ * Used by Input.astro and Select.astro to eliminate the duplicated
+ * label/hint/error markup and the describedBy computation.
+ */
+
+interface Props {
+  id?: string;
+  label?: string;
+  hint?: string;
+  error?: string;
+  required?: boolean;
+  class?: string;
+}
+
+const { id, label, hint, error, required = false, class: className = '' } = Astro.props;
+
+const hintId = id ? `${id}-hint` : undefined;
+const errorId = id ? `${id}-error` : undefined;
+---
+
+<div class:list={['form-field', className]}>
+  {label && (
+    <label for={id} class="form-field__label">
+      {label}
+      {required && (
+        <span class="form-field__required" aria-hidden="true">
+          *
+        </span>
+      )}
+    </label>
+  )}
+
+  <slot />
+
+  {hint && !error && (
+    <p id={hintId} class="form-field__hint">
+      {hint}
+    </p>
+  )}
+
+  {error && (
+    <p id={errorId} class="form-field__error" role="alert">
+      {error}
+    </p>
+  )}
+</div>
+
+<style>
+  .form-field {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .form-field__label {
+    font-size: 1.3rem;
+    font-weight: 500;
+    color: var(--color-muted);
+    margin-bottom: 0.8rem;
+    line-height: 1.3;
+  }
+
+  .form-field__required {
+    color: var(--color-destructive);
+    margin-left: 0.2rem;
+  }
+
+  .form-field__hint {
+    font-size: 1.1rem;
+    color: var(--color-muted);
+    margin-top: 0.6rem;
+    line-height: 1.4;
+  }
+
+  .form-field__error {
+    font-size: 1.1rem;
+    color: var(--color-destructive);
+    margin-top: 0.6rem;
+    line-height: 1.4;
+  }
+</style>

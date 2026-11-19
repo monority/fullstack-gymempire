@@ -1,0 +1,36 @@
+/**
+ * Point d'entrée unique du CSS global.
+ *
+ * Ordre de cascade (du plus faible au plus fort) :
+ *   reset → tokens → base → components → utilities
+ *
+ * Les blocs <style> scopés d'Astro ne sont dans aucune couche : ils gagnent
+ * donc toujours sur ces règles partagées. C'est voulu : une page peut
+ * surcharger un motif global sans !important.
+ *
+ * Voir src/styles/README.md pour les règles d'organisation.
+ */
+@layer reset, tokens, base, components, utilities;
+
+/* 1. Reset */
+@import './base/reset.css';
+
+/* 2. Tokens (une seule source de vérité) */
+@import './tokens/colors.css';
+@import './tokens/scale.css';
+
+/* 3. Bases : polices, racine, accessibilité */
+@import './base/fonts.css';
+@import './base/root.css';
+@import './base/a11y.css';
+
+/* 4. Composants partagés */
+@import '../components/ui/Button.css';
+@import '../components/ui/Badge.css';
+@import '../components/ui/Card.css';
+@import '../components/ui/Avatar.css';
+@import './components/stepper.css';
+@import './components/patterns.css';
+
+/* 5. Utilitaires */
+@import './utilities.css';

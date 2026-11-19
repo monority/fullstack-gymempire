@@ -1,0 +1,9 @@
+{
+  "name": "Gym Empire — Training Log",
+  "short_name": "Gym Empire",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#050505",
+  "theme_color": "#F59A3D",
+  "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
+}

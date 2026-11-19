@@ -1,0 +1,34 @@
+---
+interface Props {
+  title: string;
+  meta?: string;
+  class?: string;
+}
+
+const { title, meta, class: className = '' } = Astro.props;
+---
+
+<header class:list={['panel-header', className]}>
+  <h2 class="panel-header__title">{title}</h2>
+  {meta && <span class="panel-header__meta">{meta}</span>}
+</header>
+
+<style>
+  .panel-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1.2rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.4rem;
+  }
+
+  .panel-header__title {
+    margin: 0;
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: var(--text-body);
+    font-weight: 700;
+    line-height: var(--leading-body);
+  }
+</style>

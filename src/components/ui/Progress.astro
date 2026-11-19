@@ -1,0 +1,82 @@
+---
+interface Props {
+  value: number;
+  max?: number;
+  variant?: 'default' | 'success' | 'warning' | 'danger' | 'accent';
+  size?: 'sm' | 'md';
+  label?: string;
+  class?: string;
+}
+
+const {
+  value,
+  max = 100,
+  variant = 'default',
+  size = 'md',
+  label,
+  class: className = '',
+} = Astro.props;
+
+const safeMax = max > 0 ? max : 1;
+const clamped = Math.max(0, Math.min(value, safeMax));
+const percent = (clamped / safeMax) * 100;
+---
+
+{label && <div class="progress__label">{label}</div>}
+<div
+  class:list={['progress', `progress--${size}`, className]}
+  role="progressbar"
+  aria-valuenow={clamped}
+  aria-valuemin="0"
+  aria-valuemax={safeMax}
+  aria-label={label}
+>
+  <div
+    class:list={['progress__fill', `progress__fill--${variant}`]}
+    style={`width: ${percent}%;`}
+  ></div>
+</div>
+
+<style>
+  .progress {
+    width: 100%;
+    background-color: var(--color-surface-2);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+
+  .progress--sm {
+    height: 0.8rem;
+  }
+  .progress--md {
+    height: 1.2rem;
+  }
+
+  .progress__label {
+    font-size: 1.1rem;
+    color: var(--color-muted);
+    margin-bottom: 0.4rem;
+  }
+
+  .progress__fill {
+    height: 100%;
+    border-radius: 999px;
+    transition: width 300ms ease;
+  }
+
+  .progress__fill--default {
+    background-color: var(--color-accent);
+  }
+  .progress__fill--success {
+    background-color: var(--color-success);
+  }
+  .progress__fill--warning {
+    background-color: var(--color-warning);
+  }
+  .progress__fill--danger {
+    background-color: var(--color-destructive);
+  }
+  .progress__fill--accent {
+    background-color: var(--color-accent);
+  }
+</style>

@@ -1,0 +1,391 @@
+---
+import { t, localizedPath } from '../../i18n';
+import AppLayout from '../../layouts/AppLayout.astro';
+import PageHeader from '../../components/layout/PageHeader.astro';
+import Card from '../../components/ui/Card.astro';
+import Segmented from '../../components/ui/Segmented.astro';
+import BackLink from '../../components/ui/BackLink.astro';
+import EmptyState from '../../components/ui/EmptyState.astro';
+import { icons } from '../../lib/icons';
+const L = t();
+---
+
+<AppLayout title={L.tendance.title}>
+  <PageHeader title={L.tendance.title} description={L.tendance.description} />
+
+  <div class="trend" x-data="exerciseTrendApp()" x-init="init()" x-cloak>
+    <BackLink href={localizedPath('/exercises')} label={L.tendance.back} />
+
+    <template x-if="notFound">
+      <EmptyState
+        variant="error"
+        title={L.tendance.notFound}
+        description={L.tendance.notFoundDesc}
+        actionLabel={L.tendance.viewExercises}
+        actionHref={localizedPath('/exercises')}
+      />
+    </template>
+
+    <template x-if="!notFound && exercise">
+      <div class="trend__content">
+        {/* ── Controls ── */}
+        <Card padding="md">
+          <div class="trend__controls">
+            <div class="trend__field trend__field--grow">
+              <label class="trend__label" for="trend-exercise">
+                {L.tendance.exercise}
+              </label>
+              <div class="trend__select-wrap">
+                <select
+                  id="trend-exercise"
+                  class="trend__select"
+                  :value="selectedId"
+                  @change="onExerciseChange($event.target.value)"
+                >
+                  <template x-for="ex in exercises" :key="ex.id">
+                    <option :value="ex.id" x-text="trExercise(ex.name)"></option>
+                  </template>
+                </select>
+                <Fragment set:html={icons.chevronDown(16, 16)} />
+              </div>
+            </div>
+
+            <div class="trend__field">
+              <span class="trend__label" id="trend-metric-label">
+                {L.tendance.metric}
+              </span>
+              <Segmented
+                items={[
+                  { value: 'volume', label: L.tendance.metricVolume },
+                  { value: 'rm', label: L.tendance.metric1RM },
+                ]}
+                model="metric"
+                ariaLabel={L.tendance.metric}
+              />
+            </div>
+
+            <div class="trend__field">
+              <span class="trend__label" id="trend-period-label">
+                {L.tendance.period}
+              </span>
+              <Segmented
+                items={[
+                  { value: 'all', label: L.tendance.periodAll },
+                  { value: '3m', label: L.tendance.period3m },
+                  { value: '1y', label: L.tendance.period1y },
+                ]}
+                model="period"
+                ariaLabel={L.tendance.period}
+              />
+            </div>
+          </div>
+        </Card>
+
+        {/* ── Chart ── */}
+        <Card padding="lg">
+          <div class="trend__chart-wrap">
+            <header class="trend__chart-header">
+              <h2 class="trend__chart-title" x-text="chartTitle"></h2>
+              <span class="trend__chart-meta" x-text="chartMeta"></span>
+            </header>
+
+            <template x-if="points.length < 2">
+              <div class="trend__empty" role="status">
+                <div class="trend__empty-icon" aria-hidden="true">
+                  —
+                </div>
+                <h3 class="trend__empty-title">{L.tendance.emptyTitle}</h3>
+                <p class="trend__empty-desc" x-text="emptyMessage"></p>
+                <a href={localizedPath('/sessions/quick')} class="trend__empty-link">
+                  {L.common.startSession}
+                </a>
+              </div>
+            </template>
+
+            <template x-if="points.length >= 2">
+              <div class="trend__chart-col">
+                <svg
+                  class="trend__chart"
+                  viewBox="0 0 800 300"
+                  preserveAspectRatio="xMidYMid meet"
+                  role="img"
+                  :aria-label="chartTitle"
+                >
+                  <g x-html="chartGridMarkup"></g>
+                  <line
+                    x1="0"
+                    y1="300"
+                    x2="800"
+                    y2="300"
+                    stroke="var(--color-border)"
+                    stroke-width="1"
+                  />
+                  <polygon :points="chartAreaPoints" fill="url(#trend-gradient)" opacity="0.18" />
+                  <polyline
+                    :points="chartLinePoints"
+                    fill="none"
+                    stroke="var(--color-accent)"
+                    stroke-width="2.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <g x-html="chartDotsMarkup"></g>
+                  <defs>
+                    <linearGradient id="trend-gradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="var(--color-accent)" stop-opacity="0.55" />
+                      <stop offset="100%" stop-color="var(--color-accent)" stop-opacity="0" />
+                    </linearGradient>
+                  </defs>
+                </svg>
+
+                <div class="trend__chart-x" x-show="points.length > 0">
+                  <template x-for="(d, i) in points" :key="'l' + i">
+                    <span
+                      class="trend__chart-tick"
+                      :class="{ 'trend__chart-tick--start': i === 0, 'trend__chart-tick--end': i === points.length - 1 }"
+                      x-show="i === 0 || i === points.length - 1 || i === Math.floor(points.length / 2)"
+                      x-text="formatDateShort(d.date)"
+                    ></span>
+                  </template>
+                </div>
+              </div>
+            </template>
+          </div>
+        </Card>
+      </div>
+    </template>
+  </div>
+</AppLayout>
+
+<script>
+  import { createTrendsApp } from '../../components/exercises/trendsApp';
+  import { t, trExercise } from '../../i18n';
+
+  const LABELS = t();
+
+  const register = () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const Alpine = (window as any).Alpine;
+
+    Alpine.data('exerciseTrendApp', () =>
+      createTrendsApp({
+        search: window.location.search,
+        labels: {
+          historiqueSessions: LABELS.historique.sessions,
+          historiqueSessionSingular: LABELS.historique.sessionSingular,
+          chartVolumeTitle: LABELS.tendance.chartVolumeTitle,
+          chart1RMTitle: LABELS.tendance.chart1RMTitle,
+          noSessions: LABELS.tendance.noSessions,
+          minPoints: LABELS.tendance.minPoints,
+          kg: LABELS.common.kg,
+        },
+        translateExercise: trExercise,
+      })
+    );
+  };
+
+  document.addEventListener('alpine:init', register);
+  if ((window as any).Alpine) register();
+</script>
+
+<style>
+  .trend {
+    padding-bottom: 9.6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .trend__content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  /* ── Controls ── */
+  .trend__controls {
+    display: flex;
+    flex-direction: column;
+    gap: 1.4rem;
+  }
+
+  .trend__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    min-width: 0;
+  }
+  .trend__field--grow {
+    flex: 1 1 24rem;
+  }
+
+  .trend__label {
+    font-size: 1.1rem;
+    color: var(--color-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-weight: 700;
+  }
+
+  .trend__select-wrap {
+    position: relative;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .trend__select {
+    width: 100%;
+    truncate: ellipsis;
+    height: 4.4rem;
+    padding: 0 1.4rem 0 1.4rem;
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: 1.4rem;
+    line-height: 1.2;
+    outline: none;
+    cursor: pointer;
+    appearance: none;
+    transition:
+      border-color var(--transition-fast),
+      box-shadow var(--transition-fast);
+  }
+
+  /* ── Chart ── */
+  .trend__chart-wrap {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .trend__chart-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1.2rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.4rem;
+  }
+
+  .trend__chart-title {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--color-text);
+    margin: 0;
+    word-break: break-word;
+  }
+
+  .trend__chart-col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .trend__chart {
+    width: 100%;
+    height: auto;
+    max-height: 32rem;
+    background-color: var(--color-surface-2);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 1.2rem;
+  }
+
+  .trend__chart-x {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 1.2rem;
+    color: var(--color-muted);
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .trend__chart-tick {
+    font-variant-numeric: tabular-nums;
+  }
+  .trend__chart-tick--start,
+  .trend__chart-tick--end {
+    color: var(--color-text);
+    font-weight: 700;
+  }
+
+  /* ── Empty state ── */
+  .trend__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 2.8rem 1.2rem 2.4rem;
+    text-align: center;
+  }
+
+  .trend__empty-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 4.4rem;
+    height: 4.4rem;
+    border: 1px solid var(--color-border);
+    border-radius: 50%;
+    color: var(--color-accent);
+    font-family: var(--font-display);
+    font-size: 2rem;
+    font-weight: 700;
+  }
+
+  .trend__empty-title {
+    margin-top: 0.4rem;
+    color: var(--color-text);
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    font-weight: 700;
+  }
+
+  .trend__empty-desc {
+    max-width: 34rem;
+    margin: 0;
+    color: var(--color-muted);
+    font-size: 1.3rem;
+    line-height: 1.5;
+  }
+
+  .trend__empty-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 4.2rem;
+    margin-top: 0.6rem;
+    padding: 0 1.6rem;
+    border-radius: var(--radius-md);
+    background: var(--color-accent);
+    color: var(--color-accent-foreground);
+    font-size: 1.3rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition:
+      background-color var(--transition-fast),
+      box-shadow var(--transition-fast);
+  }
+  .trend__empty-link:hover {
+    background: var(--color-accent-hover);
+  }
+  .trend__empty-link:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+  }
+
+  @media (min-width: 640px) {
+    .trend__controls {
+      flex-direction: row;
+      align-items: end;
+      flex-wrap: wrap;
+      gap: 1.6rem;
+    }
+  }
+</style>

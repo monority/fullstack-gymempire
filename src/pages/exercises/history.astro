@@ -1,0 +1,553 @@
+---
+import { t, localizedPath } from '../../i18n';
+import AppLayout from '../../layouts/AppLayout.astro';
+import PageHeader from '../../components/layout/PageHeader.astro';
+import Badge from '../../components/ui/Badge.astro';
+import Card from '../../components/ui/Card.astro';
+import EmptyState from '../../components/ui/EmptyState.astro';
+import BackLink from '../../components/ui/BackLink.astro';
+import { icons } from '../../lib/icons';
+const L = t();
+---
+
+<AppLayout title={L.historique.title}>
+  <PageHeader title={L.historique.title} description={L.historique.description} />
+
+  <div class="hist__main" x-data="exerciseHistoryApp()" x-init="init()" x-cloak>
+    {/* ── Back link ── */}
+    <BackLink href={localizedPath('/exercises')} label={L.historique.back} />
+
+    <template x-if="notFound">
+      <EmptyState
+        variant="error"
+        title={L.historique.notFound}
+        description={L.historique.notFoundDesc}
+        actionLabel={L.historique.viewExercises}
+        actionHref={localizedPath('/exercises')}
+      />
+    </template>
+
+    {/* ── Loaded exercise ── */}
+    <template x-if="!notFound && exercise">
+      <div class="hist__body">
+        {/* ── Header ── */}
+        <header class="hist__header">
+          <div class="hist__header-row">
+            <div class="hist__header-left">
+              <div class="hist__title-icon" aria-hidden="true">
+                <Fragment set:html={icons.dumbbellBox(24, 24)} />
+              </div>
+              <h1 class="hist__title" x-text="trExercise(exercise.name)"></h1>
+            </div>
+            <div class="hist__badges">
+              <Badge
+                variant="category"
+                size="sm"
+                :class="'badge--cat-' + muscleHue(exercise.muscle)"
+                x-text="trMuscle(exercise.muscle)"
+              />
+              <Badge variant="default" size="sm" x-text="trCategory(exercise.category)" />
+            </div>
+          </div>
+        </header>
+
+        {/* ── Chart ── */}
+        <Card padding="lg">
+          <div class="hist__chart-wrap">
+            <header class="hist__section-header">
+              <h2 class="hist__section-title">{L.historique.historyTitle}</h2>
+              <span class="hist__meta" x-text="chartMeta"></span>
+            </header>
+
+            <template x-if="chartData.length === 0">
+              <p class="hist__empty-msg">{L.historique.historyEmpty}</p>
+            </template>
+
+            <template x-if="chartData.length > 0">
+              <div class="hist__chart-body">
+                <svg
+                  class="hist__chart"
+                  viewBox="0 0 800 300"
+                  preserveAspectRatio="xMidYMid meet"
+                  role="img"
+                  aria-label={L.historique.historyTitle}
+                >
+                  {/* Horizontal grid lines + Y labels (SVG string: Alpine x-for breaks inside <svg>) */}
+                  <g x-html="chartGridMarkup"></g>
+
+                  {/* X axis baseline */}
+                  <line
+                    x1="0"
+                    y1="300"
+                    x2="800"
+                    y2="300"
+                    stroke="var(--color-border)"
+                    stroke-width="1"
+                  />
+
+                  {/* Soft area under the line */}
+                  <polygon :points="chartAreaPoints" fill="url(#hist-gradient)" opacity="0.18" />
+
+                  {/* Line */}
+                  <polyline
+                    :points="chartLinePoints"
+                    fill="none"
+                    stroke="var(--color-accent)"
+                    stroke-width="2.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+
+                  {/* Dots (SVG string: Alpine x-for breaks inside <svg>) */}
+                  <g x-html="chartDotsMarkup"></g>
+
+                  {/* Gradient defs */}
+                  <defs>
+                    <linearGradient id="hist-gradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="var(--color-accent)" stop-opacity="0.55" />
+                      <stop offset="100%" stop-color="var(--color-accent)" stop-opacity="0" />
+                    </linearGradient>
+                  </defs>
+                </svg>
+
+                {/* X axis date labels (subset to avoid overlap) */}
+                <div class="hist__x-labels" x-show="chartData.length > 0">
+                  <template x-for="(d, i) in chartData" :key="'l' + i">
+                    <span
+                      class="hist__x-tick"
+                      :class="{ 'hist__chart-tick--start': i === 0, 'hist__chart-tick--end': i === chartData.length - 1 }"
+                      x-show="i === 0 || i === chartData.length - 1 || i === Math.floor(chartData.length / 2)"
+                      x-text="formatDateShort(d.date)"
+                    ></span>
+                  </template>
+                </div>
+              </div>
+            </template>
+          </div>
+        </Card>
+
+        {/* ── Stats grid ── */}
+        <template x-if="history.length > 0">
+          <div class="hist__stats">
+            {/* Best 1RM */}
+            <div class="hist__stat">
+              <div class="hist__stat-label">
+                <span class="hist__stat-icon">
+                  <Fragment set:html={icons.trendingUp(16, 16)} />
+                </span>
+                <span class="hist__stat-name">{L.historique.best1RM}</span>
+              </div>
+              <div class="hist__stat-row">
+                <span class="hist__stat-value" x-text="formatNumber(best1RM)"></span>
+                <span class="hist__stat-unit">kg</span>
+              </div>
+              <span
+                class="hist__stat-date"
+                x-text="best1RMDate ? formatDate(best1RMDate) : '—'"
+              ></span>
+            </div>
+
+            {/* Best weight */}
+            <div class="hist__stat">
+              <div class="hist__stat-label">
+                <span class="hist__stat-icon">
+                  <Fragment set:html={icons.volumeBox(16, 16)} />
+                </span>
+                <span class="hist__stat-name">{L.historique.bestWeight}</span>
+              </div>
+              <div class="hist__stat-row">
+                <span class="hist__stat-value" x-text="formatNumber(bestWeight)"></span>
+                <span class="hist__stat-unit">kg</span>
+              </div>
+              <span
+                class="hist__stat-date"
+                x-text="bestWeightDate ? formatDate(bestWeightDate) : '—'"
+              ></span>
+            </div>
+
+            {/* Max reps */}
+            <div class="hist__stat">
+              <div class="hist__stat-label">
+                <span class="hist__stat-icon">
+                  <Fragment set:html={icons.arrowUpDown(16, 16)} />
+                </span>
+                <span class="hist__stat-name">{L.historique.maxReps}</span>
+              </div>
+              <div class="hist__stat-row">
+                <span class="hist__stat-value" x-text="maxReps"></span>
+                <span class="hist__stat-unit">reps</span>
+              </div>
+              <span
+                class="hist__stat-date"
+                x-text="maxRepsDate ? formatDate(maxRepsDate) : '—'"
+              ></span>
+            </div>
+
+            {/* Total volume */}
+            <div class="hist__stat">
+              <div class="hist__stat-label">
+                <span class="hist__stat-icon">
+                  <Fragment set:html={icons.trendingUpLine(16, 16)} />
+                </span>
+                <span class="hist__stat-name">{L.historique.totalVolume}</span>
+              </div>
+              <div class="hist__stat-row">
+                <span class="hist__stat-value" x-text="formatNumber(totalVolume)"></span>
+                <span class="hist__stat-unit">kg</span>
+              </div>
+              <span class="hist__stat-date" x-text="sessionCountLabel"></span>
+            </div>
+          </div>
+        </template>
+
+        {/* ── History table ── */}
+        <section class="hist__table-section">
+          <header class="hist__table-header">
+            <h2 class="hist__table-title">{L.historique.tableTitle}</h2>
+            <span class="hist__table-meta" x-text="tableMeta"></span>
+          </header>
+
+          <template x-if="history.length === 0">
+            <Card>
+              <EmptyState
+                iconName="clock"
+                title={L.common.noData}
+                description={L.historique.historyEmpty}
+                actionLabel={L.historique.viewExercises}
+                actionHref={localizedPath('/exercises')}
+              />
+            </Card>
+          </template>
+
+          <template x-if="history.length > 0">
+            <div class="hist__table-wrap">
+              <table class="hist__table">
+                <thead>
+                  <tr>
+                    <th scope="col">{L.historique.colDate}</th>
+                    <th scope="col">{L.historique.colWeight}</th>
+                    <th scope="col">{L.historique.colReps}</th>
+                    <th scope="col" class="text-right!">
+                      {L.historique.col1RM}
+                    </th>
+                    <th scope="col" class="text-right!">
+                      {L.historique.colRpe}
+                    </th>
+                    <th scope="col">{L.historique.colType}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <template x-for="(row, idx) in historyDesc" :key="idx">
+                    <tr class="hist__tr">
+                      <td data-label={L.historique.colDate}>
+                        <div class="hist__date">
+                          <span
+                            class="hist__date-main font-semibold text-text"
+                            x-text="formatDate(row.date)"
+                          ></span>
+                          <span class="hist__session-name" x-text="row.sessionName"></span>
+                        </div>
+                      </td>
+                      <td
+                        class="hist__num font-display tabular-nums font-semibold text-right"
+                        data-label={L.historique.colWeight}
+                        x-text="formatNumber(row.weight) + ' kg'"
+                      ></td>
+                      <td
+                        class="hist__num font-display tabular-nums font-semibold text-right"
+                        data-label={L.historique.colReps}
+                        x-text="row.reps"
+                      ></td>
+                      <td
+                        class="hist__num font-display tabular-nums font-semibold text-right text-accent"
+                        data-label={L.historique.col1RM}
+                        x-text="formatNumber(row.estimated1RM) + ' kg'"
+                      ></td>
+                      <td
+                        class="hist__num font-display tabular-nums font-semibold text-right"
+                        data-label={L.historique.colRpe}
+                        x-text="formatRpe(row)"
+                      ></td>
+                      <td data-label={L.historique.colType}>
+                        <span
+                          class="type-pill"
+                          :class="'type-pill--' + row.type"
+                          x-text="typeLabel(row.type)"
+                        ></span>
+                      </td>
+                    </tr>
+                  </template>
+                </tbody>
+              </table>
+            </div>
+          </template>
+        </section>
+      </div>
+    </template>
+  </div>
+</AppLayout>
+
+<script>
+  import { createHistoryApp } from '../../components/exercises/historyApp';
+  import { t } from '../../i18n';
+
+  const LABELS = t();
+
+  const register = () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const Alpine = (window as any).Alpine;
+
+    Alpine.data('exerciseHistoryApp', () =>
+      createHistoryApp({
+        search: window.location.search,
+        labels: { ...LABELS.historique, kg: LABELS.common.kg },
+      })
+    );
+  };
+
+  document.addEventListener('alpine:init', register);
+  if ((window as any).Alpine) register();
+</script>
+
+<style>
+  .hist__title-icon {
+    background-color: color-mix(in srgb, var(--color-accent) 12%, transparent);
+  }
+  .hist__title-icon svg {
+    width: 2.4rem;
+    height: 2.4rem;
+  }
+
+  .hist__title {
+    font-size: clamp(2.4rem, 4.5vw, 3.4rem);
+  }
+
+  .hist__table-section {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .hist__table-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.4rem;
+  }
+
+  .hist__table-title {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--color-text);
+    margin: 0;
+  }
+
+  .hist__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 1.3rem;
+  }
+
+  .hist__date {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .hist__session-name {
+    font-size: 1.1rem;
+    color: var(--color-muted);
+    text-transform: capitalize;
+  }
+
+  .hist__chart {
+    width: 100%;
+    height: auto;
+    max-height: 32rem;
+    background-color: var(--color-surface-2);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 1.2rem;
+  }
+
+  .hist__chart-tick--start,
+  .hist__chart-tick--end {
+    color: var(--color-text);
+    font-weight: 700;
+  }
+
+  .hist__stats {
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 640px) {
+    .hist__stats {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .hist__stat:nth-child(even) {
+      border-left: 1px solid var(--color-border);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .hist__stats {
+      grid-template-columns: repeat(4, 1fr);
+    }
+    .hist__stat {
+      border-bottom: 0;
+    }
+    .hist__stat + .hist__stat {
+      border-left: 1px solid var(--color-border);
+    }
+  }
+
+  .hist__stat-value {
+    font-family: var(--font-display);
+    font-size: 2.6rem;
+    font-weight: 700;
+    color: var(--color-text);
+    font-variant-numeric: tabular-nums;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+  }
+  .hist__stat--hero .hist__stat-value {
+    color: var(--color-accent);
+  }
+
+  .hist__table thead th {
+    background-color: var(--color-surface-3);
+    color: var(--color-muted);
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    text-align: left;
+    padding: 1.2rem 1.4rem;
+    border-bottom: 1px solid var(--color-border);
+    white-space: nowrap;
+  }
+
+  .hist__table tbody td {
+    padding: 1rem 1.4rem;
+    border-bottom: 1px solid var(--color-border);
+    vertical-align: middle;
+  }
+
+  .hist__table tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .hist__table tbody tr:nth-child(even) {
+    background-color: var(--color-surface-2);
+  }
+
+  .hist__date-main {
+    overflow-wrap: anywhere;
+  }
+
+  .hist__error-icon {
+    background-color: color-mix(in srgb, var(--color-destructive) 10%, transparent);
+  }
+  .hist__error-icon svg {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  .hist__error-link {
+    transition: background-color var(--transition-fast);
+  }
+
+  @media (max-width: 640px) {
+    .hist__table thead {
+      display: none;
+    }
+
+    .hist__table,
+    .hist__table tbody,
+    .hist__table tr,
+    .hist__table td {
+      display: block;
+      width: 100%;
+    }
+
+    .hist__table tr {
+      padding: 1.2rem 1.4rem;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .hist__table tr:last-child {
+      border-bottom: none;
+    }
+
+    .hist__table tr:nth-child(even) {
+      background-color: var(--color-surface-2);
+    }
+
+    .hist__table td {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      min-width: 0;
+      padding: 0.4rem 0;
+      border-bottom: none;
+    }
+
+    .hist__table td > * {
+      min-width: 0;
+      max-width: calc(100% - 9rem);
+      text-align: right;
+    }
+
+    .hist__table td > .hist__date {
+      overflow-wrap: anywhere;
+    }
+
+    .hist__table td::before {
+      content: attr(data-label);
+      flex: 0 0 auto;
+      font-size: 1rem;
+      color: var(--color-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 700;
+    }
+
+    .hist__num {
+      text-align: right;
+    }
+
+    .hist__date-main {
+      overflow-wrap: anywhere;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .hist__title-icon {
+      width: 4rem;
+      height: 4rem;
+    }
+
+    .hist__title-icon svg {
+      width: 2rem;
+      height: 2rem;
+    }
+
+    .hist__stat {
+      padding: 1.4rem 1.6rem;
+    }
+
+    .hist__stat-value {
+      font-size: 2rem;
+    }
+
+    .hist__title {
+      font-size: 2.2rem;
+    }
+  }
+</style>
