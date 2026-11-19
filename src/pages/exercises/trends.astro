@@ -158,34 +158,27 @@ const L = t();
 </AppLayout>
 
 <script>
+  import { registerAlpine } from '../../lib/alpine';
   import { createTrendsApp } from '../../components/exercises/trendsApp';
   import { t, trExercise } from '../../i18n';
 
   const LABELS = t();
 
-  const register = () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const Alpine = (window as any).Alpine;
-
-    Alpine.data('exerciseTrendApp', () =>
-      createTrendsApp({
-        search: window.location.search,
-        labels: {
-          historiqueSessions: LABELS.historique.sessions,
-          historiqueSessionSingular: LABELS.historique.sessionSingular,
-          chartVolumeTitle: LABELS.tendance.chartVolumeTitle,
-          chart1RMTitle: LABELS.tendance.chart1RMTitle,
-          noSessions: LABELS.tendance.noSessions,
-          minPoints: LABELS.tendance.minPoints,
-          kg: LABELS.common.kg,
-        },
-        translateExercise: trExercise,
-      })
-    );
-  };
-
-  document.addEventListener('alpine:init', register);
-  if ((window as any).Alpine) register();
+  registerAlpine('exerciseTrendApp', () =>
+    createTrendsApp({
+      search: window.location.search,
+      labels: {
+        historiqueSessions: LABELS.historique.sessions,
+        historiqueSessionSingular: LABELS.historique.sessionSingular,
+        chartVolumeTitle: LABELS.tendance.chartVolumeTitle,
+        chart1RMTitle: LABELS.tendance.chart1RMTitle,
+        noSessions: LABELS.tendance.noSessions,
+        minPoints: LABELS.tendance.minPoints,
+        kg: LABELS.common.kg,
+      },
+      translateExercise: trExercise,
+    })
+  );
 </script>
 
 <style>

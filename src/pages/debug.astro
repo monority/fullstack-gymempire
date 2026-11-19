@@ -189,9 +189,10 @@ const isDev = import.meta.env.DEV;
       <>
         <script>
           import { generateDemoData, resetAllData, currentCounts } from '../lib/seed';
+          import { getAlpine } from '../lib/alpine';
 
           document.addEventListener('alpine:init', () => {
-            window.Alpine.data('debugApp', () => ({
+            getAlpine()?.data('debugApp', () => ({
               counts: { sessions: 0, progress: 0, body: 0, exercises: 0 },
               summary: '',
               message: '',

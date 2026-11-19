@@ -170,6 +170,7 @@ const title = `${L.detail.title} — Gym Empire`;
     </main>
 
     <script>
+      import { registerAlpine } from '../../lib/alpine';
       import { createPrintSheetApp } from '../../components/session-detail/printSheetApp';
       import { getAuth } from '../../lib/auth';
       import { t, getLocale, localizedPath, trExercise } from '../../i18n';
@@ -183,34 +184,26 @@ const title = `${L.detail.title} — Gym Empire`;
         window.location.replace(localizedPath('/login'));
       }
 
-      const register = () => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const Alpine = (window as any).Alpine;
-        const sheet = window as Window & { __SHEET_PRINTED__?: boolean };
-
-        Alpine.data('printSheetApp', () =>
-          createPrintSheetApp({
-            search: window.location.search,
-            labels: {
-              common: LABELS.common,
-              detail: LABELS.detail,
-              locale: getLocale,
-              backHref: localizedPath('/sessions'),
+      const sheet = window as Window & { __SHEET_PRINTED__?: boolean };
+      registerAlpine('printSheetApp', () =>
+        createPrintSheetApp({
+          search: window.location.search,
+          labels: {
+            common: LABELS.common,
+            detail: LABELS.detail,
+            locale: getLocale,
+            backHref: localizedPath('/sessions'),
+          },
+          ui: {
+            alreadyPrinted: () => Boolean(sheet.__SHEET_PRINTED__),
+            markPrinted: () => {
+              sheet.__SHEET_PRINTED__ = true;
             },
-            ui: {
-              alreadyPrinted: () => Boolean(sheet.__SHEET_PRINTED__),
-              markPrinted: () => {
-                sheet.__SHEET_PRINTED__ = true;
-              },
-              print: () => window.print(),
-              schedule: (fn, ms) => window.setTimeout(fn, ms),
-            },
-          })
-        );
-      };
-
-      document.addEventListener('alpine:init', register);
-      if ((window as any).Alpine) register();
+            print: () => window.print(),
+            schedule: (fn, ms) => window.setTimeout(fn, ms),
+          },
+        })
+      );
     </script>
 
     {/* Alpine.js CDN — MUST be AFTER the app script (type="module" runs before defer) */}

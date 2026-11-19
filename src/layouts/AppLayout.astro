@@ -300,37 +300,12 @@ const groupsWithActive = groups.map((g) => ({
       // execution time readyState is already 'interactive', so the
       // else branch would boot before the post-</html> listeners.)
       document.addEventListener('DOMContentLoaded', () => Alpine.start(), { once: true });
+    </script>
 
-      // Keep Alpine's mutation observer from initializing a swapped page
-      // before that page's module has registered its data factory.
-      document.addEventListener('astro:before-swap', (event) => {
-        // The inline theme bootstrap only runs on a full page load. On a
-        // ClientRouter swap Astro replaces <html> attributes with those of
-        // the server-rendered document, which has no data-theme -> the app
-        // silently fell back to dark. Re-apply the stored theme before swap.
-        if (typeof window.__applyStoredTheme === 'function') {
-          window.__applyStoredTheme(event.newDocument);
-        }
-        event.newDocument.querySelectorAll('main [x-data]').forEach((root) => {
-          root.setAttribute('x-ignore', '');
-        });
-      });
-
-      // ClientRouter swaps page content without reloading Alpine. Re-fire
-      // registrations for scripts introduced by the new page, then initialise
-      // only the new Alpine roots. Persisted components (notably the sidebar)
-      // already have an Alpine state stack and are deliberately skipped.
-      document.addEventListener('astro:page-load', () => {
-        document.dispatchEvent(new CustomEvent('alpine:init'));
-        window.setTimeout(() => {
-          document.querySelectorAll('main [x-data][x-ignore]').forEach((root) => {
-            root.removeAttribute('x-ignore');
-            delete root._x_ignore;
-            delete root._x_ignoreSelf;
-            Alpine.initTree(root);
-          });
-        }, 50);
-      });
+    {/* Lifecycle ClientRouter (theme, x-ignore, re-registration) — module typé, ADR-001. */}
+    <script>
+      import { installAlpineLifecycle } from '../lib/alpine';
+      installAlpineLifecycle();
     </script>
   </body>
 </html>

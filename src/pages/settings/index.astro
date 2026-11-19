@@ -621,6 +621,7 @@ const APP_VERSION = '0.0.1';
 </AppLayout>
 
 <script>
+  import { registerAlpine } from '../../lib/alpine';
   import { createSettingsApp, buildSettingsLabels } from '../../components/settings/settingsApp';
   import { t, DATE_LOCALE } from '../../i18n';
   import { downloadBlob } from '../../lib/csv-export';
@@ -641,38 +642,30 @@ const APP_VERSION = '0.0.1';
     });
   }
 
-  const registerSettings = () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const Alpine = (window as any).Alpine;
-    const dialogs = window as DialogWindow;
-
-    Alpine.data('settingsApp', () =>
-      createSettingsApp({
-        labels: buildSettingsLabels(LABELS),
-        clock: {
-          now: () => new Date(),
-          nowIso: () => new Date().toISOString(),
-          locale: () => DATE_LOCALE(),
+  const dialogs = window as DialogWindow;
+  registerAlpine('settingsApp', () =>
+    createSettingsApp({
+      labels: buildSettingsLabels(LABELS),
+      clock: {
+        now: () => new Date(),
+        nowIso: () => new Date().toISOString(),
+        locale: () => DATE_LOCALE(),
+      },
+      ui: {
+        notify: (message, kind) => window.showToast?.(message, kind),
+        download: downloadBlob,
+        readFile,
+        openDialog: (id) => dialogs.openDialog?.(id),
+        closeDialog: (id) => dialogs.closeDialog?.(id),
+        pickImportFile: () => {
+          const input = document.querySelector<HTMLInputElement>('.set__file-input');
+          if (!input) return;
+          input.value = '';
+          input.click();
         },
-        ui: {
-          notify: (message, kind) => window.showToast(message, kind),
-          download: downloadBlob,
-          readFile,
-          openDialog: (id) => dialogs.openDialog?.(id),
-          closeDialog: (id) => dialogs.closeDialog?.(id),
-          pickImportFile: () => {
-            const input = document.querySelector<HTMLInputElement>('.set__file-input');
-            if (!input) return;
-            input.value = '';
-            input.click();
-          },
-        },
-      })
-    );
-  };
-
-  document.addEventListener('alpine:init', registerSettings);
-  if ((window as any).Alpine) registerSettings();
+      },
+    })
+  );
 </script>
 
 <style>

@@ -566,6 +566,7 @@ const setTypes = [
 </AppLayout>
 
 <script>
+  import { registerAlpine } from '../../../lib/alpine';
   import { createSessionBuilderApp } from '../../../components/builder/sessionBuilder';
   import { pickBuilderLabels } from '../../../components/builder/builderLabels';
   import { exerciseCard } from '../../../components/builder/exerciseCard';
@@ -583,51 +584,44 @@ const setTypes = [
     closeDialog?: (id: string) => void;
   };
 
-  const register = () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const Alpine = (window as any).Alpine;
-    const host = window as BuilderWindow;
-
-    Alpine.data('exerciseCard', (...args: any[]) => exerciseCard(args[0], args[1]));
-
-    Alpine.data('sessionBuilder', () =>
-      createSessionBuilderApp({
-        labels: BUILDER_LABELS,
-        rpeLabels:
-          LABELS.builder as unknown as import('../../../components/builder/sessionMeta').SessionMetaLabels,
-        search: window.location.search,
-        today: () => new Date().toISOString().split('T')[0],
-        locale: DATE_LOCALE(),
-        localizedPath,
-        host: {
-          expose: (sessions, labels) => {
-            host.__builderSessions = sessions;
-            host.__builderLabels = labels;
-          },
-          onToggle: (listener) => {
-            window.addEventListener('builder:exercise-toggled', ((e: CustomEvent) => {
-              listener(e.detail.exerciseId, e.detail.expanded);
-            }) as EventListener);
-          },
-          openDialog: (id) => host.openDialog?.(id),
-          closeDialog: (id) => host.closeDialog?.(id),
-          dispatch: (name) => window.dispatchEvent(new CustomEvent(name)),
-          confirm: (message) => window.confirm(message),
-          navigate: (href) => {
-            window.location.href = href;
-          },
-          focusPickerSearch: () => {
-            requestAnimationFrame(() => {
-              document.querySelector<HTMLInputElement>('[x-ref="pickerSearch"]')?.focus();
-            });
-          },
+  const host = window as BuilderWindow;
+  registerAlpine('exerciseCard', (...args: Parameters<typeof exerciseCard>) =>
+    exerciseCard(...args)
+  );
+  registerAlpine('sessionBuilder', () =>
+    createSessionBuilderApp({
+      labels: BUILDER_LABELS,
+      rpeLabels:
+        LABELS.builder as unknown as import('../../../components/builder/sessionMeta').SessionMetaLabels,
+      search: window.location.search,
+      today: () => new Date().toISOString().split('T')[0],
+      locale: DATE_LOCALE(),
+      localizedPath,
+      host: {
+        expose: (sessions, labels) => {
+          host.__builderSessions = sessions;
+          host.__builderLabels = labels;
         },
-      })
-    );
-  };
-
-  document.addEventListener('alpine:init', register);
-  if ((window as any).Alpine) register();
+        onToggle: (listener) => {
+          window.addEventListener('builder:exercise-toggled', ((e: CustomEvent) => {
+            listener(e.detail.exerciseId, e.detail.expanded);
+          }) as EventListener);
+        },
+        openDialog: (id) => host.openDialog?.(id),
+        closeDialog: (id) => host.closeDialog?.(id),
+        dispatch: (name) => window.dispatchEvent(new CustomEvent(name)),
+        confirm: (message) => window.confirm(message),
+        navigate: (href) => {
+          window.location.href = href;
+        },
+        focusPickerSearch: () => {
+          requestAnimationFrame(() => {
+            document.querySelector<HTMLInputElement>('[x-ref="pickerSearch"]')?.focus();
+          });
+        },
+      },
+    })
+  );
 </script>
 
 <style>

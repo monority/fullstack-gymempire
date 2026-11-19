@@ -189,33 +189,26 @@ const L = t();
 </AppLayout>
 
 <script>
+  import { registerAlpine } from '../../lib/alpine';
   import { createRecordsApp } from '../../components/progression/recordsApp';
   import { t, localizedPath, getLocale } from '../../i18n';
 
   const LABELS = t();
 
-  const register = () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const Alpine = (window as any).Alpine;
-
-    Alpine.data('recordsApp', () =>
-      createRecordsApp({
-        labels: {
-          on: LABELS.records.on,
-          exercisesTracked: LABELS.records.exercisesTracked,
-          exerciseTracked: LABELS.records.exerciseTracked,
-          kg: LABELS.common.kg,
-          viewHistoryAriaPrefix: LABELS.records.viewHistoryAriaPrefix,
-        },
-        today: () => new Date(),
-        locale: getLocale(),
-        localizedPath,
-      })
-    );
-  };
-
-  document.addEventListener('alpine:init', register);
-  if ((window as any).Alpine) register();
+  registerAlpine('recordsApp', () =>
+    createRecordsApp({
+      labels: {
+        on: LABELS.records.on,
+        exercisesTracked: LABELS.records.exercisesTracked,
+        exerciseTracked: LABELS.records.exerciseTracked,
+        kg: LABELS.common.kg,
+        viewHistoryAriaPrefix: LABELS.records.viewHistoryAriaPrefix,
+      },
+      today: () => new Date(),
+      locale: getLocale(),
+      localizedPath,
+    })
+  );
 </script>
 
 <style is:global>

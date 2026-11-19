@@ -288,25 +288,18 @@ const L = t();
 </AppLayout>
 
 <script>
+  import { registerAlpine } from '../../lib/alpine';
   import { createHistoryApp } from '../../components/exercises/historyApp';
   import { t } from '../../i18n';
 
   const LABELS = t();
 
-  const register = () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const Alpine = (window as any).Alpine;
-
-    Alpine.data('exerciseHistoryApp', () =>
-      createHistoryApp({
-        search: window.location.search,
-        labels: { ...LABELS.historique, kg: LABELS.common.kg },
-      })
-    );
-  };
-
-  document.addEventListener('alpine:init', register);
-  if ((window as any).Alpine) register();
+  registerAlpine('exerciseHistoryApp', () =>
+    createHistoryApp({
+      search: window.location.search,
+      labels: { ...LABELS.historique, kg: LABELS.common.kg },
+    })
+  );
 </script>
 
 <style>

@@ -128,6 +128,7 @@ const L = t();
 </AppLayout>
 
 <script>
+  import { registerAlpine } from '../../lib/alpine';
   import {
     createSessionDetailApp,
     buildSessionDetailLabels,
@@ -141,33 +142,25 @@ const L = t();
     closeDialog?: (id: string) => void;
   };
 
-  const register = () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const Alpine = (window as any).Alpine;
-    const dialogs = window as DialogWindow;
-    const labels = buildSessionDetailLabels(LABELS);
-    labels.printHref = localizedPath('/sessions/print');
-
-    Alpine.data('sessionDetailApp', () =>
-      createSessionDetailApp({
-        labels,
-        search: window.location.search,
-        localizedPath,
-        ui: {
-          notify: (message, kind) => window.showToast(message, kind),
-          openDialog: (id) => dialogs.openDialog?.(id),
-          closeDialog: (id) => dialogs.closeDialog?.(id),
-          navigate: (href) => {
-            window.location.href = href;
-          },
-          translateExercise: (name) => trExercise(name),
+  const dialogs = window as DialogWindow;
+  const labels = buildSessionDetailLabels(LABELS);
+  labels.printHref = localizedPath('/sessions/print');
+  registerAlpine('sessionDetailApp', () =>
+    createSessionDetailApp({
+      labels,
+      search: window.location.search,
+      localizedPath,
+      ui: {
+        notify: (message, kind) => window.showToast?.(message, kind),
+        openDialog: (id) => dialogs.openDialog?.(id),
+        closeDialog: (id) => dialogs.closeDialog?.(id),
+        navigate: (href) => {
+          window.location.href = href;
         },
-      })
-    );
-  };
-
-  document.addEventListener('alpine:init', register);
-  if ((window as any).Alpine) register();
+        translateExercise: (name) => trExercise(name),
+      },
+    })
+  );
 </script>
 
 <style is:global>

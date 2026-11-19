@@ -240,12 +240,13 @@ const L = t();
 
 <script>
   import { createTimerApp } from '../../components/timer/timerApp';
+  import { getAlpine } from '../../lib/alpine';
   import { t, localizedPath } from '../../i18n';
 
   const LABELS = t();
 
   const registerTimer = () => {
-    window.Alpine.data('timerApp', () =>
+    getAlpine()?.data('timerApp', () =>
       createTimerApp({
         labels: LABELS.timer,
         labelSource: LABELS,
@@ -256,7 +257,7 @@ const L = t();
     );
   };
   document.addEventListener('alpine:init', registerTimer);
-  if ((window as any).Alpine) registerTimer();
+  if (getAlpine()) registerTimer();
 </script>
 
 <style>

@@ -185,34 +185,28 @@ const L = t();
 </AppLayout>
 
 <script>
+  import { registerAlpine } from '../lib/alpine';
   import { createCalendarApp } from '../components/calendar/calendarApp';
   import { t, localizedPath } from '../i18n';
 
   const LABELS = t();
 
-  const registerCalendar = () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const Alpine = (window as any).Alpine;
-
-    Alpine.data('calendarApp', () =>
-      createCalendarApp({
-        labels: {
-          ...LABELS.calendrier,
-          status: {
-            completed: LABELS.sessions.completed,
-            inProgress: LABELS.sessions.inProgress,
-            planned: LABELS.sessions.planned,
-          },
-          seanceSingular: LABELS.sessions.seanceSingular,
-          seancePlural: LABELS.sessions.seancePlural,
+  registerAlpine('calendarApp', () =>
+    createCalendarApp({
+      labels: {
+        ...LABELS.calendrier,
+        status: {
+          completed: LABELS.sessions.completed,
+          inProgress: LABELS.sessions.inProgress,
+          planned: LABELS.sessions.planned,
         },
-        today: () => new Date(),
-        localizedPath,
-      })
-    );
-  };
-  document.addEventListener('alpine:init', registerCalendar);
-  if ((window as any).Alpine) registerCalendar();
+        seanceSingular: LABELS.sessions.seanceSingular,
+        seancePlural: LABELS.sessions.seancePlural,
+      },
+      today: () => new Date(),
+      localizedPath,
+    })
+  );
 </script>
 
 <style>

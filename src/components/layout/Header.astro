@@ -119,13 +119,14 @@ const { title, class: className = '' } = Astro.props as Props;
 </header>
 
 <script>
+  import { getAlpine } from '../../lib/alpine';
   import { t } from '../../i18n';
 
   const L = t();
 
   document.addEventListener('alpine:init', () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const Alpine = (window as any).Alpine;
+    const Alpine = getAlpine();
+    if (!Alpine) return;
 
     Alpine.data('localeApp', () => ({
       get locale(): string {

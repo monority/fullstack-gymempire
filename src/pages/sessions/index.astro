@@ -230,6 +230,7 @@ const L = t();
 </AppLayout>
 
 <script>
+  import { registerAlpine } from '../../lib/alpine';
   import { createSessionsApp, buildSessionsLabels } from '../../components/sessions/sessionsApp';
   import { t, localizedPath } from '../../i18n';
 
@@ -241,31 +242,23 @@ const L = t();
     trMuscle?: (name: string) => string;
   };
 
-  const register = () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const Alpine = (window as any).Alpine;
-    const host = window as DialogWindow;
-
-    Alpine.data('sessionsApp', () =>
-      createSessionsApp({
-        labels: buildSessionsLabels(LABELS),
-        today: () => new Date(),
-        localizedPath,
-        ui: {
-          confirm: (message) => window.confirm(message),
-          navigate: (href) => {
-            window.location.href = href;
-          },
-          translateMuscle: (name) => host.trMuscle?.(name) ?? name,
-          openDialog: (id) => host.openDialog?.(id),
-          closeDialog: (id) => host.closeDialog?.(id),
+  const host = window as DialogWindow;
+  registerAlpine('sessionsApp', () =>
+    createSessionsApp({
+      labels: buildSessionsLabels(LABELS),
+      today: () => new Date(),
+      localizedPath,
+      ui: {
+        confirm: (message) => window.confirm(message),
+        navigate: (href) => {
+          window.location.href = href;
         },
-      })
-    );
-  };
-
-  document.addEventListener('alpine:init', register);
-  if ((window as any).Alpine) register();
+        translateMuscle: (name) => host.trMuscle?.(name) ?? name,
+        openDialog: (id) => host.openDialog?.(id),
+        closeDialog: (id) => host.closeDialog?.(id),
+      },
+    })
+  );
 </script>
 
 <style>

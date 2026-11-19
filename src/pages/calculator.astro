@@ -144,17 +144,11 @@ const L = t();
 </AppLayout>
 
 <script>
+  import { registerAlpine } from '../lib/alpine';
   import { t } from '../i18n';
   import { createPlateCalculator } from '../components/calculator/plateCalculator';
 
   const LABELS = t().calculateur;
 
-  const registerCalculator = () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const Alpine = (window as any).Alpine;
-
-    Alpine.data('plateCalculator', () => createPlateCalculator({ labels: LABELS }));
-  };
-  document.addEventListener('alpine:init', registerCalculator);
-  if ((window as any).Alpine) registerCalculator();
+  registerAlpine('plateCalculator', () => createPlateCalculator({ labels: LABELS }));
 </script>

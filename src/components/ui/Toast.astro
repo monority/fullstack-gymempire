@@ -151,11 +151,12 @@ import Icon from './Icon.astro';
 </style>
 
 <script>
+  import { getAlpine } from '../../lib/alpine';
   // Register the Alpine data store. Mirrors the pattern used across the
   // and registers Alpine.data so any page using the CDN build picks it up.
   document.addEventListener('alpine:init', () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const Alpine = (window as any).Alpine;
+    const Alpine = getAlpine();
+    if (!Alpine) return;
 
     Alpine.data('toastApp', () => ({
       open: false,

@@ -292,29 +292,22 @@ const L = t();
 </AppLayout>
 
 <script>
+  import { registerAlpine } from '../../lib/alpine';
   import { createPoidsApp } from '../../components/progression/poidsApp';
   import { t } from '../../i18n';
 
   const LABELS = t();
 
-  const register = () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const Alpine = (window as any).Alpine;
-
-    Alpine.data('poidsApp', () =>
-      createPoidsApp({
-        labels: { ...LABELS.poids, kg: LABELS.common.kg },
-        today: () => new Date().toISOString().split('T')[0],
-        ui: {
-          confirm: (message) => window.confirm(message),
-          schedule: (fn, ms) => window.setTimeout(fn, ms),
-        },
-      })
-    );
-  };
-
-  document.addEventListener('alpine:init', register);
-  if ((window as any).Alpine) register();
+  registerAlpine('poidsApp', () =>
+    createPoidsApp({
+      labels: { ...LABELS.poids, kg: LABELS.common.kg },
+      today: () => new Date().toISOString().split('T')[0],
+      ui: {
+        confirm: (message) => window.confirm(message),
+        schedule: (fn, ms) => window.setTimeout(fn, ms),
+      },
+    })
+  );
 </script>
 
 <style is:global>

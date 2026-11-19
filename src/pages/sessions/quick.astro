@@ -311,6 +311,7 @@ const L = t();
 </AppLayout>
 
 <script>
+  import { getAlpine } from '../../lib/alpine';
   import { t, localizedPath } from '../../i18n';
   import { getSessions, saveSession, updateSession } from '../../lib/storage/sessions';
   import { getSettings } from '../../lib/storage/settings';
@@ -320,8 +321,8 @@ const L = t();
   const LABELS = t();
 
   document.addEventListener('alpine:init', () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const Alpine = (window as any).Alpine;
+    const Alpine = getAlpine();
+    if (!Alpine) return;
 
     Alpine.data('quickSessionApp', () =>
       createQuickSession({

@@ -457,6 +457,7 @@ const categories = [
   </div>
 
   <script>
+    import { registerAlpine } from '../../lib/alpine';
     import {
       createExercisesApp,
       buildExercisesLabels,
@@ -472,30 +473,22 @@ const categories = [
       closeDialog?: (id: string) => void;
     };
 
-    const register = () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const Alpine = (window as any).Alpine;
-      const dialogs = window as DialogWindow;
-
-      Alpine.data('exercisesApp', () =>
-        createExercisesApp({
-          labels: buildExercisesLabels(LABELS),
-          localizedPath,
-          clock: {
-            now: () => new Date(),
-            locale: () => DATE_LOCALE(),
-          },
-          ui: {
-            notify: (message, kind) => window.showToast(message, kind),
-            openDialog: (id) => dialogs.openDialog?.(id),
-            closeDialog: (id) => dialogs.closeDialog?.(id),
-          },
-        })
-      );
-    };
-
-    document.addEventListener('alpine:init', register);
-    if ((window as any).Alpine) register();
+    const dialogs = window as DialogWindow;
+    registerAlpine('exercisesApp', () =>
+      createExercisesApp({
+        labels: buildExercisesLabels(LABELS),
+        localizedPath,
+        clock: {
+          now: () => new Date(),
+          locale: () => DATE_LOCALE(),
+        },
+        ui: {
+          notify: (message, kind) => window.showToast?.(message, kind),
+          openDialog: (id) => dialogs.openDialog?.(id),
+          closeDialog: (id) => dialogs.closeDialog?.(id),
+        },
+      })
+    );
   </script>
 
   <style>

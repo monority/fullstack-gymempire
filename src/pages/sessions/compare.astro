@@ -470,37 +470,30 @@ const L = t();
 </AppLayout>
 
 <script>
+  import { registerAlpine } from '../../lib/alpine';
   import { createComparisonApp } from '../../components/sessions/compareApp';
   import { t } from '../../i18n';
 
   const LABELS = t();
 
-  const register = () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const Alpine = (window as any).Alpine;
-
-    Alpine.data('comparisonApp', () =>
-      createComparisonApp({
-        search: window.location.search,
-        pathname: window.location.pathname,
-        labels: {
-          comparer: LABELS.comparer,
-          rapide: LABELS.rapide,
-          status: {
-            completed: LABELS.comparer.completed,
-            inProgress: LABELS.comparer.inProgress,
-            planned: LABELS.comparer.planned,
-          },
+  registerAlpine('comparisonApp', () =>
+    createComparisonApp({
+      search: window.location.search,
+      pathname: window.location.pathname,
+      labels: {
+        comparer: LABELS.comparer,
+        rapide: LABELS.rapide,
+        status: {
+          completed: LABELS.comparer.completed,
+          inProgress: LABELS.comparer.inProgress,
+          planned: LABELS.comparer.planned,
         },
-        ui: {
-          replaceUrl: (url) => window.history.replaceState({}, '', url),
-        },
-      })
-    );
-  };
-
-  document.addEventListener('alpine:init', register);
-  if ((window as any).Alpine) register();
+      },
+      ui: {
+        replaceUrl: (url) => window.history.replaceState({}, '', url),
+      },
+    })
+  );
 </script>
 
 <style>

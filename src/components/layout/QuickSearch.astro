@@ -344,6 +344,7 @@ const L = t();
 </style>
 
 <script>
+  import { getAlpine } from '../../lib/alpine';
   import { t, getLocale, localizedPath, trExercise, trMuscle } from '../../i18n';
   import { getExercises } from '../../lib/storage/exercises';
   import { getSessions } from '../../lib/storage/sessions';
@@ -377,8 +378,8 @@ const L = t();
   const rankScore = (name: string, q: string): number => (normalize(name).startsWith(q) ? 0 : 1);
 
   document.addEventListener('alpine:init', () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const Alpine = (window as any).Alpine;
+    const Alpine = getAlpine();
+    if (!Alpine) return;
 
     Alpine.data('commandMenu', () => {
       const L = t();
@@ -622,7 +623,7 @@ const L = t();
   let qsBound = false;
 
   function resetCmdState(dlg: HTMLDialogElement): void {
-    const a = (window as any).Alpine;
+    const a = getAlpine();
     if (!a || typeof a.$data !== 'function') return;
     try {
       const data = a.$data(dlg) as { reset?: () => void } | undefined;
