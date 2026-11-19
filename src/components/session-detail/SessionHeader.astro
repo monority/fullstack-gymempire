@@ -11,3 +11,31 @@ import StatusBadge from '../ui/StatusBadge.astro';
   </div>
   <div class="detail__date" x-text="formatDateTime(session.date)"></div>
 </header>
+
+<style>
+  /* ── Header ── */
+  .detail__header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .detail__header-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1.2rem;
+    flex-wrap: wrap;
+  }
+
+  .detail__title {
+    font-family: var(--font-display);
+    font-size: clamp(2.4rem, 4.5vw, 3.4rem);
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--color-text);
+    letter-spacing: -0.01em;
+    word-break: break-word;
+    margin: 0;
+  }
+</style>

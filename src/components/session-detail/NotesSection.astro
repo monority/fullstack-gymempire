@@ -62,3 +62,269 @@ import Icon from '../ui/Icon.astro';
     </Card>
   </section>
 </template>
+
+<style>
+  .suggestion {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.4rem;
+    padding: 1.8rem 2rem;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+    background-color: var(--color-surface-2);
+  }
+
+  .suggestion--up {
+    background-color: color-mix(in srgb, var(--color-success) 8%, var(--color-surface-2));
+    border-color: color-mix(in srgb, var(--color-success) 40%, transparent);
+  }
+
+  .suggestion--maintain {
+    background-color: var(--alpha-bg-subtle);
+    border-color: var(--color-border);
+  }
+
+  .suggestion--down {
+    background-color: color-mix(in srgb, var(--color-warning) 8%, var(--color-surface-2));
+    border-color: color-mix(in srgb, var(--color-warning) 40%, transparent);
+  }
+
+  .suggestion__icon {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 4.2rem;
+    height: 4.2rem;
+    border-radius: 50%;
+    background-color: var(--alpha-bg-soft);
+    color: var(--color-muted);
+  }
+
+  .suggestion--up .suggestion__icon {
+    color: var(--color-success);
+    background-color: color-mix(in srgb, var(--color-success) 15%, transparent);
+  }
+
+  .suggestion--maintain .suggestion__icon {
+    color: var(--color-muted);
+    background-color: var(--alpha-bg-soft);
+  }
+
+  .suggestion--down .suggestion__icon {
+    color: var(--color-warning);
+    background-color: color-mix(in srgb, var(--color-warning) 15%, transparent);
+  }
+
+  .suggestion__icon svg {
+    width: 2.2rem;
+    height: 2.2rem;
+  }
+
+  .suggestion__body {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .suggestion__headline {
+    font-family: var(--font-display);
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--color-text);
+    line-height: 1.2;
+  }
+
+  .suggestion--up .suggestion__headline {
+    color: var(--color-success);
+  }
+
+  .suggestion--maintain .suggestion__headline {
+    color: var(--color-muted);
+  }
+
+  .suggestion--down .suggestion__headline {
+    color: var(--color-warning);
+  }
+
+  .suggestion__detail {
+    color: var(--color-text);
+    font-size: 1.3rem;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .suggestion__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.2rem;
+    margin-top: 0.4rem;
+    color: var(--color-muted);
+    font-size: 1.2rem;
+  }
+
+  .suggestion__meta strong {
+    color: var(--color-text);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .notes {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.8rem;
+  }
+
+  @media (min-width: 640px) {
+    .notes {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .notes__item--text {
+      grid-column: 1 / -1;
+    }
+  }
+
+  .notes__item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    min-width: 0;
+  }
+
+  .notes__label {
+    font-size: 1.1rem;
+    color: var(--color-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-weight: 700;
+  }
+
+  .notes__value {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    min-width: 0;
+  }
+
+  .notes__rpe-label {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-muted);
+  }
+
+  /* ── Fatigue (5 flame icons) ── */
+  .notes__fatigue {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .notes__fatigue-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text);
+    filter: grayscale(1) opacity(0.3);
+    transition: filter var(--transition-fast);
+  }
+
+  .notes__fatigue-icon svg {
+    display: block;
+  }
+
+  .notes__fatigue-icon.is-active {
+    filter: none;
+  }
+
+  .notes__fatigue-label {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-muted);
+  }
+
+  /* ── Mood ── */
+  .notes__mood {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+    height: 4.2rem;
+    padding: 0 1.4rem;
+    border-radius: var(--radius-md);
+    background-color: var(--color-surface-2);
+    border: 1px solid var(--color-border);
+  }
+
+  .notes__mood-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+
+  .notes__mood-icon svg {
+    display: block;
+  }
+
+  .notes__mood-label {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-text);
+  }
+
+  .notes__mood--great {
+    background-color: color-mix(in srgb, var(--color-success) 12%, transparent);
+    border-color: color-mix(in srgb, var(--color-success) 40%, transparent);
+    color: var(--color-success);
+  }
+
+  .notes__mood--good {
+    background-color: var(--color-stat-sessions-bg);
+    border-color: color-mix(in srgb, var(--color-stat-sessions) 35%, transparent);
+    color: var(--color-stat-sessions);
+  }
+
+  .notes__mood--ok {
+    background-color: color-mix(in srgb, var(--color-warning) 10%, transparent);
+    border-color: color-mix(in srgb, var(--color-warning) 32%, transparent);
+    color: var(--color-warning);
+  }
+
+  .notes__mood--tired {
+    background-color: var(--color-superset-g1-bg);
+    border-color: color-mix(in srgb, var(--color-superset-g1) 40%, transparent);
+    color: var(--color-superset-g1);
+  }
+
+  .notes__mood--bad {
+    background-color: color-mix(in srgb, var(--color-destructive) 12%, transparent);
+    border-color: color-mix(in srgb, var(--color-destructive) 40%, transparent);
+    color: var(--color-destructive);
+  }
+
+  /* ── Free text ── */
+  .notes__text {
+    margin: 0;
+    padding: 1.2rem 1.4rem;
+    background-color: var(--color-surface-2);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-text);
+    font-size: 1.4rem;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+</style>

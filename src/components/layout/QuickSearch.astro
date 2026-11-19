@@ -344,7 +344,7 @@ const L = t();
 </style>
 
 <script>
-  import { registerAlpine } from '../../lib/alpine';
+  import { getAlpine, registerAlpine } from '../../lib/alpine';
   import { t, getLocale, localizedPath, trExercise, trMuscle } from '../../i18n';
   import { getExercises } from '../../lib/storage/exercises';
   import { getSessions } from '../../lib/storage/sessions';
@@ -616,7 +616,7 @@ const L = t();
   let qsBound = false;
 
   function resetCmdState(dlg: HTMLDialogElement): void {
-    const a = (window as any).Alpine;
+    const a = getAlpine();
     if (!a || typeof a.$data !== 'function') return;
     try {
       const data = a.$data(dlg) as { reset?: () => void } | undefined;

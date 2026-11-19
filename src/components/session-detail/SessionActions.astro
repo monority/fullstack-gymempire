@@ -58,3 +58,61 @@ import { icons } from '../../lib/icons';
     <span x-text="labels.delete"></span>
   </Button>
 </div>
+
+<style>
+  .detail__actions {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+  }
+
+  .detail__actions > .button {
+    min-height: 4.4rem;
+  }
+
+  .detail__sheet {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+    padding: 1.2rem 0;
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+    margin: 0.2rem 0;
+  }
+
+  .detail__sheet-label {
+    font-size: 1.1rem;
+    color: var(--color-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-weight: 700;
+    margin-right: 0.4rem;
+  }
+
+  .detail__confirm-text {
+    color: var(--color-text);
+    font-size: 1.3rem;
+    line-height: 1.5;
+  }
+
+  .detail__confirm-text strong {
+    color: var(--color-accent);
+    font-weight: 700;
+  }
+
+  @media (max-width: 640px) {
+    .detail__actions {
+      align-items: stretch;
+      flex-direction: column;
+    }
+    .detail__actions > .button,
+    .detail__sheet {
+      width: 100%;
+    }
+    .detail__sheet > .button {
+      flex: 1 1 0%;
+    }
+  }
+</style>
