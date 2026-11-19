@@ -12,7 +12,11 @@ export default {
   devMode: 'Development mode',
   devWarning: 'This is a development account',
   devLogin: 'Quick sign-in (dev)',
-  signupMessage: 'Sign-up is coming soon. For now, use any email and password to sign in — this is a dev space.',
+  demoMode: 'Demo account',
+  demoLogin: 'Demo account (pre-filled data)',
+  demoWarning: 'Fictional read-only account — changes are not saved.',
+  signupMessage:
+    'Sign-up is coming soon. For now, use any email and password to sign in — this is a dev space.',
   defaultPseudo: 'Athlete',
   errors: {
     emailRequired: 'Please enter your email.',

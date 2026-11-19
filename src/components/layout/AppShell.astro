@@ -17,10 +17,9 @@ interface Props {
   groups: NavGroup[];
   title?: string;
   class?: string;
-  skipAuth?: boolean;
 }
 
-const { groups, title, class: className = '', skipAuth = false } = Astro.props as unknown as Props;
+const { groups, title, class: className = '' } = Astro.props as unknown as Props;
 const L = t();
 
 const classes = ['app-shell', className].filter(Boolean).join(' ');
@@ -38,7 +37,7 @@ const drawerItems = groups.map((group) => ({
 
 <div
   class={classes}
-  data-skip-auth={skipAuth ? 'true' : undefined}
+
   x-data="themeApp()"
   x-init="init()"
 >
@@ -49,6 +48,10 @@ const drawerItems = groups.map((group) => ({
       <slot name="actions" slot="actions" />
     </Header>
     <main class="page-content">
+      <div class="demo-banner" data-demo-banner hidden role="status">
+        <span class="demo-banner__dot" aria-hidden="true"></span>
+        {L.layout.demoBanner}
+      </div>
       <slot />
     </main>
   </div>
@@ -214,9 +217,10 @@ const drawerItems = groups.map((group) => ({
     btn.addEventListener('click', logout);
   });
 
-  const skipAuthForPage =
-    document.querySelector<HTMLElement>('.app-shell')?.dataset.skipAuth === 'true';
   const auth = getAuth();
+  if (auth?.demo) {
+    document.querySelector<HTMLElement>('[data-demo-banner]')?.removeAttribute('hidden');
+  }
   if (auth) {
     document.querySelectorAll<HTMLElement>('[data-user-name]').forEach((el) => {
       el.textContent = auth.name;
@@ -227,7 +231,7 @@ const drawerItems = groups.map((group) => ({
     document.querySelectorAll<HTMLElement>('[data-user-zone]').forEach((el) => {
       el.removeAttribute('hidden');
     });
-  } else if (!skipAuthForPage) {
+  } else {
     window.location.replace('/login');
   }
 
@@ -342,6 +346,26 @@ const drawerItems = groups.map((group) => ({
     min-width: 0;
     display: flex;
     flex-direction: column;
+  }
+
+  .demo-banner {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin: 0 0 2.4rem;
+    padding: 1rem 1.2rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    color: var(--color-muted);
+    font-size: var(--text-small);
+  }
+
+  .demo-banner__dot {
+    width: 0.8rem;
+    height: 0.8rem;
+    flex-shrink: 0;
+    border-radius: var(--radius-pill);
+    background: var(--color-accent);
   }
 
   .page-content {

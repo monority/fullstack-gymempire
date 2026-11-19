@@ -4,6 +4,7 @@
  */
 
 import { setAuth, isAuthenticated } from '../../lib/auth';
+import { loginWithDemoAccount } from '../../lib/demo-account';
 import { icons } from '../../lib/icons';
 
 export interface LoginAppDeps {
@@ -71,6 +72,7 @@ export interface LoginApp {
   toggleLocale(): void;
   submit(): void;
   devLogin(): void;
+  demoLogin(): void;
 }
 
 export function createLoginApp(deps: LoginAppDeps): LoginApp {
@@ -145,6 +147,13 @@ export function createLoginApp(deps: LoginAppDeps): LoginApp {
       this.error = '';
       this.loading = true;
       setAuth('dev@muscu.app', 'Dev User');
+      host.navigate(deps.localizedPath('/'));
+    },
+
+    demoLogin() {
+      this.error = '';
+      this.loading = true;
+      loginWithDemoAccount();
       host.navigate(deps.localizedPath('/'));
     },
   };

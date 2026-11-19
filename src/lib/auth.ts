@@ -23,6 +23,8 @@
 export interface MuscuAuth {
   email: string;
   name: string;
+  /** Compte de démonstration : données fictives, écritures désactivées. */
+  demo?: boolean;
 }
 
 const AUTH_KEY = 'muscu-auth';
@@ -39,16 +41,13 @@ export function getAuth(): MuscuAuth | null {
     const raw = window.localStorage.getItem(AUTH_KEY);
     if (raw === null) return null;
     const parsed = JSON.parse(raw) as Partial<MuscuAuth>;
-    if (
-      typeof parsed?.email !== 'string' ||
-      typeof parsed?.name !== 'string'
-    ) {
+    if (typeof parsed?.email !== 'string' || typeof parsed?.name !== 'string') {
       return null;
     }
     const email = parsed.email.trim();
     const name = parsed.name.trim();
     if (!email || !name) return null;
-    return { email, name };
+    return { email, name, demo: parsed.demo === true };
   } catch {
     return null;
   }
@@ -59,7 +58,7 @@ export function getAuth(): MuscuAuth | null {
  * so downstream code never has to worry about stray whitespace.
  * Silently no-ops if either field is empty or storage is unavailable.
  */
-export function setAuth(email: string, name: string): void {
+export function setAuth(email: string, name: string, demo = false): void {
   if (typeof window === 'undefined' || !window.localStorage) {
     return;
   }
@@ -69,7 +68,7 @@ export function setAuth(email: string, name: string): void {
   try {
     window.localStorage.setItem(
       AUTH_KEY,
-      JSON.stringify({ email: cleanEmail, name: cleanName }),
+      JSON.stringify({ email: cleanEmail, name: cleanName, demo })
     );
   } catch {
     // quota exceeded, private mode, storage disabled — silently no-op
@@ -95,4 +94,9 @@ export function clearAuth(): void {
  */
 export function isAuthenticated(): boolean {
   return getAuth() !== null;
+}
+
+/** Vrai quand la session courante est le compte de démonstration. */
+export function isDemoAccount(): boolean {
+  return getAuth()?.demo === true;
 }

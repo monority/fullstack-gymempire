@@ -42,7 +42,6 @@ const routes = [
   ['exercises', '/exercises'],
   ['calendar', '/calendar'],
   ['stats', '/progression/stats'],
-  ['demo', '/demo'],
   ['records', '/progression/records'],
   ['poids', '/progression/poids'],
   ['settings', '/settings'],

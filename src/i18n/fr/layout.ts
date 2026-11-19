@@ -22,4 +22,6 @@ export default {
   appTagline: 'Application de musculation',
   railLabel: 'Système d’entraînement',
   railStatus: 'Local · prêt',
+  demoBanner:
+    'Compte démo · données fictives · lecture seule — les modifications ne sont pas enregistrées.',
 };

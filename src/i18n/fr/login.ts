@@ -1,6 +1,6 @@
 export default {
   title: 'Bon retour',
-  subtitle: 'Connectez-vous à votre espace d\'entraînement.',
+  subtitle: "Connectez-vous à votre espace d'entraînement.",
   email: 'Email',
   password: 'Mot de passe',
   submit: 'Se connecter',
@@ -12,11 +12,15 @@ export default {
   devMode: 'Mode développement',
   devWarning: 'Ceci est un compte de développement',
   devLogin: 'Connexion rapide (dev)',
-  signupMessage: 'L\'inscription arrive bientôt. En attendant, utilisez n\'importe quel email et mot de passe pour vous connecter — c\'est un espace de dev.',
+  demoMode: 'Compte de démonstration',
+  demoLogin: 'Compte démo (données remplies)',
+  demoWarning: 'Compte fictif en lecture seule — les modifications ne sont pas enregistrées.',
+  signupMessage:
+    "L'inscription arrive bientôt. En attendant, utilisez n'importe quel email et mot de passe pour vous connecter — c'est un espace de dev.",
   defaultPseudo: 'Athlète',
   errors: {
     emailRequired: 'Veuillez saisir votre email.',
-    emailInvalid: 'Format d\'email invalide.',
+    emailInvalid: "Format d'email invalide.",
     passwordRequired: 'Veuillez saisir votre mot de passe.',
   },
 };

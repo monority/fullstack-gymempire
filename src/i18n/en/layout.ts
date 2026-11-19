@@ -22,4 +22,5 @@ export default {
   appTagline: 'Workout tracking app',
   railLabel: 'Training system',
   railStatus: 'Local · ready',
+  demoBanner: 'Demo account · fictional data · read only — changes are not saved.',
 };

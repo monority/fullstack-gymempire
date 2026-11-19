@@ -1,6 +1,21 @@
 /**
  * Low-level localStorage access with graceful degradation.
+ * Les écritures sont neutralisées pour le compte de démonstration (lecture seule).
  */
+
+import { isDemoAccount } from '../auth';
+
+let unlockedForSeed = false;
+
+/** Exécute un bloc en autorisant les écritures, même en compte démo. */
+export function withUnlockedWrites<T>(fn: () => T): T {
+  unlockedForSeed = true;
+  try {
+    return fn();
+  } finally {
+    unlockedForSeed = false;
+  }
+}
 
 /**
  * Estimated 1RM via the Epley formula: weight × (1 + reps / 30).
@@ -30,6 +45,7 @@ export function setStore<T>(key: string, value: T): void {
   if (typeof window === 'undefined' || !window.localStorage) {
     return;
   }
+  if (!unlockedForSeed && isDemoAccount()) return;
   try {
     window.localStorage.setItem(key, JSON.stringify(value));
   } catch {

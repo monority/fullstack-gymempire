@@ -11,7 +11,6 @@ interface Props {
   title: string;
   description?: string;
   groups?: NavTree;
-  skipAuth?: boolean;
 }
 
 const currentPath = Astro.url.pathname;
@@ -67,7 +66,7 @@ const defaultGroups: NavTree = [
   },
 ];
 
-const { title, description, groups = defaultGroups, skipAuth = false } = Astro.props;
+const { title, description, groups = defaultGroups } = Astro.props;
 
 // Mark active state on each item (and its children when present)
 // so the Sidebar and the mobile drawer can highlight the right
@@ -156,7 +155,7 @@ const groupsWithActive = groups.map((g) => ({
   </head>
   <body>
     {groupsWithActive.length > 0 ? (
-      <AppShell groups={groupsWithActive} title={title} skipAuth={skipAuth}>
+      <AppShell groups={groupsWithActive} title={title}>
         <slot />
       </AppShell>
     ) : (

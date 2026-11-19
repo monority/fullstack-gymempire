@@ -150,6 +150,26 @@ const L = t();
         </Button>
       </section>
 
+      <section class="login__dev login__demo" aria-labelledby="login-demo-title">
+        <div class="login__dev-header">
+          <span class="login__dev-badge" aria-hidden="true">
+            DÉMO
+          </span>
+          <h2 id="login-demo-title" class="login__dev-title">
+            {L.login.demoMode}
+          </h2>
+        </div>
+        <p class="login__dev-warning" role="note">
+          <span aria-hidden="true" class="login__dev-warning-icon">
+            <Icon name="alertTriangle" size={16} />
+          </span>
+          {L.login.demoWarning}
+        </p>
+        <Button variant="primary" fullWidth @click="demoLogin()" class="login__dev-btn">
+          <span>{L.login.demoLogin}</span>
+        </Button>
+      </section>
+
       {/* ── Signup link ── */}
       <div class="login__signup">
         <p class="login__signup-text">{L.login.createAccount}</p>
@@ -341,7 +361,7 @@ const L = t();
   .login__subtitle {
     text-align: center;
     color: var(--color-muted);
-    font-size: 1.3rem;
+    font-size: var(--text-small);
     line-height: 1.4;
     margin: 0 0 3.2rem;
   }
@@ -467,6 +487,10 @@ const L = t();
     font-weight: 600;
   }
 
+  .login__demo {
+    margin-top: 1.2rem;
+  }
+
   /* ── Dev section ── */
   .login__dev {
     display: flex;
@@ -532,7 +556,7 @@ const L = t();
   }
 
   .login__dev-btn {
-    font-size: 1.3rem;
+    font-size: var(--text-small);
     font-weight: 600;
   }
   .login__dev-btn:active {
@@ -556,13 +580,13 @@ const L = t();
   .login__signup-text {
     text-align: center;
     color: var(--color-muted);
-    font-size: 1.3rem;
+    font-size: var(--text-small);
     line-height: 1.4;
     margin: 0;
   }
 
   .login__signup-btn {
-    font-size: 1.3rem;
+    font-size: var(--text-small);
     font-weight: 600;
     min-height: 4.4rem;
   }
