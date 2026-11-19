@@ -4,7 +4,6 @@ import { getAlpine, registerAlpine, registerStore } from '../alpine';
 
 afterEach(() => {
   delete window.Alpine;
-  document.removeEventListener('alpine:init', () => {});
 });
 
 describe('pont Alpine', () => {

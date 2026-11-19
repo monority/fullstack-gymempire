@@ -623,7 +623,7 @@ const L = t();
   let qsBound = false;
 
   function resetCmdState(dlg: HTMLDialogElement): void {
-    const a = getAlpine();
+    const a = (window as any).Alpine;
     if (!a || typeof a.$data !== 'function') return;
     try {
       const data = a.$data(dlg) as { reset?: () => void } | undefined;
