@@ -38,13 +38,13 @@
 
 | #   | Indicateur (définition exacte)                       |  Baseline **mesurée** le 2026-11-19 |                                    Cible | Outil de mesure                               |
 | --- | ---------------------------------------------------- | ----------------------------------: | ---------------------------------------: | --------------------------------------------- |
-| K1  | Lignes de `<style>` dans `src/pages`                 |          8 785 (22 blocs, 18 > 150) |                                    ≤ 400 | `check-components.mjs`                        |
-| K2  | Pages > 1 000 lignes                                 |                                   7 |                                        0 | `wc -l`                                       |
+| K1  | Lignes de `<style>` dans `src/pages`                 |            8 785 → **8 006** (P4.1) |                                    ≤ 400 | `check-components.mjs`                        |
+| K2  | Pages > 1 000 lignes                                 |                           7 → **6** |                                        0 | `wc -l`                                       |
 | K3  | Page la plus longue                                  |           `sessions/create` — 1 489 |                                    ≤ 250 | `wc -l`                                       |
 | K4  | Occurrences de `alpine:init` dans `src`              |                  29 → **0** (P3) ✅ |                                        1 | `grep -r "alpine:init" src \| wc -l`          |
 | K5  | Occurrences de `(window as any)`                     |                  55 → **0** (P1) ✅ |                                        0 | `grep -r "(window as any)" src \| wc -l`      |
 | K6  | Fichiers de `src/pages` contenant `Alpine.data(`     |                  20 → **0** (P3) ✅ |                         0 (dans `pages`) | `grep -rl "Alpine.data" src/pages \| wc -l`   |
-| K7  | Occurrences de `is:global`                           |                                   5 |                         0 hors whitelist | `check-components.mjs`                        |
+| K7  | Occurrences de `is:global`                           |                           5 → **4** |                         0 hors whitelist | `check-components.mjs`                        |
 | K8  | Domaines sans composant `.astro`                     |                                   7 |                                        0 | `find src/components -name '*.astro'`         |
 | K9  | Familles de helpers de formatage dupliqués           |                                   6 |                                        0 | `grep -r "function fmt\|function format" src` |
 | K10 | Globaux `window.*` pour UI (toast/dialog)            |                  5+ → **0** (P1) ✅ |                        0 (stores Alpine) | `grep -r "window.showToast\|openDialog" src`  |
@@ -614,7 +614,7 @@ Une ADR non tranchée bloque la phase concernée : elle est écrite en 10 lignes
 | P1 — Socle Alpine      | ☑      | K4, K5, K6, K10 → 0 ✅                                                 | `425563b`…`eafe4b7`                   |
 | P2 — Contrat universel | ☐      | primitives typées, registre helper                                     | —                                     |
 | P3 — Headless          | ◐      | factories inline extraites + 11 tests ✅ ; P3.4 (gros modules) restant | `eafe4b7`                             |
-| P4 — Styles            | ☐      | K1 ≤ 400, K7 → 0                                                       | —                                     |
+| P4 — Styles            | ◐      | P4.1 fait (detail 1130→338, is:global retiré) ; reste 8006 lignes      | `52d682d`                             |
 | P5 — Domaines          | ☐      | K2, K3, K8 → 0                                                         | —                                     |
 | P6 — Qualité           | ☐      | K9, K11, K12, K14                                                      | —                                     |
 | P7 — Verrouillage      | ☐      | CI stricte, ADR                                                        | —                                     |
