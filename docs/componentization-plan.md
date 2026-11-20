@@ -38,20 +38,20 @@
 
 | #   | Indicateur (définition exacte)                       |  Baseline **mesurée** le 2026-11-19 |                                    Cible | Outil de mesure                               |
 | --- | ---------------------------------------------------- | ----------------------------------: | ---------------------------------------: | --------------------------------------------- |
-| K1  | Lignes de `<style>` dans `src/pages`                 |            8 785 → **8 006** (P4.1) |                                    ≤ 400 | `check-components.mjs`                        |
+| K1  | Lignes de `<style>` dans `src/pages`                 |                   8 785 → **7 622** |                                    ≤ 400 | `check-components.mjs`                        |
 | K2  | Pages > 1 000 lignes                                 |                           7 → **6** |                                        0 | `wc -l`                                       |
 | K3  | Page la plus longue                                  |           `sessions/create` — 1 489 |                                    ≤ 250 | `wc -l`                                       |
 | K4  | Occurrences de `alpine:init` dans `src`              |                  29 → **0** (P3) ✅ |                                        1 | `grep -r "alpine:init" src \| wc -l`          |
 | K5  | Occurrences de `(window as any)`                     |                  55 → **0** (P1) ✅ |                                        0 | `grep -r "(window as any)" src \| wc -l`      |
 | K6  | Fichiers de `src/pages` contenant `Alpine.data(`     |                  20 → **0** (P3) ✅ |                         0 (dans `pages`) | `grep -rl "Alpine.data" src/pages \| wc -l`   |
-| K7  | Occurrences de `is:global`                           |                           5 → **4** |                         0 hors whitelist | `check-components.mjs`                        |
+| K7  | Occurrences de `is:global`                           |                        5 → **0** ✅ |                         0 hors whitelist | `check-components.mjs`                        |
 | K8  | Domaines sans composant `.astro`                     |                                   7 |                                        0 | `find src/components -name '*.astro'`         |
-| K9  | Familles de helpers de formatage dupliqués           |                                   6 |                                        0 | `grep -r "function fmt\|function format" src` |
+| K9  | Familles de helpers de formatage dupliqués           |                        6 → **0** ✅ |                                        0 | `grep -r "function fmt\|function format" src` |
 | K10 | Globaux `window.*` pour UI (toast/dialog)            |                  5+ → **0** (P1) ✅ |                        0 (stores Alpine) | `grep -r "window.showToast\|openDialog" src`  |
 | K11 | Littéraux de couleur                                 |        100 (`print`) + 21 (`debug`) |                        whitelist réduite | `pnpm check:colors`                           |
 | K12 | JS / CSS / plus gros fichier gzip                    |     **108 280 / 45 917 / 26 942 B** |            ≤ 140k / 60k / 40k (↓ de 5 %) | `pnpm check:budget`                           |
 | K13 | Couverture statements / branches / functions / lines | **64,68 / 58,47 / 62,27 / 66,64 %** | **69,7 / 63,5 / 67,3 / 71,6 %** (+5 pts) | `pnpm test:coverage`                          |
-| K14 | Violations a11y `serious`/`critical`                 |                     non mesuré (P0) |                          0 sur 14 routes | axe-core + `scripts/check-a11y.mjs` (P6)      |
+| K14 | Violations a11y `serious`/`critical`                 |            0 sur 11 routes ✅ (axe) |                          0 sur 14 routes | `pnpm test:e2e` (11 tests a11y)               |
 
 > Les chiffres K4–K7 et K12–K13 ont été **relevés dans le dépôt** (et non estimés) : ne pas les
 > remplacer par les valeurs de l'audit initial, qui comptait des _fichiers_ là où on mesure désormais
@@ -608,16 +608,16 @@ Une ADR non tranchée bloque la phase concernée : elle est écrite en 10 lignes
 
 ## 9. Suivi
 
-| Phase                  | Statut | KPI cible                                                              | PR                                    |
-| ---------------------- | ------ | ---------------------------------------------------------------------- | ------------------------------------- |
-| P0 — Fondations        | ☑      | garde-fou, baseline, templates, spike GO, git, e2e, gate de format     | `fa4289a`, `59129c2` + commit courant |
-| P1 — Socle Alpine      | ☑      | K4, K5, K6, K10 → 0 ✅                                                 | `425563b`…`eafe4b7`                   |
-| P2 — Contrat universel | ☐      | primitives typées, registre helper                                     | —                                     |
-| P3 — Headless          | ◐      | factories inline extraites + 11 tests ✅ ; P3.4 (gros modules) restant | `eafe4b7`                             |
-| P4 — Styles            | ◐      | P4.1 fait (detail 1130→338, is:global retiré) ; reste 8006 lignes      | `52d682d`                             |
-| P5 — Domaines          | ☐      | K2, K3, K8 → 0                                                         | —                                     |
-| P6 — Qualité           | ☐      | K9, K11, K12, K14                                                      | —                                     |
-| P7 — Verrouillage      | ☐      | CI stricte, ADR                                                        | —                                     |
+| Phase                  | Statut | KPI cible                                                               | PR                                    |
+| ---------------------- | ------ | ----------------------------------------------------------------------- | ------------------------------------- |
+| P0 — Fondations        | ☑      | garde-fou, baseline, templates, spike GO, git, e2e, gate de format      | `fa4289a`, `59129c2` + commit courant |
+| P1 — Socle Alpine      | ☑      | K4, K5, K6, K10 → 0 ✅                                                  | `425563b`…`eafe4b7`                   |
+| P2 — Contrat universel | ☐      | primitives typées, registre helper                                      | —                                     |
+| P3 — Headless          | ◐      | factories inline extraites + 11 tests ✅ ; P3.4 (gros modules) restant  | `eafe4b7`                             |
+| P4 — Styles            | ◐      | is:global 0 ✅, detail 338 l. ; reste 7 622 l. CSS + 6 pages > 1000     | `52d682d`, `5c0646b`                  |
+| P5 — Domaines          | ☐      | K2, K3, K8 → 0                                                          | —                                     |
+| P6 — Qualité           | ◐      | CSP, a11y, budgets/route, https WebDAV, dead-code ✅ ; CSP/e2e 14 tests | `43b5a80`, `da29aba`                  |
+| P7 — Verrouillage      | ☐      | CI stricte, ADR                                                         | —                                     |
 
 > **P0, P1 et P3 (extraction) terminés**. **P1** : pont Alpine typé, lifecycle centralisé, store UI (toasts +
 > dialogs) et globals `window.*` supprimés (K5, K10 à 0). Restent 11 `alpine:init` (dont 3 pages à
