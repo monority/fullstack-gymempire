@@ -9,9 +9,9 @@ import CardContent from '../ui/CardContent.astro';
 import Button from '../ui/Button.astro';
 import Toggle from '../ui/Toggle.astro';
 import { t } from '../../i18n';
-import { icons } from '../../lib/icons';
 
 const L = t();
+import Icon from '../ui/Icon.astro';
 ---
 
 <section class="rem" id="set-reminder" x-data="reminderSettings()" x-init="init()" x-cloak>
@@ -19,7 +19,7 @@ const L = t();
     <CardHeader>
       <div class="rem__heading">
         <span class="rem__heading-icon" aria-hidden="true">
-          <Fragment set:html={icons.bell(24, 24)} />
+          <Icon name="bell" size={24} />
         </span>
         <CardTitle>{L.settings.reminders}</CardTitle>
       </div>
@@ -76,7 +76,7 @@ const L = t();
           <div class="rem__row-value">
             <div class="rem__time-wrap">
               <span class="rem__time-icon" aria-hidden="true">
-                <Fragment set:html={icons.clockStopwatch(18, 18)} />
+                <Icon name="clockStopwatch" size={18} />
               </span>
               <input
                 type="time"

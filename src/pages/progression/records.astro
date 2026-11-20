@@ -5,8 +5,8 @@ import PageHeader from '../../components/layout/PageHeader.astro';
 import Badge from '../../components/ui/Badge.astro';
 import EmptyState from '../../components/ui/EmptyState.astro';
 import RecordsSummary from '../../components/progression/RecordsSummary.astro';
-import { icons } from '../../lib/icons';
 const L = t();
+import Icon from '../../components/ui/Icon.astro';
 ---
 
 <AppLayout title={L.records.title}>
@@ -20,7 +20,7 @@ const L = t();
     <template x-if="allRecords.length > 0">
       <div class="rec__toolbar">
         <label class="rec__search">
-          <Fragment set:html={icons.searchLine(20, 20)} />
+          <Icon name="searchLine" size={20} />
           <input
             type="search"
             class="rec__search-input"
@@ -77,7 +77,7 @@ const L = t();
             :aria-label="labels.viewHistoryAriaPrefix + rec.name"
           >
             <div class="rec__card-icon" aria-hidden="true">
-              <Fragment set:html={icons.dumbbellBox(24, 24)} />
+              <Icon name="dumbbellBox" size={24} />
             </div>
 
             <div class="rec__card-main">
@@ -124,7 +124,7 @@ const L = t();
                 {L.records.prDate} <span x-text="formatDate(rec.date)"></span>
               </span>
               <span class="rec__card-cta" aria-hidden="true">
-                <Fragment set:html={icons.chevronRight(16, 16)} />
+                <Icon name="chevronRight" size={16} />
               </span>
             </div>
           </a>

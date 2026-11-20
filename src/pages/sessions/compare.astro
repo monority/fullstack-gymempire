@@ -8,7 +8,6 @@ import CardTitle from '../../components/ui/CardTitle.astro';
 import CardContent from '../../components/ui/CardContent.astro';
 import Badge from '../../components/ui/Badge.astro';
 import Icon from '../../components/ui/Icon.astro';
-import { icons } from '../../lib/icons';
 import BackLink from '../../components/ui/BackLink.astro';
 const L = t();
 ---
@@ -29,7 +28,7 @@ const L = t();
               {L.comparer.session1Ref}
             </label>
             <div class="comp__picker-wrap">
-              <Fragment set:html={icons.dumbbellBox(18, 18)} />
+              <Icon name="dumbbellBox" size={18} />
               <select
                 class="comp__select"
                 x-model="session1Id"
@@ -57,7 +56,7 @@ const L = t();
               {L.comparer.session2}
             </label>
             <div class="comp__picker-wrap">
-              <Fragment set:html={icons.dumbbellBox(18, 18)} />
+              <Icon name="dumbbellBox" size={18} />
               <select
                 id="comp-s2"
                 class="comp__select"
@@ -84,7 +83,7 @@ const L = t();
       <Card>
         <div class="comp__hint">
           <div class="comp__hint-icon" aria-hidden="true">
-            <Fragment set:html={icons.infoCircle(18, 18)} />
+            <Icon name="infoCircle" size={18} />
           </div>
           <p>
             {L.comparer.needTwo}
@@ -99,7 +98,7 @@ const L = t();
       <Card>
         <div class="comp__hint">
           <div class="comp__hint-icon" aria-hidden="true">
-            <Fragment set:html={icons.trendingUpLine(18, 18)} />
+            <Icon name="trendingUpLine" size={18} />
           </div>
           <p>{L.comparer.selectBoth}</p>
         </div>
@@ -115,7 +114,7 @@ const L = t();
             {/* Volume delta */}
             <article class="comp__summary-card">
               <div class="comp__summary-header">
-                <Fragment set:html={icons.volumeBox(20, 20)} />
+                <Icon name="volumeBox" size={20} />
                 <span class="comp__summary-label">{L.comparer.volume}</span>
               </div>
               <div class="comp__summary-body">
@@ -133,11 +132,11 @@ const L = t();
                   <span class="comp__summary-delta-icon" aria-hidden="true">
                     <template x-if="volumeDelta.direction === 'up'">
                       <span class="comp__rotate-180">
-                        <Fragment set:html={icons.arrowDown(18, 18)} />
+                        <Icon name="arrowDown" size={18} />
                       </span>
                     </template>
                     <template x-if="volumeDelta.direction === 'down'">
-                      <Fragment set:html={icons.arrowDown(18, 18)} />
+                      <Icon name="arrowDown" size={18} />
                     </template>
                     <template x-if="volumeDelta.direction === 'equal'">
                       <Icon name="minus" size={20} />
@@ -158,7 +157,7 @@ const L = t();
             {/* Exercises delta */}
             <article class="comp__summary-card">
               <div class="comp__summary-header">
-                <Fragment set:html={icons.list(20, 20)} />
+                <Icon name="list" size={20} />
                 <span class="comp__summary-label">{L.comparer.exercises}</span>
               </div>
               <div class="comp__summary-body">
@@ -173,11 +172,11 @@ const L = t();
                   <span class="comp__summary-delta-icon" aria-hidden="true">
                     <template x-if="exercisesDelta.direction === 'up'">
                       <span class="comp__rotate-180">
-                        <Fragment set:html={icons.arrowDown(18, 18)} />
+                        <Icon name="arrowDown" size={18} />
                       </span>
                     </template>
                     <template x-if="exercisesDelta.direction === 'down'">
-                      <Fragment set:html={icons.arrowDown(18, 18)} />
+                      <Icon name="arrowDown" size={18} />
                     </template>
                     <template x-if="exercisesDelta.direction === 'equal'">
                       <Icon name="minus" size={20} />
@@ -195,7 +194,7 @@ const L = t();
             {/* Sets delta */}
             <article class="comp__summary-card">
               <div class="comp__summary-header">
-                <Fragment set:html={icons.list(20, 20)} />
+                <Icon name="list" size={20} />
                 <span class="comp__summary-label">{L.comparer.sets}</span>
               </div>
               <div class="comp__summary-body">
@@ -210,11 +209,11 @@ const L = t();
                   <span class="comp__summary-delta-icon" aria-hidden="true">
                     <template x-if="setsDelta.direction === 'up'">
                       <span class="comp__rotate-180">
-                        <Fragment set:html={icons.arrowDown(18, 18)} />
+                        <Icon name="arrowDown" size={18} />
                       </span>
                     </template>
                     <template x-if="setsDelta.direction === 'down'">
-                      <Fragment set:html={icons.arrowDown(18, 18)} />
+                      <Icon name="arrowDown" size={18} />
                     </template>
                     <template x-if="setsDelta.direction === 'equal'">
                       <Icon name="minus" size={20} />
@@ -232,7 +231,7 @@ const L = t();
             {/* Best 1RM delta */}
             <article class="comp__summary-card">
               <div class="comp__summary-header">
-                <Fragment set:html={icons.dumbbell(20, 20)} />
+                <Icon name="dumbbell" size={20} />
                 <span class="comp__summary-label">{L.comparer.best1RM}</span>
               </div>
               <div class="comp__summary-body">
@@ -250,11 +249,11 @@ const L = t();
                   <span class="comp__summary-delta-icon" aria-hidden="true">
                     <template x-if="bestSetDelta.direction === 'up'">
                       <span class="comp__rotate-180">
-                        <Fragment set:html={icons.arrowDown(18, 18)} />
+                        <Icon name="arrowDown" size={18} />
                       </span>
                     </template>
                     <template x-if="bestSetDelta.direction === 'down'">
-                      <Fragment set:html={icons.arrowDown(18, 18)} />
+                      <Icon name="arrowDown" size={18} />
                     </template>
                     <template x-if="bestSetDelta.direction === 'equal'">
                       <Icon name="minus" size={20} />

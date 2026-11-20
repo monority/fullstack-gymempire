@@ -16,7 +16,6 @@ import Segmented from '../../components/ui/Segmented.astro';
 import Toggle from '../../components/ui/Toggle.astro';
 import DialogFooter from '../../components/ui/DialogFooter.astro';
 import { t } from '../../i18n';
-import { icons } from '../../lib/icons';
 import { formatRestOptions } from '../../lib/settings-stats';
 
 const L = t();
@@ -252,7 +251,7 @@ const APP_VERSION = '0.0.1';
         <div class="set__data-tile">
           <div class="set__data-tile-header">
             <div class="set__data-tile-icon" aria-hidden="true">
-              <Fragment set:html={icons.download(24, 24)} />
+              <Icon name="download" size={24} />
             </div>
             <div class="set__data-tile-content">
               <h4 class="set__data-tile-title">{L.settings.exportJSON}</h4>
@@ -278,7 +277,7 @@ const APP_VERSION = '0.0.1';
         <div class="set__data-tile">
           <div class="set__data-tile-header">
             <div class="set__data-tile-icon" aria-hidden="true">
-              <Fragment set:html={icons.table(24, 24)} />
+              <Icon name="table" size={24} />
             </div>
             <div class="set__data-tile-content">
               <h4 class="set__data-tile-title">{L.settings.exportCSV}</h4>
@@ -304,7 +303,7 @@ const APP_VERSION = '0.0.1';
         <div class="set__data-tile">
           <div class="set__data-tile-header">
             <div class="set__data-tile-icon" aria-hidden="true">
-              <Fragment set:html={icons.upload(24, 24)} />
+              <Icon name="upload" size={24} />
             </div>
             <div class="set__data-tile-content">
               <h4 class="set__data-tile-title">{L.settings.import}</h4>
@@ -354,7 +353,7 @@ const APP_VERSION = '0.0.1';
         <CardHeader>
           <div class="set__sync-heading">
             <span class="set__heading-icon" aria-hidden="true">
-              <Fragment set:html={icons.cloud(24, 24)} />
+              <Icon name="cloud" size={24} />
             </span>
             <CardTitle>{L.settings.sync.title}</CardTitle>
           </div>

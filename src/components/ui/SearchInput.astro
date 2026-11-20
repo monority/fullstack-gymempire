@@ -1,6 +1,4 @@
 ---
-import { icons } from '../../lib/icons';
-
 interface Props {
   placeholder?: string;
   label?: string;
@@ -9,10 +7,11 @@ interface Props {
 }
 
 const { placeholder, label, class: className = '', ...rest } = Astro.props;
+import Icon from './Icon.astro';
 ---
 
 <div class:list={['search-input', className]}>
-  <Fragment set:html={icons.searchLine(18, 18)} />
+  <Icon name="searchLine" size={18} />
   <input
     type="search"
     class="search-input__field"

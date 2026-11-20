@@ -10,9 +10,9 @@ import Input from '../components/ui/Input.astro';
 import Select from '../components/ui/Select.astro';
 import BarbellResult from '../components/calculator/BarbellResult.astro';
 import DumbbellResult from '../components/calculator/DumbbellResult.astro';
-import { icons } from '../lib/icons';
 import '../styles/calculator.css';
 const L = t();
+import Icon from '../components/ui/Icon.astro';
 ---
 
 <AppLayout title={L.calculateur.title}>
@@ -28,7 +28,7 @@ const L = t();
         role="tab"
         @click="mode = 'bar'"
       >
-        <Fragment set:html={icons.barbell(18, 18)} />
+        <Icon name="barbell" size={18} />
         {L.calculateur.modeBarre}
       </button>
       <button
@@ -39,7 +39,7 @@ const L = t();
         role="tab"
         @click="mode = 'dumbbell'"
       >
-        <Fragment set:html={icons.dumbbellSimple(18, 18)} />
+        <Icon name="dumbbellSimple" size={18} />
         {L.calculateur.modeHaltere}
       </button>
     </div>

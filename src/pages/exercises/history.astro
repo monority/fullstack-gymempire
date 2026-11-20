@@ -6,9 +6,9 @@ import Badge from '../../components/ui/Badge.astro';
 import Card from '../../components/ui/Card.astro';
 import EmptyState from '../../components/ui/EmptyState.astro';
 import BackLink from '../../components/ui/BackLink.astro';
-import { icons } from '../../lib/icons';
 import HistoryStats from '../../components/exercises/HistoryStats.astro';
 const L = t();
+import Icon from '../../components/ui/Icon.astro';
 ---
 
 <AppLayout title={L.historique.title}>
@@ -36,7 +36,7 @@ const L = t();
           <div class="hist__header-row">
             <div class="hist__header-left">
               <div class="hist__title-icon" aria-hidden="true">
-                <Fragment set:html={icons.dumbbellBox(24, 24)} />
+                <Icon name="dumbbellBox" size={24} />
               </div>
               <h1 class="hist__title" x-text="trExercise(exercise.name)"></h1>
             </div>

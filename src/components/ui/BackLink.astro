@@ -1,6 +1,4 @@
 ---
-import { icons } from '../../lib/icons';
-
 interface Props {
   href: string;
   label: string;
@@ -9,10 +7,11 @@ interface Props {
 }
 
 const { href, label, class: className = '', ...rest } = Astro.props;
+import Icon from './Icon.astro';
 ---
 
 <a {href} class:list={['back-link', className]} {...rest}>
-  <Fragment set:html={icons.arrowLeft(20, 20)} />
+  <Icon name="arrowLeft" size={20} />
   <span>{label}</span>
 </a>
 

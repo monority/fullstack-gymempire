@@ -7,6 +7,7 @@ import Segmented from '../../components/ui/Segmented.astro';
 import Select from '../../components/ui/Select.astro';
 import { icons } from '../../lib/icons';
 const L = t();
+import Icon from '../../components/ui/Icon.astro';
 ---
 
 <AppLayout title={L.rapide.title}>
@@ -58,7 +59,7 @@ const L = t();
       <section class="quick__selecting">
         <div class="quick__selecting-inner">
           <div class="quick__zap-icon" aria-hidden="true">
-            <Fragment set:html={icons.zap(64, 64)} />
+            <Icon name="zap" size={64} />
           </div>
           <h1 class="quick__title">{L.rapide.title}</h1>
           <p class="quick__intro">{L.rapide.introText}</p>
@@ -171,7 +172,7 @@ const L = t();
             @click="completeSet()"
             aria-label={L.rapide.completeSetAria}
           >
-            <Fragment set:html={icons.check(24, 24)} />
+            <Icon name="check" size={24} />
             <span>{L.rapide.done}</span>
           </Button>
 
@@ -181,7 +182,7 @@ const L = t();
             :disabled="!canUndo"
             @click="undoLastSet()"
           >
-            <Fragment set:html={icons.undo(18, 18)} />
+            <Icon name="undo" size={18} />
             <span>{L.rapide.undoLast}</span>
           </Button>
 
@@ -193,7 +194,7 @@ const L = t();
               @click="prevSet()"
               aria-label={L.rapide.prevSetAria}
             >
-              <Fragment set:html={icons.chevronLeft(20, 20)} />
+              <Icon name="chevronLeft" size={20} />
               <span>{L.rapide.prev}</span>
             </button>
             <button
@@ -204,7 +205,7 @@ const L = t();
               aria-label={L.rapide.nextSetAria}
             >
               <span>{L.rapide.next}</span>
-              <Fragment set:html={icons.chevronRight(20, 20)} />
+              <Icon name="chevronRight" size={20} />
             </button>
           </div>
         </div>
@@ -265,7 +266,7 @@ const L = t();
             :class="{ 'quick__done-icon--partial': recordedSets < totalSets }"
             aria-hidden="true"
           >
-            <Fragment set:html={icons.checkCircle(80, 80)} />
+            <Icon name="checkCircle" size={80} />
           </div>
           <h1 class="quick__done-title" x-text="completionTitle"></h1>
           <p class="quick__done-name" x-text="session?.name"></p>
