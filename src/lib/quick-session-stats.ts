@@ -7,6 +7,8 @@
  */
 
 import type { Session, SetType } from './storage/types';
+import { formatDurationWithLabels } from './format';
+import { formatRestTime as formatRestTimeShared } from './rest-times';
 
 export interface QuickSessionInfo {
   id: string;
@@ -27,26 +29,17 @@ export interface SessionStats {
 /** Re-exported from lib/format — single implementation. */
 export { formatWeightValue } from './format';
 
-/** Format seconds into duration string. */
+/** Format seconds into duration string (implémentation unique dans lib/format). */
 export function formatDuration(
   seconds: number | undefined,
   labels: { minShort: string; hShort: string; sShort: string }
 ): string {
-  if (!seconds || seconds <= 0 || !Number.isFinite(seconds)) return '0' + labels.minShort;
-  const total = Math.floor(seconds);
-  const h = Math.floor(total / 3600);
-  const m = Math.floor((total % 3600) / 60);
-  const s = total % 60;
-  if (h > 0) return `${h}${labels.hShort} ${m.toString().padStart(2, '0')}${labels.minShort}`;
-  if (m > 0) return `${m}${labels.minShort} ${s.toString().padStart(2, '0')}${labels.sShort}`;
-  return `${s}${labels.sShort}`;
+  return formatDurationWithLabels(seconds, labels);
 }
 
-/** Format rest timer as M:SS. */
+/** Format rest timer as M:SS (implémentation unique dans lib/rest-times). */
 export function formatRestTime(totalSeconds: number): string {
-  const m = Math.floor(totalSeconds / 60);
-  const r = totalSeconds % 60;
-  return `${m}:${r.toString().padStart(2, '0')}`;
+  return formatRestTimeShared(totalSeconds);
 }
 
 /** Get label for set type. */

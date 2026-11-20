@@ -18,3 +18,10 @@ export type NavItem = {
 };
 export type NavGroup = { label: string; items: NavItem[] };
 export type NavTree = NavGroup[];
+
+/** Unions métier — source unique (définies dans storage/types, ré-exportées ici). */
+export type { SessionStatus, SessionMood, SetType, WeightUnit } from './storage/types';
+
+/** Clés de registre pour les composants data-driven. */
+export type ChartKind = 'volume' | 'muscle' | 'frequency' | 'topExercises' | 'benchmarks';
+export type SettingSectionKind = 'profile' | 'units' | 'goals' | 'webdav' | 'danger';

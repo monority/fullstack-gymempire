@@ -35,9 +35,13 @@ export function typeLabel(type: SetType, labels: TypeLabels): string {
  * Per-set RPE display label: "RPE 7.5" or "uRPE 7".
  * Sets without a value render '—'.
  */
-export function formatSetRpe(rpe: number | string | null | undefined, rpeType?: RpeType): string {
+export function formatSetRpe(
+  rpe: number | string | null | undefined,
+  rpeType?: RpeType,
+  fallback = '—'
+): string {
   const v = typeof rpe === 'string' ? Number(rpe) : rpe;
-  if (v == null || !Number.isFinite(v)) return '—';
+  if (v == null || !Number.isFinite(v)) return fallback;
   return (rpeType === 'urpe' ? 'uRPE ' : 'RPE ') + v.toString();
 }
 

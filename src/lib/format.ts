@@ -158,6 +158,21 @@ export function formatDuration(seconds: number): string {
 }
 
 /** Duration with zero-padded segments → "2h 05m", "5m 03s". Returns "—" for invalid. */
+/** Durée localisée (abréviations injectées) — source unique pour quick-session. */
+export function formatDurationWithLabels(
+  seconds: number | undefined,
+  labels: { minShort: string; hShort: string; sShort: string }
+): string {
+  if (!seconds || seconds <= 0 || !Number.isFinite(seconds)) return '0' + labels.minShort;
+  const total = Math.floor(seconds);
+  const h = Math.floor(total / 3600);
+  const m = Math.floor((total % 3600) / 60);
+  const s = total % 60;
+  if (h > 0) return `${h}${labels.hShort} ${m.toString().padStart(2, '0')}${labels.minShort}`;
+  if (m > 0) return `${m}${labels.minShort} ${s.toString().padStart(2, '0')}${labels.sShort}`;
+  return `${s}${labels.sShort}`;
+}
+
 export function formatDurationShort(seconds?: number): string {
   if (!seconds || seconds <= 0) return '\u2014';
   const total = Math.floor(seconds);

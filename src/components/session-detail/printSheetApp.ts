@@ -4,6 +4,7 @@
  */
 
 import { getSessionById } from '../../lib/storage/sessions';
+import { formatSetRpe } from '../../lib/workout-helpers';
 import type {
   Session,
   SessionExercise,
@@ -109,12 +110,6 @@ export function createPrintSheetApp(deps: PrintSheetDeps): PrintSheetApp {
     return `${base} ${D.at} ${time}`;
   }
 
-  function formatSetRpe(rpe: number | string | null | undefined, rpeType?: RpeType): string {
-    const value = typeof rpe === 'string' ? Number(rpe) : rpe;
-    if (value == null || !Number.isFinite(value)) return '-';
-    return (rpeType === 'urpe' ? 'uRPE ' : 'RPE ') + value.toString();
-  }
-
   return {
     labels: {
       date: L.common.date,
@@ -179,7 +174,7 @@ export function createPrintSheetApp(deps: PrintSheetDeps): PrintSheetApp {
     formatDuration: formatDurationShort,
     formatVolume,
     formatWeight,
-    formatSetRpe: (set) => formatSetRpe(set.rpe, set.rpeType),
+    formatSetRpe: (set) => formatSetRpe(set.rpe, set.rpeType, '-'),
     exerciseVolume,
   };
 }
