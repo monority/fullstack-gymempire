@@ -5,6 +5,7 @@ import WeeklyGoal from '../components/dashboard/WeeklyGoal.astro';
 import NextSession from '../components/dashboard/NextSession.astro';
 import VolumeTrend from '../components/dashboard/VolumeTrend.astro';
 import RecentSessions from '../components/dashboard/RecentSessions.astro';
+import WeekMetrics from '../components/dashboard/WeekMetrics.astro';
 import { t, localizedPath } from '../i18n';
 
 const L = t();
@@ -39,70 +40,7 @@ const L = t();
         <WeeklyGoal />
       </div>
 
-      <section class="dash__metrics" aria-label={L.dashboard.metricsAria}>
-        <div class="dash__metric">
-          <div class="dash__metric-head">
-            <span class="dash__metric-label">{L.dashboard.weeklyVolumeShort}</span>
-            <strong class="dash__metric-value">
-              <span x-text="formatVolume(weeklyVolumeTotal)"></span>
-              <span class="dash__metric-unit" x-text="labels.kg"></span>
-            </strong>
-          </div>
-          <div class="dash__metric-bars" role="img" aria-label={L.dashboard.weeklyVolumeTrend}>
-            <template x-for="(value, index) in weeklyVolumeByDay" :key="index">
-              <span
-                class="dash__metric-bar"
-                :class="{ 'dash__metric-bar--today': index === todayIdx }"
-                :style="`height: ${Math.max(6, (value / maxVol) * 100)}%`"
-              ></span>
-            </template>
-          </div>
-        </div>
-
-        <div class="dash__metric">
-          <div class="dash__metric-head">
-            <span class="dash__metric-label">{L.dashboard.totalSessions}</span>
-            <strong class="dash__metric-value">
-              <span x-text="weeklySessionsByDay.reduce((total, count) => total + count, 0)"></span>
-              <span
-                class="dash__metric-unit"
-                x-text="weeklySessionsByDay.reduce((total, count) => total + count, 0) === 1 ? labels.weeklyMoreSingular : labels.sessionsUnit"
-              ></span>
-            </strong>
-          </div>
-          <div class="dash__metric-bars" role="img" aria-label={L.dashboard.totalSessions}>
-            <template x-for="(value, index) in weeklySessionsByDay" :key="index">
-              <span
-                class="dash__metric-bar"
-                :class="{ 'dash__metric-bar--today': index === todayIdx }"
-                :style="`height: ${Math.max(6, (value / Math.max(...weeklySessionsByDay, 1)) * 100)}%`"
-              ></span>
-            </template>
-          </div>
-        </div>
-
-        <div class="dash__metric">
-          <div class="dash__metric-head">
-            <span class="dash__metric-label">{L.dashboard.setsUnit}</span>
-            <strong class="dash__metric-value">
-              <span x-text="weeklySetsTotal"></span>
-              <span
-                class="dash__metric-unit"
-                x-text="weeklySetsTotal === 1 ? labels.setSingular : labels.setsUnit"
-              ></span>
-            </strong>
-          </div>
-          <div class="dash__metric-bars" role="img" aria-label={L.dashboard.setsUnit}>
-            <template x-for="(value, index) in weeklySetsByDay" :key="index">
-              <span
-                class="dash__metric-bar"
-                :class="{ 'dash__metric-bar--today': index === todayIdx }"
-                :style="`height: ${Math.max(6, (value / Math.max(...weeklySetsByDay, 1)) * 100)}%`"
-              ></span>
-            </template>
-          </div>
-        </div>
-      </section>
+      <WeekMetrics labels={L.dashboard} />
 
       <div class="dash__charts">
         <VolumeTrend />
@@ -276,78 +214,6 @@ const L = t();
     border-top: 1px solid var(--color-border);
   }
 
-  .dash__metrics {
-    display: grid;
-    grid-template-columns: 1fr;
-    margin-bottom: 2.4rem;
-    border-top: 1px solid var(--color-border);
-    border-bottom: 1px solid var(--color-border);
-  }
-
-  .dash__metric {
-    min-width: 0;
-    padding: 2rem 1.6rem;
-  }
-
-  .dash__metric + .dash__metric {
-    border-top: 1px solid var(--color-border);
-  }
-
-  .dash__metric-head {
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-    margin-bottom: 1.6rem;
-  }
-
-  .dash__metric-label {
-    color: var(--color-muted);
-    font-size: var(--text-caption);
-    font-weight: 700;
-    letter-spacing: var(--tracking-caption);
-    text-transform: uppercase;
-  }
-
-  .dash__metric-value {
-    color: var(--color-text);
-    font-family: var(--font-display);
-    font-size: var(--text-metric);
-    font-weight: 700;
-    font-variant-numeric: tabular-nums;
-    line-height: var(--leading-display);
-    letter-spacing: var(--tracking-display);
-  }
-
-  .dash__metric-unit {
-    margin-left: 0.4rem;
-    color: var(--color-muted);
-    font-family: var(--font-body);
-    font-size: var(--text-small);
-    font-weight: 500;
-  }
-
-  .dash__metric-bars {
-    display: flex;
-    align-items: flex-end;
-    gap: 0.6rem;
-    height: 5rem;
-  }
-
-  .dash__metric-bar {
-    flex: 1;
-    min-width: 0;
-    height: 6%;
-    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
-    background: var(--color-border-strong);
-    transition:
-      height 240ms var(--ease-out),
-      background-color var(--transition-fast);
-  }
-
-  .dash__metric-bar--today {
-    background: var(--color-accent);
-  }
-
   .dash__charts {
     display: grid;
     gap: 0;
@@ -405,21 +271,6 @@ const L = t();
   .dash__empty-link:focus-visible {
     outline: none;
     box-shadow: var(--focus-ring);
-  }
-
-  @media (min-width: 760px) {
-    .dash__hero-row {
-      grid-template-columns: minmax(0, 1.5fr) minmax(26rem, 0.8fr);
-    }
-
-    .dash__metrics {
-      grid-template-columns: repeat(3, 1fr);
-    }
-
-    .dash__metric + .dash__metric {
-      border-top: 0;
-      border-left: 1px solid var(--color-border);
-    }
   }
 
   @media (min-width: 1024px) {

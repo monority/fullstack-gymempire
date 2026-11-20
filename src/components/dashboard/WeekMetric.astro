@@ -1,0 +1,113 @@
+---
+/**
+ * WeekMetric — une métrique "semaine" (valeur + 7 barres), pattern imposé
+ * par le design system pour le dashboard (pas de tuiles KPI égales).
+ * Les expressions Alpine sont passées en props : le composant reste réactif.
+ */
+import type { HTMLAttributes } from 'astro/types';
+
+interface Props extends HTMLAttributes<'section'> {
+  label: string;
+  ariaLabel: string;
+  valueExpr: string;
+  unitExpr: string;
+  valuesExpr: string;
+  maxExpr: string;
+  class?: string;
+}
+
+const {
+  label,
+  ariaLabel,
+  valueExpr,
+  unitExpr,
+  valuesExpr,
+  maxExpr,
+  class: className = '',
+  ...rest
+} = Astro.props;
+
+const forExpr = `(value, index) in ${valuesExpr}`;
+const heightExpr = '`height: ${Math.max(6, (value / ' + maxExpr + ') * 100)}%`';
+---
+
+<section class:list={['week-metric', className]} {...rest}>
+  <div class="week-metric__head">
+    <span class="week-metric__label">{label}</span>
+    <strong class="week-metric__value">
+      <span x-text={valueExpr}></span>
+      <span class="week-metric__unit" x-text={unitExpr}></span>
+    </strong>
+  </div>
+  <div class="week-metric__bars" role="img" aria-label={ariaLabel}>
+    <template x-for={forExpr} :key="index">
+      <span
+        class="week-metric__bar"
+        :class="{ 'week-metric__bar--today': index === todayIdx }"
+        x-bind:style={heightExpr}
+      ></span>
+    </template>
+  </div>
+</section>
+
+<style>
+  .week-metric {
+    min-width: 0;
+    flex: 1 1 0;
+  }
+
+  .week-metric__head {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .week-metric__label {
+    color: var(--color-muted);
+    font-family: var(--font-body);
+    font-size: var(--text-caption);
+    font-weight: 700;
+    letter-spacing: var(--tracking-caption);
+    text-transform: uppercase;
+  }
+
+  .week-metric__value {
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    font-family: var(--font-display);
+    font-size: var(--text-metric);
+    font-weight: 700;
+    line-height: var(--leading-display);
+    letter-spacing: var(--tracking-display);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .week-metric__unit {
+    color: var(--color-muted);
+    font-family: var(--font-body);
+    font-size: var(--text-caption);
+    font-weight: 500;
+  }
+
+  .week-metric__bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.6rem;
+    height: 5rem;
+    margin-top: 1.6rem;
+  }
+
+  .week-metric__bar {
+    flex: 1 1 0;
+    height: 6%;
+    min-width: 0;
+    border-radius: 0.4rem 0.4rem 0 0;
+    background-color: var(--color-border-strong);
+    transition: height 240ms var(--ease-out);
+  }
+
+  .week-metric__bar--today {
+    background-color: var(--color-accent);
+  }
+</style>

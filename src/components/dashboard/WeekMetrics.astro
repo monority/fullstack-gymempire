@@ -1,0 +1,74 @@
+---
+/**
+ * WeekMetrics — les 3 métriques hebdomadaires du dashboard, rendues depuis
+ * un registre typé (aucune duplication de markup).
+ */
+import type { Dictionary } from '../../i18n/types';
+import WeekMetric from './WeekMetric.astro';
+
+interface Props {
+  labels: Dictionary['dashboard'];
+}
+const { labels } = Astro.props;
+
+const metrics = [
+  {
+    key: 'volume',
+    label: labels.weeklyVolumeShort,
+    ariaLabel: labels.weeklyVolumeTrend,
+    valueExpr: 'formatVolume(weeklyVolumeTotal)',
+    unitExpr: 'labels.kg',
+    valuesExpr: 'weeklyVolumeByDay',
+    maxExpr: 'maxVol',
+  },
+  {
+    key: 'sessions',
+    label: labels.totalSessions,
+    ariaLabel: labels.totalSessions,
+    valueExpr: 'weeklySessionsByDay.reduce((total, count) => total + count, 0)',
+    unitExpr:
+      'weeklySessionsByDay.reduce((total, count) => total + count, 0) === 1 ? labels.weeklyMoreSingular : labels.sessionsUnit',
+    valuesExpr: 'weeklySessionsByDay',
+    maxExpr: 'Math.max(...weeklySessionsByDay, 1)',
+  },
+  {
+    key: 'sets',
+    label: labels.setsUnit,
+    ariaLabel: labels.setsUnit,
+    valueExpr: 'weeklySetsTotal',
+    unitExpr: 'weeklySetsTotal === 1 ? labels.setSingular : labels.setsUnit',
+    valuesExpr: 'weeklySetsByDay',
+    maxExpr: 'Math.max(...weeklySetsByDay, 1)',
+  },
+] as const;
+---
+
+<section class="week-metrics" aria-label={labels.metricsAria}>
+  {metrics.map((metric) => (
+    <WeekMetric
+      label={metric.label}
+      ariaLabel={metric.ariaLabel}
+      valueExpr={metric.valueExpr}
+      unitExpr={metric.unitExpr}
+      valuesExpr={metric.valuesExpr}
+      maxExpr={metric.maxExpr}
+    />
+  ))}
+</section>
+
+<style>
+  .week-metrics {
+    display: flex;
+    align-items: stretch;
+    gap: 2.4rem;
+    padding: 2.4rem 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  @media (max-width: 640px) {
+    .week-metrics {
+      flex-direction: column;
+      gap: 2rem;
+    }
+  }
+</style>
