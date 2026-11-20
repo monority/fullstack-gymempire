@@ -1,0 +1,351 @@
+---
+import { t } from '../../i18n';
+import Card from '../ui/Card.astro';
+import CardHeader from '../ui/CardHeader.astro';
+import CardTitle from '../ui/CardTitle.astro';
+import CardContent from '../ui/CardContent.astro';
+import Icon from '../ui/Icon.astro';
+const L = t();
+---
+
+<template x-if="exercises.length > 0">
+  <Card>
+    <CardHeader>
+      <CardTitle>{L.builder.notesTitle}</CardTitle>
+    </CardHeader>
+    <CardContent>
+      <div class="create__notes">
+        <div class="create__field">
+          <div class="create__field-row">
+            <label for="ses-rpe" class="create__label">
+              {L.builder.rpe}
+            </label>
+            <span class="rpe-value" :class="'tone--' + rpeTone" x-text="sessionRpe"></span>
+          </div>
+          <div class="create__rpe-slider">
+            <input
+              id="ses-rpe"
+              type="range"
+              min="1"
+              max="10"
+              step="1"
+              class="ses-rpe-input create__rpe-input"
+              :class="'ses-rpe-input--' + rpeTone"
+              x-model.number="sessionRpe"
+              aria-label={L.builder.rpeAria}
+            />
+            <div class="create__rpe-label">
+              <span x-text="rpeLabel"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="create__field">
+          <label class="create__label">{L.builder.fatigueTitle}</label>
+          <div class="create__fatigue-group" role="radiogroup" aria-label={L.builder.fatigueAria}>
+            <template x-for="i in 5" :key="'fat-' + i">
+              <button
+                type="button"
+                class="ses-fatigue-btn create__fatigue-btn"
+                :class="{ 'is-active': sessionFatigue >= i }"
+                :aria-pressed="sessionFatigue >= i"
+                :aria-label="labels.fatigueOn + ' ' + i + ' ' + labels.fatigueOutOf5"
+                @click="setFatigue(i)"
+              >
+                <Icon name="flame" size={20} />
+              </button>
+            </template>
+          </div>
+        </div>
+
+        <div class="create__field">
+          <label class="create__label">{L.builder.moodTitle}</label>
+          <div class="create__mood-group" role="radiogroup" aria-label={L.builder.moodAria}>
+            <button
+              type="button"
+              class="ses-mood-btn create__mood-btn"
+              :class="{ 'is-active': sessionMood === 'great' }"
+              :aria-pressed="sessionMood === 'great'"
+              :aria-label="labels.moodLabel + ' : ' + labels.moodGreat"
+              @click="setMood('great')"
+            >
+              <Icon name="smile" size={22} />
+            </button>
+            <button
+              type="button"
+              class="ses-mood-btn create__mood-btn"
+              :class="{ 'is-active': sessionMood === 'good' }"
+              :aria-pressed="sessionMood === 'good'"
+              :aria-label="labels.moodLabel + ' : ' + labels.moodGood"
+              @click="setMood('good')"
+            >
+              <Icon name="heart" size={22} />
+            </button>
+            <button
+              type="button"
+              class="ses-mood-btn create__mood-btn"
+              :class="{ 'is-active': sessionMood === 'ok' }"
+              :aria-pressed="sessionMood === 'ok'"
+              :aria-label="labels.moodLabel + ' : ' + labels.moodOk"
+              @click="setMood('ok')"
+            >
+              <Icon name="Meh" size={22} />
+            </button>
+            <button
+              type="button"
+              class="ses-mood-btn create__mood-btn"
+              :class="{ 'is-active': sessionMood === 'tired' }"
+              :aria-pressed="sessionMood === 'tired'"
+              :aria-label="labels.moodLabel + ' : ' + labels.moodTired"
+              @click="setMood('tired')"
+            >
+              <Icon name="frown" size={22} />
+            </button>
+            <button
+              type="button"
+              class="ses-mood-btn create__mood-btn"
+              :class="{ 'is-active': sessionMood === 'bad' }"
+              :aria-pressed="sessionMood === 'bad'"
+              :aria-label="labels.moodLabel + ' : ' + labels.moodBad"
+              @click="setMood('bad')"
+            >
+              <Icon name="sad" size={22} />
+            </button>
+          </div>
+        </div>
+
+        <div class="create__field">
+          <label for="ses-notes" class="create__label">
+            {L.builder.notesLabel}
+          </label>
+          <textarea
+            id="ses-notes"
+            class="create__textarea"
+            x-model="sessionNotes"
+            placeholder={L.builder.notesPlaceholder}
+            rows="3"
+            maxlength="500"
+          ></textarea>
+        </div>
+      </div>
+    </CardContent>
+  </Card>
+</template>
+
+<style>
+  .ses-rpe-input::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: 50%;
+    background-color: var(--color-success);
+    border: 3px solid var(--color-surface);
+    box-shadow: var(--shadow-2);
+    cursor: grab;
+    transition:
+      background-color var(--transition-fast),
+      transform var(--transition-fast),
+      box-shadow var(--transition-fast);
+  }
+
+  .ses-rpe-input:active::-webkit-slider-thumb {
+    cursor: grabbing;
+    transform: scale(1.08);
+  }
+
+  .ses-rpe-input::-moz-range-thumb {
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: 50%;
+    background-color: var(--color-success);
+    border: 3px solid var(--color-surface);
+    box-shadow: var(--shadow-2);
+    cursor: grab;
+    transition:
+      background-color var(--transition-fast),
+      transform var(--transition-fast);
+  }
+
+  .ses-rpe-input--easy::-webkit-slider-thumb {
+    background-color: var(--color-success);
+  }
+
+  .ses-rpe-input--easy::-moz-range-thumb {
+    background-color: var(--color-success);
+  }
+
+  .ses-rpe-input--moderate::-webkit-slider-thumb {
+    background-color: var(--color-warning);
+  }
+
+  .ses-rpe-input--moderate::-moz-range-thumb {
+    background-color: var(--color-warning);
+  }
+
+  .ses-rpe-input--hard::-webkit-slider-thumb {
+    background-color: var(--color-accent);
+  }
+
+  .ses-rpe-input--hard::-moz-range-thumb {
+    background-color: var(--color-accent);
+  }
+
+  .ses-rpe-input--max::-webkit-slider-thumb {
+    background-color: var(--color-destructive);
+  }
+
+  .ses-rpe-input--max::-moz-range-thumb {
+    background-color: var(--color-destructive);
+  }
+
+  .ses-fatigue-btn.is-active {
+    filter: none;
+    background-color: color-mix(in srgb, var(--color-accent) 12%, transparent);
+    border-color: color-mix(in srgb, var(--color-accent) 40%, transparent);
+  }
+
+  .ses-fatigue-btn svg,
+  .ses-mood-btn svg {
+    display: block;
+  }
+
+  .ses-mood-btn.is-active {
+    filter: none;
+    background-color: color-mix(in srgb, var(--color-accent) 14%, transparent);
+    border-color: color-mix(in srgb, var(--color-accent) 45%, transparent);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-accent) 18%, transparent);
+  }
+
+  .create__select {
+    background-color: var(--color-surface-2);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    min-height: 4.4rem;
+    padding: 0.8rem 1rem;
+    color: var(--color-text);
+    font-size: 1.3rem;
+    font-family: var(--font-body);
+    width: 100%;
+    outline: none;
+  }
+
+  .create__select:focus {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 2px var(--color-accent);
+  }
+
+  .create__notes {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .create__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .create__field-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .create__label {
+    font-size: 1.3rem;
+    font-weight: 500;
+    color: var(--color-muted);
+  }
+
+  .create__rpe-slider {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .create__rpe-input {
+    width: 100%;
+  }
+
+  .create__rpe-label {
+    min-width: 4.4rem;
+    font-size: 1.2rem;
+    color: var(--color-muted);
+    text-align: right;
+  }
+
+  .create__fatigue-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .create__fatigue-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 4.4rem;
+    min-height: 4.4rem;
+    padding: 0.5rem;
+    border-radius: 9999px;
+    border: 1px solid var(--color-border);
+    background-color: transparent;
+    color: var(--color-muted);
+    transition:
+      color var(--transition-fast),
+      border-color var(--transition-fast);
+  }
+
+  .create__fatigue-btn:hover {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+
+  .create__mood-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .create__mood-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 4.4rem;
+    min-height: 4.4rem;
+    padding: 0.5rem;
+    border-radius: 9999px;
+    border: 1px solid var(--color-border);
+    background-color: transparent;
+    color: var(--color-muted);
+    transition:
+      color var(--transition-fast),
+      border-color var(--transition-fast);
+  }
+
+  .create__mood-btn:hover {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+
+  .create__textarea {
+    background-color: var(--color-surface-2);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    min-height: 10rem;
+    padding: 1rem 1.2rem;
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: 1.4rem;
+    resize: none;
+    width: 100%;
+    outline: none;
+  }
+
+  .create__textarea:focus {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 2px var(--color-accent);
+  }
+</style>

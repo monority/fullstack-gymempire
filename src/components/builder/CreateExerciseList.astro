@@ -1,0 +1,502 @@
+---
+import { t } from '../../i18n';
+import Card from '../ui/Card.astro';
+import CardContent from '../ui/CardContent.astro';
+import Button from '../ui/Button.astro';
+import Icon from '../ui/Icon.astro';
+import IconButton from '../ui/IconButton.astro';
+import Badge from '../ui/Badge.astro';
+import { icons } from '../../lib/icons';
+
+const L = t();
+const setTypes = [
+  { value: 'warmup', label: L.builder.types.warmup },
+  { value: 'work', label: L.builder.types.work },
+  { value: 'top', label: L.builder.types.top },
+  { value: 'drop', label: L.builder.types.drop },
+  { value: 'failure', label: L.builder.types.failure },
+] as const;
+---
+
+<template x-if="exercises.length === 0">
+  <Card>
+    <div class="create__empty-state">
+      <div class="create__empty-icon" aria-hidden="true">
+        <Icon name="dumbbellBox" size={48} />
+      </div>
+      <h3 class="create__empty-title" x-text="labels.noExoAdded">
+        {L.builder.noExoAdded}
+      </h3>
+      <p class="create__empty-desc" x-text="labels.noExoDesc">
+        {L.builder.noExoDesc}
+      </p>
+      <Button class="create__empty-add-btn" @click="openPicker()">
+        <Icon name="plus" size={20} />
+        <span>{L.builder.addExercise}</span>
+      </Button>
+    </div>
+  </Card>
+</template>
+
+<template x-for="(ex, exIdx) in exercises" :key="ex.exerciseId + '-' + exIdx">
+  <div x-data="exerciseCard(ex, exIdx)">
+    <Card>
+      <div
+        class="ses-ex-superset-bar create__superset-bar"
+        x-show="exercise.supersetId != null"
+        x-cloak
+        :class="'ses-superset-bar--g' + exercise.supersetId"
+      >
+        <span class="ses-superset-dot" aria-hidden="true"></span>
+        <Icon name="link" size={16} class="create__superset-bar-icon" />
+        <span class="create__superset-bar-label">
+          <span x-text="labels.supersetLabel + ' ' + exercise.supersetId">Superset</span>
+        </span>
+        <IconButton
+          variant="ghost"
+          icon={icons.closeX(18, 18)}
+          label={L.builder.supersetRemove}
+          title={L.builder.supersetRemove}
+          @click="$dispatch('builder:remove-superset', { index: exerciseIndex })"
+        />
+      </div>
+
+      <div class="ses-ex-header create__ex-header">
+        <button
+          type="button"
+          class="ses-ex-toggle create__ex-toggle"
+          @click="toggle()"
+          :aria-expanded="expanded.toString()"
+          :aria-controls="'ses-ex-body-' + exerciseIndex"
+        >
+          <div class="create__toggle-body">
+            <div class="ses-ex-head create__ex-head">
+              <h3 class="create__ex-name" x-text="trExercise(exercise.name)"></h3>
+              <Badge
+                variant="category"
+                :class="'badge--cat-' + muscleHue(exercise.muscle)"
+                x-text="trMuscle(exercise.muscle)"
+              />
+            </div>
+            <p class="create__ex-summary" x-show="!expanded" x-cloak x-text="summary"></p>
+          </div>
+          <span class="ses-chevron create__ex-chevron" :class="{ 'is-open': expanded }">
+            <Icon name="chevronDown" size={20} />
+          </span>
+        </button>
+        <IconButton
+          variant="danger"
+          icon={icons.trash(18, 18)}
+          label={L.builder.removeExerciseAria}
+          title={L.builder.removeExerciseTitle}
+          @click="remove()"
+        />
+      </div>
+
+      <div :id="'ses-ex-body-' + exerciseIndex" class="create__ex-body" x-show="expanded" x-cloak>
+        <CardContent>
+          <div
+            class="create__sets-scroll"
+            role="table"
+            :aria-label="labels.setsFor + ' ' + exercise.name"
+          >
+            <div class="ses-table-head" role="row">
+              <div class="ses-cell ses-cell-num" role="columnheader">
+                #
+              </div>
+              <div class="ses-cell ses-cell-type" role="columnheader">
+                {L.builder.setTypeHeader}
+              </div>
+              <div class="ses-cell ses-cell-num" role="columnheader">
+                {L.builder.weightHeader}
+              </div>
+              <div class="ses-cell ses-cell-num" role="columnheader">
+                Reps
+              </div>
+              <div class="ses-cell ses-cell-action" role="columnheader" aria-label="Actions"></div>
+            </div>
+            <template x-for="(set, setIdx) in exercise.sets" :key="setIdx">
+              <div class="ses-table-row" role="row">
+                <div class="ses-cell ses-cell-num" role="cell" x-text="set.setNumber"></div>
+                <div class="ses-cell ses-cell-type" role="cell">
+                  <select
+                    class="create__select"
+                    x-model="set.type"
+                    :aria-label="labels.setTypeLabel + ' ' + (setIdx + 1)"
+                  >
+                    {setTypes.map((t) => (
+                      <option value={t.value}>{t.label}</option>
+                    ))}
+                  </select>
+                </div>
+                <div class="ses-cell ses-cell-num" role="cell">
+                  <input
+                    type="number"
+                    class="create__input ses-input-inline"
+                    min="0"
+                    step="0.5"
+                    :value="displayWeight(set.weight)"
+                    @change="storeWeight($event.target, set)"
+                    inputmode="decimal"
+                    :aria-label="labels.weightForSet + ' ' + (setIdx + 1)"
+                  />
+                </div>
+                <div class="ses-cell ses-cell-num" role="cell">
+                  <input
+                    type="number"
+                    class="create__input ses-input-inline"
+                    min="0"
+                    step="1"
+                    x-model.number="set.reps"
+                    inputmode="numeric"
+                    :aria-label="labels.repsForSet + ' ' + (setIdx + 1)"
+                  />
+                </div>
+                <div class="ses-cell ses-cell-action" role="cell">
+                  <IconButton
+                    variant="danger"
+                    size="sm"
+                    icon={icons.closeX(18, 18)}
+                    label={L.builder.deleteSet}
+                    :aria-label="labels.deleteSet + ' ' + (setIdx + 1)"
+                    title={L.builder.deleteSet}
+                    :disabled="exercise.sets.length <= 1"
+                    @click="removeSet(setIdx)"
+                  />
+                </div>
+              </div>
+            </template>
+          </div>
+
+          <div class="ses-ex-actions create__ex-actions">
+            <Button variant="secondary" size="sm" @click="addSet()">
+              <Icon name="plus" size={18} />
+              <span>{L.builder.addSet}</span>
+            </Button>
+          </div>
+        </CardContent>
+      </div>
+    </Card>
+  </div>
+</template>
+
+<template x-if="exercises.length > 0">
+  <div class="create__add-wrap">
+    <Button class="create__add-btn" @click="openPicker()">
+      <Icon name="plus" size={20} />
+      <span>{L.builder.addExercise}</span>
+    </Button>
+  </div>
+</template>
+
+<div
+  class="create__validation"
+  x-show="!canSave && (sessionName.trim() || exercises.length > 0)"
+  x-cloak
+>
+  <template x-if="!sessionName.trim()">
+    <span x-text="labels.needName">{L.builder.needName}</span>
+  </template>
+  <template x-if="sessionName.trim() && exercises.length === 0">
+    <span x-text="labels.needExo">{L.builder.needExo}</span>
+  </template>
+  <template x-if="sessionName.trim() && exercises.length > 0 && exercises.some((exercise) => exercise.sets.length === 0)">
+    <span x-text="labels.needSets">{L.builder.needSets}</span>
+  </template>
+</div>
+
+<style>
+  .ses-input-inline::-webkit-outer-spin-button,
+  .ses-input-inline::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .ses-input-inline {
+    -moz-appearance: textfield;
+  }
+
+  .ses-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+  }
+
+  .ses-cell-num {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--color-text);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ses-cell-type {
+    justify-content: stretch;
+  }
+
+  .ses-cell-action {
+    justify-content: flex-end;
+    gap: 0.4rem;
+  }
+
+  .ses-superset-bar--g1 {
+    --ses-super-color: var(--color-superset-g1);
+    background-color: var(--color-superset-g1-bg);
+  }
+
+  .ses-superset-bar--g2 {
+    --ses-super-color: var(--color-superset-g2);
+    background-color: var(--color-superset-g2-bg);
+  }
+
+  .ses-superset-bar--g3 {
+    --ses-super-color: var(--color-superset-g3);
+    background-color: var(--color-superset-g3-bg);
+  }
+
+  .ses-superset-bar--g4 {
+    --ses-super-color: var(--color-superset-g4);
+    background-color: var(--color-superset-g4-bg);
+  }
+
+  .ses-superset-bar--g5 {
+    --ses-super-color: var(--color-superset-g5);
+    background-color: var(--color-superset-g5-bg);
+  }
+
+  .ses-superset-dot {
+    width: 0.9rem;
+    height: 0.9rem;
+    border-radius: var(--radius-pill);
+    background-color: var(--ses-super-color, var(--color-muted));
+    flex-shrink: 0;
+  }
+
+  .ses-chevron.is-open {
+    transform: rotate(180deg);
+    color: var(--color-accent);
+  }
+
+  .ses-tip-video svg {
+    width: 1.3rem;
+    height: 1.3rem;
+    fill: currentColor;
+    stroke: currentColor;
+    flex-shrink: 0;
+  }
+
+  .ses-tip-video svg polygon {
+    fill: currentColor;
+    stroke: none;
+  }
+
+  .create__empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1.5rem;
+    text-align: center;
+  }
+
+  .create__empty-icon {
+    color: var(--color-muted);
+    margin-bottom: 1rem;
+  }
+
+  .create__empty-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: 0.5rem;
+  }
+
+  .create__empty-desc {
+    font-size: 0.875rem;
+    color: var(--color-muted);
+    margin-bottom: 1.5rem;
+  }
+
+  .create__empty-add-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: var(--color-accent);
+    color: var(--color-accent-foreground);
+    border-radius: var(--radius-md);
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: background-color var(--transition-fast);
+  }
+
+  .create__empty-add-btn:hover {
+    background-color: var(--color-accent-hover);
+  }
+
+  .create__superset-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+  }
+
+  .create__superset-bar-icon {
+    color: var(--ses-super-color, var(--color-muted));
+  }
+
+  .create__superset-bar-label {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: var(--ses-super-color, var(--color-muted));
+  }
+
+  .create__superset-bar-chain {
+    font-size: 0.75rem;
+    color: var(--color-muted);
+  }
+
+  .create__ex-header {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 1.2rem;
+  }
+
+  .create__ex-toggle {
+    flex: 1 1 0%;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-align: left;
+    min-width: 0;
+    padding: 0;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+  }
+
+  .create__ex-head {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .create__ex-name {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: var(--color-text);
+    line-height: 1.2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .create__ex-summary {
+    font-size: 0.875rem;
+    color: var(--color-muted);
+    margin-top: 0.125rem;
+  }
+
+  .create__ex-chevron {
+    color: var(--color-muted);
+    transition: transform var(--transition-fast);
+  }
+
+  .create__ex-body {
+    border-top: 1px solid var(--color-border);
+  }
+
+  .create__sets-scroll {
+    overflow-x: auto;
+  }
+
+  .create__ex-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+  }
+
+  .create__add-wrap {
+    display: flex;
+    justify-content: center;
+    padding: 1rem 0;
+  }
+
+  .create__add-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .ses-table-head,
+  .ses-table-row {
+    display: grid;
+    grid-template-columns:
+      3.2rem minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, 0.8fr)
+      5.2rem;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0 1.2rem;
+  }
+
+  .ses-table-head {
+    height: 3.2rem;
+    background-color: var(--color-surface-3);
+    font-size: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-muted);
+  }
+
+  .ses-table-row {
+    min-height: 5.6rem;
+    border-top: 1px solid var(--color-border);
+    transition: background-color var(--transition-fast);
+  }
+
+  .ses-table-row:hover {
+    background-color: var(--alpha-bg-subtle);
+  }
+
+  .ses-table-head .ses-cell-num {
+    font-size: 1rem;
+    color: var(--color-muted);
+  }
+
+  @media (max-width: 640px) {
+    .ses-table-head {
+      display: none;
+    }
+    .ses-table-row {
+      grid-template-columns: 1fr 1fr;
+      grid-template-areas: 'num type' 'weight reps' 'action action';
+      gap: 0.6rem;
+      padding: 1rem;
+      min-height: 0;
+    }
+    .ses-table-row .ses-cell-num:nth-of-type(1) {
+      grid-area: num;
+    }
+    .ses-table-row .ses-cell-type {
+      grid-area: type;
+    }
+    .ses-table-row .ses-cell-num:nth-of-type(3) {
+      grid-area: weight;
+    }
+    .ses-table-row .ses-cell-num:nth-of-type(4) {
+      grid-area: reps;
+    }
+    .ses-table-row .ses-cell-action {
+      grid-area: action;
+      justify-content: flex-end;
+      padding-top: 0.4rem;
+      border-top: 1px dashed var(--color-border);
+    }
+  }
+</style>

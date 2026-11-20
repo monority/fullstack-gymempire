@@ -1,0 +1,110 @@
+---
+import { t } from '../../i18n';
+import Button from '../ui/Button.astro';
+import Icon from '../ui/Icon.astro';
+const L = t();
+---
+
+<div class="create__action-bar">
+  <div class="create__summary" x-show="exercises.length > 0" aria-live="polite">
+    <span class="create__summary-item">
+      <strong x-text="exercises.length"></strong>
+      <span>{L.builder.exercisesWord}</span>
+    </span>
+    <span class="create__summary-separator" aria-hidden="true">
+      /
+    </span>
+    <span class="create__summary-item">
+      <strong x-text="exercises.reduce((total, exercise) => total + exercise.sets.length, 0)"></strong>
+      <span>{L.builder.setsPlural}</span>
+    </span>
+  </div>
+  <Button variant="secondary" @click="discard()">
+    {L.common.cancel}
+  </Button>
+  <Button
+    variant="ghost"
+    x-show="exercises.length > 1"
+    @click="allExpanded ? collapseAll() : expandAll()"
+    :aria-label="allExpanded ? labels.collapseAll : labels.expandAll"
+  >
+    <span x-text="allExpanded ? labels.collapseAll : labels.expandAll">{L.builder.expandAll}</span>
+  </Button>
+  <Button variant="primary" :disabled="!canSave" @click="save()">
+    <Icon name="save" size={18} />
+    <span x-text="editSessionId ? labels.editSaveSession : labels.saveSession">
+      {L.builder.saveSession}
+    </span>
+  </Button>
+</div>
+
+<style>
+  .create__action-bar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.5rem;
+  }
+
+  .create__summary {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.8rem;
+    margin-right: auto;
+    color: var(--color-muted);
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .create__summary-item {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+
+  .create__summary-item strong {
+    color: var(--color-text);
+    font-family: var(--font-display);
+    font-size: 1.8rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .create__summary-separator {
+    color: var(--alpha-text-faint);
+  }
+
+  @media (max-width: 480px) {
+    .create__summary {
+      display: none;
+    }
+
+    .ses-ex-header {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 4.4rem;
+      align-items: start;
+    }
+    .ses-ex-toggle {
+      grid-column: 1;
+      grid-row: 1;
+      width: 100%;
+    }
+    .ses-ex-header > .icon-btn {
+      grid-column: 2;
+      grid-row: 1;
+      justify-self: end;
+    }
+    .ses-ex-head {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .ses-ex-actions {
+      align-items: stretch;
+      flex-direction: column;
+    }
+    .ses-ex-actions :global(.button) {
+      width: 100%;
+    }
+  }
+</style>
