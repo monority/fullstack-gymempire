@@ -28,11 +28,14 @@ const L = t();
         :stroke-dasharray="`${weeklyProgress * 113.1} 113.1`"
       ></circle>
     </svg>
-    <span class="dash__goal-ring-pct" x-text="`${Math.round(weeklyProgress * 100)}%`"></span>
+    <span
+      class="dash__goal-ring-pct u-tabular"
+      x-text="`${Math.round(weeklyProgress * 100)}%`"
+    ></span>
   </div>
 
   <div class="dash__goal-text">
-    <h2 class="dash__goal-title">
+    <h2 class="dash__goal-title u-tabular">
       <span class="dash__goal-done" x-text="weeklyDone"></span>
       <span class="dash__goal-sep" aria-hidden="true">
         /
@@ -93,7 +96,6 @@ const L = t();
     font-weight: 700;
     line-height: var(--leading-display);
     letter-spacing: var(--tracking-display);
-    font-variant-numeric: tabular-nums;
   }
 
   .dash__goal-done {
@@ -162,7 +164,7 @@ const L = t();
     font-family: var(--font-display);
     font-size: 1.8rem;
     font-weight: 700;
-    font-variant-numeric: tabular-nums;
+
     line-height: 1;
   }
 

@@ -66,7 +66,7 @@ const L = t();
       </div>
       <template x-for="(set, i) in addSets" :key="i">
         <div class="exo__add-sets-row">
-          <span class="exo__add-sets-num" x-text="i + 1"></span>
+          <span class="exo__add-sets-num u-tabular" x-text="i + 1"></span>
           <div class="exo__add-sets-type">
             <span class="exo__add-sets-label">{L.builder.type}</span>
             <div class="exo__select-wrap">
@@ -260,7 +260,7 @@ const L = t();
     font-family: var(--font-display);
     font-size: 1.2rem;
     font-weight: 700;
-    font-variant-numeric: tabular-nums;
+
     line-height: 1;
   }
 

@@ -4,6 +4,11 @@
  * et ~61 `font-variant-numeric` dupliqués.
  */
 @layer utilities {
+  /* Atome : chiffres tabulaires uniquement. */
+  .u-tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
   /* Atome : contexte uniquement (aucune autre propriété). */
   .u-uppercase {
     text-transform: uppercase;

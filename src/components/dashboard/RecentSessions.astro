@@ -50,7 +50,7 @@ const L = t();
             ·
           </span>
           <span
-            class="dash__session-volume"
+            class="dash__session-volume u-tabular"
             x-text="formatVolume(sessionVolume(s)) + ' ' + labels.kg"
           ></span>
           <div class="dash__session-muscle" x-show="sessionPrimaryMuscle(s)">
@@ -192,7 +192,6 @@ const L = t();
   .dash__session-volume {
     color: var(--color-text);
     font-weight: 600;
-    font-variant-numeric: tabular-nums;
   }
 
   .dash__session-muscle {

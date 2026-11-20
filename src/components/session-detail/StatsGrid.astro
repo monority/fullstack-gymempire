@@ -8,21 +8,21 @@ import { icons } from '../../lib/icons';
       <span class="detail__stat-icon" set:html={icons.clockStopwatch()} />
       <span x-text="labels.duration"></span>
     </div>
-    <div class="detail__stat-value" x-text="formatDuration(session.duration)"></div>
+    <div class="detail__stat-value u-tabular" x-text="formatDuration(session.duration)"></div>
   </div>
   <div class="detail__stat detail__stat--volume">
     <div class="detail__stat-label u-uppercase">
       <span class="detail__stat-icon" set:html={icons.volumeBox()} />
       <span x-text="labels.totalVolume"></span>
     </div>
-    <div class="detail__stat-value" x-text="formatVolume(sessionTotalVolume)"></div>
+    <div class="detail__stat-value u-tabular" x-text="formatVolume(sessionTotalVolume)"></div>
   </div>
   <div class="detail__stat">
     <div class="detail__stat-label u-uppercase">
       <span class="detail__stat-icon" set:html={icons.list()} />
       <span x-text="labels.exercises"></span>
     </div>
-    <div class="detail__stat-value" x-text="session.exercises.length"></div>
+    <div class="detail__stat-value u-tabular" x-text="session.exercises.length"></div>
   </div>
 </div>
 
@@ -84,7 +84,7 @@ import { icons } from '../../lib/icons';
     font-size: 2.6rem;
     font-weight: 700;
     color: var(--color-text);
-    font-variant-numeric: tabular-nums;
+
     line-height: 1.1;
     letter-spacing: -0.01em;
   }

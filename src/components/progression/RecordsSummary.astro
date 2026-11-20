@@ -44,7 +44,7 @@ const metrics = [
   {metrics.map((metric) => (
     <StatCard label={metric.label} hero={metric.hero}>
       <div slot="value" class="records-summary__value">
-        <span class="stat-card__value records-summary__number" x-text={metric.value} />
+        <span class="stat-card__value records-summary__number u-tabular" x-text={metric.value} />
         <span class="records-summary__unit">{metric.unit}</span>
       </div>
       <span slot="date" class="records-summary__foot" x-text={metric.foot} />
@@ -95,7 +95,7 @@ const metrics = [
     font-family: var(--font-display);
     font-size: var(--text-metric);
     font-weight: 700;
-    font-variant-numeric: tabular-nums;
+
     line-height: var(--leading-display);
     letter-spacing: var(--tracking-display);
   }

@@ -34,7 +34,7 @@ const heightExpr = '`height: ${Math.max(6, (value / ' + maxExpr + ') * 100)}%`';
 <section class:list={['week-metric', className]} {...rest}>
   <div class="week-metric__head">
     <span class:list={['week-metric__label', 'u-label']}>{label}</span>
-    <strong class="week-metric__value">
+    <strong class="week-metric__value u-tabular">
       <span x-text={valueExpr}></span>
       <span class="week-metric__unit" x-text={unitExpr}></span>
     </strong>
@@ -71,7 +71,6 @@ const heightExpr = '`height: ${Math.max(6, (value / ' + maxExpr + ') * 100)}%`';
     font-weight: 700;
     line-height: var(--leading-display);
     letter-spacing: var(--tracking-display);
-    font-variant-numeric: tabular-nums;
   }
 
   .week-metric__unit {

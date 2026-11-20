@@ -30,7 +30,7 @@ const trendArrow = trend ? trendArrowMap[trend] : '';
     </div>
 
     <div class="stats-card__value-row">
-      <span class="stats-card__value">{value}</span>
+      <span class="stats-card__value u-tabular">{value}</span>
       {unit && <span class="stats-card__unit">{unit}</span>}
     </div>
 
@@ -81,7 +81,6 @@ const trendArrow = trend ? trendArrowMap[trend] : '';
     font-family: var(--font-display);
     font-weight: 700;
     font-size: clamp(2rem, 5vw, 2.4rem);
-    font-variant-numeric: tabular-nums;
   }
 
   .stats-card__unit {

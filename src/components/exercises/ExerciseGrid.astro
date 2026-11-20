@@ -20,7 +20,7 @@ const L = t();
           <span class="exo__card-icon" set:html={icons.dumbbellBox()} />
           <h3 class="exo__card-name" x-text="trExercise(ex.name)"></h3>
           <span
-            class="exo__set-badge"
+            class="exo__set-badge u-tabular"
             x-show="getSetCount(ex.id) > 0"
             x-cloak
             x-transition.opacity.duration.200ms
@@ -216,7 +216,7 @@ const L = t();
     font-weight: 700;
     letter-spacing: 0.02em;
     line-height: 1;
-    font-variant-numeric: tabular-nums;
+
     flex-shrink: 0;
   }
 
