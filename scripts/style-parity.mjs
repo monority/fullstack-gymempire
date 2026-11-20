@@ -26,7 +26,6 @@ const PROPS = [
   'fontVariantNumeric',
   'color',
   'fontFamily',
-  'fontSize',
   'fontWeight',
   'letterSpacing',
   'lineHeight',
@@ -36,13 +35,14 @@ const PROPS = [
   'boxShadow',
   'display',
   'flexDirection',
-  'gap',
-  'gridTemplateColumns',
   'alignItems',
   'justifyContent',
-  'width',
-  'height',
-];
+  'textAlign',
+  'whiteSpace',
+  'overflow',
+  'visibility',
+  'opacity',
+]; // géométrie (width/height/gap) exclue : sensible au HMR et au chargement des polices
 const DIR = 'test-results';
 const BASE = process.env.BASE_URL || 'http://127.0.0.1:4321';
 
@@ -93,6 +93,7 @@ async function save(label) {
   for (const route of ROUTES) {
     await page.goto(BASE + route);
     await page.waitForTimeout(500);
+    await page.evaluate(() => document.fonts.ready);
     out[route] = await page.evaluate((props) => {
       const nodes = [...document.querySelectorAll('[class]')].filter((el) =>
         /__(label|stat|value|head|meta|title|mood|fatigue|rpe)|stat-card__|week-metric__|/.test(

@@ -46,7 +46,7 @@ import Icon from '../ui/Icon.astro';
         <div class="notes__item" x-show="session.mood">
           <div class="notes__label u-uppercase" x-text="labels.moodLabel"></div>
           <div class="notes__value">
-            <span class="notes__mood" :class="'notes__mood--' + session.mood">
+            <span class="notes__mood u-surface" :class="'notes__mood--' + session.mood">
               <span class="notes__mood-icon" x-html="moodIcon(session.mood)"></span>
               <span class="notes__mood-label u-uppercase" x-text="moodLabel(session.mood)"></span>
             </span>
@@ -59,7 +59,7 @@ import Icon from '../ui/Icon.astro';
           x-show="session.notes && session.notes.trim() !== ''"
         >
           <div class="notes__label u-uppercase" x-text="labels.notes"></div>
-          <p class="notes__text" x-text="session.notes"></p>
+          <p class="notes__text u-surface" x-text="session.notes"></p>
         </div>
       </div>
     </Card>
@@ -262,9 +262,6 @@ import Icon from '../ui/Icon.astro';
     gap: 0.8rem;
     height: 4.2rem;
     padding: 0 1.4rem;
-    border-radius: var(--radius-md);
-    background-color: var(--color-surface-2);
-    border: 1px solid var(--color-border);
   }
 
   .notes__mood-icon {
@@ -321,9 +318,7 @@ import Icon from '../ui/Icon.astro';
   .notes__text {
     margin: 0;
     padding: 1.2rem 1.4rem;
-    background-color: var(--color-surface-2);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
+
     color: var(--color-text);
     font-size: 1.4rem;
     line-height: 1.6;

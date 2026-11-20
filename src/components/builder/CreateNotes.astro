@@ -120,7 +120,7 @@ const L = t();
           </label>
           <textarea
             id="ses-notes"
-            class="create__textarea"
+            class="create__textarea u-surface"
             x-model="sessionNotes"
             placeholder={L.builder.notesPlaceholder}
             rows="3"
@@ -218,9 +218,6 @@ const L = t();
   }
 
   .create__select {
-    background-color: var(--color-surface-2);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
     min-height: 4.4rem;
     padding: 0.8rem 1rem;
     color: var(--color-text);
@@ -331,9 +328,6 @@ const L = t();
   }
 
   .create__textarea {
-    background-color: var(--color-surface-2);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
     min-height: 10rem;
     padding: 1rem 1.2rem;
     color: var(--color-text);

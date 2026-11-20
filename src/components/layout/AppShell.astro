@@ -62,7 +62,7 @@ const drawerItems = groups.map((group) => ({
     <div class="drawer__panel" role="dialog" aria-modal="true" aria-label={L.layout.menuAria}>
       <div class="drawer__header">
         <div class="drawer__brand">
-          <span class="drawer__brand-icon" aria-hidden="true">
+          <span class="drawer__brand-icon u-surface" aria-hidden="true">
             <Icon name="dumbbell" size={20} />
           </span>
           <span class="drawer__brand-text">Gym Empire</span>
@@ -106,7 +106,7 @@ const drawerItems = groups.map((group) => ({
       </nav>
 
       {/* Footer - user session + logout */}
-      <div class="drawer__user" data-user-zone hidden>
+      <div class="drawer__user u-surface" data-user-zone hidden>
         <div class="drawer__user-info">
           <span class="drawer__user-label">{L.layout.signedInAs}</span>
           <span class="drawer__user-name" data-user-name>
@@ -471,9 +471,7 @@ const drawerItems = groups.map((group) => ({
     justify-content: center;
     width: 3.4rem;
     height: 3.4rem;
-    border-radius: var(--radius-md);
-    background-color: var(--color-surface-2);
-    border: 1px solid var(--color-border);
+
     color: var(--color-accent);
     flex-shrink: 0;
   }
@@ -625,9 +623,7 @@ const drawerItems = groups.map((group) => ({
     gap: 1rem;
     margin: 1.2rem 0.8rem 1.2rem;
     padding: 1.2rem;
-    background-color: var(--color-surface-2);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
+
     flex-shrink: 0;
   }
 

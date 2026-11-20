@@ -20,7 +20,7 @@ const L = t();
   id="set-data"
 >
   <div class="set__data-grid">
-    <div class="set__data-tile">
+    <div class="set__data-tile u-surface">
       <div class="set__data-tile-header">
         <div class="set__data-tile-icon" aria-hidden="true">
           <Icon name="download" size={24} />
@@ -46,7 +46,7 @@ const L = t();
       </Button>
     </div>
 
-    <div class="set__data-tile">
+    <div class="set__data-tile u-surface">
       <div class="set__data-tile-header">
         <div class="set__data-tile-icon" aria-hidden="true">
           <Icon name="table" size={24} />
@@ -72,7 +72,7 @@ const L = t();
       </Button>
     </div>
 
-    <div class="set__data-tile">
+    <div class="set__data-tile u-surface">
       <div class="set__data-tile-header">
         <div class="set__data-tile-icon" aria-hidden="true">
           <Icon name="upload" size={24} />
@@ -330,9 +330,7 @@ const L = t();
     flex-direction: column;
     gap: 1.2rem;
     padding: 1.8rem;
-    background-color: var(--color-surface-2);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
+
     transition:
       border-color 200ms ease,
       box-shadow 200ms ease;
@@ -357,7 +355,7 @@ const L = t();
     width: 3.6rem;
     height: 3.6rem;
     flex-shrink: 0;
-    border-radius: var(--radius-md);
+
     background-color: color-mix(in srgb, var(--color-accent) 12%, transparent);
     color: var(--color-accent);
     border: 1px solid color-mix(in srgb, var(--color-accent) 28%, transparent);
