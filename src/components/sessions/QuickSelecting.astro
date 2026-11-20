@@ -1,0 +1,128 @@
+---
+import { t, localizedPath } from '../../i18n';
+import Button from '../ui/Button.astro';
+import Icon from '../ui/Icon.astro';
+const L = t();
+---
+
+{/* --- STATE 1 — Selecting --- */}
+<template x-if="state === 'selecting'">
+  <section class="quick__selecting">
+    <div class="quick__selecting-inner">
+      <div class="quick__zap-icon" aria-hidden="true">
+        <Icon name="zap" size={64} />
+      </div>
+      <h1 class="quick__title">{L.rapide.title}</h1>
+      <p class="quick__intro">{L.rapide.introText}</p>
+
+      <div class="quick__form">
+        <label class="quick__label" for="qs-session">
+          {L.rapide.session}
+        </label>
+        <select id="qs-session" class="quick__select" x-model="selectedSessionId">
+          <option value="">{L.rapide.selectSession}</option>
+          <template x-for="s in availableSessions" :key="s.id">
+            <option
+              :value="s.id"
+              x-text="`${s.label} (${s.totalSets} ${setsShortLabel} · ${formatWeightValue(s.totalVolume)})`"
+            ></option>
+          </template>
+        </select>
+      </div>
+
+      <div class="quick__selecting-actions">
+        <Button variant="ghost" href={localizedPath('/sessions')}>
+          {L.common.back}
+        </Button>
+        <Button variant="primary" :disabled="!selectedSessionId" @click="startSession()">
+          {L.rapide.start}
+        </Button>
+      </div>
+
+      <template x-if="availableSessions.length === 0">
+        <p class="quick__empty-text">
+          {L.rapide.emptyDesc}{' '}
+          <a class="quick__empty-link" href={localizedPath('/sessions/create')}>
+            {L.rapide.restart}
+          </a>
+          .
+        </p>
+      </template>
+    </div>
+  </section>
+</template>
+
+<style>
+  .quick__selecting {
+    flex: 1 1 0%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    overflow-y: auto;
+  }
+
+  .quick__selecting-inner {
+    width: 100%;
+    max-width: 52rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .quick__zap-icon {
+    width: 9.6rem;
+    height: 9.6rem;
+    border-radius: 0;
+    background-color: transparent;
+    border: 0;
+    color: var(--color-accent);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .quick__intro {
+    font-size: 1.5rem;
+    color: var(--color-muted);
+    line-height: 1.4;
+    margin: 0;
+    max-width: 38rem;
+  }
+
+  .quick__form {
+    width: 100%;
+    max-width: 44rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    text-align: left;
+  }
+
+  .quick__selecting-actions {
+    display: flex;
+    gap: 0.75rem;
+    width: 100%;
+    max-width: 44rem;
+    margin-top: 0.25rem;
+  }
+
+  .quick__empty-text {
+    margin-top: 0.5rem;
+    color: var(--color-muted);
+    font-size: 1.4rem;
+    line-height: 1.5;
+  }
+
+  .quick__empty-link {
+    color: var(--color-accent);
+    text-decoration: underline;
+  }
+
+  .quick__selecting-actions :global(.button) {
+    flex: 1;
+  }
+</style>
