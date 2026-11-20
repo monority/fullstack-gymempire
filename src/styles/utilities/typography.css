@@ -16,7 +16,6 @@
     font-size: var(--text-caption);
     font-weight: 700;
     letter-spacing: var(--tracking-caption);
-    line-height: var(--leading-caption);
     text-transform: uppercase;
   }
 

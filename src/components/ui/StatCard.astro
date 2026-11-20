@@ -27,7 +27,7 @@ const {
 <Tag class:list={['stat-card', hero && 'stat-card--hero', className]} {...rest}>
   <div class="stat-card__head">
     {icon && <span class="stat-card__icon" aria-hidden="true" set:html={icon} />}
-    <span class="stat-card__label">{label}</span>
+    <span class:list={['stat-card__label', 'u-label']}>{label}</span>
   </div>
   <slot name="value" />
   <slot name="date" />
@@ -59,15 +59,6 @@ const {
   .stat-card__icon :global(svg) {
     width: 1.6rem;
     height: 1.6rem;
-  }
-
-  .stat-card__label {
-    color: var(--color-muted);
-    font-family: var(--font-body);
-    font-size: var(--text-caption);
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
   }
 
   .stat-card--hero :global(.stat-card__value) {
