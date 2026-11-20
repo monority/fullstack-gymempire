@@ -38,7 +38,7 @@
 
 | #   | Indicateur (définition exacte)                       |    Baseline **mesurée** le 2026-11-19 |                                    Cible | Outil de mesure                               |
 | --- | ---------------------------------------------------- | ------------------------------------: | ---------------------------------------: | --------------------------------------------- |
-| K1  | Lignes de `<style>` dans `src/pages`                 |                     8 785 → **6 150** |                                    ≤ 400 | `check-components.mjs`                        |
+| K1  | Lignes de `<style>` dans `src/pages`                 |                     8 785 → **6 097** |                                    ≤ 400 | `check-components.mjs`                        |
 | K2  | Pages > 1 000 lignes                                 |                             7 → **4** |                                        0 | `wc -l`                                       |
 | K3  | Page la plus longue                                  | 1 488 (create) → **1 225** (settings) |                                    ≤ 250 | `wc -l`                                       |
 | K4  | Occurrences de `alpine:init` dans `src`              |                    29 → **0** (P3) ✅ |                                        1 | `grep -r "alpine:init" src \| wc -l`          |
