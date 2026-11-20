@@ -246,7 +246,7 @@ Nouveau garde-fou, sans dépendance, sortie texte + `--json`, `STRICT=1` bloquan
 
 ## 9. Définition de terminé (chaque phase)
 
-- [ ] Captures 14 routes identiques (dark + light) ou diff validé et ré-enregistré.
+- [ ] Parité des styles calculés sur 14 routes (`scripts/style-parity.mjs`) et captures identiques.
 - [ ] `pnpm test` ≥ 660, `pnpm test:e2e` ≥ 14 (dont 11 a11y).
 - [ ] `pnpm check:strict` 0/0/0, `pnpm lint` 0 erreur.
 - [ ] `pnpm check:colors`, `check:contrast`, `check:components`, `check:css` verts.
