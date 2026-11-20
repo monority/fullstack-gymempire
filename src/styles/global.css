@@ -1,36 +1,53 @@
 /**
- * Point d'entrée unique du CSS global.
+ * Point d'entrée UNIQUE du CSS global.
  *
  * Ordre de cascade (du plus faible au plus fort) :
- *   reset → tokens → base → components → utilities
+ *   reset → tokens → base → components → utilities → overrides
  *
- * Les blocs <style> scopés d'Astro ne sont dans aucune couche : ils gagnent
- * donc toujours sur ces règles partagées. C'est voulu : une page peut
- * surcharger un motif global sans !important.
+ * Les blocs <style> Astro sont NON layerés : ils ont donc toujours la
+ * priorité sur ces couches. C'est le contrat de surcharge (ADR-006) :
+ * un composant peut adapter un motif global SANS !important.
  *
- * Voir src/styles/README.md pour les règles d'organisation.
+ * Aucune règle ici : uniquement la déclaration des layers et les imports.
+ * Voir src/styles/README.md pour le catalogue et les conventions.
  */
-@layer reset, tokens, base, components, utilities;
+@layer reset, tokens, base, components, utilities, overrides;
 
 /* 1. Reset */
 @import './base/reset.css';
 
-/* 2. Tokens (une seule source de vérité) */
+/* 2. Tokens — la seule source de vérité */
 @import './tokens/colors.css';
-@import './tokens/scale.css';
+@import './tokens/spacing.css';
+@import './tokens/typography.css';
+@import './tokens/radii.css';
+@import './tokens/motion.css';
+@import './tokens/layout.css';
 
-/* 3. Bases : polices, racine, accessibilité */
+/* 3. Base — defaults d'éléments */
 @import './base/fonts.css';
 @import './base/root.css';
+@import './base/elements.css';
+@import './base/typography.css';
 @import './base/a11y.css';
 
-/* 4. Composants partagés */
-@import '../components/ui/Button.css';
-@import '../components/ui/Badge.css';
-@import '../components/ui/Card.css';
-@import '../components/ui/Avatar.css';
+/* 4. Composants — objets visuels réutilisables */
+@import './components/button.css';
+@import './components/badge.css';
+@import './components/card.css';
+@import './components/avatar.css';
 @import './components/stepper.css';
 @import './components/patterns.css';
 
-/* 5. Utilitaires */
+/* 5. Utilitaires — classes atomiques */
+@import './utilities/surface.css';
+@import './utilities/typography.css';
+@import './utilities/layout.css';
+@import './utilities/focus.css';
 @import './utilities.css';
+
+/* 6. Overrides — exceptions documentées (doit rester quasi vide) */
+@import './overrides.css';
+
+/* Page autonome (calculatrice) — isolée, importée en dernier. */
+@import './calculator.css';

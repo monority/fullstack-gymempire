@@ -1,0 +1,18 @@
+/**
+ * Design tokens — layout et empilement.
+ * Couche CSS : `tokens`. Aucun sélecteur, aucune valeur composite.
+ */
+@layer tokens {
+  :root {
+    --z-base: 0;
+    --z-header: 5;
+    --z-drawer: 6;
+    --z-overlay: 10;
+    --sidebar-width: 22rem;
+    --bottom-nav-height: 5.6rem;
+    --topbar-height: 6.4rem;
+    --page-max-w: 96rem;
+    --surface-panel: color-mix(in srgb, var(--color-surface) 88%, transparent);
+    --surface-panel-elevated: color-mix(in srgb, var(--color-surface-2) 90%, transparent);
+  }
+}

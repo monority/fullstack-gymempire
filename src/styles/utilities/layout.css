@@ -1,0 +1,64 @@
+/**
+ * Utility — layout et grilles.
+ * Couche : `utilities`. Remplace les grilles copiées dans chaque composant.
+ */
+@layer utilities {
+  .u-row {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+  }
+
+  .u-stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+    min-width: 0;
+  }
+
+  .u-between {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-2);
+  }
+
+  /* Grilles adaptatives avec séparateurs hairline. */
+  .u-grid-2,
+  .u-grid-3,
+  .u-grid-4 {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .u-grid-2 > * + *,
+  .u-grid-3 > * + *,
+  .u-grid-4 > * + * {
+    border-top: 1px solid var(--color-border);
+  }
+
+  @media (min-width: 640px) {
+    .u-grid-2,
+    .u-grid-3,
+    .u-grid-4 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .u-grid-2 > * + *,
+    .u-grid-3 > * + *,
+    .u-grid-4 > * + * {
+      border-top: 0;
+      border-left: 1px solid var(--color-border);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .u-grid-3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .u-grid-4 {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+}

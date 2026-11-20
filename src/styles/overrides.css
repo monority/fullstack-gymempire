@@ -1,0 +1,12 @@
+/**
+ * Couche `overrides` — exceptions explicites uniquement.
+ *
+ * Le markup injecté par `x-html` ne reçoit pas le hash scoped d'Astro :
+ * ses sélecteurs doivent être ciblés ici avec `:global()` commenté.
+ * Cette couche doit rester vide ou quasi-vide.
+ *
+ * ADR-006 — docs/adr/006-css-layers.md
+ */
+@layer overrides {
+  /* Aucune exception pour l'instant. */
+}

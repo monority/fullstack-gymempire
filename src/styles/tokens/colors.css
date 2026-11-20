@@ -8,6 +8,8 @@
     color-scheme: dark;
 
     /* Couleurs de base */
+    /* Voile des overlays, identique en dark et light */
+    --color-scrim: #000000;
     --color-bg: #080b0f;
     --color-surface: #0d1218;
     --color-surface-2: #131a22;

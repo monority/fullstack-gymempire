@@ -1,0 +1,49 @@
+/**
+ * Utility — typographie fonctionnelle.
+ * Couche : `utilities`. Remplace les ~126 `text-transform: uppercase`
+ * et ~61 `font-variant-numeric` dupliqués.
+ */
+@layer utilities {
+  /* Sur-titre / libellé de champ : Inter uppercase, mute, captions. */
+  .u-label {
+    color: var(--color-muted);
+    font-family: var(--font-body);
+    font-size: var(--text-caption);
+    font-weight: 700;
+    letter-spacing: var(--tracking-caption);
+    line-height: var(--leading-caption);
+    text-transform: uppercase;
+  }
+
+  /* Valeur de métrique : Archivo, chiffres tabulaires. */
+  .u-metric {
+    color: var(--color-text);
+    font-family: var(--font-display);
+    font-size: var(--text-metric);
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+    letter-spacing: var(--tracking-display);
+    line-height: var(--leading-display);
+  }
+
+  /* Unités et suffixes. */
+  .u-unit {
+    color: var(--color-muted);
+    font-family: var(--font-body);
+    font-size: var(--text-caption);
+    font-weight: 500;
+  }
+
+  /* Texte secondaire. */
+  .u-muted {
+    color: var(--color-muted);
+    font-size: var(--text-small);
+  }
+
+  /* Troncature sur une ligne. */
+  .u-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}

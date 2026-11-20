@@ -1,0 +1,22 @@
+/**
+ * Design tokens — espacements.
+ * Couche CSS : `tokens`. Aucun sélecteur, aucune valeur composite.
+ */
+@layer tokens {
+  :root {
+    /* Espacements (base 0.4rem = 4px avec html à 62.5%) */
+    --spacing-1: 0.4rem;
+    --spacing-2: 0.8rem;
+    --spacing-3: 1.2rem;
+    --spacing-4: 1.6rem;
+    --spacing-5: 2rem;
+    --spacing-6: 2.4rem;
+    --spacing-7: 2.8rem;
+    --spacing-8: 3.2rem;
+    --page-padding-desktop: 5.6rem;
+    --page-padding-tablet: 3.2rem;
+    --page-padding-mobile: 1.6rem;
+    --gap-card: 1.2rem;
+    --gap-section: 1.6rem;
+  }
+}

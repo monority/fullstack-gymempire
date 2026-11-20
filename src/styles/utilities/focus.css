@@ -1,0 +1,10 @@
+/**
+ * Utility — focus accessible.
+ * Couche : `utilities`. La règle globale `:focus-visible` vit dans `base/a11y.css`.
+ */
+@layer utilities {
+  .u-focus:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+  }
+}

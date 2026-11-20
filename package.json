@@ -20,6 +20,7 @@
     "check:contrast": "node scripts/check-contrast.mjs",
     "check:budget": "node scripts/check-budget.mjs",
     "check:components": "node scripts/check-components.mjs",
+    "check:css": "node scripts/check-css.mjs",
     "check:dead-code": "node scripts/dead-code.mjs",
     "screens": "node scripts/capture-screens.mjs",
     "test": "vitest run",

@@ -1,0 +1,16 @@
+/**
+ * Typographie de base — titres.
+ * Couche CSS : `base`. Deux voix : Archivo (display), Inter (UI).
+ */
+@layer base {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-display);
+    line-height: var(--leading-heading);
+    letter-spacing: var(--tracking-heading);
+  }
+}
