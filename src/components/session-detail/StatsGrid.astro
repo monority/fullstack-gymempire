@@ -4,21 +4,21 @@ import { icons } from '../../lib/icons';
 
 <div class="detail__stats-grid">
   <div class="detail__stat">
-    <div class="detail__stat-label">
+    <div class="detail__stat-label u-uppercase">
       <span class="detail__stat-icon" set:html={icons.clockStopwatch()} />
       <span x-text="labels.duration"></span>
     </div>
     <div class="detail__stat-value" x-text="formatDuration(session.duration)"></div>
   </div>
   <div class="detail__stat detail__stat--volume">
-    <div class="detail__stat-label">
+    <div class="detail__stat-label u-uppercase">
       <span class="detail__stat-icon" set:html={icons.volumeBox()} />
       <span x-text="labels.totalVolume"></span>
     </div>
     <div class="detail__stat-value" x-text="formatVolume(sessionTotalVolume)"></div>
   </div>
   <div class="detail__stat">
-    <div class="detail__stat-label">
+    <div class="detail__stat-label u-uppercase">
       <span class="detail__stat-icon" set:html={icons.list()} />
       <span x-text="labels.exercises"></span>
     </div>
@@ -56,7 +56,7 @@ import { icons } from '../../lib/icons';
     gap: 0.6rem;
     font-size: 1.1rem;
     color: var(--color-muted);
-    text-transform: uppercase;
+
     letter-spacing: 0.14em;
     font-weight: 700;
   }

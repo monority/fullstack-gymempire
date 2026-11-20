@@ -28,7 +28,7 @@ import { icons } from '../../lib/icons';
   </Button>
 
   <div class="detail__sheet" role="group">
-    <span class="detail__sheet-label" aria-hidden="true"></span>
+    <span class="detail__sheet-label u-uppercase" aria-hidden="true"></span>
 
     <Button variant="secondary" @click="downloadSessionCsv()" :aria-label="labels.downloadCsvAria">
       <Icon name="table" size={20} />
@@ -85,7 +85,7 @@ import { icons } from '../../lib/icons';
   .detail__sheet-label {
     font-size: 1.1rem;
     color: var(--color-muted);
-    text-transform: uppercase;
+
     letter-spacing: 0.14em;
     font-weight: 700;
     margin-right: 0.4rem;

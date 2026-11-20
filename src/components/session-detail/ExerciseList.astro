@@ -24,7 +24,7 @@ const L = t();
           <h3 class="exo-row__name" x-text="trExercise(ex.name)"></h3>
           <div class="exo-row__head-actions">
             <span
-              class="exo-row__superset"
+              class="exo-row__superset u-uppercase"
               :class="'exo-row__superset--g' + (supersetGroup(ex)?.color ?? 0)"
               :aria-label="supersetLabelFor(ex)"
               :title="supersetMembers(ex)"
@@ -45,29 +45,39 @@ const L = t();
 
         <div class="exo-row__stats">
           <div class="exo-row__stat">
-            <span class="exo-row__stat-label">{L.sessions.volume}</span>
+            <span class="exo-row__stat-label u-uppercase">{L.sessions.volume}</span>
             <span class="exo-row__stat-value" x-text="formatVolume(exerciseVolume(ex))"></span>
           </div>
           <div class="exo-row__stat">
-            <span class="exo-row__stat-label">{L.detail.best1RM}</span>
+            <span class="exo-row__stat-label u-uppercase">{L.detail.best1RM}</span>
             <span class="exo-row__stat-value" x-text="formatVolume(best1RM(ex))"></span>
           </div>
           <div class="exo-row__stat">
-            <span class="exo-row__stat-label">{L.detail.sets}</span>
+            <span class="exo-row__stat-label u-uppercase">{L.detail.sets}</span>
             <span class="exo-row__stat-value" x-text="ex.sets.length"></span>
           </div>
         </div>
 
         <div class="exo-row__table-wrap" x-show="ex.sets.length > 0">
           <table class="exo-row__table">
-            <thead>
+            <thead class="u-uppercase">
               <tr>
-                <th scope="col">#</th>
-                <th scope="col">{L.detail.colType}</th>
-                <th scope="col">{L.detail.colWeight}</th>
-                <th scope="col">{L.detail.colReps}</th>
-                <th scope="col">RPE</th>
-                <th scope="col" class="exo-row__th-end">
+                <th scope="col" class="u-uppercase">
+                  #
+                </th>
+                <th scope="col" class="u-uppercase">
+                  {L.detail.colType}
+                </th>
+                <th scope="col" class="u-uppercase">
+                  {L.detail.colWeight}
+                </th>
+                <th scope="col" class="u-uppercase">
+                  {L.detail.colReps}
+                </th>
+                <th scope="col" class="u-uppercase">
+                  RPE
+                </th>
+                <th scope="col" class="exo-row__th-end" class="u-uppercase">
                   {L.detail.statusLabel}
                 </th>
               </tr>
@@ -145,7 +155,7 @@ const L = t();
     border-radius: var(--radius-pill);
     font-size: 1.1rem;
     font-weight: 700;
-    text-transform: uppercase;
+
     letter-spacing: 0.04em;
   }
 
@@ -231,7 +241,7 @@ const L = t();
   .exo-row__stat-label {
     font-size: 1.1rem;
     color: var(--color-muted);
-    text-transform: uppercase;
+
     letter-spacing: 0.12em;
     font-weight: 700;
   }
@@ -257,7 +267,7 @@ const L = t();
     font-family: var(--font-display);
     font-size: 1.1rem;
     font-weight: 700;
-    text-transform: uppercase;
+
     letter-spacing: 0.14em;
     text-align: left;
     padding: 1.2rem 1.4rem;

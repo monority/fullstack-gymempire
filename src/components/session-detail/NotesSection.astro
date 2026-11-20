@@ -10,19 +10,19 @@ import Icon from '../ui/Icon.astro';
       <div class="notes">
         {/* RPE badge */}
         <div class="notes__item" x-show="session.rpe != null">
-          <div class="notes__label" x-text="labels.rpe"></div>
+          <div class="notes__label u-uppercase" x-text="labels.rpe"></div>
           <div class="notes__value">
             <span class="rpe-value" :class="'tone--' + rpeTone(session.rpe)">
               <span x-text="session.rpe"></span>
               <span class="rpe-value__sep">/10</span>
             </span>
-            <span class="notes__rpe-label" x-text="rpeLabel(session.rpe)"></span>
+            <span class="notes__rpe-label u-uppercase" x-text="rpeLabel(session.rpe)"></span>
           </div>
         </div>
 
         {/* Fatigue */}
         <div class="notes__item" x-show="session.fatigue && session.fatigue > 0">
-          <div class="notes__label" x-text="labels.fatigue"></div>
+          <div class="notes__label u-uppercase" x-text="labels.fatigue"></div>
           <div class="notes__value">
             <div class="notes__fatigue" aria-label="">
               <template x-for="i in 5" :key="'d-fat-' + i">
@@ -35,17 +35,20 @@ import Icon from '../ui/Icon.astro';
                 </span>
               </template>
             </div>
-            <span class="notes__fatigue-label" x-text="fatigueLabel(session.fatigue)"></span>
+            <span
+              class="notes__fatigue-label u-uppercase"
+              x-text="fatigueLabel(session.fatigue)"
+            ></span>
           </div>
         </div>
 
         {/* Mood */}
         <div class="notes__item" x-show="session.mood">
-          <div class="notes__label" x-text="labels.moodLabel"></div>
+          <div class="notes__label u-uppercase" x-text="labels.moodLabel"></div>
           <div class="notes__value">
             <span class="notes__mood" :class="'notes__mood--' + session.mood">
               <span class="notes__mood-icon" x-html="moodIcon(session.mood)"></span>
-              <span class="notes__mood-label" x-text="moodLabel(session.mood)"></span>
+              <span class="notes__mood-label u-uppercase" x-text="moodLabel(session.mood)"></span>
             </span>
           </div>
         </div>
@@ -55,7 +58,7 @@ import Icon from '../ui/Icon.astro';
           class="notes__item notes__item--text"
           x-show="session.notes && session.notes.trim() !== ''"
         >
-          <div class="notes__label" x-text="labels.notes"></div>
+          <div class="notes__label u-uppercase" x-text="labels.notes"></div>
           <p class="notes__text" x-text="session.notes"></p>
         </div>
       </div>
@@ -197,7 +200,7 @@ import Icon from '../ui/Icon.astro';
   .notes__label {
     font-size: 1.1rem;
     color: var(--color-muted);
-    text-transform: uppercase;
+
     letter-spacing: 0.14em;
     font-weight: 700;
   }
@@ -214,7 +217,7 @@ import Icon from '../ui/Icon.astro';
     font-family: var(--font-display);
     font-size: 1.3rem;
     font-weight: 700;
-    text-transform: uppercase;
+
     letter-spacing: 0.1em;
     color: var(--color-muted);
   }
@@ -247,7 +250,7 @@ import Icon from '../ui/Icon.astro';
     font-family: var(--font-display);
     font-size: 1.3rem;
     font-weight: 700;
-    text-transform: uppercase;
+
     letter-spacing: 0.1em;
     color: var(--color-muted);
   }
@@ -279,7 +282,7 @@ import Icon from '../ui/Icon.astro';
     font-family: var(--font-display);
     font-size: 1.3rem;
     font-weight: 700;
-    text-transform: uppercase;
+
     letter-spacing: 0.1em;
     color: var(--color-text);
   }
