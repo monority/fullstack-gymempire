@@ -1,0 +1,113 @@
+---
+/**
+ * RecordsSummary — les 3 métriques de la page Records.
+ * Même motif que StatsSummary / HistoryStats : registre typé + StatCard.
+ */
+import type { Dictionary } from '../../i18n/types';
+import StatCard from '../ui/StatCard.astro';
+
+interface Props {
+  labels: Dictionary['records'];
+  common: Dictionary['common'];
+}
+const { labels, common } = Astro.props;
+
+const metrics = [
+  {
+    key: 'best1RMGlobal',
+    label: labels.best1RMGlobal,
+    value: 'formatNumber(bestOverall1RM)',
+    unit: common.kg,
+    foot: `bestOverallExercise ? labels.on + bestOverallExercise : '—'`,
+    hero: true,
+  },
+  {
+    key: 'totalPRs',
+    label: labels.totalPRs,
+    value: 'totalPRs',
+    unit: 'PR',
+    foot: `totalPRs > 1 ? labels.exercisesTracked : labels.exerciseTracked`,
+    hero: false,
+  },
+  {
+    key: 'recentPRs',
+    label: labels.recentPRs,
+    value: 'recentPRs',
+    unit: 'PR',
+    foot: labels.since30Days,
+    hero: false,
+  },
+] as const;
+---
+
+<div class="records-summary">
+  {metrics.map((metric) => (
+    <StatCard label={metric.label} hero={metric.hero}>
+      <div slot="value" class="records-summary__value">
+        <span class="stat-card__value records-summary__number" x-text={metric.value} />
+        <span class="records-summary__unit">{metric.unit}</span>
+      </div>
+      <span slot="date" class="records-summary__foot" x-text={metric.foot} />
+    </StatCard>
+  ))}
+</div>
+
+<style>
+  .records-summary {
+    display: grid;
+    grid-template-columns: 1fr;
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .records-summary > :global(.stat-card) {
+    min-width: 0;
+    padding: 2rem 1.6rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .records-summary > :global(.stat-card:last-child) {
+    border-bottom: 0;
+  }
+
+  @media (min-width: 768px) {
+    .records-summary {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .records-summary > :global(.stat-card) {
+      border-bottom: 0;
+    }
+
+    .records-summary > :global(.stat-card + .stat-card) {
+      border-left: 1px solid var(--color-border);
+    }
+  }
+
+  .records-summary__value {
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+  }
+
+  .records-summary__number {
+    color: var(--color-text);
+    font-family: var(--font-display);
+    font-size: var(--text-metric);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    line-height: var(--leading-display);
+    letter-spacing: var(--tracking-display);
+  }
+
+  .records-summary__unit {
+    color: var(--color-muted);
+    font-family: var(--font-body);
+    font-size: var(--text-small);
+  }
+
+  .records-summary__foot {
+    color: var(--color-muted);
+    font-size: var(--text-small);
+  }
+</style>

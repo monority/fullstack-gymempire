@@ -1,5 +1,6 @@
 ---
 import { t, localizedPath } from '../../i18n';
+import StatsSummary from '../../components/progression/StatsSummary.astro';
 import AppLayout from '../../layouts/AppLayout.astro';
 import PageHeader from '../../components/layout/PageHeader.astro';
 import Card from '../../components/ui/Card.astro';
@@ -23,49 +24,7 @@ const L = t();
     </div>
 
     <div class="stats__content" x-show="hasCompletedSessions" x-cloak>
-      <div class="stats__summary">
-        <div class="stats__sum">
-          <span class="stats__sum-label">{L.stats.volumeTotal}</span>
-          <div class="stats__sum-value-row">
-            <span class="stats__sum-value" x-text="formatNumber(totalVolume12w)"></span>
-            <span class="stats__sum-unit">{L.common.kg}</span>
-          </div>
-          <span
-            class="stats__sum-foot"
-            x-text="sessions12w + ' ' + labels.sessionSingular + (sessions12w > 1 ? 's' : '') + ' ' + labels.completed"
-          ></span>
-        </div>
-
-        <div class="stats__sum">
-          <span class="stats__sum-label">{L.stats.sessions12w}</span>
-          <div class="stats__sum-value-row">
-            <span class="stats__sum-value" x-text="sessions12w"></span>
-          </div>
-          <span class="stats__sum-foot">{L.stats.completed}</span>
-        </div>
-
-        <div class="stats__sum">
-          <span class="stats__sum-label">{L.stats.avgDuration}</span>
-          <div class="stats__sum-value-row">
-            <span class="stats__sum-value" x-text="formatDuration(avgDuration)"></span>
-          </div>
-          <span
-            class="stats__sum-foot"
-            x-text="durationSessionCount > 0 ? labels.on + durationSessionCount + ' ' + labels.sessionSingular + (durationSessionCount > 1 ? 's' : '') : labels.noTimed"
-          ></span>
-        </div>
-
-        <div class="stats__sum">
-          <span class="stats__sum-label">{L.stats.regularity}</span>
-          <div class="stats__sum-value-row">
-            <span class="stats__sum-value" x-text="consistencyPct + '%'"></span>
-          </div>
-          <span
-            class="stats__sum-foot"
-            x-text="activeWeeks + ' ' + (activeWeeks > 1 ? labels.activeWeeks : labels.activeWeek) + ' / 12'"
-          ></span>
-        </div>
-      </div>
+      <StatsSummary labels={L.stats} common={L.common} />
 
       <Card>
         <PanelHeader title={L.stats.volumeChart} meta={L.stats.last12wKg} />
@@ -203,84 +162,6 @@ const L = t();
     display: flex;
     flex-direction: column;
     gap: 0;
-  }
-
-  .stats__summary {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0;
-    border-top: 1px solid var(--color-border);
-    border-bottom: 1px solid var(--color-border);
-  }
-
-  @media (min-width: 768px) {
-    .stats__summary {
-      grid-template-columns: repeat(4, 1fr);
-    }
-  }
-
-  .stats__sum {
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-    min-width: 0;
-    padding: 2rem 1.6rem;
-    background-color: transparent;
-    border: 0;
-    border-bottom: 1px solid var(--color-border);
-    border-radius: 0;
-  }
-
-  @media (max-width: 767px) {
-    .stats__sum:nth-child(even) {
-      border-left: 1px solid var(--color-border);
-    }
-  }
-
-  @media (min-width: 768px) {
-    .stats__sum {
-      border-bottom: 0;
-    }
-
-    .stats__sum + .stats__sum {
-      border-left: 1px solid var(--color-border);
-    }
-  }
-
-  .stats__sum-label {
-    color: var(--color-muted);
-    font-size: var(--text-caption);
-    font-weight: 700;
-    letter-spacing: var(--tracking-caption);
-    text-transform: uppercase;
-  }
-
-  .stats__sum-value-row {
-    display: flex;
-    align-items: baseline;
-    gap: 0.25rem;
-  }
-
-  .stats__sum-value {
-    color: var(--color-text);
-    font-family: var(--font-display);
-    font-size: var(--text-metric);
-    font-weight: 700;
-    font-variant-numeric: tabular-nums;
-    line-height: var(--leading-display);
-    letter-spacing: var(--tracking-display);
-  }
-
-  .stats__sum-unit {
-    color: var(--color-muted);
-    font-family: var(--font-body);
-    font-size: var(--text-small);
-    font-weight: 500;
-  }
-
-  .stats__sum-foot {
-    color: var(--color-muted);
-    font-size: var(--text-small);
   }
 
   .stats__chart-wrap {

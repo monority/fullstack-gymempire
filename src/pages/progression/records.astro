@@ -4,6 +4,7 @@ import AppLayout from '../../layouts/AppLayout.astro';
 import PageHeader from '../../components/layout/PageHeader.astro';
 import Badge from '../../components/ui/Badge.astro';
 import EmptyState from '../../components/ui/EmptyState.astro';
+import RecordsSummary from '../../components/progression/RecordsSummary.astro';
 import { icons } from '../../lib/icons';
 const L = t();
 ---
@@ -13,40 +14,7 @@ const L = t();
 
   <div class="rec" x-data="recordsApp()" x-init="init()" x-cloak>
     <template x-if="totalPRs > 0 || hasData">
-      <div class="rec__stats">
-        <div class="rec__stat rec__stat--hero">
-          <span class="rec__stat-label">{L.records.best1RMGlobal}</span>
-          <div class="rec__stat-value-row">
-            <span class="rec__stat-value text-display" x-text="formatNumber(bestOverall1RM)"></span>
-            <span class="rec__stat-unit">{L.common.kg}</span>
-          </div>
-          <span
-            class="rec__stat-foot"
-            x-text="bestOverallExercise ? labels.on + bestOverallExercise : '—'"
-          ></span>
-        </div>
-
-        <div class="rec__stat">
-          <span class="rec__stat-label">{L.records.totalPRs}</span>
-          <div class="rec__stat-value-row">
-            <span class="rec__stat-value text-display" x-text="totalPRs"></span>
-            <span class="rec__stat-unit">PR</span>
-          </div>
-          <span
-            class="rec__stat-foot"
-            x-text="totalPRs > 1 ? labels.exercisesTracked : labels.exerciseTracked"
-          ></span>
-        </div>
-
-        <div class="rec__stat">
-          <span class="rec__stat-label">{L.records.recentPRs}</span>
-          <div class="rec__stat-value-row">
-            <span class="rec__stat-value text-display" x-text="recentPRs"></span>
-            <span class="rec__stat-unit">PR</span>
-          </div>
-          <span class="rec__stat-foot">{L.records.since30Days}</span>
-        </div>
-      </div>
+      <RecordsSummary labels={L.records} common={L.common} />
     </template>
 
     <template x-if="allRecords.length > 0">
@@ -217,57 +185,6 @@ const L = t();
     display: flex;
     flex-direction: column;
     gap: 1rem;
-  }
-
-  .rec__stats {
-    display: grid;
-    grid-template-columns: repeat(1, 1fr);
-    gap: 0.75rem;
-  }
-
-  .rec__stat {
-    display: flex;
-    flex-direction: column;
-    gap: 0.375rem;
-    min-width: 0;
-    padding-left: 1rem;
-    padding-right: 1rem;
-    padding-top: 1.6rem;
-    padding-bottom: 1.6rem;
-    background-color: transparent;
-    border-width: 0;
-    border-bottom-width: 1px;
-    border-bottom-style: solid;
-    border-bottom-color: var(--color-border);
-    border-radius: 0;
-  }
-
-  .rec__stat-label {
-    font-size: 0.875rem;
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-    color: var(--color-muted);
-    font-weight: 700;
-  }
-
-  .rec__stat-value-row {
-    display: flex;
-    align-items: baseline;
-    gap: 0.25rem;
-  }
-
-  .rec__stat-value {
-    font-size: 2.6rem;
-    font-weight: 700;
-    color: var(--color-text);
-    font-variant-numeric: tabular-nums;
-    line-height: 1.1;
-  }
-
-  .rec__stat-foot {
-    font-size: 1.1rem;
-    color: var(--color-muted);
-    text-transform: capitalize;
   }
 
   .rec__toolbar {
@@ -490,23 +407,6 @@ const L = t();
     border-bottom-color: var(--color-border);
   }
 
-  @media (min-width: 640px) {
-    .rec__stats {
-      grid-template-columns: 1.4fr 0.8fr 0.8fr;
-      gap: 0;
-      border-top: 1px solid var(--color-border);
-      border-bottom: 1px solid var(--color-border);
-    }
-
-    .rec__stat {
-      border-bottom: 0;
-    }
-
-    .rec__stat + .rec__stat {
-      border-left: 1px solid var(--color-border);
-    }
-  }
-
   .rec__search-input::placeholder {
     color: var(--color-muted);
   }
@@ -545,11 +445,6 @@ const L = t();
     transform: translateX(2px);
   }
 
-  .rec__stat--hero .rec__stat-value {
-    font-size: 3rem;
-    color: var(--color-accent);
-  }
-
   .rec__card-stat--hero .rec__card-stat-value {
     color: var(--color-accent);
   }
@@ -586,21 +481,6 @@ const L = t();
     .rec__card-stats {
       grid-template-columns: repeat(2, 1fr);
       gap: 0.6rem 1.2rem;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .rec__stat-value {
-      font-size: 2.2rem;
-    }
-    .rec__stat--hero .rec__stat-value {
-      font-size: 2.6rem;
-    }
-    .rec__card-name {
-      font-size: 1.5rem;
-    }
-    .rec__card-stat-value {
-      font-size: 1.3rem;
     }
   }
 </style>

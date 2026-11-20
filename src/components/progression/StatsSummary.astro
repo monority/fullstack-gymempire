@@ -1,0 +1,120 @@
+---
+/**
+ * StatsSummary — les 4 métriques de synthèse de la page Statistiques.
+ * Markup data-driven : une définition par métrique, zéro copier-coller.
+ */
+import type { Dictionary } from '../../i18n/types';
+import StatCard from '../ui/StatCard.astro';
+
+interface Props {
+  labels: Dictionary['stats'];
+  common: Dictionary['common'];
+}
+const { labels, common } = Astro.props;
+
+const metrics = [
+  {
+    key: 'volumeTotal',
+    label: labels.volumeTotal,
+    value: 'formatNumber(totalVolume12w)',
+    unit: common.kg,
+    foot: `sessions12w + ' ' + labels.sessionSingular + (sessions12w > 1 ? 's' : '') + ' ' + labels.completed`,
+  },
+  {
+    key: 'sessions12w',
+    label: labels.sessions12w,
+    value: 'sessions12w',
+    unit: '',
+    foot: `labels.completed`,
+  },
+  {
+    key: 'avgDuration',
+    label: labels.avgDuration,
+    value: 'formatDuration(avgDuration)',
+    unit: '',
+    foot: `durationSessionCount > 0 ? labels.on + durationSessionCount + ' ' + labels.sessionSingular + (durationSessionCount > 1 ? 's' : '') : labels.noTimed`,
+  },
+  {
+    key: 'regularity',
+    label: labels.regularity,
+    value: "consistencyPct + '%'",
+    unit: '',
+    foot: `activeWeeks + ' ' + (activeWeeks > 1 ? labels.activeWeeks : labels.activeWeek) + ' / 12'`,
+  },
+] as const;
+---
+
+<div class="stats-summary">
+  {metrics.map((metric) => (
+    <StatCard label={metric.label}>
+      <div slot="value" class="stats-summary__value">
+        <span class="stat-card__value stats-summary__number" x-text={metric.value} />
+        {metric.unit && <span class="stats-summary__unit">{metric.unit}</span>}
+      </div>
+      <span slot="date" class="stats-summary__foot" x-text={metric.foot} />
+    </StatCard>
+  ))}
+</div>
+
+<style>
+  .stats-summary {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .stats-summary > :global(.stat-card) {
+    min-width: 0;
+    padding: 2rem 1.6rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  @media (min-width: 768px) {
+    .stats-summary {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .stats-summary > :global(.stat-card) {
+      border-bottom: 0;
+    }
+
+    .stats-summary > :global(.stat-card + .stat-card) {
+      border-left: 1px solid var(--color-border);
+    }
+  }
+
+  @media (max-width: 767px) {
+    .stats-summary > :global(.stat-card:nth-child(even)) {
+      border-left: 1px solid var(--color-border);
+    }
+  }
+
+  .stats-summary__value {
+    display: flex;
+    align-items: baseline;
+    gap: 0.25rem;
+  }
+
+  .stats-summary__number {
+    color: var(--color-text);
+    font-family: var(--font-display);
+    font-size: var(--text-metric);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    line-height: var(--leading-display);
+    letter-spacing: var(--tracking-display);
+  }
+
+  .stats-summary__unit {
+    color: var(--color-muted);
+    font-family: var(--font-body);
+    font-size: var(--text-small);
+    font-weight: 500;
+  }
+
+  .stats-summary__foot {
+    color: var(--color-muted);
+    font-size: var(--text-small);
+  }
+</style>

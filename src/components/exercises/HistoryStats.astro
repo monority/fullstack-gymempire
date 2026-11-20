@@ -57,7 +57,7 @@ const stats = [
   {stats.map((stat) => (
     <StatCard label={stat.label} icon={stat.icon} hero={stat.hero}>
       <div slot="value" class="hist-stats__value">
-        <span class="hist-stats__number" x-text={stat.value} />
+        <span class="stat-card__value hist-stats__number" x-text={stat.value} />
         <span class="hist-stats__unit">{stat.unit}</span>
       </div>
       <span slot="date" class="hist-stats__date" x-text={stat.date} />
