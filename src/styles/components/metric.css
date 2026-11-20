@@ -1,0 +1,32 @@
+/**
+ * Objet composant — métriques.
+ * Couche : `components`.
+ */
+@layer components {
+  .stat-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    min-width: 0;
+  }
+
+  .stat-card__head {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    min-width: 0;
+  }
+
+  .stat-card__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    color: var(--color-muted);
+  }
+
+  .stat-card__icon svg {
+    width: 1.6rem;
+    height: 1.6rem;
+  }
+}

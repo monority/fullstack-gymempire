@@ -34,33 +34,7 @@ const {
 </Tag>
 
 <style>
-  .stat-card {
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-    min-width: 0;
-  }
-
-  .stat-card__head {
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    min-width: 0;
-  }
-
-  .stat-card__icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex: 0 0 auto;
-    color: var(--color-muted);
-  }
-
-  .stat-card__icon :global(svg) {
-    width: 1.6rem;
-    height: 1.6rem;
-  }
-
+  /* Règle héros : doit rester non layerée pour battre les styles locaux des pages. */
   .stat-card--hero :global(.stat-card__value) {
     color: var(--color-accent);
   }

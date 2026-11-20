@@ -39,6 +39,7 @@
 @import './components/table.css';
 @import './components/field.css';
 @import './components/dialog.css';
+@import './components/metric.css';
 @import './components/feedback.css';
 @import './components/controls.css';
 @import './components/layout-ui.css';
