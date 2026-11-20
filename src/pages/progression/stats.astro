@@ -1,6 +1,7 @@
 ---
 import { t, localizedPath } from '../../i18n';
-import StatsSummary from '../../components/progression/StatsSummary.astro';
+import MetricGrid from '../../components/ui/MetricGrid.astro';
+import { buildStatsMetrics } from '../../components/progression/metric-definitions';
 import AppLayout from '../../layouts/AppLayout.astro';
 import PageHeader from '../../components/layout/PageHeader.astro';
 import Card from '../../components/ui/Card.astro';
@@ -24,7 +25,7 @@ const L = t();
     </div>
 
     <div class="stats__content" x-show="hasCompletedSessions" x-cloak>
-      <StatsSummary labels={L.stats} common={L.common} />
+      <MetricGrid prefix="stats-summary" metrics={buildStatsMetrics(L)} />
 
       <Card>
         <PanelHeader title={L.stats.volumeChart} meta={L.stats.last12wKg} />

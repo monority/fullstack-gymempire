@@ -1,0 +1,34 @@
+---
+/**
+ * MetricGrid — grille générique de métriques (ADR-009).
+ * Un seul composant pour History / Stats / Records : le registre de
+ * définitions est passé en props, les classes restent préfixées pour
+ * préserver les styles existants.
+ */
+import StatCard from './StatCard.astro';
+import type { MetricDefinition } from '../../lib/metric-types';
+
+interface Props {
+  prefix: string;
+  metrics: readonly MetricDefinition[];
+  footClass?: string;
+  class?: string;
+}
+const { prefix, metrics, footClass, class: className = '' } = Astro.props;
+const resolvedFootClass = footClass ?? `${prefix}__foot`;
+---
+
+<div class:list={[prefix, className]}>
+  {metrics.map((metric) => (
+    <StatCard label={metric.label} icon={metric.icon} hero={metric.hero}>
+      <div slot="value" class={`${prefix}__value`}>
+        <span
+          class:list={['stat-card__value', `${prefix}__number`, 'u-tabular']}
+          x-text={metric.value}
+        />
+        {metric.unit && <span class={`${prefix}__unit`}>{metric.unit}</span>}
+      </div>
+      <span slot="date" class={resolvedFootClass} x-text={metric.foot} />
+    </StatCard>
+  ))}
+</div>

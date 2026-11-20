@@ -4,7 +4,8 @@ import AppLayout from '../../layouts/AppLayout.astro';
 import PageHeader from '../../components/layout/PageHeader.astro';
 import Badge from '../../components/ui/Badge.astro';
 import EmptyState from '../../components/ui/EmptyState.astro';
-import RecordsSummary from '../../components/progression/RecordsSummary.astro';
+import MetricGrid from '../../components/ui/MetricGrid.astro';
+import { buildRecordsMetrics } from '../../components/progression/metric-definitions';
 const L = t();
 import Icon from '../../components/ui/Icon.astro';
 ---
@@ -14,7 +15,7 @@ import Icon from '../../components/ui/Icon.astro';
 
   <div class="rec" x-data="recordsApp()" x-init="init()" x-cloak>
     <template x-if="totalPRs > 0 || hasData">
-      <RecordsSummary labels={L.records} common={L.common} />
+      <MetricGrid prefix="records-summary" metrics={buildRecordsMetrics(L)} />
     </template>
 
     <template x-if="allRecords.length > 0">

@@ -6,7 +6,8 @@ import Badge from '../../components/ui/Badge.astro';
 import Card from '../../components/ui/Card.astro';
 import EmptyState from '../../components/ui/EmptyState.astro';
 import BackLink from '../../components/ui/BackLink.astro';
-import HistoryStats from '../../components/exercises/HistoryStats.astro';
+import MetricGrid from '../../components/ui/MetricGrid.astro';
+import { buildHistoryMetrics } from '../../components/progression/metric-definitions';
 const L = t();
 import Icon from '../../components/ui/Icon.astro';
 ---
@@ -127,7 +128,11 @@ import Icon from '../../components/ui/Icon.astro';
           </div>
         </Card>
 
-        <HistoryStats labels={L.historique} />
+        <MetricGrid
+          prefix="hist-stats"
+          footClass="hist-stats__date"
+          metrics={buildHistoryMetrics(L)}
+        />
 
         {/* ── History table ── */}
         <section class="hist__table-section">
