@@ -78,8 +78,7 @@ src/styles/
 │   ├── table.css           # Table + TableHead/Body/Row/Cell
 │   ├── metric.css          # valeur de métrique (Archivo, tabular)
 │   ├── panel.css           # en-tête + contenu de panneau
-│   ├── stepper.css
-│   └── avatar.css
+│   └── stepper.css
 ├── utilities/
 │   ├── surface.css         # .u-surface, .u-surface-raised, .u-hairline
 │   ├── typography.css      # .u-label, .u-metric, .u-muted, .u-truncate
@@ -130,20 +129,20 @@ restent **locales** aux composants et ne sont jamais référencées depuis `glob
 
 ## 4. Cibles chiffrées (KPI v3)
 
-| KPI                                              |        Baseline |                Cible | Outil                  |
-| ------------------------------------------------ | --------------: | -------------------: | ---------------------- |
-| Lignes CSS `<style>` + global                    |          13 823 |          **≤ 6 000** | `check-css.mjs`        |
-| `uppercase` hors `u-label`                       |             126 |              **≤ 5** | `check-css.mjs`        |
-| border hairline hors `u-surface`                 |              85 |             **≤ 15** | `check-css.mjs`        |
-| `tabular-nums` hors `c-metric`                   |              61 |              **≤ 5** | `check-css.mjs`        |
-| `:focus-visible` hors `base`                     |              48 |              **≤ 5** | `check-css.mjs`        |
-| `border-radius: var(--radius-md)`                |              47 |             **≤ 10** | `check-css.mjs`        |
-| Littéraux de couleur hors tokens                 | 121 (whitelist) |             **≤ 30** | `check-colors.mjs`     |
-| Blocs `<style>` > 80 lignes                      |              14 |                **0** | `check-components.mjs` |
-| Pages > 1 000 lignes (hors `ui`)                 |               2 |                **0** | `wc -l`                |
-| Composants de synthèse                           |               4 | **1** (`MetricGrid`) | inventaire             |
-| Couverture de tokens (`var(--…)` / déclarations) |           ~70 % |           **≥ 95 %** | `check-css.mjs`        |
-| Tests / e2e                                      |        660 / 14 |         ≥ 660 / ≥ 14 | CI                     |
+| KPI                                      |        Baseline |                Cible | Outil                  |
+| ---------------------------------------- | --------------: | -------------------: | ---------------------- |
+| Lignes CSS `<style>` + global            |          13 823 |          **≤ 6 000** | `check-css.mjs`        |
+| `uppercase` hors `u-label`               |             126 |              **≤ 5** | `check-css.mjs`        |
+| border hairline hors `u-surface`         |              85 |             **≤ 15** | `check-css.mjs`        |
+| `tabular-nums` hors `c-metric`           |              61 |              **≤ 5** | `check-css.mjs`        |
+| `:focus-visible` hors `base`             |              48 |              **≤ 5** | `check-css.mjs`        |
+| `border-radius: var(--radius-md)`        |              47 |             **≤ 10** | `check-css.mjs`        |
+| Littéraux de couleur hors tokens         | 121 (whitelist) |             **≤ 30** | `check-colors.mjs`     |
+| Blocs `<style>` > 80 lignes              | **45** (sur 92) |                **0** | `check-components.mjs` |
+| Pages > 1 000 lignes (hors `ui`)         |               2 |                **0** | `wc -l`                |
+| Composants de synthèse                   |               4 | **1** (`MetricGrid`) | inventaire             |
+| Valeurs de design littérales hors tokens |         **737** |             **≤ 50** | `check-css.mjs`        |
+| Tests / e2e                              |        660 / 14 |         ≥ 660 / ≥ 14 | CI                     |
 
 ---
 
