@@ -1,0 +1,375 @@
+---
+import { t } from '../../i18n';
+import Badge from '../ui/Badge.astro';
+const L = t();
+
+interface Props {
+  expr: string;
+  exExpr: string;
+  badge: string;
+  ariaLabel: string;
+  accent?: boolean;
+}
+const { expr, exExpr, badge, ariaLabel, accent = false } = Astro.props;
+---
+
+<section class="comp__session-col" aria-label={ariaLabel}>
+  <header class="comp__session-header">
+    <span class:list={['comp__session-badge', accent && 'comp__session-badge--accent']}>
+      {badge}
+    </span>
+    <h3 class="comp__session-name" x-text={`${expr}.name`}></h3>
+    <div class="comp__session-meta">
+      <span
+        class="comp__status"
+        :class={`'comp__status--' + ${expr}.status`}
+        x-text={`statusLabel(${expr}.status)`}
+      ></span>
+      <span class="comp__session-date" x-text={`formatDate(${expr}.date)`}></span>
+    </div>
+    <div class="comp__session-stats">
+      <div class="comp__stat">
+        <span class="comp__stat-label">{L.comparer.duration}</span>
+        <span class="comp__stat-value" x-text={`formatDuration(${expr}.duration)`}></span>
+      </div>
+      <div class="comp__stat">
+        <span class="comp__stat-label">{L.sessions.volume}</span>
+        <span class="comp__stat-value" x-text={`formatVolume(totalVolume(${expr}))`}></span>
+      </div>
+    </div>
+  </header>
+
+  <div class="comp__exercises">
+    <template x-if="unionExercises.length === 0">
+      <p class="comp__no-exercises">{L.comparer.noExercises}</p>
+    </template>
+
+    <template x-for="item in unionExercises" :key="item.exerciseId">
+      <article class="comp__exo" :class={`{ 'comp__exo--missing': !item.${exExpr} }`}>
+        <header class="comp__exo-header">
+          <div class="comp__exo-info">
+            <h4 class="comp__exo-name" x-text="trExercise(item.name)"></h4>
+            <Badge
+              variant="category"
+              size="sm"
+              :class="'badge--cat-' + muscleHue(item.muscle)"
+              class="comp__exo-badge"
+              x-text="trMuscle(item.muscle)"
+            />
+          </div>
+          <div class="comp__exo-volume" x-show={`item.${exExpr}`}>
+            <span class="comp__stat-label">{L.sessions.volume}</span>
+            <span
+              class="comp__exo-volume-value"
+              x-text={`formatVolume(exerciseVolume(item.${exExpr}))`}
+            ></span>
+          </div>
+          <div class="comp__exo-missing" x-show={`!item.${exExpr}`}>
+            <span>{L.comparer.notPerformed}</span>
+          </div>
+        </header>
+
+        <div class="comp__exo-table" x-show={`item.${exExpr}`}>
+          <div class="comp__exo-thead">
+            <div class="comp__exo-th">#</div>
+            <div class="comp__exo-th">{L.builder.type}</div>
+            <div class="comp__exo-th">{L.common.weight}</div>
+            <div class="comp__exo-th">{L.common.reps}</div>
+            <div class="comp__exo-th comp__exo-th--end">{L.sessions.volume}</div>
+          </div>
+          <template
+            x-for={`set in (item.${exExpr} ? item.${exExpr}.sets : [])`}
+            :key="set.setNumber"
+          >
+            <div class="comp__exo-row" :class="{ 'is-completed': set.completed }">
+              <div class="comp__exo-td comp__exo-td--num" x-text="set.setNumber"></div>
+              <div class="comp__exo-td">
+                <span
+                  class="type-pill"
+                  :class="'type-pill--' + set.type"
+                  x-text="typeLabel(set.type)"
+                ></span>
+              </div>
+              <div class="comp__exo-td" x-text="formatWeight(set.weight)"></div>
+              <div class="comp__exo-td" x-text="set.reps"></div>
+              <div
+                class="comp__exo-td comp__exo-td--end"
+                x-text="formatVolume(set.weight * set.reps)"
+              ></div>
+            </div>
+          </template>
+        </div>
+      </article>
+    </template>
+  </div>
+</section>
+
+<style>
+  .comp__session-col {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
+    padding: var(--spacing-4);
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+  }
+
+  .comp__session-header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+    padding-bottom: var(--spacing-3);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .comp__session-badge {
+    display: inline-flex;
+    align-items: center;
+    align-self: flex-start;
+    height: 2.4rem;
+    padding: 0 1rem;
+    background-color: var(--alpha-bg-soft);
+    border: 1px solid var(--color-border);
+    border-radius: 9999px;
+    color: var(--color-muted);
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .comp__session-badge--accent {
+    background-color: color-mix(in srgb, var(--color-accent) 12%, transparent);
+    border-color: color-mix(in srgb, var(--color-accent) 30%, transparent);
+    color: var(--color-accent);
+  }
+
+  .comp__session-name {
+    font-family: var(--font-display);
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--color-text);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    word-break: break-word;
+    margin: 0;
+  }
+
+  .comp__session-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    flex-wrap: wrap;
+  }
+
+  .comp__session-date {
+    font-size: 1.2rem;
+    color: var(--color-muted);
+    line-height: 1.3;
+  }
+
+  .comp__session-stats {
+    display: flex;
+    gap: var(--spacing-4);
+    padding-top: var(--spacing-1);
+    flex-wrap: wrap;
+  }
+
+  /* ── Status badge ── */
+  .comp__status {
+    display: inline-flex;
+    align-items: center;
+    height: 2.4rem;
+    padding: 0 1rem;
+    border-radius: var(--radius-pill);
+    font-family: var(--font-body);
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    line-height: 1;
+    text-transform: uppercase;
+    flex-shrink: 0;
+  }
+
+  .comp__status--completed {
+    background-color: color-mix(in srgb, var(--color-success) 12%, transparent);
+    color: var(--color-success);
+    border: 1px solid color-mix(in srgb, var(--color-success) 30%, transparent);
+  }
+
+  .comp__status--in-progress {
+    background-color: color-mix(in srgb, var(--color-info) 12%, transparent);
+    color: var(--color-info);
+    border: 1px solid color-mix(in srgb, var(--color-info) 30%, transparent);
+  }
+
+  .comp__status--planned {
+    background-color: var(--alpha-bg-soft);
+    color: var(--color-muted);
+    border: 1px solid var(--color-border);
+  }
+
+  /* ── Exercise card ── */
+  .comp__exo {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+    padding: var(--spacing-3);
+    background-color: var(--color-surface-2);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+  }
+
+  .comp__exo--missing {
+    background-color: var(--alpha-bg-subtle);
+    border-style: dashed;
+  }
+
+  .comp__exo-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--spacing-3);
+    flex-wrap: wrap;
+  }
+
+  .comp__exo-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  .comp__exo-name {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-text);
+    line-height: 1.2;
+    word-break: break-word;
+    margin: 0;
+  }
+
+  .comp__exo-badge {
+    align-self: flex-start;
+  }
+
+  .comp__exo-volume {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.2rem;
+    flex-shrink: 0;
+  }
+
+  .comp__exo-volume-value {
+    font-family: var(--font-display);
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: var(--color-accent);
+    font-variant-numeric: tabular-nums;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+  }
+
+  .comp__exo-missing {
+    display: inline-flex;
+    align-items: center;
+    height: 3rem;
+    padding: 0 1.2rem;
+    background-color: var(--alpha-bg-subtle);
+    border: 1px dashed var(--color-border);
+    border-radius: 9999px;
+    color: var(--color-muted);
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    flex-shrink: 0;
+  }
+
+  /* ── Exercise table ── */
+  .comp__exo-table {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    background-color: var(--color-surface-3);
+  }
+
+  .comp__exo-thead,
+  .comp__exo-row {
+    display: grid;
+    grid-template-columns: 3.4rem minmax(0, 1.2fr) minmax(0, 0.9fr) minmax(0, 0.7fr) minmax(
+        0,
+        1.1fr
+      );
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0 1rem;
+  }
+
+  .comp__exo-thead {
+    height: 3.4rem;
+    background-color: var(--color-surface);
+    font-size: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-muted);
+  }
+
+  .comp__exo-th {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+  }
+
+  .comp__exo-th--end {
+    justify-content: flex-end;
+  }
+
+  .comp__exo-row {
+    min-height: 3.8rem;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .comp__exo-row.is-completed {
+    color: var(--color-text);
+  }
+
+  .comp__exo-td {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--color-text);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .comp__exo-td--num {
+    justify-content: center;
+  }
+
+  .comp__exo-td--end {
+    justify-content: flex-end;
+  }
+
+  @media (max-width: 400px) {
+    .comp__exo-thead,
+    .comp__exo-row {
+      grid-template-columns: 2.6rem minmax(0, 1.1fr) minmax(0, 0.9fr) minmax(0, 0.7fr);
+    }
+    .comp__exo-thead > :last-child,
+    .comp__exo-row > :last-child {
+      display: none;
+    }
+  }
+</style>
