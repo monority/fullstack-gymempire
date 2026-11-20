@@ -22,8 +22,8 @@ const wrapperClasses = ['overflow-x-auto', className].filter(Boolean).join(' ');
   </table>
 </div>
 
-<style is:global>
-  [data-ui-table] thead th {
+<style>
+  :global([data-ui-table] thead th) {
     text-align: left;
     font-size: 1.1rem;
     line-height: 1.4rem;
