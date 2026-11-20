@@ -36,6 +36,12 @@
 @import './components/badge.css';
 @import './components/card.css';
 @import './components/avatar.css';
+@import './components/table.css';
+@import './components/field.css';
+@import './components/dialog.css';
+@import './components/feedback.css';
+@import './components/controls.css';
+@import './components/layout-ui.css';
 @import './components/stepper.css';
 @import './components/patterns.css';
 

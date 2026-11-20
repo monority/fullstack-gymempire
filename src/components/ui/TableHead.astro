@@ -14,9 +14,3 @@ const { class: className = '' } = Astro.props;
 <thead class:list={['table-head', className]}>
   <slot />
 </thead>
-
-<style>
-  .table-head {
-    border-bottom: 1px solid var(--color-border);
-  }
-</style>

@@ -1,0 +1,55 @@
+/**
+ * Objet composant — FormField, PanelHeader.
+ * Couche : `components`. Styles déplacés depuis ui/ (ADR-008).
+ */
+@layer components {
+  .form-field {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .form-field__label {
+    font-size: 1.3rem;
+    font-weight: 500;
+    color: var(--color-muted);
+    margin-bottom: 0.8rem;
+    line-height: 1.3;
+  }
+
+  .form-field__required {
+    color: var(--color-destructive);
+    margin-left: 0.2rem;
+  }
+
+  .form-field__hint {
+    font-size: 1.1rem;
+    color: var(--color-muted);
+    margin-top: 0.6rem;
+    line-height: 1.4;
+  }
+
+  .form-field__error {
+    font-size: 1.1rem;
+    color: var(--color-destructive);
+    margin-top: 0.6rem;
+    line-height: 1.4;
+  }
+
+  .panel-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1.2rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.4rem;
+  }
+
+  .panel-header__title {
+    margin: 0;
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: var(--text-body);
+    font-weight: 700;
+    line-height: var(--leading-body);
+  }
+}

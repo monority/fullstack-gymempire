@@ -1,0 +1,338 @@
+/**
+ * Objet composant — EmptyState, Toast, Tooltip, Skeleton, Progress.
+ * Couche : `components`. Styles déplacés depuis ui/ (ADR-008).
+ */
+@layer components {
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4.8rem 2.4rem;
+    max-width: 32rem;
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  .empty-state--centered {
+    padding: 2rem 0;
+  }
+
+  .empty-state__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 4.8rem;
+    height: 4.8rem;
+    border-radius: 50%;
+    color: var(--color-muted);
+    background-color: var(--alpha-bg-soft);
+  }
+
+  .empty-state__icon--error {
+    width: 6rem;
+    height: 6rem;
+    color: var(--color-destructive);
+    background-color: color-mix(in srgb, var(--color-destructive) 10%, transparent);
+  }
+
+  .empty-state__title {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-text);
+    margin-top: 1.6rem;
+    text-align: center;
+  }
+
+  .empty-state__title--large {
+    font-size: 2rem;
+    margin-top: 0;
+  }
+
+  .empty-state__desc {
+    font-size: 1.2rem;
+    color: var(--color-muted);
+    margin-top: 0.8rem;
+    text-align: center;
+  }
+
+  .empty-state--centered .empty-state__desc {
+    font-size: 1.3rem;
+    line-height: 1.5;
+  }
+
+  .empty-state__action {
+    margin-top: 0.4rem;
+  }
+  .empty-state__action--lg {
+    margin-top: 1.6rem;
+  }
+
+  .toast-root {
+    position: fixed;
+    bottom: calc(var(--bottom-nav-height, 5.6rem) + 1.2rem);
+    right: 2.4rem;
+    z-index: 8; /* level 8: toasts */
+    max-width: 42rem;
+    font-family: var(--font-body);
+  }
+
+  .toast {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.2rem;
+    padding: 1.2rem 1.4rem;
+    background-color: var(--color-surface-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-2);
+  }
+
+  .toast__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+  }
+
+  .toast__icon svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .toast__message {
+    margin: 0;
+    flex: 1 1 auto;
+    color: var(--color-text);
+    font-size: 1.4rem;
+    line-height: 1.4;
+    word-break: break-word;
+  }
+
+  .toast__close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    padding: 0.2rem;
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-sm);
+    color: var(--color-muted);
+    cursor: pointer;
+    transition:
+      color var(--transition-fast),
+      background-color var(--transition-fast);
+  }
+
+  .toast__close svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .toast__close:hover {
+    color: var(--color-text);
+    background-color: var(--alpha-bg-hover);
+  }
+
+  .toast--success .toast__icon {
+    color: var(--color-success);
+  }
+  .toast--error .toast__icon {
+    color: var(--color-destructive);
+  }
+  .toast--info .toast__icon {
+    color: var(--color-info);
+  }
+  .toast--warning .toast__icon {
+    color: var(--color-warning);
+  }
+
+  @media (max-width: 640px) {
+    .toast-root {
+      bottom: 5.6rem;
+      right: 1.2rem;
+    }
+  }
+
+  .tooltip-wrapper {
+    position: relative;
+    display: inline-flex;
+  }
+
+  .tooltip {
+    position: absolute;
+    z-index: 2; /* level 2: tooltips */
+    padding: 0.8rem 1.2rem;
+    font-size: 1.2rem;
+    font-weight: 500;
+    white-space: nowrap;
+    background-color: var(--color-surface-3);
+    color: var(--color-text);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-1);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 200ms ease 200ms;
+    min-width: 80px;
+    text-align: center;
+  }
+
+  .tooltip-wrapper:hover .tooltip,
+  .tooltip-wrapper:focus-within .tooltip {
+    opacity: 1;
+  }
+
+  /* Positions */
+  .tooltip--top {
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-bottom: 0.8rem;
+  }
+
+  .tooltip--bottom {
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 0.8rem;
+  }
+
+  .tooltip--left {
+    right: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-right: 0.8rem;
+  }
+
+  .tooltip--right {
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-left: 0.8rem;
+  }
+
+  /* Arrows */
+  .tooltip__arrow {
+    position: absolute;
+    height: 0;
+    width: 0;
+    border-style: solid;
+    border-color: transparent;
+  }
+
+  .tooltip__arrow--top {
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 6px 5px 0 5px;
+    border-top-color: var(--color-surface-3);
+  }
+
+  .tooltip__arrow--bottom {
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 0 5px 6px 5px;
+    border-bottom-color: var(--color-surface-3);
+  }
+
+  .tooltip__arrow--left {
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    border-width: 5px 6px 5px 0;
+    border-left-color: var(--color-surface-3);
+  }
+
+  .tooltip__arrow--right {
+    right: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    border-width: 5px 0 5px 6px;
+    border-right-color: var(--color-surface-3);
+  }
+
+  .skeleton-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .skeleton {
+    display: block;
+    background: linear-gradient(
+      90deg,
+      var(--color-surface-2) 0%,
+      var(--color-surface-3) 50%,
+      var(--color-surface-2) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s ease-in-out infinite;
+  }
+
+  .skeleton--text {
+    height: 1rem;
+    border-radius: var(--radius-sm);
+  }
+  .skeleton--circle {
+    border-radius: 50%;
+    aspect-ratio: 1;
+  }
+  .skeleton--rect {
+    border-radius: var(--radius-md);
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+
+  .progress {
+    width: 100%;
+    background-color: var(--color-surface-2);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+
+  .progress--sm {
+    height: 0.8rem;
+  }
+  .progress--md {
+    height: 1.2rem;
+  }
+
+  .progress__label {
+    font-size: 1.1rem;
+    color: var(--color-muted);
+    margin-bottom: 0.4rem;
+  }
+
+  .progress__fill {
+    height: 100%;
+    border-radius: 999px;
+    transition: width 300ms ease;
+  }
+
+  .progress__fill--default {
+    background-color: var(--color-accent);
+  }
+  .progress__fill--success {
+    background-color: var(--color-success);
+  }
+  .progress__fill--warning {
+    background-color: var(--color-warning);
+  }
+  .progress__fill--danger {
+    background-color: var(--color-destructive);
+  }
+  .progress__fill--accent {
+    background-color: var(--color-accent);
+  }
+}

@@ -12,14 +12,3 @@ const { class: className = '' } = Astro.props;
 <tr class:list={['table-row', className]}>
   <slot />
 </tr>
-
-<style>
-  .table-row {
-    border-bottom: 1px solid var(--color-border);
-    transition: background-color 160ms ease;
-  }
-
-  .table-row:hover {
-    background-color: var(--alpha-bg-subtle);
-  }
-</style>
