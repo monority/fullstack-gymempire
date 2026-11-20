@@ -1,0 +1,77 @@
+---
+/**
+ * StatCard — brique de métrique calme (hairline, flat, une seule valeur).
+ * Les valeurs/date sont injectées par slots pour rester pilotables par Alpine.
+ */
+import type { HTMLAttributes } from 'astro/types';
+
+type Tag = 'article' | 'div';
+interface Props extends HTMLAttributes<Tag> {
+  label: string;
+  icon?: string;
+  hero?: boolean;
+  as?: Tag;
+  class?: string;
+}
+
+const {
+  label,
+  icon,
+  hero = false,
+  as: Tag = 'article',
+  class: className = '',
+  ...rest
+} = Astro.props;
+---
+
+<Tag class:list={['stat-card', hero && 'stat-card--hero', className]} {...rest}>
+  <div class="stat-card__head">
+    {icon && <span class="stat-card__icon" aria-hidden="true" set:html={icon} />}
+    <span class="stat-card__label">{label}</span>
+  </div>
+  <slot name="value" />
+  <slot name="date" />
+</Tag>
+
+<style>
+  .stat-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    min-width: 0;
+  }
+
+  .stat-card__head {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    min-width: 0;
+  }
+
+  .stat-card__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    color: var(--color-muted);
+  }
+
+  .stat-card__icon :global(svg) {
+    width: 1.6rem;
+    height: 1.6rem;
+  }
+
+  .stat-card__label {
+    color: var(--color-muted);
+    font-family: var(--font-body);
+    font-size: var(--text-caption);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .stat-card--hero :global(.stat-card__value),
+  .stat-card--hero :global(.hist-stats__number) {
+    color: var(--color-accent);
+  }
+</style>

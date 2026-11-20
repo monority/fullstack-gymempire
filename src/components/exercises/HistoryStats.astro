@@ -1,0 +1,155 @@
+---
+/**
+ * HistoryStats — les 4 métriques d'un historique d'exercice.
+ * Rendu data-driven via un tableau de définitions : une seule source de
+ * vérité pour le markup, les icônes et les expressions Alpine.
+ */
+import type { Dictionary } from '../../i18n/types';
+import { icons } from '../../lib/icons';
+import StatCard from '../ui/StatCard.astro';
+
+interface Props {
+  labels: Dictionary['historique'];
+}
+const { labels } = Astro.props;
+
+const stats = [
+  {
+    name: 'best1RM',
+    label: labels.best1RM,
+    icon: icons.trendingUp(16, 16),
+    value: 'formatNumber(best1RM)',
+    unit: 'kg',
+    date: "best1RMDate ? formatDate(best1RMDate) : '—'",
+    hero: true,
+  },
+  {
+    name: 'bestWeight',
+    label: labels.bestWeight,
+    icon: icons.volumeBox(16, 16),
+    value: 'formatNumber(bestWeight)',
+    unit: 'kg',
+    date: "bestWeightDate ? formatDate(bestWeightDate) : '—'",
+    hero: false,
+  },
+  {
+    name: 'maxReps',
+    label: labels.maxReps,
+    icon: icons.arrowUpDown(16, 16),
+    value: 'maxReps',
+    unit: 'reps',
+    date: "maxRepsDate ? formatDate(maxRepsDate) : '—'",
+    hero: false,
+  },
+  {
+    name: 'totalVolume',
+    label: labels.totalVolume,
+    icon: icons.trendingUpLine(16, 16),
+    value: 'formatNumber(totalVolume)',
+    unit: 'kg',
+    date: 'sessionCountLabel',
+    hero: false,
+  },
+] as const;
+---
+
+<div class="hist-stats">
+  {stats.map((stat) => (
+    <StatCard label={stat.label} icon={stat.icon} hero={stat.hero}>
+      <div slot="value" class="hist-stats__value">
+        <span class="hist-stats__number" x-text={stat.value} />
+        <span class="hist-stats__unit">{stat.unit}</span>
+      </div>
+      <span slot="date" class="hist-stats__date" x-text={stat.date} />
+    </StatCard>
+  ))}
+</div>
+
+<style>
+  .hist-stats {
+    display: grid;
+    grid-template-columns: 1fr;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+
+  .hist-stats > :global(.stat-card) {
+    padding: 1.6rem 1.8rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .hist-stats > :global(.stat-card:last-child) {
+    border-bottom: 0;
+  }
+
+  .hist-stats__value {
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+  }
+
+  .hist-stats__number {
+    color: var(--color-text);
+    font-family: var(--font-display);
+    font-size: 2.6rem;
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .hist-stats__unit {
+    color: var(--color-muted);
+    font-family: var(--font-body);
+    font-size: var(--text-caption);
+  }
+
+  .hist-stats__date {
+    color: var(--color-muted);
+    font-family: var(--font-body);
+    font-size: var(--text-caption);
+  }
+
+  @media (min-width: 640px) {
+    .hist-stats {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .hist-stats > :global(.stat-card:nth-child(even)) {
+      border-left: 1px solid var(--color-border);
+    }
+
+    .hist-stats > :global(.stat-card:nth-child(n + 3)) {
+      border-top: 1px solid var(--color-border);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .hist-stats {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .hist-stats > :global(.stat-card) {
+      border-bottom: 0;
+    }
+
+    .hist-stats > :global(.stat-card:nth-child(n + 3)) {
+      border-top: 0;
+    }
+
+    .hist-stats > :global(.stat-card + .stat-card) {
+      border-left: 1px solid var(--color-border);
+    }
+  }
+
+  @media (max-width: 520px) {
+    .hist-stats > :global(.stat-card) {
+      padding: 1.4rem 1.6rem;
+    }
+
+    .hist-stats__number {
+      font-size: 2rem;
+    }
+  }
+</style>
