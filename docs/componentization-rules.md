@@ -196,6 +196,14 @@ Règles :
   `scripts/check-colors.mjs`). Toute nouvelle exception doit être justifiée dans un commentaire.
 - Respecter les règles du design system : un seul accent, hairlines, pas de kicker, pas d'ombre au
   repos, Archivo réservé à Display/Metric.
+- **Architecture en 6 couches** (`reset → tokens → base → components → utilities → overrides`) :
+  voir le plan v3 §2 et `src/styles/README.md`.
+- Nommage global : `u-*` utility atomique, `c-*` objet composant, `is-*` / `has-*` états, BEM
+  `b__e--m` **uniquement** dans un `<style>` Astro scopé.
+- Une déclaration répétée dans 2 composants est promue en utility ou en classe `c-*`. Aucune valeur
+  littérale hors `tokens/`, aucun `!important`, aucune classe de page dans un fichier global.
+- Les blocs `<style>` Astro restent **non layerés** (priorité sur les couches) : c'est le contrat de
+  surcharge, pas un bug. `:global()` ciblé uniquement dans la couche `overrides`.
 
 ---
 
@@ -205,8 +213,9 @@ Règles :
 2. **Nommer les composants** : une liste de sections, chaque section = un composant de domaine.
 3. **Extraire le markup d'abord** : créer `components/<domaine>/Section.astro` avec `Props`, slots,
    classe BEM propre, puis remplacer le bloc dans la page par `<Section … />`.
-4. **Déplacer le style** : couper les règles correspondantes de la page vers le `<style>` du
-   composant. Supprimer tout `is:global` devenu inutile.
+4. **Déplacer le style** : motifs communs → utility `u-*` ou classe `c-*` (couches
+   `components`/`utilities`) ; structure spécifique → `<style>` scopé du composant. Supprimer tout
+   `is:global` devenu inutile.
 5. **Extraire la logique** : si un bloc Alpine existe, créer `xApp.ts` + tests, puis réduire le
    `<script>` de la page à `registerAlpine(...)`.
 6. **Vérifier** : `pnpm test && pnpm check:strict && pnpm lint && pnpm build && pnpm check:budget &&
