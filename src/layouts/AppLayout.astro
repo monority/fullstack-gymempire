@@ -101,6 +101,16 @@ const groupsWithActive = groups.map((g) => ({
   <head>
     <ClientRouter />
     <meta charset="utf-8" />
+    {/* CSP defensive : aucune ressource externe (Alpine, polices et icônes sont
+        auto-hébergés). 'unsafe-inline' est requis par les boots synchrones
+        (thème, locale, Alpine ESM) documentés plus bas. Alpine 3 compile ses
+        expressions avec `new Function` : 'unsafe-eval' est requis par le moteur
+        lui-même (ADR-001). connect-src couvre le WebDAV configuré par
+        l'utilisateur et le HMR en développement. */}
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https: http://localhost: http://127.0.0.1: ws: wss:; object-src 'none'; base-uri 'none'; form-action 'self'"
+    />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title} — Gym Empire</title>
     <meta name="description" content={description || L.layout.appTagline} />
