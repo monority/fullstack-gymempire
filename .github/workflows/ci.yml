@@ -44,8 +44,15 @@ jobs:
       - name: Lint
         run: pnpm lint
 
-      - name: Dette de componentisation (avertissement)
+      - name: Gouvernance CSS (ratchet strict)
+        run: pnpm check:css
+        env:
+          STRICT: '1'
+
+      - name: Dette de componentisation (ratchet strict)
         run: pnpm check:components
+        env:
+          STRICT: '1'
 
       - name: Modules orphelins (inventaire)
         run: pnpm check:dead-code

@@ -5,11 +5,11 @@ import { gzipSync } from 'node:zlib';
 
 const dir = 'dist/_astro';
 const LIMITS = {
-  jsGzip: 140_000,
-  cssGzip: 60_000,
-  fileGzip: 40_000,
-  htmlGzip: 20_000, // plus grosse page HTML (settings ~14 Ko)
-  domNodes: 2_000, // nombre de balises de la plus grosse page
+  jsGzip: 120_000, // mesuré ~110 Ko
+  cssGzip: 52_000, // mesuré ~47 Ko
+  fileGzip: 30_000, // mesuré ~27 Ko
+  htmlGzip: 16_000, // mesuré ~12,8 Ko
+  domNodes: 1_800, // mesuré ~1 563
 };
 
 const files = readdirSync(dir).map((name) => {

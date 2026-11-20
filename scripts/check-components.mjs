@@ -1,6 +1,7 @@
 // Mesure de la dette de componentisation (voir docs/componentization-plan.md §6.1).
 // Sans dépendance. Mode avertissement par défaut ; STRICT=1 rend les findings bloquants.
 // Usage : node scripts/check-components.mjs [--json]
+import { enforceRatchet } from './ratchet.mjs';
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 
@@ -131,4 +132,4 @@ if (AS_JSON) {
   if (!STRICT) console.log('(mode avertissement — STRICT=1 pour bloquer)');
 }
 
-if (STRICT && findings.some((f) => f.blocking)) process.exit(1);
+enforceRatchet('check-components', byRule, STRICT);

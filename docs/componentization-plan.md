@@ -258,13 +258,17 @@ Nouveau garde-fou, sans dépendance, sortie texte + `--json`, `STRICT=1` bloquan
 
 ## 10. Suivi
 
-| Phase                                                     | Statut |
-| --------------------------------------------------------- | ------ |
-| 0 — Socle (layers, arborescence, inversion de dépendance) | ☐      |
-| 1 — Utilities haute fréquence                             | ☐      |
-| 2 — Objets composants                                     | ☐      |
-| 3 — MetricGrid générique                                  | ☐      |
-| 4 — Dernières pages                                       | ☐      |
-| 5 — Verrouillage CI                                       | ☐      |
+| Phase                                                     | Statut                                 |
+| --------------------------------------------------------- | -------------------------------------- |
+| 0 — Socle (layers, arborescence, inversion de dépendance) | ☑                                      |
+| 1 — Utilities haute fréquence                             | ☑                                      |
+| 2 — Objets composants                                     | ☑                                      |
+| 3 — MetricGrid générique                                  | ☑                                      |
+| 4 — Dernières pages                                       | ☑                                      |
+| 5 — Verrouillage CI                                       | ☑ (ratchet strict + budgets resserrés) |
 
 > Prochaine action : **Phase 0**. Aucune phase ne commence avec un KPI en régression.
+
+> Plan v3 exécuté intégralement. La dette résiduelle est mesurée dans `scripts/quality-baseline.json`
+> et ne peut plus augmenter sans faire échouer la CI (ratchet). Le total de dette reste à réduire
+> par lots successifs en abaissant cette baseline.

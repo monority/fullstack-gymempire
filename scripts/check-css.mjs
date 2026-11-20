@@ -1,5 +1,6 @@
 // Gouvernance CSS (plan v3). Sans dépendance.
 // Usage : node scripts/check-css.mjs [--json]
+import { enforceRatchet } from './ratchet.mjs';
 // STRICT=1 transforme les avertissements en erreurs.
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
@@ -132,4 +133,4 @@ else {
   console.log(`  total: ${findings.length}`);
   if (!STRICT) console.log('(mode avertissement — STRICT=1 pour bloquer)');
 }
-if (STRICT && findings.some((f) => f.blocking)) process.exit(1);
+enforceRatchet('check-css', byRule, STRICT);

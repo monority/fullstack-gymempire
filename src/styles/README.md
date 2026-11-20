@@ -57,3 +57,5 @@ styles/
 6. Spécificité max 2 classes, pas de `#id` (sauf hooks de dialogue whitelistés).
 7. Aucune classe de page (`.set__`, `.hist__`, …) dans un fichier global.
 8. Vérifier avec `pnpm check:css`, `pnpm check:colors`, `pnpm check:contrast`.
+9. La dette résiduelle est mesurée dans `scripts/quality-baseline.json` : en CI (`STRICT=1`), tout
+   compteur qui **augmente** bloque. La réduire lot par lot en abaissant cette baseline.
