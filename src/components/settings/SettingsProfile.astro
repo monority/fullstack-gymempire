@@ -1,0 +1,219 @@
+---
+import { t } from '../../i18n';
+import SettingsSection from '../ui/SettingsSection.astro';
+import Input from '../ui/Input.astro';
+import Segmented from '../ui/Segmented.astro';
+const L = t();
+---
+
+1. PROFIL
+<SettingsSection
+  icon="user"
+  title={L.settings.profile}
+  description={L.settings.profileDesc}
+  id="set-profile"
+>
+  <div class="set__rows">
+    <div class="set__row">
+      <div class="set__label">
+        <span class="set__label-title">{L.settings.pseudo}</span>
+        <span class="set__label-desc">{L.settings.pseudoDesc}</span>
+      </div>
+      <div class="set__control">
+        <Input
+          bare
+          size="md"
+          type="text"
+          id="set-pseudo"
+          class="set__sync-input"
+          x-model="display.pseudo"
+          @change="savePseudo()"
+          :placeholder="labels.pseudoPlaceholder"
+          maxlength="40"
+          autocomplete="nickname"
+          :aria-label="labels.pseudoPlaceholder"
+        />
+      </div>
+    </div>
+    <div class="set__row">
+      <div class="set__label">
+        <span class="set__label-title">{L.settings.email}</span>
+        <span class="set__label-desc">{L.settings.emailDesc}</span>
+      </div>
+      <div class="set__control">
+        <Input
+          bare
+          size="md"
+          type="email"
+          id="set-email"
+          class="set__sync-input"
+          x-model="display.email"
+          @change="saveEmail()"
+          :placeholder="labels.emailPlaceholder"
+          autocomplete="email"
+          :aria-label="labels.emailPlaceholder"
+        />
+      </div>
+    </div>
+  </div>
+</SettingsSection>
+2. UNITÉS
+<SettingsSection
+  icon="ruler"
+  title={L.settings.units}
+  description={L.settings.unitsDesc}
+  id="set-units"
+>
+  <div class="set__rows">
+    <div class="set__row">
+      <div class="set__label">
+        <span class="set__label-title">{L.settings.weightUnit}</span>
+        <span class="set__label-desc">{L.settings.weightUnitDesc}</span>
+      </div>
+      <Segmented
+        items={[
+          { value: 'kg', label: 'kg', action: "setUnit('kg')" },
+          { value: 'lbs', label: 'lbs', action: "setUnit('lbs')" },
+        ]}
+        model="display.unit"
+        ariaLabel={L.settings.weightUnit}
+      />
+    </div>
+
+    <div class="set__row">
+      <div class="set__label">
+        <span class="set__label-title">{L.settings.repsFormat}</span>
+        <span class="set__label-desc">{L.settings.repsDesc}</span>
+      </div>
+      <div class="set__seg-group" role="group" aria-label={L.settings.repsFormat}>
+        <button
+          type="button"
+          class="set__seg-btn"
+          :class="{ 'is-active': display.repsFormat === 'simple' }"
+          :aria-pressed="display.repsFormat === 'simple'"
+          @click="setRepsFormat('simple')"
+        >
+          {L.settings.simple}
+        </button>
+        <button
+          type="button"
+          class="set__seg-btn"
+          :class="{ 'is-active': display.repsFormat === 'range' }"
+          :aria-pressed="display.repsFormat === 'range'"
+          @click="setRepsFormat('range')"
+        >
+          {L.settings.range}
+        </button>
+      </div>
+    </div>
+  </div>
+</SettingsSection>
+<style>
+  /* ── Rows ── */
+  .set__rows {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-top: 1.2rem;
+  }
+
+  .set__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--alpha-bg-soft);
+  }
+
+  .set__row:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .set__row:first-child {
+    padding-top: 0;
+  }
+
+  .set__row--start {
+    align-items: flex-start;
+  }
+
+  /* ── Label ── */
+  .set__label {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-1);
+    min-width: 0;
+    flex: 1;
+  }
+
+  /* ── Control ── */
+  .set__control {
+    flex-shrink: 0;
+    width: 100%;
+    max-width: 24rem;
+  }
+
+  .set__control--right {
+    text-align: right;
+    font-size: 1.3rem;
+    color: var(--color-muted);
+    font-variant-numeric: tabular-nums;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* ── Sync section ── */
+  .set__section {
+    scroll-margin-top: calc(var(--topbar-height, 5.6rem) + 1rem);
+  }
+
+  /* ── Segmented control ── */
+  .set__seg-group {
+    display: inline-flex;
+    padding: 0.3rem;
+    background-color: var(--color-surface-2);
+    border: 1px solid var(--color-border);
+    border-radius: 9999px;
+  }
+
+  .set__seg-btn {
+    appearance: none;
+    background-color: transparent;
+    border: 1px solid transparent;
+    color: var(--color-muted);
+    font-family: var(--font-body);
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    padding: 0 1rem;
+    height: 4.4rem;
+    min-width: 6.4rem;
+    border-radius: 9999px;
+    cursor: pointer;
+    transition:
+      background-color 140ms ease,
+      color 140ms ease,
+      box-shadow 140ms ease,
+      transform 140ms ease;
+  }
+
+  .set__seg-btn.is-active {
+    background-color: var(--color-accent);
+    color: var(--color-accent-foreground);
+    box-shadow:
+      var(--shadow-1),
+      0 0 0 1px color-mix(in srgb, var(--color-accent) 40%, transparent);
+  }
+
+  .set__seg-btn:active {
+    transform: scale(0.96);
+  }
+
+  .set__seg-btn:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+  }
+</style>

@@ -1,0 +1,129 @@
+---
+import { t } from '../../i18n';
+import Dialog from '../ui/Dialog.astro';
+import Input from '../ui/Input.astro';
+import Button from '../ui/Button.astro';
+import DialogFooter from '../ui/DialogFooter.astro';
+const L = t();
+---
+
+RESET CONFIRMATION DIALOG
+<Dialog id="set-reset-dialog" title={`${L.settings.resetAll} ?`}>
+  <p class="set__dialog-text">
+    {L.settings.resetConfirmIntro}
+    <strong class="text-destructive"> {L.settings.resetConfirmIntroStrong}</strong> —
+    {L.settings.resetConfirmIntroList}
+  </p>
+  <p class="set__dialog-muted">
+    {L.settings.resetConfirmAction} <strong class="text-destructive">SUPPRIMER</strong>{' '}
+    {L.settings.resetConfirmActionOutro}
+    {L.settings.resetIrreversible}
+  </p>
+  <div class="set__dialog-input-wrap">
+    <Input
+      bare
+      size="md"
+      type="text"
+      class="set__confirm-input"
+      placeholder="SUPPRIMER"
+      x-model="resetConfirmText"
+      autocomplete="off"
+      :aria-label="labels.resetConfirm"
+    />
+  </div>
+
+  <div slot="footer">
+    <DialogFooter
+      cancelLabel={L.common.cancel}
+      confirmLabel={L.settings.resetPermanent}
+      confirmDisabled="resetConfirmText !== 'SUPPRIMER'"
+      confirmClick="confirmReset()"
+    />
+  </div>
+</Dialog>
+WEBDAV PUSH OVERWRITE CONFIRMATION DIALOG
+<Dialog id="set-push-dialog" title={L.settings.sync.pushTitle}>
+  <p class="set__dialog-text">{L.settings.sync.pushBody}</p>
+  <p class="set__dialog-muted">{L.settings.sync.pushIrreversible}</p>
+
+  <div slot="footer">
+    <Button variant="secondary" data-dialog-close type="button">
+      {L.common.cancel}
+    </Button>
+    <Button
+      variant="destructive"
+      type="button"
+      x-bind:disabled="syncBusy !== null"
+      @click="confirmPush()"
+    >
+      <span x-show="syncBusy !== 'push'" x-cloak>
+        {L.settings.sync.pushConfirm}
+      </span>
+      <span x-show="syncBusy === 'push'" x-cloak>
+        {L.settings.sync.pushing}
+      </span>
+    </Button>
+  </div>
+</Dialog>
+WEBDAV RESTORE CONFIRMATION DIALOG
+<Dialog id="set-restore-dialog" title={L.settings.sync.restoreTitle}>
+  <p class="set__dialog-text">{L.settings.sync.restoreBody}</p>
+  <p class="set__dialog-muted">{L.settings.sync.restoreIrreversible}</p>
+
+  <div slot="footer">
+    <Button variant="secondary" data-dialog-close type="button">
+      {L.common.cancel}
+    </Button>
+    <Button
+      variant="destructive"
+      type="button"
+      x-bind:disabled="syncBusy !== null"
+      @click="confirmRestore()"
+    >
+      <span x-show="syncBusy !== 'pull'" x-cloak>
+        {L.settings.sync.restoreConfirm}
+      </span>
+      <span x-show="syncBusy === 'pull'" x-cloak>
+        {L.settings.sync.pulling}
+      </span>
+    </Button>
+  </div>
+</Dialog>
+<style>
+  /* ── Dialog ── */
+  .set__dialog-text {
+    color: var(--color-text);
+    font-size: 1.3rem;
+    line-height: 1.5;
+    margin-bottom: 0.8rem;
+  }
+
+  .set__dialog-muted {
+    color: var(--color-muted);
+    font-size: 1.2rem;
+    line-height: 1.5;
+    margin-bottom: 0.8rem;
+  }
+
+  .set__dialog-input-wrap {
+    margin-top: 1.2rem;
+  }
+
+  .set__confirm-input {
+    background-color: var(--color-bg);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-align: center;
+  }
+
+  .set__confirm-input::placeholder {
+    color: var(--alpha-text-faint);
+    font-weight: 500;
+    letter-spacing: 0.06em;
+  }
+
+  .set__confirm-input:focus {
+    border-color: var(--color-destructive);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-destructive) 25%, transparent);
+  }
+</style>
