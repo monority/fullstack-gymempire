@@ -97,6 +97,7 @@ export function buildRecordsMetrics(L: Dictionary): MetricDefinition[] {
       value: 'recentPRs',
       unit: 'PR',
       foot: L.records.since30Days,
+      footStatic: true,
     },
   ];
 }

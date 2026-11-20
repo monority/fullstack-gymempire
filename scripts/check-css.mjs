@@ -85,7 +85,7 @@ for (const { rel, text } of files) {
   }
 
   // Sélecteur #id
-  for (const m of css.matchAll(/(^|[\s>])(#[a-zA-Z][\w-]*)/g)) {
+  for (const m of css.matchAll(/(^|[\s>])(#(?![\da-fA-F]{3,8}\b)[a-zA-Z][\w-]*)/g)) {
     if (!m[2].startsWith('#exo-') && !m[2].startsWith('#set-') && !m[2].startsWith('#ses-')) {
       add('#id selector', rel, m[2]);
     }
@@ -112,7 +112,13 @@ for (const { rel, text } of files) {
   }
 
   // Compteurs de duplication (KPI plan v3)
-  if (!isToken && !rel.startsWith('utilities/') && !rel.startsWith('components/')) {
+  if (
+    !isToken &&
+    !rel.startsWith('utilities/') &&
+    !rel.startsWith('components/') &&
+    !rel.startsWith('styles/components/') &&
+    !rel.startsWith('styles/utilities/')
+  ) {
     const counts = {
       uppercase: (css.match(/text-transform:\s*uppercase/g) || []).length,
       tabular: (css.match(/font-variant-numeric:\s*tabular-nums/g) || []).length,

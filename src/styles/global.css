@@ -44,6 +44,17 @@
 @import './components/feedback.css';
 @import './components/controls.css';
 @import './components/layout-ui.css';
+@import './components/session-detail.css';
+@import './components/sessions.css';
+@import './components/builder.css';
+@import './components/settings.css';
+@import './components/layout-shell.css';
+@import './components/exercises-extra.css';
+@import './components/builder-extra.css';
+@import './components/sessions-extra.css';
+@import './components/workout-extra.css';
+@import './components/dashboard.css';
+@import './components/session-detail-page.css';
 @import './components/stepper.css';
 @import './components/patterns.css';
 

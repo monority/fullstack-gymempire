@@ -5,6 +5,8 @@ export interface MetricDefinition {
   value: string;
   unit?: string;
   foot: string;
+  /** Texte statique (pas une expression Alpine). */
+  footStatic?: boolean;
   icon?: string;
   hero?: boolean;
 }

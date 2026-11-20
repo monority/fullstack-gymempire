@@ -28,7 +28,13 @@ const resolvedFootClass = footClass ?? `${prefix}__foot`;
         />
         {metric.unit && <span class={`${prefix}__unit`}>{metric.unit}</span>}
       </div>
-      <span slot="date" class={resolvedFootClass} x-text={metric.foot} />
+      {metric.footStatic ? (
+        <span slot="date" class={resolvedFootClass}>
+          {metric.foot}
+        </span>
+      ) : (
+        <span slot="date" class={resolvedFootClass} x-text={metric.foot} />
+      )}
     </StatCard>
   ))}
 </div>
