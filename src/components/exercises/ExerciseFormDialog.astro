@@ -1,0 +1,135 @@
+---
+import { t } from '../../i18n';
+import Dialog from '../ui/Dialog.astro';
+import Input from '../ui/Input.astro';
+import Select from '../ui/Select.astro';
+import Button from '../ui/Button.astro';
+import DialogFooter from '../ui/DialogFooter.astro';
+const L = t();
+const categories = [
+  { value: 'Barre', label: L.exercices.categories.barre },
+  { value: 'Haltère', label: L.exercices.categories.haltere },
+  { value: 'Machine', label: L.exercices.categories.machine },
+  { value: 'Poids du corps', label: L.exercices.categories.poidsCorps },
+  { value: 'Câble', label: L.exercices.categories.cable },
+  { value: 'Autre', label: L.exercices.categories.autre },
+] as const;
+---
+
+ADD / EDIT DIALOG
+<Dialog id="exo-form-dialog" :title="editingId ? labels.editTitle : labels.addTitle">
+  <form class="exo__form" @submit.prevent="save()">
+    <Input
+      id="exo-name"
+      label={L.exercices.nameLabel}
+      required
+      placeholder={L.exercices.namePlaceholder}
+      x-model="form.name"
+      autocomplete="off"
+    />
+
+    <Select
+      id="exo-muscle"
+      label={L.exercices.muscleLabel}
+      required
+      placeholder={L.common.select}
+      x-model="form.muscle"
+    >
+      <template x-for="opt in muscleOptionsForSelect" :key="opt.value">
+        <option :value="opt.value" x-text="opt.label"></option>
+      </template>
+    </Select>
+
+    <div x-show="form.muscle === '__custom__'" x-cloak x-transition.opacity.duration.200ms>
+      <Input
+        id="exo-muscle-custom"
+        label={L.exercices.customMuscleLabel}
+        required
+        placeholder="Ex. Mollets"
+        x-model="form.customMuscle"
+        autocomplete="off"
+      />
+    </div>
+
+    <Select
+      id="exo-category"
+      label={L.exercices.categoryLabel}
+      required
+      placeholder={L.common.select}
+      x-model="form.category"
+      options={categories.map((c) => ({ value: c.value, label: c.label }))}
+    />
+
+    <div
+      class="exo__form-error"
+      x-show="formError"
+      x-text="formError"
+      x-cloak
+      x-transition.opacity.duration.200ms
+    ></div>
+
+    <div class="exo__form-actions">
+      <Button variant="secondary" size="md" @click="closeForm()">
+        {L.common.cancel}
+      </Button>
+      <Button
+        variant="primary"
+        size="md"
+        type="submit"
+        x-text="editingId ? labels.save : labels.add"
+      />
+    </div>
+  </form>
+</Dialog>
+DELETE CONFIRMATION DIALOG
+<Dialog id="exo-delete-dialog" title={L.exercices.deleteTitle}>
+  <p class="exo__confirm-text">
+    <strong x-text="deletingName || 'cet exercice'"></strong>
+  </p>
+  <p class="exo__confirm-text">{L.exercices.deleteDesc}</p>
+
+  <div slot="footer">
+    <DialogFooter
+      cancelLabel={L.common.cancel}
+      confirmLabel={L.common.delete}
+      confirmClick="confirmDelete()"
+    />
+  </div>
+</Dialog>
+ADD TO SESSION DIALOG
+<style>
+  .exo__form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.4rem;
+    margin-top: 0.8rem;
+  }
+
+  .exo__form-error {
+    background-color: color-mix(in srgb, var(--color-destructive) 10%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-destructive) 35%, transparent);
+    border-radius: var(--radius-sm);
+    color: var(--color-destructive);
+    font-size: 1.2rem;
+    font-weight: 500;
+    padding: 0.8rem 1.2rem;
+  }
+
+  .exo__form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.8rem;
+    margin-top: 0.6rem;
+  }
+
+  .exo__confirm-text {
+    color: var(--color-text);
+    font-size: 1.3rem;
+    line-height: 1.5;
+  }
+
+  .exo__confirm-text strong {
+    color: var(--color-accent);
+    font-weight: 700;
+  }
+</style>
