@@ -28,7 +28,7 @@ export function formatShort(seconds: number): string {
 export function formatStopwatch(ms: number): string {
   const totalMs = Math.max(0, Math.floor(ms));
   const hours = Math.floor(totalMs / 3600000);
-  const minutes = Math.floor((totalMs % 600000) / 60000);
+  const minutes = Math.floor((totalMs % 3600000) / 60000);
   const seconds = Math.floor((totalMs % 60000) / 1000);
   const centis = Math.floor((totalMs % 1000) / 10);
   const pad = (n: number, w: number) => n.toString().padStart(w, '0');

@@ -46,8 +46,3 @@ export function createI18nStore(locale: Locale): I18nStore {
 export function registerI18nStore(): void {
   registerStore('i18n', createI18nStore(getLocale()));
 }
-
-/** Accès typé pour les factories Alpine (this.$store.i18n). */
-export function i18nOf(store?: { i18n?: I18nStore }): I18nStore {
-  return store?.i18n ?? createI18nStore(getLocale());
-}

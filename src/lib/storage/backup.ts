@@ -35,13 +35,13 @@ const MIGRATIONS: ReadonlyArray<{ to: number; migrate: (data: Record<string, unk
     // Example (future): { to: 2, migrate: (data) => { … } }
   ];
 
-const APP_DATA_KEYS: ReadonlyArray<{ key: string; match: RegExp }> = [
-  { key: STORAGE_KEYS.exercises, match: /^muscu:exercises$/ },
-  { key: STORAGE_KEYS.sessions, match: /^muscu:sessions$/ },
-  { key: STORAGE_KEYS.progress, match: /^muscu:progress$/ },
-  { key: STORAGE_KEYS.settings, match: /^muscu-settings$/ },
-  { key: STORAGE_KEYS.body, match: /^muscu:body$/ },
-  { key: STORAGE_KEYS.reminderNotified, match: /^muscu:reminder-notified$/ },
+const APP_DATA_KEYS: ReadonlyArray<{ key: string }> = [
+  { key: STORAGE_KEYS.exercises },
+  { key: STORAGE_KEYS.sessions },
+  { key: STORAGE_KEYS.progress },
+  { key: STORAGE_KEYS.settings },
+  { key: STORAGE_KEYS.body },
+  { key: STORAGE_KEYS.reminderNotified },
 ];
 
 /**

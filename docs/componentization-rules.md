@@ -17,7 +17,7 @@
    `detail.astro` pour un élément rendu par `SessionHeader.astro` est une violation.
 4. **La logique suit une factory testable, jamais le template.** Un bloc Alpine dans un `<script>`
    de page est une violation (sauf les 10 lignes d'enregistrement, voir §5).
-5. **On réutilise avant de créer.** La bibliothèque `src/components/ui/` contient 39 primitives :
+5. **On réutilise avant de créer.** La bibliothèque `src/components/ui/` contient 41 primitives :
    un nouveau `<table>`, `<dialog>`, `<input>` ou `<button>` fait maison est une violation.
 6. **On garde le site vert à chaque étape.** Tests, typage, budget et captures visuelles avant/après.
 
@@ -236,7 +236,7 @@ pnpm test:smoke`, puis comparer les captures `pnpm screens` avant/après.
 | ------------------------------------- | --------------------------------- | ------------------------------------------------------------- |
 | `pages/ui.astro`, `pages/debug.astro` | taille, styles et couleurs libres | outils de revue visuelle / générateur de données, 404 en prod |
 | `pages/sessions/print.astro`          | `is:inline`, palette locale       | feuille autonome/imprimable, sans le shell ni les tokens      |
-| `pages/en/**`                         | 6 lignes                          | stubs de route vers la page française                         |
+| `pages/en/[...slug].astro`            | 1 catch-all                       | route locale unique (20 stubs supprimés)                      |
 | `styles/global.css`                   | `is:global`, `@layer`             | point d'entrée des tokens et des rules globales               |
 | `components/ui/Table.astro`           | `:global()` ciblé                 | (cellules rendues via slots) — à réduire au minimum           |
 

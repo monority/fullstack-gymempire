@@ -40,6 +40,9 @@ describe('formatStopwatch', () => {
     expect(formatStopwatch(0)).toBe('00:00.00');
     expect(formatStopwatch(1500)).toBe('00:01.50');
     expect(formatStopwatch(61234)).toBe('01:01.23');
+    // frontière 10 minutes (ancien bug : % 600000 au lieu de % 3600000)
+    expect(formatStopwatch(600000)).toBe('10:00.00');
+    expect(formatStopwatch(900000)).toBe('15:00.00');
   });
 
   it('formats hours when >= 1h', () => {

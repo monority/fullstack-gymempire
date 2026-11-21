@@ -42,7 +42,6 @@ test.describe('i18n bout en bout', () => {
   test('le sélecteur de langue conserve la route courante', async ({ page }) => {
     await page.goto('/sessions');
     const switcher = page.getByRole('button', { name: /Changer de langue/i }).first();
-    if ((await switcher.count()) === 0) test.skip(true, 'sélecteur absent sur cette page');
     await switcher.click();
     await expect(page).toHaveURL(/\/en\/sessions/);
     await expect(page.locator('html')).toHaveAttribute('lang', 'en');

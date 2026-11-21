@@ -5,7 +5,7 @@
  *   • install  : precache the app shell (the main HTML routes)
  *   • activate : drop caches from older versions, claim clients
  *   • fetch
- *       – /api/*            : network-first, fall back to cache
+ *       – pages          : network-first, fallback to cached shell
  *       – static assets     : cache-first (CSS, JS, fonts, images)
  *       – HTML navigations  : network-first, fall back to cache,
  *                              then to the cached dashboard `/`
@@ -27,44 +27,6 @@ const APP_SHELL = [
   '/fonts/archivo-latin.woff2',
   '/fonts/inter-latin.woff2',
   '/',
-  '/sessions',
-  '/sessions/create',
-  '/sessions/detail',
-  '/sessions/quick',
-  '/sessions/print',
-  '/sessions/compare',
-  '/exercises',
-  '/exercises/trends',
-  '/exercises/history',
-  '/progression',
-  '/progression/stats',
-  '/progression/records',
-  '/progression/poids',
-  '/settings',
-  '/timer',
-  '/timer/pop',
-  '/calendar',
-  '/calculator',
-  '/login',
-  '/en',
-  '/en/sessions',
-  '/en/sessions/create',
-  '/en/sessions/detail',
-  '/en/sessions/quick',
-  '/en/sessions/print',
-  '/en/sessions/compare',
-  '/en/exercises',
-  '/en/exercises/trends',
-  '/en/exercises/history',
-  '/en/progression',
-  '/en/progression/stats',
-  '/en/progression/records',
-  '/en/progression/poids',
-  '/en/settings',
-  '/en/timer',
-  '/en/calendar',
-  '/en/calculator',
-  '/en/login',
   '/manifest.json',
   '/favicon.svg',
 ];
@@ -165,12 +127,6 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(request.url);
   // Cross-origin (CDN, fonts, analytics…) — let the browser handle it.
   if (url.origin !== self.location.origin) return;
-
-  // 1) API calls — network-first, cached fallback, hard 503 last.
-  if (url.pathname.startsWith('/api/')) {
-    event.respondWith(networkFirst(request));
-    return;
-  }
 
   // 2) Static assets. Only Astro's prod bundles under /_astro/ carry
   //    content-hashed filenames → immutable → cache-first. Everything

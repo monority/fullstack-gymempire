@@ -56,5 +56,3 @@ export {
   trTemplateName,
   trTemplateDesc,
 } from './exercise-translations';
-
-export default { t, getLocale, localizedPath, useI18n, resolveLocale };

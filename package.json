@@ -23,6 +23,7 @@
     "check:css": "node scripts/check-css.mjs",
     "check:i18n": "vitest run src/i18n/__tests__",
     "check:i18n-build": "node scripts/check-i18n-build.mjs",
+    "check:style-parity": "node scripts/style-parity.mjs",
     "check:dead-code": "node scripts/dead-code.mjs",
     "screens": "node scripts/capture-screens.mjs",
     "test": "vitest run",

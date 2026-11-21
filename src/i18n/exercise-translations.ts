@@ -41,7 +41,7 @@ export function trTemplateName(name: string): string {
 /** Translate a training template's description (server-rendered). */
 export function trTemplateDesc(id: string): string {
   if (getLocale() === defaultLocale) return id;
-  return TEMPLATE_DESCS_EN[id] ?? '';
+  return TEMPLATE_DESCS_EN[id] ?? id;
 }
 
 const EXERCISE_NAMES_EN: Record<string, string> = {

@@ -1,3 +1,4 @@
+import { formatTime, formatShort, formatStopwatch } from './timer-format';
 import type { Dictionary } from '../i18n/types';
 import { playBeep } from './sound';
 
@@ -84,34 +85,6 @@ export function widgetLabelsFrom(d: Dictionary): TimerWidgetLabels {
 }
 
 const PRESETS = [60, 90, 120, 180];
-
-function fmtTime(seconds: number): string {
-  const s = Math.max(0, Math.floor(seconds));
-  const mm = Math.floor(s / 60)
-    .toString()
-    .padStart(2, '0');
-  const ss = (s % 60).toString().padStart(2, '0');
-  return `${mm}:${ss}`;
-}
-
-function fmtShort(seconds: number): string {
-  const mm = Math.floor(seconds / 60);
-  const ss = seconds % 60;
-  if (mm === 0) return `${ss}s`;
-  if (ss === 0) return `${mm}:00`;
-  return `${mm}:${ss.toString().padStart(2, '0')}`;
-}
-
-function fmtMs(ms: number): string {
-  const total = Math.max(0, Math.floor(ms));
-  const hours = Math.floor(total / 3600000);
-  const minutes = Math.floor((total % 3600000) / 60000);
-  const seconds = Math.floor((total % 60000) / 1000);
-  const centis = Math.floor((total % 1000) / 10);
-  const pad = (n: number, w: number) => n.toString().padStart(w, '0');
-  if (hours > 0) return `${pad(hours, 2)}:${pad(minutes, 2)}:${pad(seconds, 2)}`;
-  return `${pad(minutes, 2)}:${pad(seconds, 2)}.${pad(centis, 2)}`;
-}
 
 function beep(): void {
   playBeep();
@@ -544,7 +517,7 @@ export function mountTimerWidget(root: HTMLElement, labels: TimerWidgetLabels): 
     </div>
 
     <div class="tw__presets" data-ref="presets" role="group" aria-label="${labels.custom}">
-      ${PRESETS.map((p) => `<button type="button" class="tw__preset" data-preset="${p}">${fmtShort(p)}</button>`).join('')}
+      ${PRESETS.map((p) => `<button type="button" class="tw__preset" data-preset="${p}">${formatShort(p)}</button>`).join('')}
     </div>
 
     <div class="tw__custom" data-ref="custom">
@@ -663,7 +636,7 @@ export function mountTimerWidget(root: HTMLElement, labels: TimerWidgetLabels): 
 
     if (isCountdown) {
       rem = s.running ? Math.max(0, Math.ceil((s.endAt - now) / 1000)) : s.remaining;
-      text = fmtTime(rem);
+      text = formatTime(rem);
       if (rem === 0) cls += ' is-done';
       else if (s.running && rem <= 10) cls += ' is-warning';
       else if (s.running) cls += ' is-running';
@@ -685,7 +658,7 @@ export function mountTimerWidget(root: HTMLElement, labels: TimerWidgetLabels): 
       ringProgress.classList.toggle('is-done', rem === 0);
     } else {
       const elapsed = s.swRunning ? now - s.swStartAt : s.swElapsed;
-      text = fmtMs(elapsed);
+      text = formatStopwatch(elapsed);
       if (s.swRunning) cls += ' is-running';
       statusText = s.swRunning ? labels.running : elapsed > 0 ? labels.paused : labels.ready;
     }
@@ -715,8 +688,8 @@ export function mountTimerWidget(root: HTMLElement, labels: TimerWidgetLabels): 
         .map(
           (lap, i) => `<div class="tw__laps-row${i === 0 ? ' is-latest' : ''}">
             <span class="tw__laps-num">${s.laps.length - i}</span>
-            <span>${fmtMs(lap.lapTime)}</span>
-            <span class="tw__laps-total">${fmtMs(lap.totalTime)}</span>
+            <span>${formatStopwatch(lap.lapTime)}</span>
+            <span class="tw__laps-total">${formatStopwatch(lap.totalTime)}</span>
           </div>`
         )
         .join('');

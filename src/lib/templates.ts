@@ -106,7 +106,7 @@ export const TRAINING_TEMPLATES: ReadonlyArray<TrainingTemplate> = [
       { name: 'Développé couché barre', muscle: 'Pectoraux', defaultSets: 3, defaultReps: 6 },
       { name: 'Rowing barre', muscle: 'Dos', defaultSets: 3, defaultReps: 8 },
       {
-        name: 'Développé militaire haltères assis',
+        name: 'Développé haltères assis',
         muscle: 'Épaules',
         defaultSets: 3,
         defaultReps: 8,
