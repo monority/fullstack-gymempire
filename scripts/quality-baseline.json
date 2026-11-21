@@ -1,16 +1,15 @@
 {
-  "generatedAt": "2026-11-20T17:57:27.797Z",
+  "generatedAt": "2026-11-21T20:03:50.945Z",
   "note": "Ratchet CI : la dette existante est tolérée, toute AUGMENTATION bloque. Abaisser les valeurs au fur et à mesure des lots.",
   "check-css": {
-    "style block > 80": 25,
+    "style block > 80": 3,
     "!important": 7,
-    "specificity depth": 10,
     "kpi:uppercase": 1
   },
   "check-components": {
     "(window as any)": 1,
-    "size": 13,
-    "style": 16,
-    "script": 13
+    "script": 13,
+    "style": 5,
+    "size": 5
   }
 }

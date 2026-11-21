@@ -91,9 +91,14 @@ for (const { rel, text } of files) {
     }
   }
 
-  // Profondeur > 2
+  // Profondeur > 2 — seuls les sélecteurs de classe/id comptent
+  // (les éléments comme tbody/td/svg n'augmentent pas la spécificité).
   for (const m of css.matchAll(/(^|\n)\s*([.#]?[\w-]+(?:\s+[.#]?[\w-]+){2,})\s*\{/g)) {
-    add('specificity depth', rel, m[2].trim().slice(0, 70));
+    const parts = m[2]
+      .trim()
+      .split(/\s+/)
+      .filter((p) => /^[.#]/.test(p));
+    if (parts.length > 2) add('specificity depth', rel, m[2].trim().slice(0, 70));
   }
 
   // Tokens inconnus (les variables définies localement sont valides)

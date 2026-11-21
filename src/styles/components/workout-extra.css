@@ -262,4 +262,190 @@
       height: 3.2rem;
     }
   }
+
+  .workout-record {
+    display: grid;
+    grid-template-columns: 0.5rem minmax(0, 1fr) auto;
+    gap: 1.6rem;
+    align-items: start;
+    padding: 2rem 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .workout-record__status {
+    width: 0.5rem;
+    height: 100%;
+    min-height: 8rem;
+    background: var(--color-border-strong);
+    border-radius: 2px;
+  }
+  .workout-record--completed .workout-record__status {
+    background: var(--color-accent);
+  }
+  .workout-record--in-progress .workout-record__status {
+    background: var(--color-info);
+  }
+
+  .workout-record__body {
+    min-width: 0;
+  }
+
+  .workout-record__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.2rem;
+  }
+
+  .workout-record__name {
+    margin: 0;
+    font-size: 2rem;
+    letter-spacing: -0.02em;
+  }
+
+  .workout-record__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.2rem 2.4rem;
+    margin-top: 1.6rem;
+  }
+
+  .workout-record__meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .workout-record__meta-value {
+    color: var(--color-text);
+    font-size: 1.3rem;
+    font-weight: 650;
+
+    margin: 0;
+  }
+
+  .workout-record__exercises {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem 1.2rem;
+    margin-top: 1.2rem;
+    color: var(--color-muted);
+    font-size: 1.2rem;
+  }
+
+  .workout-record__ex {
+    display: inline-flex;
+    gap: 0.4rem;
+    align-items: baseline;
+  }
+
+  .workout-record__ex-detail {
+    color: var(--color-accent);
+    font-size: 1rem;
+  }
+
+  .workout-record__ex-more {
+    color: var(--color-muted);
+  }
+
+  .workout-record__arrow {
+    color: var(--color-accent);
+    font-size: 1.8rem;
+  }
+
+  @media (max-width: 480px) {
+    .workout-record {
+      gap: 1rem;
+      padding: 1.6rem 0;
+    }
+    .workout-record__top {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .workout-record__meta {
+      gap: 1rem 1.4rem;
+    }
+  }
+
+  .exercise-card {
+    display: flex;
+    flex-direction: column;
+    gap: 1.4rem;
+    padding: 2rem 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .exercise-card__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1.2rem;
+  }
+
+  .exercise-card__title-group {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.6rem;
+    min-width: 0;
+  }
+
+  .exercise-card__marker {
+    width: 0.8rem;
+    height: 3.8rem;
+    flex-shrink: 0;
+    background: var(--color-border-strong);
+    border-radius: 2px;
+  }
+  .exercise-card--complete .exercise-card__marker {
+    background: var(--color-accent);
+  }
+
+  .exercise-card__name {
+    margin: 0;
+    color: var(--color-text);
+    font-size: 1.9rem;
+    letter-spacing: -0.02em;
+  }
+
+  .exercise-card__muscle {
+    display: block;
+    margin-top: 0.4rem;
+    color: var(--color-muted);
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .exercise-card__summary {
+    display: flex;
+    gap: 0.8rem;
+    color: var(--color-muted);
+    font-size: 1.2rem;
+  }
+
+  .exercise-card__sep {
+    color: var(--color-accent);
+  }
+
+  .exercise-card__sets {
+    border-top: 1px solid var(--color-border-strong);
+  }
+
+  .exercise-card__sets-header {
+    padding: 0.8rem 1.6rem;
+    color: var(--color-muted);
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+  }
+
+  @media (max-width: 480px) {
+    .exercise-card {
+      padding: 1.6rem 0;
+    }
+    .exercise-card__sets-header {
+      padding: 0.8rem 0.4rem;
+    }
+  }
 }

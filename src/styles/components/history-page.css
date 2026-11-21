@@ -1,0 +1,75 @@
+/**
+ * Styles de page — history.astro.
+ * Couche : `components`. Déplacés depuis la page (ratchet).
+ */
+@layer components {
+  .hist__title-icon {
+    background-color: color-mix(in srgb, var(--color-accent) 12%, transparent);
+  }
+  .hist__title-icon svg {
+    width: 2.4rem;
+    height: 2.4rem;
+  }
+
+  .hist__title {
+    font-size: clamp(2.4rem, 4.5vw, 3.4rem);
+  }
+
+  .hist__table-section {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .hist__table-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.4rem;
+  }
+
+  .hist__table-title {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--color-text);
+    margin: 0;
+  }
+
+  .hist__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 1.3rem;
+  }
+
+  .hist__date {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .hist__session-name {
+    font-size: 1.1rem;
+    color: var(--color-muted);
+    text-transform: capitalize;
+  }
+
+  .hist__chart {
+    width: 100%;
+    height: auto;
+    max-height: 32rem;
+    background-color: var(--color-surface-2);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 1.2rem;
+  }
+
+  .hist__chart-tick--start,
+  .hist__chart-tick--end {
+    color: var(--color-text);
+    font-weight: 700;
+  }
+}

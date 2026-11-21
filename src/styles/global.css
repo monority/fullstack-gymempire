@@ -55,6 +55,17 @@
 @import './components/workout-extra.css';
 @import './components/dashboard.css';
 @import './components/session-detail-page.css';
+@import './components/calendar-page.css';
+@import './components/progression-page.css';
+@import './components/trends-page.css';
+@import './components/history-page.css';
+@import './components/login-page.css';
+@import './components/sessions-page.css';
+@import './components/poids-page.css';
+@import './components/records-page.css';
+@import './components/stats-page.css';
+@import './components/compare-page.css';
+@import './components/timer-page.css';
 @import './components/stepper.css';
 @import './components/patterns.css';
 
