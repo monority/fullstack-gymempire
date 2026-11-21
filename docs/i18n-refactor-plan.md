@@ -313,3 +313,6 @@ mauvaise langue. Les phases suivantes sont des améliorations structurelles sans
 | 5 — Verrouillage      | ☐      | CI stricte, ADR              |
 
 > Prochaine action : **Phase 0**. Aucune phase ne commence avec un KPI en régression.
+
+> Phases 0 et 1 exécutées (commit `c8e66ee`). Le site n'a plus de page dans la mauvaise langue.
+> Les phases 2 à 5 restent à faire (routage natif, injection client, données, verrouillage).
