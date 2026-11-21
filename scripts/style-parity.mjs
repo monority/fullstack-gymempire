@@ -5,7 +5,7 @@
 import { chromium } from '@playwright/test';
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 
-const ROUTES = [
+const ALL_ROUTES = [
   '/',
   '/sessions',
   '/sessions/detail?id=s1',
@@ -21,6 +21,7 @@ const ROUTES = [
   '/timer',
   '/login',
 ];
+const ROUTES = process.env.PARITY_ROUTES ? process.env.PARITY_ROUTES.split(',') : ALL_ROUTES;
 const PROPS = [
   'textTransform',
   'fontVariantNumeric',
@@ -86,14 +87,26 @@ const SEED = () => {
 
 async function save(label) {
   mkdirSync(DIR, { recursive: true });
-  const browser = await chromium.launch();
-  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
-  await page.addInitScript(SEED);
+  const browser = await chromium.launch({
+    args: ['--disable-dev-shm-usage', '--no-sandbox', '--disable-gpu'],
+  });
   const out = {};
   for (const route of ROUTES) {
+    // Page fraîche par route : évite la saturation mémoire de Chromium
+    // sur 14 navigations (observé en environnement conteneurisé).
+    const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+    await page.addInitScript(SEED);
     await page.goto(BASE + route);
     await page.waitForTimeout(500);
     await page.evaluate(() => document.fonts.ready);
+    // Alpine retire x-cloak après avoir initialisé l'arbre : attendre cet
+    // état évite de comparer des états d'affichage transitoires (faux positifs).
+    await page
+      .waitForFunction(() => document.querySelectorAll('[x-cloak]').length === 0, null, {
+        timeout: 2000,
+      })
+      .catch(() => {});
+    await page.waitForTimeout(200);
     out[route] = await page.evaluate((props) => {
       const nodes = [...document.querySelectorAll('[class]')].filter((el) =>
         /__(label|stat|value|head|meta|title|mood|fatigue|rpe)|stat-card__|week-metric__|/.test(
@@ -107,6 +120,7 @@ async function save(label) {
         return { cls: String(el.className).slice(0, 120), tag: el.tagName, values };
       });
     }, PROPS);
+    await page.close();
   }
   await browser.close();
   writeFileSync(`${DIR}/style-${label}.json`, JSON.stringify(out, null, 2));

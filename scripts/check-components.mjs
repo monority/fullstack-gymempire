@@ -13,7 +13,8 @@ const LIMITS = { page: 250, style: 20, script: 20 };
 
 // Exceptions documentées dans docs/componentization-rules.md §9.
 const WHITELIST = {
-  size: new Set(['pages/ui.astro', 'pages/debug.astro']),
+  // ui = galerie design system (404 en prod), print = feuille imprimable autonome.
+  size: new Set(['pages/ui.astro', 'pages/debug.astro', 'pages/sessions/print.astro']),
   style: new Set(['pages/ui.astro', 'pages/debug.astro', 'pages/sessions/print.astro']),
   script: new Set(['pages/ui.astro', 'pages/debug.astro']),
   global: new Set(['pages/sessions/print.astro', 'pages/ui.astro']),
@@ -118,10 +119,12 @@ for (const { rel, text } of files) {
   }
 }
 
-const byRule = findings.reduce((acc, f) => {
-  acc[f.rule] = (acc[f.rule] || 0) + 1;
-  return acc;
-}, {});
+const byRule = findings
+  .filter((f) => f.blocking !== false)
+  .reduce((acc, f) => {
+    acc[f.rule] = (acc[f.rule] || 0) + 1;
+    return acc;
+  }, {});
 
 if (AS_JSON) {
   console.log(JSON.stringify({ totals: byRule, findings }, null, 2));

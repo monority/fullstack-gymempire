@@ -1,0 +1,39 @@
+---
+/** Composant sans props — contrat explicite (ratchet CSS). */
+interface Props {}
+import { t } from '../../i18n';
+import Button from '../ui/Button.astro';
+import Segmented from '../ui/Segmented.astro';
+const L = t();
+---
+
+<section class="timer__presets-section" aria-label={L.timer.modeAria}>
+  <div class="timer__presets-segmented">
+    <Segmented
+      model="mode"
+      items={[
+        { value: 'countdown', label: L.timer.countdown },
+        { value: 'stopwatch', label: L.timer.stopwatch },
+      ]}
+    />
+  </div>
+  <div
+    class="timer__presets-list"
+    role="group"
+    aria-label={L.timer.presetsAria}
+    x-show="mode === 'countdown'"
+  >
+    <template x-for="preset in presets" :key="preset">
+      <Button
+        variant="secondary"
+        size="md"
+        pill
+        :active="totalTime === preset && !running && remaining === totalTime"
+        @click="setPreset(preset)"
+      >
+        <span x-text="formatShort(preset)"></span>
+      </Button>
+    </template>
+  </div>
+</section>
+CUSTOM INPUT + LAPS — two cards side by side (countdown / stopwatch)

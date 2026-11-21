@@ -1,0 +1,84 @@
+---
+/** Composant sans props — contrat explicite (ratchet CSS). */
+interface Props {}
+import { t } from '../../i18n';
+import Button from '../ui/Button.astro';
+import Card from '../ui/Card.astro';
+const L = t();
+---
+
+<section class="timer__panels">
+  {/* Custom time — countdown only */}
+  <Card padding="md" class="timer__panel-card" x-show="mode === 'countdown'">
+    <header class="timer__panel-header">
+      <span class="timer__panel-title" x-text="labels.custom">
+        {L.timer.custom}
+      </span>
+      <span class="timer__panel-subtitle" x-text="labels.customSeconds">
+        {L.timer.customSeconds}
+      </span>
+    </header>
+    <div class="timer__custom-controls">
+      <Button
+        variant="secondary"
+        size="md"
+        @click="adjustCustom(-15); setCustom()"
+        aria-label={L.timer.reduce15}
+      >
+        −15
+      </Button>
+      <input
+        id="custom-seconds"
+        type="number"
+        min="5"
+        max="600"
+        step="5"
+        class="timer__custom-input no-spinner"
+        x-model.number="customTime"
+        @keydown.enter="setCustom()"
+        @blur="setCustom()"
+        aria-label={L.timer.customSeconds}
+      />
+      <Button
+        variant="secondary"
+        size="md"
+        @click="adjustCustom(15); setCustom()"
+        aria-label={L.timer.increase15}
+      >
+        +15
+      </Button>
+    </div>
+  </Card>
+
+  {/* Laps — stopwatch only */}
+  <Card
+    padding="none"
+    class="timer__panel-card timer__laps"
+    x-show="mode === 'stopwatch' && sw.laps.length > 0"
+  >
+    <div class="timer__laps-header">
+      <span class="timer__laps-col-label" x-text="labels.lap">
+        {L.timer.lap}
+      </span>
+      <span class="timer__laps-col-label" x-text="labels.lapTime">
+        {L.timer.lapTime}
+      </span>
+      <span class="timer__laps-col-label timer__laps-col-label--right" x-text="labels.total">
+        {L.timer.total}
+      </span>
+    </div>
+    <div class="timer__laps-body">
+      <template x-for="(lap, revIdx) in swLapsReversed" :key="lap.totalTime + '-' + revIdx">
+        <div class="timer__laps-row" :class="{ 'timer__laps-row--latest': revIdx === 0 }">
+          <span class="timer__laps-num" x-text="sw.laps.length - revIdx"></span>
+          <span class="timer__laps-time" x-text="formatStopwatch(lap.lapTime)"></span>
+          <span
+            class="timer__laps-time timer__laps-time--accent"
+            x-text="formatStopwatch(lap.totalTime)"
+          ></span>
+        </div>
+      </template>
+    </div>
+  </Card>
+</section>
+SHORTCUTS — kbd hints, subtle row

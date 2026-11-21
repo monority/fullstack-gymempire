@@ -1,0 +1,85 @@
+---
+/** Composant sans props — contrat explicite (ratchet CSS). */
+interface Props {}
+import { t } from '../../i18n';
+const L = t();
+---
+
+<template x-if="records.length > 0">
+  <div class="poids__stats">
+    <div class="poids__stat poids__stat--hero">
+      <span class="poids__stat-label">{L.poids.latest}</span>
+      <div class="poids__stat-row">
+        <span class="poids__stat-value" x-text="formatNumber(latest?.weight)"></span>
+        <span class="poids__stat-unit">{L.common.kg}</span>
+      </div>
+      <span
+        class="poids__stat-delta"
+        :class="weightDelta < 0 ? 'is-down' : weightDelta > 0 ? 'is-up' : ''"
+        x-text="formatDelta(weightDelta, 'kg')"
+      ></span>
+      <span
+        class="poids__stat-info"
+        x-show="latest && sessionsSinceDate(latest.date) > 0"
+        x-text="formatSessionsSince(latest?.date)"
+      ></span>
+      <span
+        class="poids__stat-volume"
+        x-show="latest && volumeSinceDate(latest.date) > 0"
+        x-text="formatVolume(volumeSinceDate(latest?.date))"
+      ></span>
+    </div>
+
+    <div class="poids__stat" x-show="latest?.arm != null">
+      <span class="poids__stat-label">{L.poids.armLabel}</span>
+      <div class="poids__stat-row">
+        <span class="poids__stat-value" x-text="formatNumber(latest?.arm)"></span>
+        <span class="poids__stat-unit">{L.poids.unitCm}</span>
+      </div>
+      <span
+        class="poids__stat-delta"
+        :class="armDelta < 0 ? 'is-down' : armDelta > 0 ? 'is-up' : ''"
+        x-text="formatDelta(armDelta, 'cm')"
+      ></span>
+    </div>
+
+    <div class="poids__stat" x-show="latest?.chest != null">
+      <span class="poids__stat-label">{L.poids.chestLabel}</span>
+      <div class="poids__stat-row">
+        <span class="poids__stat-value" x-text="formatNumber(latest?.chest)"></span>
+        <span class="poids__stat-unit">{L.poids.unitCm}</span>
+      </div>
+      <span
+        class="poids__stat-delta"
+        :class="chestDelta < 0 ? 'is-down' : chestDelta > 0 ? 'is-up' : ''"
+        x-text="formatDelta(chestDelta, 'cm')"
+      ></span>
+    </div>
+
+    <div class="poids__stat" x-show="latest?.waist != null">
+      <span class="poids__stat-label">{L.poids.waistLabel}</span>
+      <div class="poids__stat-row">
+        <span class="poids__stat-value" x-text="formatNumber(latest?.waist)"></span>
+        <span class="poids__stat-unit">{L.poids.unitCm}</span>
+      </div>
+      <span
+        class="poids__stat-delta"
+        :class="waistDelta < 0 ? 'is-down' : waistDelta > 0 ? 'is-up' : ''"
+        x-text="formatDelta(waistDelta, 'cm')"
+      ></span>
+    </div>
+
+    <div class="poids__stat" x-show="latest?.hips != null">
+      <span class="poids__stat-label">{L.poids.hipsLabel}</span>
+      <div class="poids__stat-row">
+        <span class="poids__stat-value" x-text="formatNumber(latest?.hips)"></span>
+        <span class="poids__stat-unit">{L.poids.unitCm}</span>
+      </div>
+      <span
+        class="poids__stat-delta"
+        :class="hipsDelta < 0 ? 'is-down' : hipsDelta > 0 ? 'is-up' : ''"
+        x-text="formatDelta(hipsDelta, 'cm')"
+      ></span>
+    </div>
+  </div>
+</template>

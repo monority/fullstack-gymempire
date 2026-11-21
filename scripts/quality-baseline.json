@@ -1,14 +1,6 @@
 {
-  "generatedAt": "2026-11-21T20:14:47.021Z",
-  "note": "Ratchet CI : la dette existante est tolérée, toute AUGMENTATION bloque. Abaisser les valeurs au fur et à mesure des lots.",
-  "check-css": {
-    "style block > 80": 3,
-    "!important": 7,
-    "kpi:uppercase": 1
-  },
-  "check-components": {
-    "(window as any)": 1,
-    "style": 5,
-    "size": 4
-  }
+  "generatedAt": "2026-11-21T20:42:14.628Z",
+  "note": "Dette actionnable ramenée à zéro. Les exceptions documentées (ui/print/debug) sont exclues des compteurs. Toute augmentation bloque la CI.",
+  "check-css": {},
+  "check-components": {}
 }

@@ -66,6 +66,8 @@
 @import './components/stats-page.css';
 @import './components/compare-page.css';
 @import './components/timer-page.css';
+@import './components/quick-page.css';
+@import './components/builder-page.css';
 @import './components/stepper.css';
 @import './components/patterns.css';
 

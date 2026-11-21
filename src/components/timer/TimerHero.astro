@@ -1,0 +1,98 @@
+---
+/** Composant sans props — contrat explicite (ratchet CSS). */
+interface Props {}
+import { t } from '../../i18n';
+import Button from '../ui/Button.astro';
+import Icon from '../ui/Icon.astro';
+import { icons } from '../../lib/icons';
+const L = t();
+---
+
+{/* ── Top bar: pop-out (right) ── */}
+<div class="timer__topbar">
+  <Button
+    variant="secondary"
+    size="sm"
+    class="timer__popout"
+    :class="{ 'timer__popout--open': popupOpen }"
+    @click="openPopup()"
+    :aria-label="labels.popoutAria"
+    :title="labels.popout"
+  >
+    <Icon name="popout" size={16} />
+    <span x-text="popupOpen ? labels.popoutOpen : labels.popout">{L.timer.popout}</span>
+  </Button>
+</div>
+HERO — current mode + big clock + start CTA
+<section class="timer__hero">
+  <div class="timer__hero-mode">
+    <span class="timer__hero-icon" aria-hidden="true">
+      <Fragment set:html={icons.countdown(18, 18)} x-show="mode === 'countdown'" />
+      <Fragment set:html={icons.stopwatch(18, 18)} x-show="mode === 'stopwatch'" />
+    </span>
+    <span
+      class="timer__hero-mode-label"
+      x-text="mode === 'countdown' ? labels.countdown : labels.stopwatch"
+    >
+      {L.timer.countdown}
+    </span>
+    <span class="timer__hero-sep" aria-hidden="true">
+      ·
+    </span>
+    <span class="timer__hero-mode-status" x-text="modeStatusLabel"></span>
+  </div>
+
+  <div class="timer__hero-ring-wrap">
+    <svg class="timer__hero-ring-svg" viewBox="0 0 240 240" aria-hidden="true">
+      <circle class="timer__hero-ring-track" cx="120" cy="120" r="108" />
+      <circle
+        class="timer__hero-ring-progress"
+        :class="ringClasses"
+        cx="120"
+        cy="120"
+        r="108"
+        :stroke-dasharray="ringCircumference"
+        :stroke-dashoffset="ringOffset"
+      />
+    </svg>
+    <div
+      class="timer__hero-clock"
+      :class="clockClasses"
+      x-text="clockText"
+      aria-live="polite"
+      aria-atomic="true"
+    >
+      00:00
+    </div>
+  </div>
+
+  <div class="timer__hero-info">
+    <span x-show="mode === 'countdown'">
+      <span x-text="formatShort(totalTime)"></span>
+      <span class="timer__hero-sep" aria-hidden="true">
+        ·
+      </span>
+      <span x-text="labels.custom + ' ' + (customTime === totalTime ? formatShort(customTime) : formatShort(customTime))"></span>
+    </span>
+    <span x-show="mode === 'stopwatch'" x-text="labels.stopwatch + ' · ' + labels.running"></span>
+  </div>
+
+  <div class="timer__hero-actions">
+    <Button variant="primary" size="lg" fullWidth @click="toggle()">
+      <span x-text="toggleLabel">{L.timer.start}</span>
+    </Button>
+    <Button variant="secondary" size="lg" @click="resetCurrent()">
+      <span x-text="labels.reset">{L.timer.reset}</span>
+    </Button>
+    <Button
+      variant="ghost"
+      size="lg"
+      x-show="mode === 'stopwatch'"
+      @click="swRecordLap()"
+      :disabled="!sw.running"
+    >
+      <span x-text="labels.lap">{L.timer.lap}</span>
+    </Button>
+  </div>
+</section>
+MODE + PRESETS — same row, segmented + 4 quick pills

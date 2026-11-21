@@ -1,6 +1,6 @@
 /**
  * Pont typé vers le build Alpine auto-hébergé (ADR-001).
- * Aucun import direct d'Alpine, aucun `(window as any).Alpine`.
+ * Aucun import direct d'Alpine, aucun cast Window non typé.
  */
 
 export function getAlpine(): AlpineBridge | null {

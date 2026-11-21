@@ -1,0 +1,75 @@
+---
+/** Composant sans props — contrat explicite (ratchet CSS). */
+interface Props {}
+import { t } from '../../i18n';
+import Card from '../ui/Card.astro';
+import CardHeader from '../ui/CardHeader.astro';
+import CardTitle from '../ui/CardTitle.astro';
+import CardContent from '../ui/CardContent.astro';
+import Icon from '../ui/Icon.astro';
+const L = t();
+---
+
+<template x-if="records.length > 0">
+  <Card>
+    <CardHeader>
+      <CardTitle>{L.historique.titleShort}</CardTitle>
+    </CardHeader>
+    <CardContent>
+      <div class="poids__table-wrap">
+        <table class="poids__table">
+          <thead>
+            <tr>
+              <th scope="col">{L.poids.date}</th>
+              <th scope="col">{L.poids.sessions}</th>
+              <th scope="col">{L.poids.volume}</th>
+              <th scope="col">{L.poids.weightShort}</th>
+              <th scope="col">{L.poids.armLabel}</th>
+              <th scope="col">{L.poids.chestLabel}</th>
+              <th scope="col">{L.poids.waistLabel}</th>
+              <th scope="col">{L.poids.hipsLabel}</th>
+              <th scope="col" class="poids__table-header-cell--right"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <template x-for="(r, i) in [...records].reverse()" :key="i">
+              <tr>
+                <td x-text="formatDate(r.date)"></td>
+                <td class="poids__table-cell" x-text="sessionsSinceDate(r.date)"></td>
+                <td class="poids__table-cell" x-text="formatVolume(volumeSinceDate(r.date))"></td>
+                <td class="poids__table-cell" x-text="formatNumber(r.weight) + ' kg'"></td>
+                <td
+                  class="poids__table-cell"
+                  x-text="r.arm != null ? formatNumber(r.arm) + ' cm' : '—'"
+                ></td>
+                <td
+                  class="poids__table-cell"
+                  x-text="r.chest != null ? formatNumber(r.chest) + ' cm' : '—'"
+                ></td>
+                <td
+                  class="poids__table-cell"
+                  x-text="r.waist != null ? formatNumber(r.waist) + ' cm' : '—'"
+                ></td>
+                <td
+                  class="poids__table-cell"
+                  x-text="r.hips != null ? formatNumber(r.hips) + ' cm' : '—'"
+                ></td>
+                <td class="poids__table-cell--right">
+                  <button
+                    type="button"
+                    class="poids__icon-btn"
+                    @click="removeEntry(r.date)"
+                    :aria-label="deleteLabel(r.date)"
+                    title={L.poids.delete}
+                  >
+                    <Icon name="trash" size={20} />
+                  </button>
+                </td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+      </div>
+    </CardContent>
+  </Card>
+</template>

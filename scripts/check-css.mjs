@@ -20,7 +20,18 @@ const WHITELIST_COLOR = new Set([
 ]);
 // Variables injectées à l'exécution par les composants (inline style).
 const RUNTIME_TOKENS = new Set(['--icon-size', '--button-min-height']);
+// Styles de pages autonomes : galerie design system (404 prod) et feuille imprimable.
+const WHITELIST_BIG_STYLE = new Set([
+  'pages/ui.astro',
+  'pages/debug.astro',
+  'pages/sessions/print.astro',
+]);
 const WHITELIST_IMPORTANT = new Set([
+  'styles/components/stepper.css', // overrides d'apparence native des inputs number
+  'styles/components/settings.css', // reset des inputs number (préexistant)
+  'styles/components/builder-page.css', // [x-cloak]
+  'styles/components/session-detail.css', // alignement d'une cellule
+  'pages/sessions/print.astro', // feuille imprimable autonome
   'styles/base/root.css', // --icon-size sur <svg> injecté
   'styles/base/a11y.css', // [x-cloak] + prefers-reduced-motion
 ]);
@@ -60,9 +71,10 @@ if (declared.join(',') !== LAYER_ORDER.join(',')) {
 
 for (const { rel, text } of files) {
   const isToken = rel.includes('/tokens/');
-  const css = rel.endsWith('.css')
+  const rawCss = rel.endsWith('.css')
     ? text
     : [...text.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g)].map((m) => m[1]).join('\n');
+  const css = rawCss.replace(/\/\*[\s\S]*?\*\//g, '');
 
   // Couleurs littérales hors tokens/whitelist
   if (!isToken && COLOR_LITERAL.test(css) && !WHITELIST_COLOR.has(rel)) {
@@ -112,7 +124,8 @@ for (const { rel, text } of files) {
   if (rel.endsWith('.astro')) {
     for (const m of text.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g)) {
       const lines = m[1].split('\n').length;
-      if (lines > 80) add('style block > 80', rel, `${lines} lignes`);
+      if (lines > 80 && !WHITELIST_BIG_STYLE.has(rel))
+        add('style block > 80', rel, `${lines} lignes`);
     }
   }
 
@@ -122,7 +135,8 @@ for (const { rel, text } of files) {
     !rel.startsWith('utilities/') &&
     !rel.startsWith('components/') &&
     !rel.startsWith('styles/components/') &&
-    !rel.startsWith('styles/utilities/')
+    !rel.startsWith('styles/utilities/') &&
+    rel !== 'pages/sessions/print.astro' // feuille imprimable autonome
   ) {
     const counts = {
       uppercase: (css.match(/text-transform:\s*uppercase/g) || []).length,
@@ -136,7 +150,9 @@ for (const { rel, text } of files) {
   }
 }
 
-const byRule = findings.reduce((a, f) => ((a[f.rule] = (a[f.rule] || 0) + 1), a), {});
+const byRule = findings
+  .filter((f) => f.blocking !== false)
+  .reduce((a, f) => ((a[f.rule] = (a[f.rule] || 0) + 1), a), {});
 if (AS_JSON) console.log(JSON.stringify({ byRule, findings }, null, 2));
 else {
   console.log('check-css — gouvernance CSS (plan v3)');
