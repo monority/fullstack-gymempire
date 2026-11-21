@@ -1,4 +1,6 @@
 ---
+import { resolveLocale } from '../../i18n';
+
 interface Props {
   id?: string;
   title?: string;
@@ -8,7 +10,8 @@ interface Props {
 import { t } from '../../i18n';
 import Icon from './Icon.astro';
 
-const L = t();
+const locale = resolveLocale(Astro.url.pathname);
+const L = t(locale);
 
 const { id = 'dialog', title, class: className = '' } = Astro.props;
 ---

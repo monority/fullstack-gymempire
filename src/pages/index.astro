@@ -1,5 +1,4 @@
 ---
-const locale = resolveLocale(Astro.url.pathname);
 import { resolveLocale } from '../i18n';
 
 import AppLayout from '../layouts/AppLayout.astro';
@@ -11,6 +10,7 @@ import RecentSessions from '../components/dashboard/RecentSessions.astro';
 import WeekMetrics from '../components/dashboard/WeekMetrics.astro';
 import { t, localizedPath } from '../i18n';
 
+const locale = resolveLocale(Astro.url.pathname);
 const L = t(locale);
 ---
 
@@ -20,7 +20,7 @@ const L = t(locale);
       <h1 class="dash__title" x-text="greeting()">
         {L.dashboard.title}
       </h1>
-      <a class="dash__header-action" href={localizedPath('/sessions/create')}>
+      <a class="dash__header-action" href={localizedPath('/sessions/create', locale)}>
         {L.dashboard.newSession}
       </a>
     </header>
@@ -56,13 +56,13 @@ const L = t(locale);
       <p class="dash__empty-desc">{L.dashboard.emptyDesc}</p>
 
       <div class="dash__empty-actions">
-        <Button variant="primary" size="md" href={localizedPath('/sessions/create')}>
+        <Button variant="primary" size="md" href={localizedPath('/sessions/create', locale)}>
           <span>{L.dashboard.createFirst}</span>
         </Button>
-        <Button variant="secondary" size="md" href={localizedPath('/timer')}>
+        <Button variant="secondary" size="md" href={localizedPath('/timer', locale)}>
           <span>{L.dashboard.stopwatch}</span>
         </Button>
-        <a href={localizedPath('/exercises')} class="dash__empty-link">
+        <a href={localizedPath('/exercises', locale)} class="dash__empty-link">
           {L.dashboard.browseExercises}
         </a>
       </div>

@@ -1,9 +1,12 @@
 ---
+import { resolveLocale } from '../../i18n';
+
 /** Composant sans props — contrat explicite (ratchet CSS). */
 interface Props {}
 import { t } from '../../i18n';
 import Icon from '../ui/Icon.astro';
-const L = t();
+const locale = resolveLocale(Astro.url.pathname);
+const L = t(locale);
 ---
 
 {/* ── Summary deltas at the top ── */}

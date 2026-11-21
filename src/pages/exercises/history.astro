@@ -1,5 +1,4 @@
 ---
-const locale = resolveLocale(Astro.url.pathname);
 import { resolveLocale } from '../../i18n';
 
 import { t, localizedPath } from '../../i18n';
@@ -11,6 +10,7 @@ import EmptyState from '../../components/ui/EmptyState.astro';
 import BackLink from '../../components/ui/BackLink.astro';
 import MetricGrid from '../../components/ui/MetricGrid.astro';
 import { buildHistoryMetrics } from '../../components/progression/metric-definitions';
+const locale = resolveLocale(Astro.url.pathname);
 const L = t(locale);
 import Icon from '../../components/ui/Icon.astro';
 ---
@@ -20,7 +20,7 @@ import Icon from '../../components/ui/Icon.astro';
 
   <div class="hist__main" x-data="exerciseHistoryApp()" x-init="init()" x-cloak>
     {/* ── Back link ── */}
-    <BackLink href={localizedPath('/exercises')} label={L.historique.back} />
+    <BackLink href={localizedPath('/exercises', locale)} label={L.historique.back} />
 
     <template x-if="notFound">
       <EmptyState
@@ -28,7 +28,7 @@ import Icon from '../../components/ui/Icon.astro';
         title={L.historique.notFound}
         description={L.historique.notFoundDesc}
         actionLabel={L.historique.viewExercises}
-        actionHref={localizedPath('/exercises')}
+        actionHref={localizedPath('/exercises', locale)}
       />
     </template>
 
@@ -155,7 +155,7 @@ import Icon from '../../components/ui/Icon.astro';
                 title={L.common.noData}
                 description={L.historique.historyEmpty}
                 actionLabel={L.historique.viewExercises}
-                actionHref={localizedPath('/exercises')}
+                actionHref={localizedPath('/exercises', locale)}
               />
             </Card>
           </template>

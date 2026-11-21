@@ -1,5 +1,4 @@
 ---
-const locale = resolveLocale(Astro.url.pathname);
 import { resolveLocale } from '../../i18n';
 
 import { t, localizedPath } from '../../i18n';
@@ -9,6 +8,7 @@ import Card from '../../components/ui/Card.astro';
 import Segmented from '../../components/ui/Segmented.astro';
 import BackLink from '../../components/ui/BackLink.astro';
 import EmptyState from '../../components/ui/EmptyState.astro';
+const locale = resolveLocale(Astro.url.pathname);
 const L = t(locale);
 import Icon from '../../components/ui/Icon.astro';
 ---
@@ -17,7 +17,7 @@ import Icon from '../../components/ui/Icon.astro';
   <PageHeader title={L.tendance.title} description={L.tendance.description} />
 
   <div class="trend" x-data="exerciseTrendApp()" x-init="init()" x-cloak>
-    <BackLink href={localizedPath('/exercises')} label={L.tendance.back} />
+    <BackLink href={localizedPath('/exercises', locale)} label={L.tendance.back} />
 
     <template x-if="notFound">
       <EmptyState
@@ -25,7 +25,7 @@ import Icon from '../../components/ui/Icon.astro';
         title={L.tendance.notFound}
         description={L.tendance.notFoundDesc}
         actionLabel={L.tendance.viewExercises}
-        actionHref={localizedPath('/exercises')}
+        actionHref={localizedPath('/exercises', locale)}
       />
     </template>
 
@@ -99,7 +99,7 @@ import Icon from '../../components/ui/Icon.astro';
                 </div>
                 <h3 class="trend__empty-title">{L.tendance.emptyTitle}</h3>
                 <p class="trend__empty-desc" x-text="emptyMessage"></p>
-                <a href={localizedPath('/sessions/quick')} class="trend__empty-link">
+                <a href={localizedPath('/sessions/quick', locale)} class="trend__empty-link">
                   {L.common.startSession}
                 </a>
               </div>

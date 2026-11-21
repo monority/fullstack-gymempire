@@ -72,11 +72,40 @@ for (const file of walk('dist')) {
   const main = (html.match(/<main[^>]*>([\s\S]*?)<\/main>/) || [])[1] ?? '';
   const h1 = (main.match(/<h1[^>]*>([\s\S]*?)<\/h1>/) || [])[1] ?? '';
   const firstP = (main.match(/<p[^>]*>([\s\S]*?)<\/p>/) || [])[1] ?? '';
-  const content = [title, strip(h1), strip(firstP)].join('\n');
+  // Analyse de TOUT le texte visible (et pas seulement title/h1/p) pour
+  // détecter les libellés de composants restés en FR sur une route EN.
+  const visible = strip(main);
+  const content = [title, strip(h1), strip(firstP), visible].join('\n');
 
   const isEnRoute = relative('dist', file).replace(/\\/g, '/').startsWith('en/');
   const frCount = FR_MARKERS.filter((m) => content.includes(m)).length;
   const enCount = EN_MARKERS.filter((m) => content.includes(m)).length;
+
+  // Sur une route EN, tous les liens internes doivent être préfixés /en/.
+  if (isEnRoute) {
+    const internalLinks = [...html.matchAll(/href="(\/[^"#?][^"]*)"/g)]
+      .map((m) => m[1])
+      .filter(
+        (href) =>
+          href !== '/en' &&
+          !href.startsWith('/en/') &&
+          !href.startsWith('/_astro/') &&
+          !href.startsWith('/fonts/') &&
+          !href.startsWith('/vendor/') &&
+          href !== '/favicon.svg' &&
+          href !== '/manifest.json' &&
+          !href.startsWith('/api/')
+      );
+    if (internalLinks.length) {
+      failures.push({
+        file: relative('dist', file),
+        expected: 'liens /en/ manquants',
+        title,
+        frCount: internalLinks.length,
+        enCount: 0,
+      });
+    }
+  }
 
   if (isEnRoute && frCount > enCount) {
     failures.push({ file: relative('dist', file), expected: 'en', title, frCount, enCount });

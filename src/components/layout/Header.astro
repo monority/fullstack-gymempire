@@ -1,4 +1,6 @@
 ---
+import { resolveLocale } from '../../i18n';
+
 /**
  *
  * Layout :
@@ -21,7 +23,8 @@ interface Props {
 import { t } from '../../i18n';
 import Icon from '../ui/Icon.astro';
 
-const L = t();
+const locale = resolveLocale(Astro.url.pathname);
+const L = t(locale);
 
 const { title, class: className = '' } = Astro.props as Props;
 ---
@@ -120,9 +123,9 @@ const { title, class: className = '' } = Astro.props as Props;
 
 <script>
   import { registerAlpine } from '../../lib/alpine';
-  import { t } from '../../i18n';
+  import { t, getLocale } from '../../i18n';
 
-  const L = t();
+  const L = t(getLocale());
 
   registerAlpine('localeApp', () => ({
     get locale(): string {

@@ -1,4 +1,6 @@
 ---
+import { resolveLocale } from '../../i18n';
+
 /**
  *
  * Renders a flex row of previous/next anchors + page-number links
@@ -15,7 +17,8 @@ interface Props {
 import { t } from '../../i18n';
 import Icon from './Icon.astro';
 
-const L = t();
+const locale = resolveLocale(Astro.url.pathname);
+const L = t(locale);
 
 const { currentPage, totalPages, hrefPattern, class: className = '' } = Astro.props;
 

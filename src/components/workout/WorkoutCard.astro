@@ -1,9 +1,12 @@
 ---
+import { resolveLocale } from '../../i18n';
+
 import Badge from '../ui/Badge.astro';
 import { t, trExercise, trMuscle } from '../../i18n';
 import { formatDateShort } from '../../lib/format';
 
-const L = t();
+const locale = resolveLocale(Astro.url.pathname);
+const L = t(locale);
 interface Props {
   name: string;
   date: string;

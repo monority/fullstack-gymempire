@@ -17,13 +17,6 @@ interface Window {
   __applyStoredTheme?: (doc: Document) => void;
   showToast?: (message: string, variant?: string) => void;
   /** Exposés par la page du builder pour les sous-composants Alpine. */
-  __builderLabels?: {
-    noSets: string;
-    setsSingular: string;
-    setsPlural: string;
-    top: string;
-    [key: string]: string;
-  };
   __builderSessions?: import('./lib/storage/types').Session[];
 }
 

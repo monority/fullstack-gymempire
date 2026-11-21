@@ -1,5 +1,4 @@
 ---
-const locale = resolveLocale(Astro.url.pathname);
 import { resolveLocale } from '../../i18n';
 
 import { t, localizedPath } from '../../i18n';
@@ -9,6 +8,7 @@ import EmptyState from '../../components/ui/EmptyState.astro';
 import Card from '../../components/ui/Card.astro';
 import Badge from '../../components/ui/Badge.astro';
 import { icons } from '../../lib/icons';
+const locale = resolveLocale(Astro.url.pathname);
 const L = t(locale);
 ---
 
@@ -145,7 +145,7 @@ const L = t(locale);
           title={L.progression.noData}
           description={L.progression.empty}
           actionLabel={L.common.startSession}
-          actionHref={localizedPath('/sessions/create')}
+          actionHref={localizedPath('/sessions/create', locale)}
         />
       </Card>
     </template>

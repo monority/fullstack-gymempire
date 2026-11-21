@@ -1,5 +1,4 @@
 ---
-const locale = resolveLocale(Astro.url.pathname);
 import { resolveLocale } from '../../i18n';
 
 import AppLayout from '../../layouts/AppLayout.astro';
@@ -17,20 +16,21 @@ import SessionActions from '../../components/session-detail/SessionActions.astro
 import NotesSection from '../../components/session-detail/NotesSection.astro';
 import ExerciseList from '../../components/session-detail/ExerciseList.astro';
 
+const locale = resolveLocale(Astro.url.pathname);
 const L = t(locale);
 ---
 
 <AppLayout title={L.detail.title}>
   <div class="detail" x-data="sessionDetailApp()" x-init="init()" x-cloak>
     {/* ── Back link ── */}
-    <BackLink href={localizedPath('/sessions')} label={L.detail.backToSessions} />
+    <BackLink href={localizedPath('/sessions', locale)} label={L.detail.backToSessions} />
     <template x-if="notFound">
       <EmptyState
         variant="error"
         title={L.detail.notFound}
         description={L.detail.notFoundDesc}
         actionLabel={L.detail.viewAllSessions}
-        actionHref={localizedPath('/sessions')}
+        actionHref={localizedPath('/sessions', locale)}
       />
     </template>
     {/* ── Loaded session ── */}

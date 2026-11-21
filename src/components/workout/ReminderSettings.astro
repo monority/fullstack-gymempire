@@ -1,4 +1,6 @@
 ---
+import { resolveLocale } from '../../i18n';
+
 /** Composant sans props — contrat explicite (ratchet CSS). */
 interface Props {}
 /**
@@ -12,7 +14,8 @@ import Button from '../ui/Button.astro';
 import Toggle from '../ui/Toggle.astro';
 import { t } from '../../i18n';
 
-const L = t();
+const locale = resolveLocale(Astro.url.pathname);
+const L = t(locale);
 import Icon from '../ui/Icon.astro';
 ---
 
@@ -142,9 +145,9 @@ import Icon from '../ui/Icon.astro';
   import { getSessions } from '../../lib/storage/sessions';
   import { getStore, setStore } from '../../lib/storage/store';
   import { STORAGE_KEYS } from '../../lib/storage/defaults';
-  import { t } from '../../i18n';
+  import { t, getLocale } from '../../i18n';
 
-  const L = t();
+  const L = t(getLocale());
 
   let lastNotifiedSlot = '';
 

@@ -37,10 +37,16 @@ export function useI18n(pathname: string): {
   return { locale, dict: dictionaries[locale], dateLocale: dateLocale(locale) };
 }
 
-export function localizedPath(path: string, locale: Locale = getLocale()): string {
-  if (locale === defaultLocale) return path;
-  if (path === '/') return `/${locale}`;
-  return `/${locale}${path}`;
+export function localizedPath(path: string, locale?: Locale): string {
+  // Côté serveur, l'absence de locale est une erreur : getLocale() n'a pas de
+  // document et renverrait 'fr', produisant des liens FR sur les pages EN.
+  if (typeof document === 'undefined' && locale === undefined) {
+    throw new Error('localizedPath(): locale explicite requise côté serveur');
+  }
+  const resolved = locale ?? getLocale();
+  if (resolved === defaultLocale) return path;
+  if (path === '/') return `/${resolved}`;
+  return `/${resolved}${path}`;
 }
 
 export {

@@ -1,7 +1,10 @@
 ---
+import { resolveLocale } from '../../i18n';
+
 import { t } from '../../i18n';
 import Badge from '../ui/Badge.astro';
-const L = t();
+const locale = resolveLocale(Astro.url.pathname);
+const L = t(locale);
 
 interface Props {
   expr: string;

@@ -1,5 +1,4 @@
 ---
-const locale = resolveLocale(Astro.url.pathname);
 import { resolveLocale } from '../../i18n';
 
 import { t, localizedPath } from '../../i18n';
@@ -12,6 +11,7 @@ import PanelHeader from '../../components/ui/PanelHeader.astro';
 import CardContent from '../../components/ui/CardContent.astro';
 import Segmented from '../../components/ui/Segmented.astro';
 import Toggle from '../../components/ui/Toggle.astro';
+const locale = resolveLocale(Astro.url.pathname);
 const L = t(locale);
 ---
 
@@ -22,7 +22,7 @@ const L = t(locale);
     <div class="stats__empty-state" x-show="!hasCompletedSessions" x-cloak role="status">
       <h2 class="stats__empty-title">{L.stats.noData}</h2>
       <p class="stats__empty-text">{L.stats.empty}</p>
-      <a href={localizedPath('/sessions/create')} class="stats__empty-cta">
+      <a href={localizedPath('/sessions/create', locale)} class="stats__empty-cta">
         {L.common.startSession}
       </a>
     </div>

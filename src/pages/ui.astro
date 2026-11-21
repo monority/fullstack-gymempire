@@ -1,5 +1,4 @@
 ---
-const locale = resolveLocale(Astro.url.pathname);
 import { resolveLocale } from '../i18n';
 
 import { t, localizedPath } from '../i18n';
@@ -36,6 +35,7 @@ import StatsCard from '../components/workout/StatsCard.astro';
 import ExerciseCard from '../components/workout/ExerciseCard.astro';
 import { icons } from '../lib/icons';
 import WorkoutCard from '../components/workout/WorkoutCard.astro';
+const locale = resolveLocale(Astro.url.pathname);
 const L = t(locale);
 
 // page design-system réservée au dev :
@@ -626,7 +626,7 @@ const workoutCards = [
                 title={L.sessions.noSession}
                 description={L.ui.emptyStateDesc}
                 actionLabel={L.ui.createSession}
-                actionHref={localizedPath('/sessions/create')}
+                actionHref={localizedPath('/sessions/create', locale)}
               />
               <EmptyState iconName="dumbbell" title={L.exercices.emptyLibrary} />
               <EmptyState iconName="chart" title={L.progression.noData} />

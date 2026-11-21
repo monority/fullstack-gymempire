@@ -1,4 +1,6 @@
 ---
+import { resolveLocale } from '../../i18n';
+
 /** Composant sans props — contrat explicite (ratchet CSS). */
 interface Props {}
 /**
@@ -23,7 +25,8 @@ interface Props {}
 import { t } from '../../i18n';
 import Icon from '../ui/Icon.astro';
 
-const L = t();
+const locale = resolveLocale(Astro.url.pathname);
+const L = t(locale);
 ---
 
 <dialog
@@ -159,9 +162,9 @@ const L = t();
   const rankScore = (name: string, q: string): number => (normalize(name).startsWith(q) ? 0 : 1);
 
   registerAlpine('commandMenu', () => {
-    const L = t();
+    const L = t(getLocale());
     const locale = getLocale();
-    const base = (p: string) => localizedPath(p);
+    const base = (p: string) => localizedPath(p, getLocale());
 
     // Static page catalogue (labels localized at init).
     const pages: QItem[] = [

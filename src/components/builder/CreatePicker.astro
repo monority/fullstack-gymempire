@@ -1,4 +1,6 @@
 ---
+import { resolveLocale } from '../../i18n';
+
 /** Composant sans props — contrat explicite (ratchet CSS). */
 interface Props {}
 import { t } from '../../i18n';
@@ -9,7 +11,8 @@ import Icon from '../ui/Icon.astro';
 import Input from '../ui/Input.astro';
 import { TRAINING_TEMPLATES } from '../../lib/templates';
 import { trTemplateName, trTemplateDesc, localizedPath } from '../../i18n';
-const L = t();
+const locale = resolveLocale(Astro.url.pathname);
+const L = t(locale);
 ---
 
 <Dialog id="ses-picker-dialog" title={L.builder.pickerTitle}>
@@ -75,7 +78,7 @@ const L = t();
         <div class="create__picker-empty">
           <p x-text="labels.emptyLibrary">{L.builder.emptyLibrary}</p>
           <a
-            href={localizedPath('/exercises')}
+            href={localizedPath('/exercises', locale)}
             class="create__picker-empty-link"
             x-text="labels.createExoLink"
           >

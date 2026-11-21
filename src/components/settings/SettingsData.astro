@@ -1,4 +1,6 @@
 ---
+import { resolveLocale } from '../../i18n';
+
 /** Composant sans props — contrat explicite (ratchet CSS). */
 interface Props {}
 import { t } from '../../i18n';
@@ -11,10 +13,11 @@ import Input from '../ui/Input.astro';
 import Button from '../ui/Button.astro';
 import Icon from '../ui/Icon.astro';
 const APP_VERSION = '0.0.1';
-const L = t();
+const locale = resolveLocale(Astro.url.pathname);
+const L = t(locale);
 ---
 
-6. DONNÉES
+6. {L.settings.data}
 <SettingsSection
   icon="database"
   title={L.settings.data}
@@ -270,7 +273,7 @@ const L = t();
     </CardContent>
   </Card>
 </section>
-8. À PROPOS
+8. {L.settings.about}
 <SettingsSection
   icon="infoCircle"
   title={L.settings.about}

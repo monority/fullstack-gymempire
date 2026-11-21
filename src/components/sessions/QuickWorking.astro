@@ -1,4 +1,6 @@
 ---
+import { resolveLocale } from '../../i18n';
+
 /** Composant sans props — contrat explicite (ratchet CSS). */
 interface Props {}
 import { t } from '../../i18n';
@@ -6,7 +8,8 @@ import Button from '../ui/Button.astro';
 import Icon from '../ui/Icon.astro';
 import Segmented from '../ui/Segmented.astro';
 import Select from '../ui/Select.astro';
-const L = t();
+const locale = resolveLocale(Astro.url.pathname);
+const L = t(locale);
 ---
 
 {/* --- STATE 2 — Working --- */}

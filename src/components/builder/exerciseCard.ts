@@ -129,7 +129,7 @@ export function exerciseCard(exercise: BuilderExercise, exerciseIndex: number) {
     },
 
     applyMrv(setIndex: number) {
-      const labels = window.__builderLabels ?? ({} as NonNullable<Window['__builderLabels']>);
+      const labels = builderLabels() ?? {};
       const set = this.exercise.sets[setIndex];
       const s = this.mrvSuggestion(setIndex);
       if (!set || !s) return;

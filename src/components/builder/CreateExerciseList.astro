@@ -1,4 +1,6 @@
 ---
+import { resolveLocale } from '../../i18n';
+
 /** Composant sans props — contrat explicite (ratchet CSS). */
 interface Props {}
 import { t } from '../../i18n';
@@ -10,7 +12,8 @@ import IconButton from '../ui/IconButton.astro';
 import Badge from '../ui/Badge.astro';
 import { icons } from '../../lib/icons';
 
-const L = t();
+const locale = resolveLocale(Astro.url.pathname);
+const L = t(locale);
 const setTypes = [
   { value: 'warmup', label: L.builder.types.warmup },
   { value: 'work', label: L.builder.types.work },

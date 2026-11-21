@@ -1,10 +1,13 @@
 ---
+import { resolveLocale } from '../../i18n';
+
 /** Composant sans props — contrat explicite (ratchet CSS). */
 interface Props {}
 import { t, localizedPath } from '../../i18n';
 import Button from '../ui/Button.astro';
 import Icon from '../ui/Icon.astro';
-const L = t();
+const locale = resolveLocale(Astro.url.pathname);
+const L = t(locale);
 ---
 
 {/* --- STATE 1 — Selecting --- */}
@@ -33,7 +36,7 @@ const L = t();
       </div>
 
       <div class="quick__selecting-actions">
-        <Button variant="ghost" href={localizedPath('/sessions')}>
+        <Button variant="ghost" href={localizedPath('/sessions', locale)}>
           {L.common.back}
         </Button>
         <Button variant="primary" :disabled="!selectedSessionId" @click="startSession()">
@@ -44,7 +47,7 @@ const L = t();
       <template x-if="availableSessions.length === 0">
         <p class="quick__empty-text">
           {L.rapide.emptyDesc}{' '}
-          <a class="quick__empty-link" href={localizedPath('/sessions/create')}>
+          <a class="quick__empty-link" href={localizedPath('/sessions/create', locale)}>
             {L.rapide.restart}
           </a>
           .

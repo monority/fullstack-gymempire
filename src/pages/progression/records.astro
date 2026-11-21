@@ -1,5 +1,4 @@
 ---
-const locale = resolveLocale(Astro.url.pathname);
 import { resolveLocale } from '../../i18n';
 
 import { t, localizedPath } from '../../i18n';
@@ -9,6 +8,7 @@ import Badge from '../../components/ui/Badge.astro';
 import EmptyState from '../../components/ui/EmptyState.astro';
 import MetricGrid from '../../components/ui/MetricGrid.astro';
 import { buildRecordsMetrics } from '../../components/progression/metric-definitions';
+const locale = resolveLocale(Astro.url.pathname);
 const L = t(locale);
 import Icon from '../../components/ui/Icon.astro';
 ---
@@ -146,7 +146,7 @@ import Icon from '../../components/ui/Icon.astro';
           title={L.records.noRecords}
           description={L.records.noRecordsDesc}
           actionLabel={L.common.startSession}
-          actionHref={localizedPath('/sessions/create')}
+          actionHref={localizedPath('/sessions/create', locale)}
         />
       </div>
     </template>

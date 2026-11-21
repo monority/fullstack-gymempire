@@ -1,4 +1,6 @@
 ---
+import { resolveLocale } from '../../i18n';
+
 /** Composant sans props — contrat explicite (ratchet CSS). */
 interface Props {}
 import { t } from '../../i18n';
@@ -7,11 +9,12 @@ import Select from '../ui/Select.astro';
 import Button from '../ui/Button.astro';
 import Icon from '../ui/Icon.astro';
 import Toggle from '../ui/Toggle.astro';
-const L = t();
+const locale = resolveLocale(Astro.url.pathname);
+const L = t(locale);
 const restOptions = (await import('../../lib/settings-stats')).formatRestOptions();
 ---
 
-3. OBJECTIFS
+3. {L.settings.goals}
 <SettingsSection
   icon="target"
   title={L.settings.goals}
@@ -79,7 +82,7 @@ const restOptions = (await import('../../lib/settings-stats')).formatRestOptions
     </div>
   </div>
 </SettingsSection>
-4. TIMER
+4. {L.settings.timerSettings}
 <SettingsSection
   icon="clockStopwatch"
   title={L.settings.timerSettings}

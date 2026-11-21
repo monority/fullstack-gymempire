@@ -1,5 +1,4 @@
 ---
-const locale = resolveLocale(Astro.url.pathname);
 import { resolveLocale } from '../../i18n';
 
 import { t, localizedPath } from '../../i18n';
@@ -13,13 +12,14 @@ import CardTitle from '../../components/ui/CardTitle.astro';
 import CardContent from '../../components/ui/CardContent.astro';
 import Icon from '../../components/ui/Icon.astro';
 import BackLink from '../../components/ui/BackLink.astro';
+const locale = resolveLocale(Astro.url.pathname);
 const L = t(locale);
 ---
 
 <AppLayout title={L.comparer.title}>
   <div class="comp" x-data="comparisonApp()" x-init="init()" x-cloak>
     <PageHeader title={L.comparer.title} description={L.comparer.description} />
-    <BackLink href={localizedPath('/sessions')} label={L.comparer.back} />
+    <BackLink href={localizedPath('/sessions', locale)} label={L.comparer.back} />
     SESSION PICKERS
     <Card>
       <CardHeader>
@@ -91,7 +91,7 @@ const L = t(locale);
           </div>
           <p>
             {L.comparer.needTwo}
-            <a href={localizedPath('/sessions/create')} class="comp__hint-link">
+            <a href={localizedPath('/sessions/create', locale)} class="comp__hint-link">
               {L.comparer.createSession}
             </a>
           </p>

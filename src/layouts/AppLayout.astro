@@ -16,35 +16,43 @@ interface Props {
 }
 
 const currentPath = Astro.url.pathname;
-const locale = resolveLocale(currentPath);
+const locale = resolveLocale(Astro.url.pathname);
 const L = t(locale);
 
 const defaultGroups: NavTree = [
   {
     label: L.nav.groups.primary,
     items: [
-      { label: L.nav.dashboard, href: localizedPath('/'), icon: 'dashboard' },
+      { label: L.nav.dashboard, href: localizedPath('/', locale), icon: 'dashboard' },
       {
         label: L.nav.seances,
-        href: localizedPath('/sessions'),
+        href: localizedPath('/sessions', locale),
         icon: 'clipboard',
         children: [
-          { label: L.nav.historique, href: localizedPath('/sessions'), icon: 'clock' },
-          { label: L.nav.creer, href: localizedPath('/sessions/create'), icon: 'plus' },
+          { label: L.nav.historique, href: localizedPath('/sessions', locale), icon: 'clock' },
+          { label: L.nav.creer, href: localizedPath('/sessions/create', locale), icon: 'plus' },
         ],
       },
-      { label: L.nav.rapide, href: localizedPath('/sessions/quick'), icon: 'zap' },
+      { label: L.nav.rapide, href: localizedPath('/sessions/quick', locale), icon: 'zap' },
       {
         label: L.nav.progression,
-        href: localizedPath('/progression'),
+        href: localizedPath('/progression', locale),
         icon: 'trending-up',
         children: [
-          { label: L.nav.force, href: localizedPath('/progression'), icon: 'target' },
-          { label: L.nav.poidsMesures, href: localizedPath('/progression/poids'), icon: 'scale' },
-          { label: L.nav.records, href: localizedPath('/progression/records'), icon: 'award' },
+          { label: L.nav.force, href: localizedPath('/progression', locale), icon: 'target' },
+          {
+            label: L.nav.poidsMesures,
+            href: localizedPath('/progression/poids', locale),
+            icon: 'scale',
+          },
+          {
+            label: L.nav.records,
+            href: localizedPath('/progression/records', locale),
+            icon: 'award',
+          },
           {
             label: L.nav.statistiques,
-            href: localizedPath('/progression/stats'),
+            href: localizedPath('/progression/stats', locale),
             icon: 'chartBar',
           },
         ],
@@ -54,15 +62,15 @@ const defaultGroups: NavTree = [
   {
     label: L.nav.groups.secondary,
     items: [
-      { label: L.nav.exercices, href: localizedPath('/exercises'), icon: 'dumbbell' },
-      { label: L.nav.calendrier, href: localizedPath('/calendar'), icon: 'calendar' },
-      { label: L.nav.timer, href: localizedPath('/timer'), icon: 'timer' },
-      { label: L.nav.calculateur, href: localizedPath('/calculator'), icon: 'calculator' },
+      { label: L.nav.exercices, href: localizedPath('/exercises', locale), icon: 'dumbbell' },
+      { label: L.nav.calendrier, href: localizedPath('/calendar', locale), icon: 'calendar' },
+      { label: L.nav.timer, href: localizedPath('/timer', locale), icon: 'timer' },
+      { label: L.nav.calculateur, href: localizedPath('/calculator', locale), icon: 'calculator' },
     ],
   },
   {
     label: L.nav.groups.utility,
-    items: [{ label: L.nav.settings, href: localizedPath('/settings'), icon: 'settings' }],
+    items: [{ label: L.nav.settings, href: localizedPath('/settings', locale), icon: 'settings' }],
   },
 ];
 

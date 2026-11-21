@@ -1,4 +1,6 @@
 ---
+import { resolveLocale } from '../../i18n';
+
 /** Composant sans props — contrat explicite (ratchet CSS). */
 interface Props {}
 /**
@@ -9,7 +11,8 @@ interface Props {}
 import StatusBadge from '../ui/StatusBadge.astro';
 import { t, localizedPath } from '../../i18n';
 
-const L = t();
+const locale = resolveLocale(Astro.url.pathname);
+const L = t(locale);
 ---
 
 <section class="dash__recent" aria-label={L.dashboard.recentAria}>
@@ -17,7 +20,7 @@ const L = t();
     <h2 class="u-uppercase" x-text="labels.recentSessions">
       {L.dashboard.recentSessions}
     </h2>
-    <a href={localizedPath('/sessions')} class="dash__see-all" x-text="labels.viewAll">
+    <a href={localizedPath('/sessions', locale)} class="dash__see-all" x-text="labels.viewAll">
       {L.dashboard.viewAll} →
     </a>
   </header>
@@ -25,7 +28,7 @@ const L = t();
   <div class="dash__sessions">
     <template x-for="s in recentSessions" :key="s.id">
       <a
-        :href="localizedPath('/sessions/detail?id=' + s.id)"
+        :href="localizedPath('/sessions/detail?id=' + s.id, locale)"
         class="dash__session"
         :class="'dash__session--' + s.status"
       >

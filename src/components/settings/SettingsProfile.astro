@@ -1,14 +1,17 @@
 ---
+import { resolveLocale } from '../../i18n';
+
 /** Composant sans props — contrat explicite (ratchet CSS). */
 interface Props {}
 import { t } from '../../i18n';
 import SettingsSection from '../ui/SettingsSection.astro';
 import Input from '../ui/Input.astro';
 import Segmented from '../ui/Segmented.astro';
-const L = t();
+const locale = resolveLocale(Astro.url.pathname);
+const L = t(locale);
 ---
 
-1. PROFIL
+1. {L.settings.profile}
 <SettingsSection
   icon="user"
   title={L.settings.profile}
@@ -59,7 +62,7 @@ const L = t();
     </div>
   </div>
 </SettingsSection>
-2. UNITÉS
+2. {L.settings.units}
 <SettingsSection
   icon="ruler"
   title={L.settings.units}

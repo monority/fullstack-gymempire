@@ -1,4 +1,6 @@
 ---
+import { resolveLocale } from '../../i18n';
+
 /**
  *
  * AppShell renders a slide-in drawer with the same nav data so
@@ -19,7 +21,8 @@ interface Props {
 }
 
 const { groups, class: className = '' } = Astro.props;
-const L = t();
+const locale = resolveLocale(Astro.url.pathname);
+const L = t(locale);
 ---
 
 <aside

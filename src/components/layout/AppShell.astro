@@ -1,4 +1,6 @@
 ---
+import { resolveLocale } from '../../i18n';
+
 /**
  * AppShell - orchestrates Sidebar + Header into the full layout.
  *
@@ -20,7 +22,8 @@ interface Props {
 }
 
 const { groups, title, class: className = '' } = Astro.props as unknown as Props;
-const L = t();
+const locale = resolveLocale(Astro.url.pathname);
+const L = t(locale);
 
 const classes = ['app-shell', className].filter(Boolean).join(' ');
 
@@ -208,12 +211,12 @@ const drawerItems = groups.map((group) => ({
   // Auth gate + session display
   import { getAuth, clearAuth } from '../../lib/auth';
   import { logoutFromDemoAccount } from '../../lib/demo-account';
-  import { localizedPath } from '../../i18n';
+  import { localizedPath, getLocale } from '../../i18n';
 
   const logout = () => {
     // Un compte démo restaure les données réelles sauvegardées à l'entrée.
     if (!logoutFromDemoAccount()) clearAuth();
-    window.location.href = localizedPath('/login');
+    window.location.href = localizedPath('/login', getLocale());
   };
 
   document.querySelectorAll<HTMLButtonElement>('[data-logout]').forEach((btn) => {

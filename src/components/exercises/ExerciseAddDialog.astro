@@ -1,4 +1,6 @@
 ---
+import { resolveLocale } from '../../i18n';
+
 /** Composant sans props — contrat explicite (ratchet CSS). */
 interface Props {}
 import { t } from '../../i18n';
@@ -9,7 +11,8 @@ import Badge from '../ui/Badge.astro';
 import { icons } from '../../lib/icons';
 import DialogFooter from '../ui/DialogFooter.astro';
 import Icon from '../ui/Icon.astro';
-const L = t();
+const locale = resolveLocale(Astro.url.pathname);
+const L = t(locale);
 ---
 
 <Dialog id="exo-add-to-session-dialog" class="exo__add-dialog-host">

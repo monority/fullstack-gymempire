@@ -1,5 +1,4 @@
 ---
-const locale = resolveLocale(Astro.url.pathname);
 import { resolveLocale } from '../../i18n';
 
 import AppLayout from '../../layouts/AppLayout.astro';
@@ -17,6 +16,7 @@ import EmptyFilterState from '../../components/ui/EmptyFilterState.astro';
 import { icons } from '../../lib/icons';
 import { t, localizedPath } from '../../i18n';
 
+const locale = resolveLocale(Astro.url.pathname);
 const L = t(locale);
 ---
 
@@ -25,7 +25,7 @@ const L = t(locale);
     title={L.sessions.title}
     description={L.sessions.description}
     actionLabel={L.dashboard.newSession}
-    actionHref={localizedPath('/sessions/create')}
+    actionHref={localizedPath('/sessions/create', locale)}
   />
 
   <div class="sess-list" x-data="sessionsApp()" x-init="init()" x-cloak>
@@ -197,7 +197,7 @@ const L = t(locale);
           title={L.sessions.emptyTitle}
           description={L.sessions.emptyDesc}
           actionLabel={L.sessions.createAction}
-          actionHref={localizedPath('/sessions/create')}
+          actionHref={localizedPath('/sessions/create', locale)}
         />
       </Card>
     </template>

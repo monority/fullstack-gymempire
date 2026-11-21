@@ -1,4 +1,6 @@
 ---
+import { resolveLocale } from '../../i18n';
+
 /** Composant sans props — contrat explicite (ratchet CSS). */
 interface Props {}
 /**
@@ -7,7 +9,8 @@ interface Props {}
  */
 import { t, localizedPath } from '../../i18n';
 
-const L = t();
+const locale = resolveLocale(Astro.url.pathname);
+const L = t(locale);
 ---
 
 <section class="dash__next" x-show="nextSession" aria-label={L.dashboard.nextSession}>
@@ -28,7 +31,7 @@ const L = t();
     </div>
     <a
       class="dash__next-action"
-      :href="localizedPath('/sessions/quick?session=' + nextSession?.id)"
+      :href="localizedPath('/sessions/quick?session=' + nextSession?.id, locale)"
     >
       <span x-text="nextSession?.status === 'in-progress' ? labels.continueWorkout : labels.startWorkout"></span>
       <span aria-hidden="true">↗</span>
@@ -42,7 +45,7 @@ const L = t();
       <h2 class="dash__next-name">{L.dashboard.noNextTitle}</h2>
       <p class="dash__next-hint">{L.dashboard.noNextHint}</p>
     </div>
-    <a class="dash__next-action" href={localizedPath('/sessions/quick')}>
+    <a class="dash__next-action" href={localizedPath('/sessions/quick', locale)}>
       <span>{L.dashboard.quickSession}</span>
       <span aria-hidden="true">↗</span>
     </a>
