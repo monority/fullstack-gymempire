@@ -316,3 +316,6 @@ mauvaise langue. Les phases suivantes sont des améliorations structurelles sans
 
 > Phases 0 et 1 exécutées (commit `c8e66ee`). Le site n'a plus de page dans la mauvaise langue.
 > Les phases 2 à 5 restent à faire (routage natif, injection client, données, verrouillage).
+
+> Phase 2 exécutée : 20 stubs remplacés par `src/pages/en/[...slug].astro`, `/en/timer/pop` ajouté.
+> 43 pages buildées, toutes dans la bonne langue.

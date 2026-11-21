@@ -1,0 +1,42 @@
+---
+/**
+ * Timer pop-out — document autonome (pas d'AppLayout), partagé entre FR et EN.
+ * La locale est explicite : c'est la seule source de vérité pour les libellés.
+ */
+import type { Locale } from '../../i18n';
+import '../../styles/global.css';
+
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+---
+
+<html lang={locale}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0d0d0d" />
+    <title>Timer</title>
+    <script is:inline src="/theme-bootstrap.js" data-meta-var="--color-bg"></script>
+  </head>
+  <body>
+    <div id="tw-mount" data-locale={locale} class="w-full min-h-screen"></div>
+
+    <script>
+      import { mountTimerWidget, widgetLabelsFrom } from '../../lib/timer-widget';
+      import { t } from '../../i18n';
+
+      const locale = (document.getElementById('tw-mount')?.getAttribute('data-locale') || 'fr') as
+        'fr' | 'en';
+      const LABELS = widgetLabelsFrom(t(locale));
+      const root = document.getElementById('tw-mount');
+      if (root) {
+        const widget = mountTimerWidget(root, LABELS);
+        const hello = () => widget.sendHello();
+        hello();
+        window.setInterval(hello, 2500);
+      }
+    </script>
+  </body>
+</html>
