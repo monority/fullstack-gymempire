@@ -185,26 +185,7 @@ const L = t();
 </AppLayout>
 
 <script>
-  import { registerAlpine } from '../lib/alpine';
-  import { createCalendarApp } from '../components/calendar/calendarApp';
-  import { t, localizedPath } from '../i18n';
+  import { registerCalendar } from '../components/calendar/registration';
 
-  const LABELS = t();
-
-  registerAlpine('calendarApp', () =>
-    createCalendarApp({
-      labels: {
-        ...LABELS.calendrier,
-        status: {
-          completed: LABELS.sessions.completed,
-          inProgress: LABELS.sessions.inProgress,
-          planned: LABELS.sessions.planned,
-        },
-        seanceSingular: LABELS.sessions.seanceSingular,
-        seancePlural: LABELS.sessions.seancePlural,
-      },
-      today: () => new Date(),
-      localizedPath,
-    })
-  );
+  registerCalendar();
 </script>

@@ -132,28 +132,7 @@ const L = t();
 </AppLayout>
 
 <script>
-  import { registerAlpine } from '../../lib/alpine';
-  import { createComparisonApp } from '../../components/sessions/compareApp';
-  import { t } from '../../i18n';
+  import { registerCompare } from '../../components/sessions/compareRegistration.ts';
 
-  const LABELS = t();
-
-  registerAlpine('comparisonApp', () =>
-    createComparisonApp({
-      search: window.location.search,
-      pathname: window.location.pathname,
-      labels: {
-        comparer: LABELS.comparer,
-        rapide: LABELS.rapide,
-        status: {
-          completed: LABELS.comparer.completed,
-          inProgress: LABELS.comparer.inProgress,
-          planned: LABELS.comparer.planned,
-        },
-      },
-      ui: {
-        replaceUrl: (url) => window.history.replaceState({}, '', url),
-      },
-    })
-  );
+  registerCompare();
 </script>

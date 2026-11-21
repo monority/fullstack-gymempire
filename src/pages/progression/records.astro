@@ -158,24 +158,7 @@ import Icon from '../../components/ui/Icon.astro';
 </AppLayout>
 
 <script>
-  import { registerAlpine } from '../../lib/alpine';
-  import { createRecordsApp } from '../../components/progression/recordsApp';
-  import { t, localizedPath, getLocale } from '../../i18n';
+  import { registerRecords } from '../../components/progression/recordsRegistration.ts';
 
-  const LABELS = t();
-
-  registerAlpine('recordsApp', () =>
-    createRecordsApp({
-      labels: {
-        on: LABELS.records.on,
-        exercisesTracked: LABELS.records.exercisesTracked,
-        exerciseTracked: LABELS.records.exerciseTracked,
-        kg: LABELS.common.kg,
-        viewHistoryAriaPrefix: LABELS.records.viewHistoryAriaPrefix,
-      },
-      today: () => new Date(),
-      locale: getLocale(),
-      localizedPath,
-    })
-  );
+  registerRecords();
 </script>

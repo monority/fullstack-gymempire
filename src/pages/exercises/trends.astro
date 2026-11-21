@@ -158,25 +158,7 @@ import Icon from '../../components/ui/Icon.astro';
 </AppLayout>
 
 <script>
-  import { registerAlpine } from '../../lib/alpine';
-  import { createTrendsApp } from '../../components/exercises/trendsApp';
-  import { t, trExercise } from '../../i18n';
+  import { registerTrends } from '../../components/exercises/trendsRegistration.ts';
 
-  const LABELS = t();
-
-  registerAlpine('exerciseTrendApp', () =>
-    createTrendsApp({
-      search: window.location.search,
-      labels: {
-        historiqueSessions: LABELS.historique.sessions,
-        historiqueSessionSingular: LABELS.historique.sessionSingular,
-        chartVolumeTitle: LABELS.tendance.chartVolumeTitle,
-        chart1RMTitle: LABELS.tendance.chart1RMTitle,
-        noSessions: LABELS.tendance.noSessions,
-        minPoints: LABELS.tendance.minPoints,
-        kg: LABELS.common.kg,
-      },
-      translateExercise: trExercise,
-    })
-  );
+  registerTrends();
 </script>

@@ -230,27 +230,7 @@ const L = t();
 </AppLayout>
 
 <script>
-  import { singleton as uiStore } from '../../lib/ui-store';
-  import { registerAlpine } from '../../lib/alpine';
-  import { createSessionsApp, buildSessionsLabels } from '../../components/sessions/sessionsApp';
-  import { t, localizedPath } from '../../i18n';
+  import { registerSessions } from '../../components/sessions/sessionsRegistration.ts';
 
-  const LABELS = t();
-  const host = window as Window & { trMuscle?: (name: string) => string };
-  registerAlpine('sessionsApp', () =>
-    createSessionsApp({
-      labels: buildSessionsLabels(LABELS),
-      today: () => new Date(),
-      localizedPath,
-      ui: {
-        confirm: (message) => window.confirm(message),
-        navigate: (href) => {
-          window.location.href = href;
-        },
-        translateMuscle: (name) => host.trMuscle?.(name) ?? name,
-        openDialog: (id) => uiStore.openDialog(id),
-        closeDialog: (id) => uiStore.closeDialog(id),
-      },
-    })
-  );
+  registerSessions();
 </script>

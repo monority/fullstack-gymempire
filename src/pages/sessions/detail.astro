@@ -128,31 +128,7 @@ const L = t();
 </AppLayout>
 
 <script>
-  import { singleton as uiStore } from '../../lib/ui-store';
-  import { registerAlpine } from '../../lib/alpine';
-  import {
-    createSessionDetailApp,
-    buildSessionDetailLabels,
-  } from '../../components/session-detail/sessionDetailApp';
-  import { t, localizedPath, trExercise } from '../../i18n';
+  import { registerSessionDetail } from '../../components/session-detail/registration';
 
-  const LABELS = t();
-  const labels = buildSessionDetailLabels(LABELS);
-  labels.printHref = localizedPath('/sessions/print');
-  registerAlpine('sessionDetailApp', () =>
-    createSessionDetailApp({
-      labels,
-      search: window.location.search,
-      localizedPath,
-      ui: {
-        notify: (message, kind) => uiStore.notify(message, kind),
-        openDialog: (id) => uiStore.openDialog(id),
-        closeDialog: (id) => uiStore.closeDialog(id),
-        navigate: (href) => {
-          window.location.href = href;
-        },
-        translateExercise: (name) => trExercise(name),
-      },
-    })
-  );
+  registerSessionDetail();
 </script>
