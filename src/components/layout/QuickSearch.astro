@@ -126,7 +126,7 @@ const L = t();
 
 <script>
   import { getAlpine, registerAlpine } from '../../lib/alpine';
-  import { t, getLocale, localizedPath, trExercise, trMuscle } from '../../i18n';
+  import { t, getLocale, localizedPath, trExercise, trMuscle, dateLocale } from '../../i18n';
   import { getExercises } from '../../lib/storage/exercises';
   import { getSessions } from '../../lib/storage/sessions';
   import { normalize } from '../../lib/text';
@@ -249,7 +249,7 @@ const L = t();
     const formatDate = (iso: string): string => {
       const d = new Date(iso);
       if (Number.isNaN(d.getTime())) return iso;
-      return d.toLocaleDateString(locale === 'en' ? 'en-GB' : 'fr-FR');
+      return d.toLocaleDateString(dateLocale(locale));
     };
 
     return {

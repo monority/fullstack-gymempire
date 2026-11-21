@@ -3,6 +3,7 @@
  * `window`, le dialogue d'impression et la locale sont injectés.
  */
 
+import { dateLocale } from '../../i18n';
 import { getSessionById } from '../../lib/storage/sessions';
 import { formatSetRpe } from '../../lib/workout-helpers';
 import type {
@@ -102,7 +103,7 @@ export function createPrintSheetApp(deps: PrintSheetDeps): PrintSheetApp {
   function formatDateTime(iso: string): string {
     const base = formatDateLong(iso);
     if (!/\d{2}:\d{2}/.test(iso)) return base;
-    const loc = L.locale() === 'en' ? 'en-GB' : 'fr-FR';
+    const loc = dateLocale(L.locale() as 'fr' | 'en');
     const time = new Date(iso).toLocaleTimeString(loc, {
       hour: '2-digit',
       minute: '2-digit',

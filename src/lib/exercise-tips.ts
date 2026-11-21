@@ -19,6 +19,9 @@
  * a curated list of videos that would go stale quickly.
  */
 
+import { EXERCISE_TIPS_EN } from '../i18n/exercise-tips-en';
+import { getLocale, type Locale } from '../i18n/locale';
+
 export interface ExerciseTip {
   description: string;
   muscles: string;
@@ -422,10 +425,16 @@ export const EXERCISE_TIPS: Readonly<Record<string, ExerciseTip>> = {
  * the tip when the stored name has a minor variant (e.g. "haltère"
  * vs "haltere").
  */
-export function getExerciseTip(name: string): ExerciseTip | undefined {
+export function getExerciseTip(
+  name: string,
+  locale: Locale = getLocale()
+): ExerciseTip | undefined {
   if (!name) return undefined;
   const direct = EXERCISE_TIPS[name];
-  if (direct) return direct;
+  if (direct) {
+    const english = locale === 'en' ? EXERCISE_TIPS_EN[name] : undefined;
+    return english ? { ...direct, description: english } : direct;
+  }
   const target = name
     .toLowerCase()
     .normalize('NFD')
@@ -437,7 +446,10 @@ export function getExerciseTip(name: string): ExerciseTip | undefined {
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '')
       .trim();
-    if (normalized === target) return value;
+    if (normalized === target) {
+      const english = locale === 'en' ? EXERCISE_TIPS_EN[key] : undefined;
+      return english ? { ...value, description: english } : value;
+    }
   }
   return undefined;
 }
@@ -447,6 +459,6 @@ export function getExerciseTip(name: string): ExerciseTip | undefined {
  * Mirrors the previous `getExerciseTip` shape so existing call sites
  * stay readable.
  */
-export function getExerciseTipText(name: string): string | undefined {
-  return getExerciseTip(name)?.description;
+export function getExerciseTipText(name: string, locale?: Locale): string | undefined {
+  return getExerciseTip(name, locale)?.description;
 }

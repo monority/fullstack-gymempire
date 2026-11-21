@@ -322,3 +322,6 @@ mauvaise langue. Les phases suivantes sont des améliorations structurelles sans
 
 > Phase 3 exécutée : `$store.i18n` injecté dans 15 composants, globals supprimés, builder labels via store.
 > Vérifié en navigateur : `/en/exercises` traduit `Squat barre` en `Barbell Squat`.
+
+> Phase 4 exécutée : 90 tips EN, `getExerciseTip(name, locale)`, `dateLocale()` unique (en-GB).
+> 4 tests supplémentaires ; total 673 tests.
