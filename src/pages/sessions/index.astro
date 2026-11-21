@@ -111,7 +111,7 @@ const L = t(locale);
                 <Badge
                   variant="category"
                   size="sm"
-                  :class="'badge--cat-' + muscleHue(primaryMuscle(session))"
+                  :class="'badge--cat-' + $store.i18n.muscleHue(primaryMuscle(session))"
                 >
                   <span x-text="muscleLabel(primaryMuscle(session))"></span>
                 </Badge>

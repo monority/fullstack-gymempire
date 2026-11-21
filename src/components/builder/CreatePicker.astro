@@ -47,7 +47,7 @@ const L = t();
           :class="{ 'is-active': exerciseMuscleFilter === muscle }"
           :aria-pressed="(exerciseMuscleFilter === muscle).toString()"
           @click="exerciseMuscleFilter = muscle"
-          x-text="trMuscle(muscle)"
+          x-text="$store.i18n.trMuscle(muscle)"
         ></button>
       </template>
     </div>
@@ -104,12 +104,12 @@ const L = t();
             @click="addExercise(ex)"
             :aria-label="labels.addExoAria + ' ' + ex.name + ' ' + labels.toSession"
           >
-            <span class="create__picker-item-name" x-text="trExercise(ex.name)"></span>
+            <span class="create__picker-item-name" x-text="$store.i18n.trExercise(ex.name)"></span>
             <Badge
               variant="category"
               size="sm"
-              :class="'badge--cat-' + muscleHue(ex.muscle)"
-              x-text="trMuscle(ex.muscle)"
+              :class="'badge--cat-' + $store.i18n.muscleHue(ex.muscle)"
+              x-text="$store.i18n.trMuscle(ex.muscle)"
             />
           </button>
           <button

@@ -48,13 +48,13 @@ const { expr, exExpr, badge, ariaLabel, accent = false } = Astro.props;
       <article class="comp__exo" :class={`{ 'comp__exo--missing': !item.${exExpr} }`}>
         <header class="comp__exo-header">
           <div class="comp__exo-info">
-            <h4 class="comp__exo-name" x-text="trExercise(item.name)"></h4>
+            <h4 class="comp__exo-name" x-text="$store.i18n.trExercise(item.name)"></h4>
             <Badge
               variant="category"
               size="sm"
-              :class="'badge--cat-' + muscleHue(item.muscle)"
+              :class="'badge--cat-' + $store.i18n.muscleHue(item.muscle)"
               class="comp__exo-badge"
-              x-text="trMuscle(item.muscle)"
+              x-text="$store.i18n.trMuscle(item.muscle)"
             />
           </div>
           <div class="comp__exo-volume" x-show={`item.${exExpr}`}>

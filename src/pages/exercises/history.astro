@@ -42,16 +42,20 @@ import Icon from '../../components/ui/Icon.astro';
               <div class="hist__title-icon" aria-hidden="true">
                 <Icon name="dumbbellBox" size={24} />
               </div>
-              <h1 class="hist__title" x-text="trExercise(exercise.name)"></h1>
+              <h1 class="hist__title" x-text="$store.i18n.trExercise(exercise.name)"></h1>
             </div>
             <div class="hist__badges">
               <Badge
                 variant="category"
                 size="sm"
-                :class="'badge--cat-' + muscleHue(exercise.muscle)"
-                x-text="trMuscle(exercise.muscle)"
+                :class="'badge--cat-' + $store.i18n.muscleHue(exercise.muscle)"
+                x-text="$store.i18n.trMuscle(exercise.muscle)"
               />
-              <Badge variant="default" size="sm" x-text="trCategory(exercise.category)" />
+              <Badge
+                variant="default"
+                size="sm"
+                x-text="$store.i18n.trCategory(exercise.category)"
+              />
             </div>
           </div>
         </header>

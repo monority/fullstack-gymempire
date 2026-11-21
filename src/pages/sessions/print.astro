@@ -111,7 +111,7 @@ const title = `${L.detail.title} — Gym Empire`;
             <template x-for="(ex, exIdx) in session.exercises" :key="exIdx">
               <div class="sheet__exercise">
                 <div class="sheet__exercise-head">
-                  <h3 class="sheet__exercise-name" x-text="trExercise(ex.name)"></h3>
+                  <h3 class="sheet__exercise-name" x-text="$store.i18n.trExercise(ex.name)"></h3>
                   <span
                     class="sheet__exercise-superset"
                     x-show="groupFor(ex) != null"

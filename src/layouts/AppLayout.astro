@@ -126,18 +126,10 @@ const groupsWithActive = groups.map((g) => ({
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="Gym Empire" />
 
-    {/* ── Exercise translation helpers ──
-        Exposed on window so Alpine expressions can translate stored
-        French exercise names/muscles/categories at render time on the
-        EN locale, while stored data stays untouched (it is used as a
-        lookup key by tips / rest-times / templates). */}
+    {/* ── i18n store (injecté, plus de globals window) ── */}
     <script>
-      import { trExercise, trMuscle, trCategory } from '../i18n';
-      import { muscleHue } from '../lib/colors';
-      (window as Window & { trExercise?: typeof trExercise }).trExercise = trExercise;
-      (window as Window & { trMuscle?: typeof trMuscle }).trMuscle = trMuscle;
-      (window as Window & { trCategory?: typeof trCategory }).trCategory = trCategory;
-      (window as Window & { muscleHue?: typeof muscleHue }).muscleHue = muscleHue;
+      import { registerI18nStore } from '../lib/i18n-store';
+      registerI18nStore();
     </script>
 
     {/* ── Theme bootstrap ──

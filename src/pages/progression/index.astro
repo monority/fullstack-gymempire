@@ -53,13 +53,13 @@ const L = t(locale);
             <header class="prog__item-header">
               <div class="prog__item-title">
                 <Fragment set:html={icons.dumbbellBox()} />
-                <h3 class="prog__item-name" x-text="trExercise(stat.name)"></h3>
+                <h3 class="prog__item-name" x-text="$store.i18n.trExercise(stat.name)"></h3>
               </div>
               <Badge
                 variant="category"
                 size="sm"
-                :class="'badge--cat-' + muscleHue(stat.muscle)"
-                x-text="trMuscle(stat.muscle)"
+                :class="'badge--cat-' + $store.i18n.muscleHue(stat.muscle)"
+                x-text="$store.i18n.trMuscle(stat.muscle)"
               />
             </header>
 

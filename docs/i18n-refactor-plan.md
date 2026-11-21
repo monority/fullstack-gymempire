@@ -319,3 +319,6 @@ mauvaise langue. Les phases suivantes sont des améliorations structurelles sans
 
 > Phase 2 exécutée : 20 stubs remplacés par `src/pages/en/[...slug].astro`, `/en/timer/pop` ajouté.
 > 43 pages buildées, toutes dans la bonne langue.
+
+> Phase 3 exécutée : `$store.i18n` injecté dans 15 composants, globals supprimés, builder labels via store.
+> Vérifié en navigateur : `/en/exercises` traduit `Squat barre` en `Barbell Squat`.

@@ -15,11 +15,11 @@ const L = t();
     <div class="quick__working-inner">
       <div
         class="quick__exercise-name"
-        x-text="trExercise(currentExercise?.name)"
+        x-text="$store.i18n.trExercise(currentExercise?.name)"
         aria-live="polite"
         aria-atomic="true"
       ></div>
-      <div class="quick__muscle" x-text="trMuscle(currentExercise?.muscle)"></div>
+      <div class="quick__muscle" x-text="$store.i18n.trMuscle(currentExercise?.muscle)"></div>
 
       <div class="quick__set-info" aria-live="polite" aria-atomic="true">
         {L.rapide.setProgress}

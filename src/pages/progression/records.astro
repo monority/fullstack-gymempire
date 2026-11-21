@@ -86,12 +86,15 @@ import Icon from '../../components/ui/Icon.astro';
 
             <div class="rec__card-main">
               <div class="rec__card-head">
-                <h3 class="rec__card-name text-display" x-text="trExercise(rec.name)"></h3>
+                <h3
+                  class="rec__card-name text-display"
+                  x-text="$store.i18n.trExercise(rec.name)"
+                ></h3>
                 <Badge
                   variant="category"
                   size="sm"
-                  :class="'badge--cat-' + muscleHue(rec.muscle)"
-                  x-text="trMuscle(rec.muscle)"
+                  :class="'badge--cat-' + $store.i18n.muscleHue(rec.muscle)"
+                  x-text="$store.i18n.trMuscle(rec.muscle)"
                 />
               </div>
 

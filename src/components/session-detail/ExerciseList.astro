@@ -23,7 +23,7 @@ const L = t();
     <Card>
       <article class="exo-row" :class="supersetTint(ex)">
         <header class="exo-row__head">
-          <h3 class="exo-row__name" x-text="trExercise(ex.name)"></h3>
+          <h3 class="exo-row__name" x-text="$store.i18n.trExercise(ex.name)"></h3>
           <div class="exo-row__head-actions">
             <span
               class="exo-row__superset u-uppercase"
@@ -39,8 +39,8 @@ const L = t();
             <Badge
               variant="category"
               size="sm"
-              :class="'badge--cat-' + muscleHue(ex.muscle)"
-              x-text="trMuscle(ex.muscle)"
+              :class="'badge--cat-' + $store.i18n.muscleHue(ex.muscle)"
+              x-text="$store.i18n.trMuscle(ex.muscle)"
             />
           </div>
         </header>

@@ -1,4 +1,10 @@
 import { singleton as uiStore } from '../../lib/ui-store';
+import { getAlpine } from '../../lib/alpine';
+import type { I18nStore } from '../../lib/i18n-store';
+
+function builderLabels(): I18nStore['builderLabels'] {
+  return (getAlpine()?.store('i18n') as I18nStore | undefined)?.builderLabels;
+}
 /**
  * exerciseCard — Alpine component for a single exercise in session builder.
  *
@@ -50,7 +56,7 @@ export function exerciseCard(exercise: BuilderExercise, exerciseIndex: number) {
     get summary(): string {
       return formatExerciseSummary(
         this.exercise,
-        (window.__builderLabels ?? {}) as NonNullable<Window['__builderLabels']>
+        (builderLabels() ?? {}) as Parameters<typeof formatExerciseSummary>[1]
       );
     },
 
@@ -115,7 +121,7 @@ export function exerciseCard(exercise: BuilderExercise, exerciseIndex: number) {
     },
 
     mrvTitle(setIndex: number): string {
-      const labels = window.__builderLabels ?? ({} as NonNullable<Window['__builderLabels']>);
+      const labels = builderLabels() ?? {};
       const s = this.mrvSuggestion(setIndex);
       if (!s || s.reason === 'none') return labels.mrvNoHistory ?? '';
       if (s.reason === 'epley-cap') return labels.mrvCapped ?? '';

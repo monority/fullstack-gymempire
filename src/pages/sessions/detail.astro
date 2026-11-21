@@ -119,7 +119,7 @@ const L = t(locale);
         <div class="share-card__exercises">
           <template x-for="ex in session?.exercises || []" :key="ex.exerciseId">
             <div class="share-card__exercise">
-              <span x-text="trExercise(ex.name)"></span>
+              <span x-text="$store.i18n.trExercise(ex.name)"></span>
               <span x-text="`${ex.sets.length} ${ex.sets.length > 1 ? labels.setPlural : labels.setSingular}`"></span>
             </div>
           </template>

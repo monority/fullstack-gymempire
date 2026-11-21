@@ -16,12 +16,12 @@ const L = t();
   <div class="exo__add-dialog">
     <header class="exo__add-header">
       <div class="exo__add-header-text">
-        <h2 class="exo__add-title" x-text="trExercise(addingExercise?.name)"></h2>
+        <h2 class="exo__add-title" x-text="$store.i18n.trExercise(addingExercise?.name)"></h2>
         <Badge
           variant="category"
           size="sm"
-          :class="'badge--cat-' + muscleHue(addingExercise?.muscle)"
-          x-text="trMuscle(addingExercise?.muscle)"
+          :class="'badge--cat-' + $store.i18n.muscleHue(addingExercise?.muscle)"
+          x-text="$store.i18n.trMuscle(addingExercise?.muscle)"
         />
       </div>
       <button

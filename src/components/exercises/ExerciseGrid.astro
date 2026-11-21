@@ -20,7 +20,7 @@ const L = t();
       <Card variant="interactive" hover clickable class="exo__card-body">
         <span class="exo__card-head">
           <span class="exo__card-icon" set:html={icons.dumbbellBox()} />
-          <h3 class="exo__card-name" x-text="trExercise(ex.name)"></h3>
+          <h3 class="exo__card-name" x-text="$store.i18n.trExercise(ex.name)"></h3>
           <span
             class="exo__set-badge u-tabular"
             x-show="getSetCount(ex.id) > 0"
@@ -91,10 +91,10 @@ const L = t();
           <Badge
             variant="category"
             size="sm"
-            :class="'badge--cat-' + muscleHue(ex.muscle)"
-            x-text="trMuscle(ex.muscle)"
+            :class="'badge--cat-' + $store.i18n.muscleHue(ex.muscle)"
+            x-text="$store.i18n.trMuscle(ex.muscle)"
           />
-          <Badge variant="default" size="sm" x-text="trCategory(ex.category)" />
+          <Badge variant="default" size="sm" x-text="$store.i18n.trCategory(ex.category)" />
         </div>
 
         <CardFooter class="exo__card-foot">

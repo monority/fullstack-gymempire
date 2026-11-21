@@ -46,7 +46,7 @@ import Icon from '../../components/ui/Icon.astro';
                   @change="onExerciseChange($event.target.value)"
                 >
                   <template x-for="ex in exercises" :key="ex.id">
-                    <option :value="ex.id" x-text="trExercise(ex.name)"></option>
+                    <option :value="ex.id" x-text="$store.i18n.trExercise(ex.name)"></option>
                   </template>
                 </select>
                 <Icon name="chevronDown" size={16} />

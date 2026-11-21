@@ -73,11 +73,11 @@ const setTypes = [
         >
           <div class="create__toggle-body">
             <div class="ses-ex-head create__ex-head">
-              <h3 class="create__ex-name" x-text="trExercise(exercise.name)"></h3>
+              <h3 class="create__ex-name" x-text="$store.i18n.trExercise(exercise.name)"></h3>
               <Badge
                 variant="category"
-                :class="'badge--cat-' + muscleHue(exercise.muscle)"
-                x-text="trMuscle(exercise.muscle)"
+                :class="'badge--cat-' + $store.i18n.muscleHue(exercise.muscle)"
+                x-text="$store.i18n.trMuscle(exercise.muscle)"
               />
             </div>
             <p class="create__ex-summary" x-show="!expanded" x-cloak x-text="summary"></p>

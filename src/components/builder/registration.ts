@@ -1,6 +1,6 @@
 /** Enregistrement Alpine extrait d'une page (ratchet script). */
 import { singleton as uiStore } from '../../lib/ui-store';
-import { registerAlpine } from '../../lib/alpine';
+import { registerAlpine, getAlpine } from '../../lib/alpine';
 import { createSessionBuilderApp } from './sessionBuilder';
 import { pickBuilderLabels } from './builderLabels';
 import { exerciseCard } from './exerciseCard';
@@ -14,11 +14,13 @@ export function registerBuilder(): void {
 
   type BuilderWindow = Window & {
     __builderSessions?: unknown;
-    __builderLabels?: unknown;
     openDialog?: (id: string) => void;
     closeDialog?: (id: string) => void;
   };
   const host = window as BuilderWindow;
+  const i18nStore = getAlpine()?.store('i18n') as
+    { builderLabels?: Record<string, string> } | undefined;
+  if (i18nStore) i18nStore.builderLabels = BUILDER_LABELS as unknown as Record<string, string>;
   registerAlpine('exerciseCard', (...args: Parameters<typeof exerciseCard>) =>
     exerciseCard(...args)
   );
@@ -31,9 +33,8 @@ export function registerBuilder(): void {
       locale: DATE_LOCALE(),
       localizedPath,
       host: {
-        expose: (sessions, labels) => {
+        expose: (sessions) => {
           host.__builderSessions = sessions;
-          host.__builderLabels = labels;
         },
         onToggle: (listener) => {
           window.addEventListener('builder:exercise-toggled', ((e: CustomEvent) => {
