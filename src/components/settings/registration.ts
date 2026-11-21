@@ -3,6 +3,7 @@ import { singleton as uiStore } from '../../lib/ui-store';
 import { registerAlpine } from '../../lib/alpine';
 import { createSettingsApp, buildSettingsLabels } from './settingsApp';
 import { t, DATE_LOCALE } from '../../i18n';
+import { isDemoAccount } from '../../lib/auth';
 import { downloadBlob } from '../../lib/csv-export';
 
 export function registerSettings(): void {
@@ -18,6 +19,7 @@ export function registerSettings(): void {
   }
   registerAlpine('settingsApp', () =>
     createSettingsApp({
+      demo: isDemoAccount(),
       labels: buildSettingsLabels(LABELS),
       clock: {
         now: () => new Date(),

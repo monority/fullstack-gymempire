@@ -132,13 +132,14 @@ describe('sauvegarde et restauration autour de la démo', () => {
     ]);
   });
 
-  it('déconnecte quand même si la sauvegarde est corrompue', () => {
+  it('déconnecte et CONSERVE la sauvegarde si elle est corrompue', () => {
     setAuth(DEMO_EMAIL, DEMO_NAME, true);
     window.localStorage.setItem(DEMO_BACKUP_KEY, '{pas du json');
 
     expect(logoutFromDemoAccount()).toBe(true);
 
     expect(getAuth()).toBeNull();
-    expect(window.localStorage.getItem(DEMO_BACKUP_KEY)).toBeNull();
+    // La sauvegarde est gardée : sans elle, les données réelles seraient perdues.
+    expect(window.localStorage.getItem(DEMO_BACKUP_KEY)).toBe('{pas du json');
   });
 });

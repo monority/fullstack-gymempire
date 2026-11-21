@@ -1,4 +1,5 @@
 export default {
+  demoReadOnly: 'Compte démo : lecture seule, modifications non enregistrées.',
   title: 'Réglages',
   description: 'Personnalisez votre application et gérez vos préférences.',
   sectionsAria: 'Sections des paramètres',

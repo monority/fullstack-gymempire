@@ -105,6 +105,7 @@ function makeDeps(
 
   return {
     deps: {
+      demo: false,
       labels: buildSettingsLabels(dictionary),
       clock: {
         now: () => overrides.now ?? new Date('2026-11-17T12:34:56Z'),

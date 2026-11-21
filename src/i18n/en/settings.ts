@@ -1,4 +1,5 @@
 export default {
+  demoReadOnly: 'Demo account: read only, changes are not saved.',
   title: 'Settings',
   description: 'Customize your app and manage your preferences.',
   sectionsAria: 'Settings sections',

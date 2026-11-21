@@ -16,6 +16,13 @@ export const DEMO_NAME = 'Alex';
 
 export const DEMO_BACKUP_KEY = 'muscu:demo-backup';
 
+/** Remplit l'historique puis connecte le compte démo (plus aucune écriture). */
+export function loginWithDemoAccount(): void {
+  backupRealData();
+  withUnlockedWrites(() => generateDemoData());
+  setAuth(DEMO_EMAIL, DEMO_NAME, true);
+}
+
 /** Snapshot des données réelles, conservé le temps de la session démo. */
 function backupRealData(): void {
   if (typeof window === 'undefined' || !window.localStorage) return;
@@ -29,20 +36,15 @@ function backupRealData(): void {
   }
 }
 
-/** Remplit l'historique puis connecte le compte démo (plus aucune écriture). */
-export function loginWithDemoAccount(): void {
-  backupRealData();
-  withUnlockedWrites(() => generateDemoData());
-  setAuth(DEMO_EMAIL, DEMO_NAME, true);
-}
-
 /**
  * Déconnecte le compte démo et restaure les données sauvegardées.
- * Retourne `true` si une session démo a été traitée.
+ * La sauvegarde n'est supprimée QUE si la restauration a réussi : en cas
+ * d'échec elle est conservée pour permettre une récupération manuelle.
  */
 export function logoutFromDemoAccount(): boolean {
   if (!isDemoAccount()) return false;
 
+  let restored = true;
   try {
     const raw = window.localStorage.getItem(DEMO_BACKUP_KEY);
     if (raw) {
@@ -50,15 +52,16 @@ export function logoutFromDemoAccount(): boolean {
       withUnlockedWrites(() => importAllData(snapshot));
     }
   } catch {
-    // snapshot corrompu ou import invalide : on ne restaure pas,
-    // mais la déconnexion doit tout de même avoir lieu.
-  } finally {
+    restored = false;
+  }
+
+  if (restored) {
     try {
       window.localStorage.removeItem(DEMO_BACKUP_KEY);
     } catch {
       // ignore — meilleur effort
     }
-    clearAuth();
   }
+  clearAuth();
   return true;
 }

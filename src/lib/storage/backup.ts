@@ -7,6 +7,7 @@
 import { STORAGE_KEYS } from './defaults';
 import { isBodyRecord, isExercise, isProgressRecord, isSession, normalizeSession } from './guards';
 import { getStore, setStore } from './store';
+import { isDemoAccount } from '../auth';
 import { getExercises } from './exercises';
 import { getSessions } from './sessions';
 import { getSettings } from './settings';
@@ -56,7 +57,15 @@ export function exportAllData(): AppDataSnapshot | null {
     sessions: getSessions(),
     progress: getStore<ProgressRecord[]>(STORAGE_KEYS.progress, []),
     body: getStore<BodyRecord[]>(STORAGE_KEYS.body, []),
-    settings: getSettings(),
+    // Le mot de passe WebDAV n'est jamais exporté : un backup est un fichier
+    // téléchargeable/partageable, ce serait une fuite de credentials.
+    settings: (() => {
+      const current = getSettings();
+      return {
+        ...current,
+        webdav: current.webdav ? { ...current.webdav, password: '' } : current.webdav,
+      };
+    })(),
   };
 }
 
@@ -90,8 +99,65 @@ export function importAllData(snapshot: unknown): void {
   if (data.body && !Array.isArray(data.body)) {
     throw new Error('Historique de mesures corporelles invalide.');
   }
-  if (data.settings && typeof data.settings !== 'object') {
+  if (
+    data.settings &&
+    (typeof data.settings !== 'object' || data.settings === null || Array.isArray(data.settings))
+  ) {
     throw new Error('Réglages invalides.');
+  }
+  // Validation structurelle des réglages : un backup hostile ou corrompu ne
+  // doit pas pouvoir écraser les credentials WebDAV ni casser l'UI.
+  if (data.settings) {
+    const s = data.settings as unknown as Record<string, unknown>;
+    const ALLOWED = new Set([
+      'pseudo',
+      'email',
+      'unit',
+      'repsFormat',
+      'defaultRestTime',
+      'soundAlerts',
+      'weeklyGoal',
+      'bodyWeight',
+      'benchmarksOptIn',
+      'reminders',
+      'webdav',
+      'lastSyncAt',
+    ]);
+    for (const key of Object.keys(s)) {
+      if (!ALLOWED.has(key)) throw new Error(`Réglage inconnu: ${key}`);
+    }
+    if (s.unit !== undefined && s.unit !== 'kg' && s.unit !== 'lbs') {
+      throw new Error('Unité de poids invalide.');
+    }
+    if (s.pseudo !== undefined && typeof s.pseudo !== 'string') throw new Error('Pseudo invalide.');
+    if (s.email !== undefined && typeof s.email !== 'string') throw new Error('Email invalide.');
+    if (s.reminders !== undefined) {
+      if (!s.reminders || typeof s.reminders !== 'object' || Array.isArray(s.reminders)) {
+        throw new Error('Rappels invalides.');
+      }
+      const r = s.reminders as Record<string, unknown>;
+      if (r.enabled !== undefined && typeof r.enabled !== 'boolean')
+        throw new Error('Rappel invalide.');
+      if (
+        r.days !== undefined &&
+        (!Array.isArray(r.days) || r.days.some((d) => typeof d !== 'number'))
+      ) {
+        throw new Error('Jours de rappel invalides.');
+      }
+      if (r.time !== undefined && (typeof r.time !== 'string' || !/^\d{2}:\d{2}$/.test(r.time))) {
+        throw new Error('Heure de rappel invalide.');
+      }
+    }
+    if (s.webdav !== undefined) {
+      if (!s.webdav || typeof s.webdav !== 'object' || Array.isArray(s.webdav)) {
+        throw new Error('WebDAV invalide.');
+      }
+      const w = s.webdav as Record<string, unknown>;
+      for (const k of ['url', 'username', 'password', 'lastSyncAt']) {
+        if (w[k] !== undefined && typeof w[k] !== 'string')
+          throw new Error(`WebDAV ${k} invalide.`);
+      }
+    }
   }
 
   // run sequential migrations for older snapshot versions.
@@ -109,7 +175,19 @@ export function importAllData(snapshot: unknown): void {
   if (data.progress) setStore(STORAGE_KEYS.progress, data.progress.filter(isProgressRecord));
   if (data.body) setStore(STORAGE_KEYS.body, data.body.filter(isBodyRecord));
   if (data.settings) {
-    setStore(STORAGE_KEYS.settings, { ...getSettings(), ...data.settings });
+    const current = getSettings();
+    const incoming = data.settings as Partial<Settings>;
+    setStore(STORAGE_KEYS.settings, {
+      ...current,
+      ...incoming,
+      // Le mot de passe WebDAV n'est jamais restauré depuis un backup :
+      // ni fuite à l'export, ni écrasement par un fichier hostile.
+      webdav: {
+        ...current.webdav,
+        ...incoming.webdav,
+        password: current.webdav.password,
+      },
+    });
   }
 }
 
@@ -120,6 +198,8 @@ export function importAllData(snapshot: unknown): void {
  */
 export function resetAllData(): void {
   if (typeof window === 'undefined' || !window.localStorage) return;
+  // Le compte démo est en lecture seule : ne jamais effacer les données réelles.
+  if (isDemoAccount()) return;
   try {
     for (const { key } of APP_DATA_KEYS) {
       window.localStorage.removeItem(key);

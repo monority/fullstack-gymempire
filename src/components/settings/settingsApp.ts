@@ -23,6 +23,7 @@ import { syncPush, syncPull, syncTest } from '../../lib/sync';
 export function buildSettingsLabels(L: Dictionary) {
   const s = L.settings;
   return {
+    demoReadOnly: s.demoReadOnly,
     notSet: s.notSet,
     download: s.download,
     preparing: s.preparing,
@@ -69,6 +70,7 @@ export type SettingsLabels = ReturnType<typeof buildSettingsLabels>;
 
 export interface SettingsAppDeps {
   labels: SettingsLabels;
+  demo: boolean;
   clock: {
     now(): Date;
     nowIso(): string;
@@ -128,7 +130,11 @@ export interface SettingsApp {
 }
 
 export function createSettingsApp(deps: SettingsAppDeps): SettingsApp {
-  const { labels, clock, ui } = deps;
+  const { labels, clock, ui, demo } = deps;
+  const readOnly = (): boolean => {
+    if (demo) ui.notify(labels.demoReadOnly ?? 'Compte démo : lecture seule.', 'warning');
+    return demo;
+  };
 
   return {
     display: getSettings(),
@@ -169,11 +175,13 @@ export function createSettingsApp(deps: SettingsAppDeps): SettingsApp {
     },
 
     savePseudo() {
+      if (readOnly()) return;
       this.display = updateSettings({ pseudo: this.display.pseudo.trim() });
       this.toastSaved();
     },
 
     saveEmail() {
+      if (readOnly()) return;
       this.display = updateSettings({ email: this.display.email.trim() });
       this.toastSaved();
     },
@@ -249,6 +257,7 @@ export function createSettingsApp(deps: SettingsAppDeps): SettingsApp {
     },
 
     async handleImportFile(event) {
+      if (readOnly()) return;
       const input = event.target as HTMLInputElement;
       const file = input.files?.[0];
       if (!file) return;
@@ -272,6 +281,7 @@ export function createSettingsApp(deps: SettingsAppDeps): SettingsApp {
     },
 
     confirmReset() {
+      if (readOnly()) return;
       if (this.resetConfirmText !== 'SUPPRIMER') return;
       resetAllData();
       this.display = getSettings();
@@ -385,6 +395,7 @@ export function createSettingsApp(deps: SettingsAppDeps): SettingsApp {
     },
 
     async confirmRestore() {
+      if (readOnly()) return;
       this.syncBusy = 'pull';
       try {
         const snapshot = await syncPull(

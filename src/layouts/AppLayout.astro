@@ -109,6 +109,7 @@ const groupsWithActive = groups.map((g) => ({
   <head>
     <ClientRouter />
     <meta charset="utf-8" />
+    <meta name="referrer" content="no-referrer" />
     {/* CSP defensive : aucune ressource externe (Alpine, polices et icônes sont
         auto-hébergés). 'unsafe-inline' est requis par les boots synchrones
         (thème, locale, Alpine ESM) documentés plus bas. Alpine 3 compile ses
