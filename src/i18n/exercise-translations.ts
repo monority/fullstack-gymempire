@@ -183,7 +183,7 @@ const CATEGORIES_EN: Record<string, string> = {
   Autre: 'Other',
 };
 
-export { EXERCISE_NAMES_EN, MUSCLES_EN, CATEGORIES_EN };
+export { EXERCISE_NAMES_EN, MUSCLES_EN, CATEGORIES_EN, TEMPLATE_NAMES_EN, TEMPLATE_DESCS_EN };
 
 const TEMPLATE_NAMES_EN: Record<string, string> = {
   'PPL — Push': 'PPL — Push',

@@ -126,8 +126,7 @@ const { title, class: className = '' } = Astro.props as Props;
 
   registerAlpine('localeApp', () => ({
     get locale(): string {
-      const l = (window as { __LOCALE__?: string }).__LOCALE__;
-      return l === 'en' ? 'en' : 'fr';
+      return document.documentElement.getAttribute('lang') === 'en' ? 'en' : 'fr';
     },
     switchToLight: L.layout.switchToLight,
     switchToDark: L.layout.switchToDark,

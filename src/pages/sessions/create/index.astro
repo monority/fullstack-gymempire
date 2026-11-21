@@ -1,4 +1,7 @@
 ---
+const locale = resolveLocale(Astro.url.pathname);
+import { resolveLocale } from '../../../i18n';
+
 import AppLayout from '../../../layouts/AppLayout.astro';
 import PageHeader from '../../../components/layout/PageHeader.astro';
 import Card from '../../../components/ui/Card.astro';
@@ -15,7 +18,7 @@ import CreateExerciseList from '../../../components/builder/CreateExerciseList.a
 import CreateNotes from '../../../components/builder/CreateNotes.astro';
 import CreatePicker from '../../../components/builder/CreatePicker.astro';
 
-const L = t();
+const L = t(locale);
 const editId = Astro.url.searchParams.get('edit');
 const isEditMode = Boolean(editId);
 ---

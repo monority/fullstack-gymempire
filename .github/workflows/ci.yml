@@ -44,6 +44,9 @@ jobs:
       - name: Lint
         run: pnpm lint
 
+      - name: Tests i18n (symétrie FR/EN)
+        run: pnpm check:i18n
+
       - name: Gouvernance CSS (ratchet strict)
         run: pnpm check:css
         env:
@@ -71,6 +74,9 @@ jobs:
 
       - name: Bundle budget
         run: pnpm check:budget
+
+      - name: Cohérence des langues dans le build
+        run: pnpm check:i18n-build
 
       - name: Smoke-test critical routes
         run: pnpm test:smoke

@@ -1,10 +1,12 @@
 ---
+import { resolveLocale } from '../i18n';
+
 import '../styles/global.css';
 import AppShell from '../components/layout/AppShell.astro';
 import QuickSearch from '../components/layout/QuickSearch.astro';
 import Toast from '../components/ui/Toast.astro';
 import { ClientRouter } from 'astro:transitions';
-import { t, setLocale, getLocale, localizedPath } from '../i18n';
+import { t, localizedPath } from '../i18n';
 import type { NavTree } from '../lib/types';
 
 interface Props {
@@ -14,10 +16,8 @@ interface Props {
 }
 
 const currentPath = Astro.url.pathname;
-const currentLocale = currentPath.startsWith('/en') ? 'en' : 'fr';
-setLocale(currentLocale);
-
-const L = t();
+const locale = resolveLocale(currentPath);
+const L = t(locale);
 
 const defaultGroups: NavTree = [
   {
@@ -97,7 +97,7 @@ const groupsWithActive = groups.map((g) => ({
 }));
 ---
 
-<html lang={getLocale()}>
+<html lang={locale}>
   <head>
     <ClientRouter />
     <meta charset="utf-8" />
@@ -125,16 +125,6 @@ const groupsWithActive = groups.map((g) => ({
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="Gym Empire" />
-
-    {/* ── Locale bootstrap ──
-        Exposes the server-rendered locale so client-side Alpine
-        components (via t()/getLocale()) resolve the same language
-        as the HTML they live in. Runs before the theme block.
-        NOTE: expressions are NOT evaluated inside is:inline scripts,
-        so we read the locale from the <html lang="..."> attribute. */}
-    <script is:inline>
-      window.__LOCALE__ = document.documentElement.getAttribute('lang');
-    </script>
 
     {/* ── Exercise translation helpers ──
         Exposed on window so Alpine expressions can translate stored

@@ -1,4 +1,7 @@
 ---
+const locale = resolveLocale(Astro.url.pathname);
+import { resolveLocale } from '../../i18n';
+
 import { t, localizedPath } from '../../i18n';
 import CompareSummary from '../../components/sessions/CompareSummary.astro';
 import CompareSessionColumn from '../../components/sessions/CompareSessionColumn.astro';
@@ -10,7 +13,7 @@ import CardTitle from '../../components/ui/CardTitle.astro';
 import CardContent from '../../components/ui/CardContent.astro';
 import Icon from '../../components/ui/Icon.astro';
 import BackLink from '../../components/ui/BackLink.astro';
-const L = t();
+const L = t(locale);
 ---
 
 <AppLayout title={L.comparer.title}>

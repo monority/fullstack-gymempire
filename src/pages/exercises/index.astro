@@ -1,4 +1,7 @@
 ---
+const locale = resolveLocale(Astro.url.pathname);
+import { resolveLocale } from '../../i18n';
+
 import { t } from '../../i18n';
 import ExerciseToolbar from '../../components/exercises/ExerciseToolbar.astro';
 import ExerciseGrid from '../../components/exercises/ExerciseGrid.astro';
@@ -7,7 +10,7 @@ import ExerciseAddDialog from '../../components/exercises/ExerciseAddDialog.astr
 import AppLayout from '../../layouts/AppLayout.astro';
 import PageHeader from '../../components/layout/PageHeader.astro';
 
-const L = t();
+const L = t(locale);
 
 /**
  * Static list of categories offered in the form. Kept on the

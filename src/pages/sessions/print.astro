@@ -1,4 +1,6 @@
 ---
+import { resolveLocale } from '../../i18n';
+
 /**
  * « Fiche de séance » — print-only sheet for one session.
  *
@@ -10,13 +12,11 @@
  *
  * Route: /sessions/print?id=<sessionId>  (localized under /en when needed)
  */
-import { t, setLocale, getLocale } from '../../i18n';
+import { t } from '../../i18n';
 
-const currentPath = Astro.url.pathname;
-const locale = currentPath.startsWith('/en') ? 'en' : 'fr';
-setLocale(locale);
-const L = t();
-const lang = getLocale();
+const locale = resolveLocale(Astro.url.pathname);
+const L = t(locale);
+const lang = locale;
 const title = `${L.detail.title} — Gym Empire`;
 ---
 
@@ -28,12 +28,6 @@ const title = `${L.detail.title} — Gym Empire`;
     <meta name="robots" content="noindex" />
     <meta name="theme-color" content="#F59A3D" />
     <!-- --color-accent (hsl(30 92% 58%)) — meta can't read CSS vars -->
-
-    {/* Locale bootstrap — same convention as AppLayout so `t()` resolves
-        the same language as the <html lang> attribute on the client. */}
-    <script is:inline>
-      window.__LOCALE__ = document.documentElement.getAttribute('lang');
-    </script>
 
     <link rel="preload" as="font" type="font/woff2" href="/fonts/archivo-latin.woff2" crossorigin />
     <link rel="preload" as="font" type="font/woff2" href="/fonts/inter-latin.woff2" crossorigin />

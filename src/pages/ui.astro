@@ -1,4 +1,7 @@
 ---
+const locale = resolveLocale(Astro.url.pathname);
+import { resolveLocale } from '../i18n';
+
 import { t, localizedPath } from '../i18n';
 import AppLayout from '../layouts/AppLayout.astro';
 import Button from '../components/ui/Button.astro';
@@ -33,7 +36,7 @@ import StatsCard from '../components/workout/StatsCard.astro';
 import ExerciseCard from '../components/workout/ExerciseCard.astro';
 import { icons } from '../lib/icons';
 import WorkoutCard from '../components/workout/WorkoutCard.astro';
-const L = t();
+const L = t(locale);
 
 // page design-system réservée au dev :
 // en production, /ui renvoie la page 404 (route non destinée au public).

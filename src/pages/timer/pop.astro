@@ -1,7 +1,7 @@
 ---
-import { defaultLocale } from '../../i18n';
+import { resolveLocale } from '../../i18n';
 import '../../styles/global.css';
-const lang = Astro.currentLocale ?? defaultLocale;
+const lang = resolveLocale(Astro.url.pathname);
 ---
 
 <html lang={lang}>
@@ -18,9 +18,7 @@ const lang = Astro.currentLocale ?? defaultLocale;
 
     <script>
       import { mountTimerWidget, widgetLabelsFrom } from '../../lib/timer-widget';
-      import { t, setLocale } from '../../i18n';
-
-      setLocale(document.documentElement.getAttribute('lang') || 'fr');
+      import { t } from '../../i18n';
       const LABELS = widgetLabelsFrom(t());
 
       const root = document.getElementById('tw-mount');

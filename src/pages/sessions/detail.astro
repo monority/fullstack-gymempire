@@ -1,4 +1,7 @@
 ---
+const locale = resolveLocale(Astro.url.pathname);
+import { resolveLocale } from '../../i18n';
+
 import AppLayout from '../../layouts/AppLayout.astro';
 import Card from '../../components/ui/Card.astro';
 import Dialog from '../../components/ui/Dialog.astro';
@@ -14,7 +17,7 @@ import SessionActions from '../../components/session-detail/SessionActions.astro
 import NotesSection from '../../components/session-detail/NotesSection.astro';
 import ExerciseList from '../../components/session-detail/ExerciseList.astro';
 
-const L = t();
+const L = t(locale);
 ---
 
 <AppLayout title={L.detail.title}>

@@ -1,4 +1,7 @@
 ---
+const locale = resolveLocale(Astro.url.pathname);
+import { resolveLocale } from '../../i18n';
+
 import { t, localizedPath } from '../../i18n';
 import MetricGrid from '../../components/ui/MetricGrid.astro';
 import { buildStatsMetrics } from '../../components/progression/metric-definitions';
@@ -9,7 +12,7 @@ import PanelHeader from '../../components/ui/PanelHeader.astro';
 import CardContent from '../../components/ui/CardContent.astro';
 import Segmented from '../../components/ui/Segmented.astro';
 import Toggle from '../../components/ui/Toggle.astro';
-const L = t();
+const L = t(locale);
 ---
 
 <AppLayout title={L.stats.title}>

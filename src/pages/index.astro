@@ -1,4 +1,7 @@
 ---
+const locale = resolveLocale(Astro.url.pathname);
+import { resolveLocale } from '../i18n';
+
 import AppLayout from '../layouts/AppLayout.astro';
 import Button from '../components/ui/Button.astro';
 import WeeklyGoal from '../components/dashboard/WeeklyGoal.astro';
@@ -8,7 +11,7 @@ import RecentSessions from '../components/dashboard/RecentSessions.astro';
 import WeekMetrics from '../components/dashboard/WeekMetrics.astro';
 import { t, localizedPath } from '../i18n';
 
-const L = t();
+const L = t(locale);
 ---
 
 <AppLayout title={L.dashboard.title}>

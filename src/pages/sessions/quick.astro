@@ -1,4 +1,7 @@
 ---
+const locale = resolveLocale(Astro.url.pathname);
+import { resolveLocale } from '../../i18n';
+
 import { t } from '../../i18n';
 import QuickHeader from '../../components/sessions/QuickHeader.astro';
 import QuickSelecting from '../../components/sessions/QuickSelecting.astro';
@@ -7,7 +10,7 @@ import QuickResting from '../../components/sessions/QuickResting.astro';
 import QuickCompleted from '../../components/sessions/QuickCompleted.astro';
 import AppLayout from '../../layouts/AppLayout.astro';
 
-const L = t();
+const L = t(locale);
 ---
 
 <AppLayout title={L.rapide.title}>

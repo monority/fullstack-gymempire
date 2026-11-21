@@ -8,7 +8,7 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html', 'lcov'],
-      include: ['src/lib/**/*.ts', 'src/components/**/*.ts'],
+      include: ['src/lib/**/*.ts', 'src/components/**/*.ts', 'src/i18n/**/*.ts'],
       exclude: ['**/__tests__/**', '**/*.test.ts'],
       reportsDirectory: 'coverage',
       // Seuils planchers, relevés à mesure que la couverture progresse.

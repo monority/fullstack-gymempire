@@ -1,4 +1,7 @@
 ---
+const locale = resolveLocale(Astro.url.pathname);
+import { resolveLocale } from '../../i18n';
+
 import AppLayout from '../../layouts/AppLayout.astro';
 import PageHeader from '../../components/layout/PageHeader.astro';
 
@@ -9,7 +12,7 @@ import SettingsGoals from '../../components/settings/SettingsGoals.astro';
 import SettingsData from '../../components/settings/SettingsData.astro';
 import SettingsDialogs from '../../components/settings/SettingsDialogs.astro';
 
-const L = t();
+const L = t(locale);
 ---
 
 <AppLayout title={L.settings.title}>

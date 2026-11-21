@@ -1,4 +1,7 @@
 ---
+const locale = resolveLocale(Astro.url.pathname);
+import { resolveLocale } from '../../i18n';
+
 import AppLayout from '../../layouts/AppLayout.astro';
 import PageHeader from '../../components/layout/PageHeader.astro';
 import EmptyState from '../../components/ui/EmptyState.astro';
@@ -14,7 +17,7 @@ import EmptyFilterState from '../../components/ui/EmptyFilterState.astro';
 import { icons } from '../../lib/icons';
 import { t, localizedPath } from '../../i18n';
 
-const L = t();
+const L = t(locale);
 ---
 
 <AppLayout title={L.sessions.title}>
