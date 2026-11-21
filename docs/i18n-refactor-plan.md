@@ -325,3 +325,5 @@ mauvaise langue. Les phases suivantes sont des améliorations structurelles sans
 
 > Phase 4 exécutée : 90 tips EN, `getExerciseTip(name, locale)`, `dateLocale()` unique (en-GB).
 > 4 tests supplémentaires ; total 673 tests.
+
+> Plan i18n intégralement exécuté. 673 tests, 18 E2E (14 initiaux + 4 bilingues), 0 dette actionnable.

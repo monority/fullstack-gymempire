@@ -173,11 +173,16 @@ Règles :
 
 - Aucune chaîne visible en dur dans un composant ou une page (hors `ui.astro`, `debug.astro`).
   Tout passe par `t()` et le type `Dictionary`.
+- **Locale explicite (ADR-010)** : côté serveur, `t(locale)` avec `locale = resolveLocale(Astro.url.pathname)`.
+  Interdits : `setLocale`, `window.__LOCALE__`, `getLocale()` dans un frontmatter, `t()` sans argument
+  dans un script client. Le client consomme `$store.i18n` (store Alpine typé), jamais `window.tr*`.
 - Les libellés sont construits une fois dans la couche assemblage via `buildXLabels(t)` (convention
   déjà en place dans `sessionsApp.ts`, `settingsApp.ts`, `exercisesApp.ts`, `sessionDetailApp.ts`),
   puis passés en `deps`.
-- Dates, nombres, unités : `DATE_LOCALE()`, `lib/format.ts`, `lib/units.ts`. Pas de
-  `toLocaleDateString` maison dans un composant.
+- Dates, nombres, unités : `dateLocale(locale)` (`en-GB`/`fr-FR`), `lib/format.ts`, `lib/units.ts`.
+  Pas de `toLocaleDateString` maison ni de locale littérale (`en-US` interdit).
+- Les traductions de données (noms/muscles/catégories/tips) sont des maps typées, injectées via
+  `$store.i18n` ; les clés FR stockées restent canoniques (compatibilité localStorage).
 - Un seul helper par format : interdiction des doublons `formatDuration`, `formatRestTime`,
   `formatSetRpe`, `fmtTime`/`fmtShort`/`fmtMs` (`timer-widget.ts` aujourd'hui).
 - Les unions métier (`SessionStatus`, `ExerciseCategory`, `Unit`) sont définies une fois dans

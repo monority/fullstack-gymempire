@@ -1,6 +1,7 @@
 {
   "generatedAt": "2026-11-21T20:42:14.628Z",
-  "note": "Dette actionnable ramenée à zéro. Les exceptions documentées (ui/print/debug) sont exclues des compteurs. Toute augmentation bloque la CI.",
+  "note": "Dette actionnable CSS/composants à zéro. Les compteurs i18n sont figés à zéro : toute régression (globale de traduction, t() client sans locale, page en mauvaise langue) bloque la CI.",
   "check-css": {},
-  "check-components": {}
+  "check-components": {},
+  "check-i18n": {}
 }
