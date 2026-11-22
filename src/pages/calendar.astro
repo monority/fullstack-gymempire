@@ -128,7 +128,7 @@ const L = t(locale);
             <div class="cal__session-list">
               <template x-for="s in selectedSessions" :key="s.id">
                 <a
-                  :href="localizedPath('/sessions/detail?id=' + encodeURIComponent(s.id), locale)"
+                  :href="localizedPath('/sessions/detail?id=' + encodeURIComponent(s.id))"
                   class="cal__session-item"
                 >
                   <div class="cal__session-info">

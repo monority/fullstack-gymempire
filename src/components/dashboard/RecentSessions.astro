@@ -28,7 +28,7 @@ const L = t(locale);
   <div class="dash__sessions">
     <template x-for="s in recentSessions" :key="s.id">
       <a
-        :href="localizedPath('/sessions/detail?id=' + s.id, locale)"
+        :href="localizedPath('/sessions/detail?id=' + s.id)"
         class="dash__session"
         :class="'dash__session--' + s.status"
       >
