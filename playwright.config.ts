@@ -20,8 +20,8 @@ export default defineConfig({
     },
   ],
   webServer: {
-    // Le script force Astro en foreground (Astro 7 démonise sinon en
-    // environnement agent) et garde le process parent vivant pour Playwright.
+    // Le script force Astro en foreground (Astro 7 se démonise sinon tout seul)
+    // et garde le process parent vivant pour Playwright.
     command: 'node scripts/playwright-dev.mjs',
     url: 'http://127.0.0.1:4321',
     reuseExistingServer: !process.env.CI,

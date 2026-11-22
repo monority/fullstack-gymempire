@@ -34,7 +34,7 @@ test-output.log
 # local tooling / data
 .freebuff/
 
-# local agent/design tooling (not part of the application source)
+# local tooling (not part of the application source)
 .opencode/
 .impeccable/questions/
 .impeccable/review/

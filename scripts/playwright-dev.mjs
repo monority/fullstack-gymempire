@@ -1,7 +1,7 @@
 // serveur de dev dédié à Playwright.
 //
-// Astro 7 détecte automatiquement les environnements agent/IA et démonise
-// `astro dev`. Le CLI rend la main immédiatement, ce qui fait croire à
+// Astro 7 démonise automatiquement `astro dev` dans cet environnement.
+// Le CLI rend la main immédiatement, ce qui fait croire à
 // Playwright que le `webServer` est mort ("exited early"). On force donc le
 // mode foreground avec ASTRO_DEV_BACKGROUND=0 et on garde un process parent
 // vivant pendant toute la durée des tests.
