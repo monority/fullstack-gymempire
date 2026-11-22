@@ -294,6 +294,23 @@ export function createTimerApp(deps: TimerAppDeps): TimerApp {
         'data-theme',
         document.documentElement.getAttribute('data-theme') || 'dark'
       );
+      // Une fenêtre Picture-in-Picture est un document about:blank : elle ne
+      // reçoit aucune feuille de style. Le widget utilise les tokens --color-*
+      // / --alpha-* / --radius-* de global.css ; sans copie, ils n'existent pas
+      // et l'affichage diffère totalement de la page principale.
+      for (const sheet of Array.from(document.styleSheets)) {
+        try {
+          const rules = Array.from(sheet.cssRules)
+            .map((rule) => rule.cssText)
+            .join('\n');
+          if (!rules) continue;
+          const style = doc.createElement('style');
+          style.textContent = rules;
+          doc.head.appendChild(style);
+        } catch {
+          // Feuille cross-origin : ses règles ne sont pas exposées, on ignore.
+        }
+      }
       const bodyBg =
         getComputedStyle(document.documentElement).getPropertyValue('--color-bg').trim() ||
         '#0d0d0d';

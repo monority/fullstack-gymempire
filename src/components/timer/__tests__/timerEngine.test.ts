@@ -155,6 +155,24 @@ describe('createStopwatch', () => {
     expect(state.elapsed).toBe(1500);
   });
 
+  it('le tick se reprogramme : l’affichage suit l’horloge sans attendre la pause', () => {
+    const clock = fakeClock();
+    const state = {
+      running: false,
+      elapsed: 0,
+      laps: [],
+      startTimestamp: 0,
+      intervalId: null as number | null,
+    };
+    const sw = createStopwatch(state, { onChange: () => {} }, clock.clock);
+    sw.start();
+    for (let i = 0; i < 20; i++) clock.advance(50);
+    expect(state.elapsed).toBe(1000);
+    expect(clock.pending()).toBe(1);
+    sw.pause();
+    expect(clock.pending()).toBe(0);
+  });
+
   it('resume continues from elapsed', () => {
     const clock = fakeClock();
     const state = {

@@ -145,12 +145,22 @@ export function createStopwatch(
   opts: { onChange: () => void },
   clock: TimerClock = realClock
 ): StopwatchEngine {
+  // Le tick doit se reprogrammer : un seul setTimeout laissait l'affichage
+  // figé à la première fraction de seconde jusqu'à la pause.
+  const scheduleTick = () => {
+    state.intervalId = clock.schedule(() => {
+      engine.tick();
+      if (state.running) scheduleTick();
+    }, 50);
+  };
+
   const engine: StopwatchEngine = {
     start() {
       if (state.running) return;
       state.running = true;
       state.startTimestamp = clock.now() - state.elapsed;
-      state.intervalId = clock.schedule(() => engine.tick(), 10);
+      engine.tick();
+      scheduleTick();
       opts.onChange();
     },
 
