@@ -97,6 +97,18 @@ describe('renderVolumeChart', () => {
     expect((svg.match(/<circle/g) ?? []).length).toBe(12);
     expect(svg).toContain(labels.volumeChart);
   });
+
+  it('garde les libellés de dates dans le viewBox sans chevauchement', () => {
+    const weeks = Array.from({ length: 12 }, (_, i) =>
+      week(`2026-${String(i + 1).padStart(2, '0')}-01`, (i + 1) * 500)
+    );
+    const svg = renderVolumeChart(weeks, labels, deps);
+    const labelsSvg = svg.match(/<text[^>]*text-anchor="[^"]+"[^>]*>2026-/g) ?? [];
+    expect(labelsSvg).toHaveLength(6);
+    expect(labelsSvg[0]).toContain('text-anchor="start"');
+    expect(labelsSvg[labelsSvg.length - 1]).toContain('text-anchor="end"');
+    expect(labelsSvg.filter((l) => l.includes('text-anchor="middle"'))).toHaveLength(4);
+  });
 });
 
 describe('renderMuscleChart', () => {

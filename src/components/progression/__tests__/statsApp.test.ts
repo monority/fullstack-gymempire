@@ -57,6 +57,8 @@ describe('createStatsApp', () => {
     expect(app.periodMeta).toBe(deps().labels.volumeLast7d);
     expect(typeof app.renderVolumeChart()).toBe('string');
     expect(typeof app.renderBenchmarksTable()).toBe('string');
-    expect(app.formatDuration(65)).toMatch(/1:05/);
+    expect(app.formatDuration(65)).toBe('1:05');
+    expect(app.formatDuration(3600)).toBe('1:00:00');
+    expect(app.formatDuration(5700)).toBe('1:35:00');
   });
 });

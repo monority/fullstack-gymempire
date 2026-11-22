@@ -102,7 +102,9 @@ export function renderVolumeChart(
 
   const labelIdxs: number[] = [];
   weeks.forEach((_, i) => {
-    if (i === 0 || i === weeks.length - 1 || i % 2 === 0) {
+    // On garde un intervalle libre avant le dernier libellé (aligné à droite)
+    // pour éviter que l'avant-dernier, centré, ne vienne le chevaucher.
+    if (i === 0 || i === weeks.length - 1 || (i % 2 === 0 && i < weeks.length - 2)) {
       labelIdxs.push(i);
     }
   });
@@ -129,8 +131,13 @@ export function renderVolumeChart(
 
   for (const i of labelIdxs) {
     const b = weeks[i];
-    const cx = points[i].x;
-    svg += `<text x="${cx.toFixed(1)}" y="${(PAD_T + plotH + 24).toFixed(1)}" font-size="12" fill="${muted}" text-anchor="middle" font-family="var(--font-body, sans-serif)">${deps.formatDate(b.key)}</text>`;
+    // Les libellés extrêmes sont alignés sur les bords de la zone de tracé :
+    // centrés, ils dépassaient du viewBox et étaient coupés à l'écran.
+    const isFirst = i === 0;
+    const isLast = i === weeks.length - 1;
+    const cx = isFirst ? area.left : isLast ? area.right : points[i].x;
+    const anchor = isFirst ? 'start' : isLast ? 'end' : 'middle';
+    svg += `<text x="${cx.toFixed(1)}" y="${(PAD_T + plotH + 24).toFixed(1)}" font-size="12" fill="${muted}" text-anchor="${anchor}" font-family="var(--font-body, sans-serif)">${deps.formatDate(b.key)}</text>`;
   }
 
   return svg + '</svg>';
