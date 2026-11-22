@@ -3,16 +3,14 @@
  * Remplace les globals `window.trExercise/trMuscle/trCategory/muscleHue`
  * (plan de refonte i18n Phase 3).
  */
+import { getLocale, dateLocale, type Locale } from '../i18n';
 import {
-  trExercise,
-  trMuscle,
-  trCategory,
-  trTemplateName,
-  trTemplateDesc,
-  getLocale,
-  dateLocale,
-  type Locale,
-} from '../i18n';
+  EXERCISE_NAMES_EN,
+  MUSCLES_EN,
+  CATEGORIES_EN,
+  TEMPLATE_NAMES_EN,
+  TEMPLATE_DESCS_EN,
+} from '../i18n/exercise-translations';
 import { muscleHue, type MuscleTone } from './colors';
 import { registerStore } from './alpine';
 
@@ -33,11 +31,13 @@ export function createI18nStore(locale: Locale): I18nStore {
   return {
     locale,
     dateLocale: dateLocale(locale),
-    trExercise: (name) => trExercise(name),
-    trMuscle: (muscle) => trMuscle(muscle),
-    trCategory: (category) => trCategory(category),
-    trTemplateName: (name) => trTemplateName(name),
-    trTemplateDesc: (id) => trTemplateDesc(id),
+    // Les maps ne contiennent que l'anglais : la locale du store est la
+    // source de vérité, pas getLocale() (qui dépend du document).
+    trExercise: (name) => (locale === 'en' ? (EXERCISE_NAMES_EN[name] ?? name) : name),
+    trMuscle: (muscle) => (locale === 'en' ? (MUSCLES_EN[muscle] ?? muscle) : muscle),
+    trCategory: (category) => (locale === 'en' ? (CATEGORIES_EN[category] ?? category) : category),
+    trTemplateName: (name) => (locale === 'en' ? (TEMPLATE_NAMES_EN[name] ?? name) : name),
+    trTemplateDesc: (id) => (locale === 'en' ? (TEMPLATE_DESCS_EN[id] ?? id) : id),
     muscleHue,
   };
 }
