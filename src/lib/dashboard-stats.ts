@@ -6,6 +6,8 @@
  * No DOM, no localStorage, no Alpine dependency.
  */
 
+import { parseLocalDate } from './date';
+import { startOfWeek as sundayOfWeek } from './week-aggregation';
 import { calculate1RM } from './storage/store';
 import type { Session } from './storage/types';
 
@@ -56,14 +58,14 @@ export function computeTotalVolume(sessions: Session[]): number {
 export function computeTodayVolume(sessions: Session[]): number {
   const key = dateKey(new Date());
   return sessions
-    .filter((s) => dateKey(new Date(s.date)) === key)
+    .filter((s) => dateKey(parseLocalDate(s.date)) === key)
     .reduce((sum, s) => sum + computeSessionVolume(s), 0);
 }
 
 /** Number of sessions today. */
 export function computeTodaySessions(sessions: Session[]): number {
   const key = dateKey(new Date());
-  return sessions.filter((s) => dateKey(new Date(s.date)) === key).length;
+  return sessions.filter((s) => dateKey(parseLocalDate(s.date)) === key).length;
 }
 
 /** Count of distinct exercises across today's sessions. */
@@ -71,7 +73,7 @@ export function computeTodayExercises(sessions: Session[]): number {
   const key = dateKey(new Date());
   const seen = new Set<string>();
   for (const s of sessions) {
-    if (dateKey(new Date(s.date)) !== key) continue;
+    if (dateKey(parseLocalDate(s.date)) !== key) continue;
     for (const ex of s.exercises) seen.add(ex.exerciseId);
   }
   return seen.size;
@@ -109,11 +111,9 @@ export function computeTop1RM(sessions: Session[]): number {
 export function computeWeeklyVolumeByDay(sessions: Session[]): number[] {
   const arr = Array.from({ length: 7 }, () => 0);
   const now = new Date();
-  const startOfWeek = new Date(now);
-  startOfWeek.setDate(now.getDate() - now.getDay());
-  startOfWeek.setHours(0, 0, 0, 0);
+  const startOfWeek = sundayOfWeek(now);
   for (const s of sessions) {
-    const d = new Date(s.date);
+    const d = parseLocalDate(s.date);
     if (d < startOfWeek) continue;
     arr[d.getDay()] += computeSessionVolume(s);
   }
@@ -130,11 +130,9 @@ export function computeWeeklyActivityByDay(
 ): { sessions: number[]; sets: number[] } {
   const sessionCounts = Array.from({ length: 7 }, () => 0);
   const setCounts = Array.from({ length: 7 }, () => 0);
-  const startOfWeek = new Date(now);
-  startOfWeek.setDate(now.getDate() - now.getDay());
-  startOfWeek.setHours(0, 0, 0, 0);
+  const startOfWeek = sundayOfWeek(now);
   for (const session of sessions) {
-    const date = new Date(session.date);
+    const date = parseLocalDate(session.date);
     if (date < startOfWeek) continue;
     const day = date.getDay();
     sessionCounts[day] += 1;
@@ -153,7 +151,7 @@ export function computeWeeklyActivityByDay(
  */
 export function computeStreak(sessions: Session[]): number {
   const completedDays = new Set(
-    sessions.filter((s) => s.status === 'completed').map((s) => dateKey(new Date(s.date)))
+    sessions.filter((s) => s.status === 'completed').map((s) => dateKey(parseLocalDate(s.date)))
   );
   if (completedDays.size === 0) return 0;
 

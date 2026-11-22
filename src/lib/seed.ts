@@ -13,7 +13,7 @@
 import { STORAGE_KEYS } from './storage/defaults';
 import { getExercises } from './storage/exercises';
 import { getSettings } from './storage/settings';
-import { getStore, setStore, generateId } from './storage/store';
+import { getStore, setStore, generateId, weightFor1RM } from './storage/store';
 import { resetAllData } from './storage/backup';
 import type {
   Exercise,
@@ -337,7 +337,7 @@ export function generateDemoData(): SeedSummary {
         exerciseId: ex.id,
         date: daysFromToday(-(START_WEEKS - 1 - w) * 7),
         estimated1RM: Math.round(oneRM),
-        bestWeight: Math.round(oneRM / (1 + reps / 30)),
+        bestWeight: Math.round(weightFor1RM(oneRM, reps)),
         bestReps: reps,
       });
     }

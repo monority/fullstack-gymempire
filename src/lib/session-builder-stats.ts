@@ -1,3 +1,4 @@
+import { warmupValues, isWorkingSet } from './warmup';
 /**
  * session-builder-stats — Pure computation functions for session builder.
  *
@@ -62,21 +63,17 @@ export function formatExerciseSummary(
   return `${setCount} ${setLabel} \u2014 ${totalReps} reps \u2014 ${volume} kg${topLine}`;
 }
 
-const WARMUP_PERCENTS = [0.4, 0.6, 0.8] as const;
-const WARMUP_REPS = [12, 8, 5] as const;
-
 /** Generate warmup sets from working sets. Returns empty array if no working weight. */
 export function generateWarmupSets(exerciseId: string, sets: SessionSet[]): SessionSet[] {
-  const workingSets = sets.filter((s) => (s.type === 'work' || s.type === 'top') && s.weight > 0);
+  const workingSets = sets.filter(isWorkingSet);
   if (workingSets.length === 0) return [];
 
   const maxWeight = Math.max(...workingSets.map((s) => s.weight));
-  const warmups: SessionSet[] = WARMUP_PERCENTS.map((p, i) => ({
+  const warmups: SessionSet[] = warmupValues(maxWeight).map((v, i) => ({
     exerciseId,
     setNumber: i + 1,
     type: 'warmup' as SetType,
-    weight: Math.round(maxWeight * p),
-    reps: WARMUP_REPS[i],
+    ...v,
     completed: false,
   }));
 
@@ -118,7 +115,7 @@ export function buildExerciseFromTemplate(
 
 /** Check if exercise has at least one work/top set with weight > 0. */
 export function hasWorkingWeight(exercise: SessionExercise): boolean {
-  return exercise.sets.some((s) => (s.type === 'work' || s.type === 'top') && s.weight > 0);
+  return exercise.sets.some(isWorkingSet);
 }
 
 /** Create a new set with values inherited from the last set. */

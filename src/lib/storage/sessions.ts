@@ -2,10 +2,12 @@
  * Sessions CRUD plus date/month/week queries.
  */
 
+import { parseLocalDate } from '../date';
 import { STORAGE_KEYS } from './defaults';
 import { isSession, normalizeSession } from './guards';
 import { generateId, getStore, setStore } from './store';
 import type { Session } from './types';
+import { startOfWeek as sundayOfWeek } from '../week-aggregation';
 
 export function getSessions(): Session[] {
   const raw = getStore<Session[]>(STORAGE_KEYS.sessions, []);
@@ -59,7 +61,7 @@ export function getSessionsByDate(date: string): Session[] {
  */
 export function getSessionsByMonth(year: number, month: number): Session[] {
   return getSessions().filter((s) => {
-    const d = new Date(s.date);
+    const d = parseLocalDate(s.date);
     return d.getFullYear() === year && d.getMonth() === month;
   });
 }
@@ -70,14 +72,11 @@ export function getSessionsByMonth(year: number, month: number): Session[] {
  * matching the dashboard's weekly-goal cadence.
  */
 export function getSessionsThisWeek(): Session[] {
-  const now = new Date();
-  const startOfWeek = new Date(now);
-  startOfWeek.setDate(now.getDate() - now.getDay()); // Sunday
-  startOfWeek.setHours(0, 0, 0, 0);
+  const startOfWeek = sundayOfWeek(new Date());
 
   return getSessions().filter((s) => {
     if (s.status !== 'completed') return false;
-    const d = new Date(s.date);
+    const d = parseLocalDate(s.date);
     return d >= startOfWeek;
   });
 }

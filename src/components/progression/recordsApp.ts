@@ -3,6 +3,7 @@
  * L'horloge est injectée pour la fenêtre « 30 derniers jours ».
  */
 
+import { parseLocalDate } from '../../lib/date';
 import { getSessions } from '../../lib/storage/sessions';
 import { calculate1RM } from '../../lib/storage/store';
 import type { ProgressRecord, SessionExercise } from '../../lib/storage/types';
@@ -91,7 +92,7 @@ export function createRecordsApp(deps: RecordsAppDeps): RecordsApp {
       let count = 0;
       for (const r of this.allRecords) {
         if (!r.date) continue;
-        const d = new Date(r.date);
+        const d = parseLocalDate(r.date);
         if (!Number.isNaN(d.getTime()) && d >= cutoff) count += 1;
       }
       return count;

@@ -3,6 +3,7 @@
  * Aucun `new Date()` direct : le jour courant est injecté (tests deterministes).
  */
 
+import { parseLocalDate } from '../../lib/date';
 import type { Dictionary } from '../../i18n/types';
 import { getSessions } from '../../lib/storage/sessions';
 import type { Session } from '../../lib/storage/types';
@@ -131,14 +132,14 @@ export function createCalendarApp(deps: CalendarAppDeps): CalendarApp {
 
     get monthSessionCount() {
       return this.allSessions.filter((s) => {
-        const d = new Date(s.date);
+        const d = parseLocalDate(s.date);
         return d.getFullYear() === this.currentYear && d.getMonth() === this.currentMonth;
       }).length;
     },
     get monthVolume() {
       let total = 0;
       for (const s of this.allSessions) {
-        const d = new Date(s.date);
+        const d = parseLocalDate(s.date);
         if (d.getFullYear() !== this.currentYear || d.getMonth() !== this.currentMonth) {
           continue;
         }

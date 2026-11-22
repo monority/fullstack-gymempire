@@ -1,3 +1,4 @@
+import { warmupValues, isWorkingSet } from './warmup';
 /**
  * exercises-stats — Pure computation functions for exercises page.
  *
@@ -104,25 +105,18 @@ export function buildTrendUrl(exerciseName: string, basePath: string): string {
   return `${basePath}?${q.toString()}`;
 }
 
-const WARMUP_PERCENTS = [0.4, 0.6, 0.8] as const;
-const WARMUP_REPS = [12, 8, 5] as const;
-
 /** Check if any set has working weight. */
 export function hasWorkingWeight(sets: AddSetRow[]): boolean {
-  return sets.some((s) => (s.type === 'work' || s.type === 'top') && s.weight > 0);
+  return sets.some(isWorkingSet);
 }
 
 /** Generate warmup rows from working sets. Returns empty array if no working weight. */
 export function generateWarmupRows(sets: AddSetRow[]): AddSetRow[] {
-  const workingSets = sets.filter((s) => (s.type === 'work' || s.type === 'top') && s.weight > 0);
+  const workingSets = sets.filter(isWorkingSet);
   if (workingSets.length === 0) return [];
 
   const maxWeight = Math.max(...workingSets.map((s) => s.weight));
-  return WARMUP_PERCENTS.map((p, i) => ({
-    type: 'warmup' as SetType,
-    weight: Math.round(maxWeight * p),
-    reps: WARMUP_REPS[i],
-  }));
+  return warmupValues(maxWeight).map((v) => ({ type: 'warmup' as SetType, ...v }));
 }
 
 /** Format exercise count label. */

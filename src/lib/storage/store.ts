@@ -21,6 +21,15 @@ export function withUnlockedWrites<T>(fn: () => T): T {
  * Estimated 1RM via the Epley formula: weight × (1 + reps / 30).
  * Returns 0 for non-positive inputs, weight as-is for a single rep.
  */
+/**
+ * Inverse de l'Epley : charge approximative pour un 1RM et un nombre de reps.
+ * Utilisé par le générateur de données de démonstration.
+ */
+export function weightFor1RM(oneRM: number, reps: number): number {
+  if (!Number.isFinite(oneRM) || !Number.isFinite(reps) || reps <= 0) return 0;
+  return oneRM / (1 + reps / 30);
+}
+
 export function calculate1RM(weight: number, reps: number): number {
   if (!Number.isFinite(weight) || !Number.isFinite(reps)) return 0;
   if (weight <= 0 || reps <= 0) return 0;
