@@ -11,6 +11,7 @@ import { muscleHue } from '../colors';
 import { familyLabel, groupByFamily, muscleToneColor, svgEscape } from '../stats-helpers';
 import type { MuscleVolumeSlice } from '../volume-stats';
 import type { TopExercise, WeekBucket } from '../week-aggregation';
+import { gridLine, plotArea, svgRoot } from './geometry';
 
 export interface StatsChartLabels {
   kg: string;
@@ -68,12 +69,8 @@ export function renderVolumeChart(
 ): string {
   const W = 1000;
   const H = 280;
-  const PAD_L = 50;
-  const PAD_R = 16;
-  const PAD_T = 16;
-  const PAD_B = 48;
-  const plotW = W - PAD_L - PAD_R;
-  const plotH = H - PAD_T - PAD_B;
+  const area = plotArea(W, H, { left: 50, right: 16, top: 16, bottom: 48 });
+  const { width: plotW, height: plotH, left: PAD_L, top: PAD_T } = area;
 
   const accent = deps.cssVar('--color-accent');
   const muted = deps.cssVar('--color-muted');
@@ -96,7 +93,7 @@ export function renderVolumeChart(
   }
 
   const slotW = plotW / Math.max(1, weeks.length - 1);
-  const baselineY = PAD_T + plotH;
+  const baselineY = area.baselineY;
   const points = weeks.map((bucket, i) => ({
     bucket,
     x: weeks.length === 1 ? PAD_L + plotW / 2 : PAD_L + i * slotW,
@@ -110,10 +107,10 @@ export function renderVolumeChart(
     }
   });
 
-  let svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" class="stats__chart" role="img" aria-label="${labels.volumeChart}">`;
+  let svg = svgRoot(W, H, 'stats__chart', labels.volumeChart);
 
   for (const t of tickPositions) {
-    svg += `<line x1="${PAD_L}" y1="${t.y.toFixed(1)}" x2="${W - PAD_R}" y2="${t.y.toFixed(1)}" stroke="${grid}" stroke-width="1"/>`;
+    svg += gridLine(area, t.y, grid);
     svg += `<text x="${PAD_L - 8}" y="${(t.y + 4).toFixed(1)}" font-size="13" fill="${muted}" text-anchor="end" font-family="var(--font-body, sans-serif)">${deps.formatNumber(t.value)}</text>`;
   }
 
@@ -128,7 +125,7 @@ export function renderVolumeChart(
     svg += `<circle cx="${point.x.toFixed(1)}" cy="${point.y.toFixed(1)}" r="${radius}" fill="${accent}"><title>${deps.formatDate(point.bucket.key)} · ${deps.formatNumber(point.bucket.volume)} ${labels.kg}</title></circle>`;
   });
 
-  svg += `<line x1="${PAD_L}" y1="${(PAD_T + plotH).toFixed(1)}" x2="${W - PAD_R}" y2="${(PAD_T + plotH).toFixed(1)}" stroke="${grid}" stroke-width="1"/>`;
+  svg += gridLine(area, area.baselineY, grid);
 
   for (const i of labelIdxs) {
     const b = weeks[i];
@@ -194,7 +191,7 @@ export function renderMuscleChart(
 
   return `
 <div class="stats__donut">
-  <svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" class="stats__donut-svg" role="img" aria-label="${labels.volumeByMuscle}">
+  ${svgRoot(W, H, 'stats__donut-svg', labels.volumeByMuscle)}
     <g transform="rotate(-90 ${cx} ${cy})">
       ${arcs}
     </g>
@@ -215,12 +212,8 @@ export function renderFrequencyChart(
 ): string {
   const W = 480;
   const H = 280;
-  const PAD_L = 40;
-  const PAD_R = 16;
-  const PAD_T = 16;
-  const PAD_B = 48;
-  const plotW = W - PAD_L - PAD_R;
-  const plotH = H - PAD_T - PAD_B;
+  const area = plotArea(W, H, { left: 40, right: 16, top: 16, bottom: 48 });
+  const { width: plotW, height: plotH, left: PAD_L, top: PAD_T } = area;
 
   const accent = deps.cssVar('--color-accent');
   const muted = deps.cssVar('--color-muted');
@@ -246,10 +239,10 @@ export function renderFrequencyChart(
   const barW = Math.max(10, slotW * 0.55);
   const barGap = (slotW - barW) / 2;
 
-  let svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" class="stats__chart" role="img" aria-label="${labels.freqChart}">`;
+  let svg = svgRoot(W, H, 'stats__chart', labels.freqChart);
 
   for (const t of tickPositions) {
-    svg += `<line x1="${PAD_L}" y1="${t.y.toFixed(1)}" x2="${W - PAD_R}" y2="${t.y.toFixed(1)}" stroke="${grid}" stroke-width="1"/>`;
+    svg += gridLine(area, t.y, grid);
     svg += `<text x="${PAD_L - 8}" y="${(t.y + 4).toFixed(1)}" font-size="12" fill="${muted}" text-anchor="end" font-family="var(--font-body, sans-serif)">${Math.round(t.value)}</text>`;
   }
 
@@ -262,7 +255,7 @@ export function renderFrequencyChart(
     svg += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${barW.toFixed(1)}" height="${Math.max(0, h).toFixed(1)}" rx="2" fill="${fill}"><title>${deps.formatDate(b.key)} · ${b.sessionCount} ${labels.sessionSingular}${b.sessionCount > 1 ? 's' : ''}</title></rect>`;
   });
 
-  svg += `<line x1="${PAD_L}" y1="${(PAD_T + plotH).toFixed(1)}" x2="${W - PAD_R}" y2="${(PAD_T + plotH).toFixed(1)}" stroke="${grid}" stroke-width="1"/>`;
+  svg += gridLine(area, area.baselineY, grid);
 
   weeks.forEach((b, i) => {
     const cx = PAD_L + i * slotW + slotW / 2;

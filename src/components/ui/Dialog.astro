@@ -43,27 +43,9 @@ const { id = 'dialog', title, class: className = '' } = Astro.props;
 
 <script>
   import { singleton as uiStore } from '../../lib/ui-store';
-  const FOCUSABLE_SELECTOR = [
-    'a[href]',
-    'area[href]',
-    'button:not([disabled])',
-    'input:not([disabled]):not([type="hidden"])',
-    'select:not([disabled])',
-    'textarea:not([disabled])',
-    'iframe',
-    'object',
-    'embed',
-    '[contenteditable="true"]',
-    '[tabindex]:not([tabindex="-1"])',
-  ].join(',');
+  import { getFocusable } from '../../lib/focus';
 
   const openerMap = new WeakMap<HTMLDialogElement, HTMLElement | null>();
-
-  function getFocusable(dialog: HTMLDialogElement): HTMLElement[] {
-    return Array.from(dialog.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)).filter(
-      (el) => !el.hasAttribute('disabled') && el.tabIndex !== -1 && el.offsetParent !== null
-    );
-  }
 
   function trapFocus(dialog: HTMLDialogElement, e: KeyboardEvent) {
     if (e.key !== 'Tab') return;

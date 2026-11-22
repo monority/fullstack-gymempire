@@ -130,6 +130,7 @@ const drawerItems = groups.map((group) => ({
 
 <script>
   import { registerAlpine } from '../../lib/alpine';
+  import { getFocusable } from '../../lib/focus';
   // Mobile drawer toggle
   (() => {
     const toggle = document.querySelector<HTMLButtonElement>('[data-mobile-toggle]');
@@ -173,13 +174,6 @@ const drawerItems = groups.map((group) => ({
     closeBtn?.addEventListener('click', close);
     backdrop?.addEventListener('click', close);
 
-    const getFocusable = (): HTMLElement[] =>
-      Array.from(
-        panel.querySelectorAll<HTMLElement>(
-          'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
-        )
-      ).filter((element) => !element.hasAttribute('hidden'));
-
     document.addEventListener('keydown', (e) => {
       if (panel.hidden) return;
       if (e.key === 'Escape') {
@@ -188,7 +182,7 @@ const drawerItems = groups.map((group) => ({
       }
       if (e.key !== 'Tab' || !panel.classList.contains('is-open')) return;
 
-      const focusable = getFocusable();
+      const focusable = getFocusable(panel);
       if (focusable.length === 0) return;
       const first = focusable[0];
       const last = focusable[focusable.length - 1];

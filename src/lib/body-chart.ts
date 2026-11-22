@@ -5,6 +5,7 @@
  */
 
 import type { BodyRecord } from './storage/types';
+import { gridLine, plotArea, svgRoot } from './charts/geometry';
 
 export interface ChartDeps {
   cssVar(name: string): string;
@@ -17,12 +18,9 @@ export function renderWeightChart(records: BodyRecord[], deps: ChartDeps): strin
 
   const W = 1000;
   const H = 260;
-  const PAD_L = 50;
-  const PAD_R = 30;
-  const PAD_T = 30;
   const PAD_B = 50;
-  const plotW = W - PAD_L - PAD_R;
-  const plotH = H - PAD_T - PAD_B;
+  const area = plotArea(W, H, { left: 50, right: 30, top: 30, bottom: PAD_B });
+  const { width: plotW, height: plotH, left: PAD_L, top: PAD_T } = area;
 
   const accent = deps.cssVar('--color-accent');
   const bg = deps.cssVar('--color-bg');
@@ -74,13 +72,13 @@ export function renderWeightChart(records: BodyRecord[], deps: ChartDeps): strin
     labelIdxs.push(records.length - 1);
   }
 
-  let svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" class="poids__chart" role="img" aria-label="${deps.chartTitle}">`;
+  let svg = svgRoot(W, H, 'poids__chart', deps.chartTitle);
 
   svg += `<rect x="0" y="0" width="${W}" height="${H}" fill="transparent"/>`;
 
   for (const t of ticks) {
     const y = yAt(t);
-    svg += `<line x1="${PAD_L}" y1="${y.toFixed(1)}" x2="${W - PAD_R}" y2="${y.toFixed(1)}" stroke="${grid}" stroke-width="1"/>`;
+    svg += gridLine(area, y, grid);
     svg += `<text x="${PAD_L - 8}" y="${(y + 4).toFixed(1)}" font-size="14" fill="${muted}" text-anchor="end" font-family="var(--font-display, sans-serif)">${Math.round(t * 10) / 10}</text>`;
   }
 
