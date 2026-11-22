@@ -11,6 +11,7 @@ import { isDemoAccount } from '../auth';
 import { getExercises } from './exercises';
 import { getSessions } from './sessions';
 import { getSettings } from './settings';
+import { clearWebdavPassword } from './webdav-credentials';
 import type { BodyRecord, Exercise, ProgressRecord, Session, Settings } from './types';
 
 export interface AppDataSnapshot {
@@ -207,4 +208,5 @@ export function resetAllData(): void {
   } catch {
     // ignore — best-effort wipe
   }
+  clearWebdavPassword();
 }

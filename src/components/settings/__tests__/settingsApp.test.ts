@@ -12,6 +12,8 @@ const mocks = vi.hoisted(() => ({
   syncPush: vi.fn(),
   syncPull: vi.fn(),
   syncTest: vi.fn(),
+  getWebdavPassword: vi.fn(),
+  setWebdavPassword: vi.fn(),
 }));
 
 vi.mock('../../../lib/storage/settings', () => ({
@@ -22,6 +24,10 @@ vi.mock('../../../lib/storage/backup', () => ({
   exportAllData: mocks.exportAllData,
   importAllData: mocks.importAllData,
   resetAllData: mocks.resetAllData,
+}));
+vi.mock('../../../lib/storage/webdav-credentials', () => ({
+  getWebdavPassword: mocks.getWebdavPassword,
+  setWebdavPassword: mocks.setWebdavPassword,
 }));
 vi.mock('../../../lib/storage/csv', () => ({
   exportSessionsAsCSV: mocks.exportSessionsAsCSV,
@@ -139,14 +145,16 @@ beforeEach(() => {
   mocks.syncTest.mockResolvedValue({ reachable: true, hasBackup: false });
   mocks.syncPush.mockResolvedValue(undefined);
   mocks.syncPull.mockReturnValue({ version: 1 });
+  mocks.getWebdavPassword.mockReturnValue('');
 });
 
 describe('createSettingsApp', () => {
   it('initializes from storage and fills the WebDAV form', () => {
     mocks.getSettings.mockReturnValue({
       ...DEFAULT_SETTINGS,
-      webdav: { url: 'https://dav.test/', username: 'u', password: 'p' },
+      webdav: { url: 'https://dav.test/', username: 'u', password: '' },
     });
+    mocks.getWebdavPassword.mockReturnValue('p');
     mocks.getSessionsThisWeek.mockReturnValue([{}, {}, {}]);
 
     const { app } = create();
@@ -241,10 +249,11 @@ describe('createSettingsApp', () => {
       webdav: {
         url: 'https://dav.test/',
         username: 'u',
-        password: 'p',
+        password: '',
         lastSyncAt: '2026-11-17T12:34:56.000Z',
       },
     });
+    expect(mocks.setWebdavPassword).toHaveBeenCalledWith('p');
     expect(app.syncBusy).toBeNull();
   });
 

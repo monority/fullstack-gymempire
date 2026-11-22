@@ -127,7 +127,7 @@ export default {
     password: 'Mot de passe',
     passwordPlaceholder: '••••••••••',
     passwordNote:
-      'Le mot de passe est stocké en clair dans le stockage local de votre navigateur — il n’est envoyé qu’à ce serveur WebDAV.',
+      'Le mot de passe n’est conservé que le temps de la session dans votre navigateur — il n’est envoyé qu’à ce serveur WebDAV.',
     lastSync: 'Dernière sauvegarde',
     never: 'Jamais',
     test: 'Tester la connexion',

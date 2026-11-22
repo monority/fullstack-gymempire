@@ -14,6 +14,7 @@ import {
   exportFilename,
 } from '../../lib/settings-stats';
 import { getSettings, updateSettings } from '../../lib/storage/settings';
+import { getWebdavPassword, setWebdavPassword } from '../../lib/storage/webdav-credentials';
 import { exportAllData, importAllData, resetAllData } from '../../lib/storage/backup';
 import { exportSessionsAsCSV } from '../../lib/storage/csv';
 import { getSessionsThisWeek } from '../../lib/storage/sessions';
@@ -156,7 +157,7 @@ export function createSettingsApp(deps: SettingsAppDeps): SettingsApp {
       this.syncForm = {
         url: this.display.webdav?.url || '',
         username: this.display.webdav?.username || '',
-        password: this.display.webdav?.password || '',
+        password: getWebdavPassword(),
       };
       this.syncConfigured = Boolean(this.display.webdav?.url);
       this.syncLastLabel = this.lastSyncLabel(this.display.webdav?.lastSyncAt);
@@ -297,11 +298,12 @@ export function createSettingsApp(deps: SettingsAppDeps): SettingsApp {
 
     persistSyncConfig() {
       const url = this.syncForm.url.trim();
+      setWebdavPassword(this.syncForm.password);
       this.display = updateSettings({
         webdav: {
           url,
           username: this.syncForm.username.trim(),
-          password: this.syncForm.password,
+          password: '',
           lastSyncAt: url ? this.display.webdav?.lastSyncAt : undefined,
         },
       });
@@ -312,11 +314,12 @@ export function createSettingsApp(deps: SettingsAppDeps): SettingsApp {
     },
 
     persistSyncConfigWithNow() {
+      setWebdavPassword(this.syncForm.password);
       this.display = updateSettings({
         webdav: {
           url: this.syncForm.url.trim(),
           username: this.syncForm.username.trim(),
-          password: this.syncForm.password,
+          password: '',
           lastSyncAt: clock.nowIso(),
         },
       });

@@ -126,7 +126,7 @@ export default {
     password: 'Password',
     passwordPlaceholder: '••••••••••',
     passwordNote:
-      'The password is stored in plain text in your browser\u2019s local storage — it is only ever sent to this WebDAV server.',
+      'The password is kept only for the current browser session — it is only ever sent to this WebDAV server.',
     lastSync: 'Last backup',
     never: 'Never',
     test: 'Test connection',

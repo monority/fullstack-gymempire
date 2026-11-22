@@ -142,8 +142,8 @@ export interface Settings {
 
 /**
  * WebDAV account for the manual sync section on the settings page.
- * The password is stored in plain localStorage — a deliberate tradeoff
- * documented in the UI (this app is 100% offline/local-first).
+ * The password is intentionally absent from persisted settings: it lives in
+ * sessionStorage (see webdav-credentials.ts) for the current tab only.
  */
 export interface WebdavSettings {
   url: string;

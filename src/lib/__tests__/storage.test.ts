@@ -7,7 +7,8 @@
  */
 
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { calculate1RM, generateId } from '../storage/store';
+import { calculate1RM, generateId, setStore } from '../storage/store';
+import { getWebdavPassword } from '../storage/webdav-credentials';
 import { exportSessionsAsCSV, exportSessionAsCsv } from '../storage/csv';
 import { getExercises, saveExercise, toggleExerciseFavorite } from '../storage/exercises';
 import {
@@ -336,6 +337,19 @@ describe('getSettings', () => {
       webdav: DEFAULT_WEBDAV,
       benchmarksOptIn: false,
     });
+  });
+
+  it('migre le mot de passe WebDAV hors de localStorage', () => {
+    sessionStorage.clear();
+    setStore(STORAGE_KEYS.settings, {
+      webdav: { url: 'https://dav.test/', username: 'u', password: 'legacy' },
+    });
+
+    const settings = getSettings();
+    expect(settings.webdav.password).toBe('');
+    expect(getWebdavPassword()).toBe('legacy');
+    const persisted = JSON.parse(window.localStorage.getItem(STORAGE_KEYS.settings) || '{}');
+    expect(persisted.webdav.password).toBe('');
   });
 });
 
