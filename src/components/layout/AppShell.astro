@@ -295,11 +295,10 @@ const drawerItems = groups.map((group) => ({
       this.theme = current === 'light' ? 'light' : 'dark';
       this.collapsed = readCollapsed();
 
-      // Let Alpine apply the restored accordion state without a transition;
-      // transitions are enabled again for subsequent user interactions.
-      requestAnimationFrame(() => {
-        this.navReady = true;
-      });
+      // Alpine est la seule source de vérité de l'état des accordéons : on
+      // applique l'état restauré puis on affiche la sidebar en une seule
+      // passe. Un rAF masquait toute la sidebar à chaque changement de route.
+      this.navReady = true;
     },
 
     toggleTheme() {

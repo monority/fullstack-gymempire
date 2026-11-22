@@ -29,6 +29,7 @@ const L = t(locale);
   class:list={['sidebar', className]}
   :class="{ 'nav-ready': navReady }"
   x-show="navReady"
+  x-cloak
   transition:persist="main-sidebar"
   aria-label={L.layout.mainNavAria}
 >
@@ -54,7 +55,7 @@ const L = t(locale);
               <>
                 <button
                   type="button"
-                  class:list={['nav-item nav-item--toggle', item.parentActive && 'is-open']}
+                  class="nav-item nav-item--toggle"
                   :class={`{ 'is-open': isExpanded('${navId(item.href)}'), 'nav-item--parent-active': ${item.parentActive ?? false} }`}
                   :aria-expanded={`isExpanded('${navId(item.href)}')`}
                   aria-controls={`nav-children-${navId(item.href)}`}
@@ -71,7 +72,7 @@ const L = t(locale);
                   <span class="nav-item__chevron" aria-hidden="true" set:html={chevronDown} />
                 </button>
                 <div
-                  class:list={['nav-children', item.parentActive && 'is-open']}
+                  class="nav-children"
                   id={`nav-children-${navId(item.href)}`}
                   data-nav-group={navId(item.href)}
                   :class={`{ 'is-open': isExpanded('${navId(item.href)}') }`}

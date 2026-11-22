@@ -12,4 +12,11 @@
     width: var(--icon-size) !important;
     height: var(--icon-size) !important;
   }
+
+  /* ClientRouter : le crossfade natif du navigateur (~250 ms) donnait
+     l'impression que le changement de route bloquait. On le raccourcit. */
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 60ms;
+  }
 }

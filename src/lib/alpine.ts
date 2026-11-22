@@ -49,15 +49,15 @@ export function installAlpineLifecycle(): void {
 
   document.addEventListener('astro:page-load', () => {
     document.dispatchEvent(new CustomEvent('alpine:init'));
-    window.setTimeout(() => {
-      const alpine = getAlpine();
-      if (!alpine) return;
-      document.querySelectorAll('main [x-data][x-ignore]').forEach((root) => {
-        root.removeAttribute('x-ignore');
-        delete (root as HTMLElement & { _x_ignore?: unknown })._x_ignore;
-        delete (root as HTMLElement & { _x_ignoreSelf?: unknown })._x_ignoreSelf;
-        alpine.initTree(root);
-      });
-    }, 50);
+    // Initialisation synchrone : l'ancien délai de 50 ms laissait la page
+    // entrante visible mais encore inerte après le swap.
+    const alpine = getAlpine();
+    if (!alpine) return;
+    document.querySelectorAll('main [x-data][x-ignore]').forEach((root) => {
+      root.removeAttribute('x-ignore');
+      delete (root as HTMLElement & { _x_ignore?: unknown })._x_ignore;
+      delete (root as HTMLElement & { _x_ignoreSelf?: unknown })._x_ignoreSelf;
+      alpine.initTree(root);
+    });
   });
 }
