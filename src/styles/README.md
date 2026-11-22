@@ -1,7 +1,7 @@
 # Architecture des styles — v3
 
 > Point d'entrée unique : [`global.css`](./global.css). Aucune autre feuille n'est importée
-> par un composant. Voir le [plan v3](../../docs/componentization-plan.md) et les ADR 006-009.
+> par un composant. Voir les ADR 006-009.
 
 ## Couches (ordre strict)
 

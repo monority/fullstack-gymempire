@@ -1,6 +1,6 @@
 # ADR-009 — MetricGrid générique
 
-**Statut** : accepté — plan v3 Phase 3
+**Statut** : accepté
 
 ## Contexte
 

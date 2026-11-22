@@ -1,6 +1,6 @@
 # ADR-007 — Suppression des `:where(.page__…)` globaux
 
-**Statut** : accepté — plan v3 Phase 0
+**Statut** : accepté
 
 ## Contexte
 

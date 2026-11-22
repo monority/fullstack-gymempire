@@ -1,6 +1,6 @@
 # ADR-008 — Inversion de dépendance des styles
 
-**Statut** : accepté — plan v3 Phase 0
+**Statut** : accepté
 
 ## Contexte
 

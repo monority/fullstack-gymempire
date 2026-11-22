@@ -1,4 +1,4 @@
-// Gouvernance CSS (plan v3). Sans dépendance.
+// Gouvernance CSS. Sans dépendance.
 // Usage : node scripts/check-css.mjs [--json]
 import { enforceRatchet } from './ratchet.mjs';
 // STRICT=1 transforme les avertissements en erreurs.
@@ -129,7 +129,7 @@ for (const { rel, text } of files) {
     }
   }
 
-  // Compteurs de duplication (KPI plan v3)
+  // Compteurs de duplication
   if (
     !isToken &&
     !rel.startsWith('utilities/') &&
@@ -155,7 +155,7 @@ const byRule = findings
   .reduce((a, f) => ((a[f.rule] = (a[f.rule] || 0) + 1), a), {});
 if (AS_JSON) console.log(JSON.stringify({ byRule, findings }, null, 2));
 else {
-  console.log('check-css — gouvernance CSS (plan v3)');
+  console.log('check-css — gouvernance CSS');
   for (const [k, v] of Object.entries(byRule)) console.log(`  ${k}: ${v}`);
   console.log(`  total: ${findings.length}`);
   if (!STRICT) console.log('(mode avertissement — STRICT=1 pour bloquer)');

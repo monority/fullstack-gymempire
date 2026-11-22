@@ -1,5 +1,5 @@
 /**
- * Locale — module pur, sans état mutable (plan de refonte i18n Phase 1).
+ * Locale — module pur, sans état mutable.
  *
  * Côté serveur, la locale est TOUJOURS explicite (dérivée du chemin de la page).
  * Côté client, `getLocale()` lit l'attribut `lang` du document, qui est fixé

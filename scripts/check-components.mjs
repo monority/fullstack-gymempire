@@ -1,4 +1,4 @@
-// Mesure de la dette de componentisation (voir docs/componentization-plan.md §6.1).
+// Mesure de la dette de componentisation (voir docs/componentization-rules.md).
 // Sans dépendance. Mode avertissement par défaut ; STRICT=1 rend les findings bloquants.
 // Usage : node scripts/check-components.mjs [--json]
 import { enforceRatchet } from './ratchet.mjs';

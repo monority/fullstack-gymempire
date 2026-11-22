@@ -1,5 +1,5 @@
 // Template de factory Alpine — à copier vers src/components/<domaine>/xApp.ts.
-// Voir docs/componentization-rules.md §5 et docs/componentization-plan.md §2.5.
+// Voir docs/componentization-rules.md §5.
 import type { Dictionary } from '../../i18n/types';
 import type { UiStore } from '../../lib/ui-store';
 

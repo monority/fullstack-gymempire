@@ -1,6 +1,6 @@
 # ADR-006 — Couches CSS et priorité des styles scopés
 
-**Statut** : accepté — plan v3 §2
+**Statut** : accepté
 
 ## Contexte
 

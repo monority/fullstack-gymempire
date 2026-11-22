@@ -1,6 +1,6 @@
 # ADR-010 — Locale explicite, zéro état global
 
-**Statut** : accepté — plan de refonte i18n phases 0-4
+**Statut** : accepté
 
 ## Contexte
 

@@ -1,7 +1,6 @@
 /**
  * Store Alpine i18n — injection explicite des helpers de traduction.
- * Remplace les globals `window.trExercise/trMuscle/trCategory/muscleHue`
- * (plan de refonte i18n Phase 3).
+ * Remplace les globals `window.trExercise/trMuscle/trCategory/muscleHue`.
  */
 import { getLocale, dateLocale, type Locale } from '../i18n';
 import {

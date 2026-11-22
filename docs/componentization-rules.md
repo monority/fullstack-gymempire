@@ -105,7 +105,7 @@ const hasActions = Astro.slots.has('actions');
 </style>
 ```
 
-Template complet et variantes typées : voir [`componentization-plan.md`](./componentization-plan.md#2-architecture-cible--le-quoi) §2.2–2.4.
+Template complet et variantes typées : voir [`templates/Component.astro`](./templates/Component.astro).
 
 Règles :
 
@@ -202,7 +202,7 @@ Règles :
 - Respecter les règles du design system : un seul accent, hairlines, pas de kicker, pas d'ombre au
   repos, Archivo réservé à Display/Metric.
 - **Architecture en 6 couches** (`reset → tokens → base → components → utilities → overrides`) :
-  voir le plan v3 §2 et `src/styles/README.md`.
+  voir `src/styles/README.md`.
 - Nommage global : `u-*` utility atomique, `c-*` objet composant, `is-*` / `has-*` états, BEM
   `b__e--m` **uniquement** dans un `<style>` Astro scopé.
 - Une déclaration répétée dans 2 composants est promue en utility ou en classe `c-*`. Aucune valeur
@@ -260,10 +260,10 @@ Toute autre exception doit être ajoutée ici **et** dans la whitelist du futur
 
 ---
 
-## 11. Patterns modernes (applicables dès la Phase 2 du plan)
+## 11. Patterns modernes
 
 Ces patterns complètent les règles ci-dessus ; leurs implémentations de référence sont dans
-[`componentization-plan.md`](./componentization-plan.md#2-architecture-cible--le-quoi) §2.2–2.7.
+[`templates/Component.astro`](./templates/Component.astro).
 
 1. **Props typées** : `HTMLAttributes<'article'>` + `as` polymorphe + `class:list` + `...rest`.
    Interdiction de l'index signature `[key: string]: unknown`.
