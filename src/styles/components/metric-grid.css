@@ -3,6 +3,24 @@
  * Couche : `components`. Styles déplacés depuis les 3 composants de synthèse (ADR-009).
  */
 @layer components {
+  /* Une valeur trop longue pour sa carte est tronquée avec des points de
+     suspension ; la valeur exacte reste accessible via l'infobulle posée
+     par MetricGrid. */
+  .hist-stats__number,
+  .stats-summary__number,
+  .records-summary__number {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .hist-stats__unit,
+  .stats-summary__unit,
+  .records-summary__unit {
+    flex: 0 0 auto;
+  }
+
   .hist-stats {
     display: grid;
     grid-template-columns: 1fr;

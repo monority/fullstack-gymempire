@@ -25,6 +25,7 @@ const resolvedFootClass = footClass ?? `${prefix}__foot`;
         <span
           class:list={['stat-card__value', `${prefix}__number`, 'u-tabular']}
           x-text={metric.value}
+          :title={metric.value}
         />
         {metric.unit && <span class={`${prefix}__unit`}>{metric.unit}</span>}
       </div>
