@@ -17,4 +17,4 @@ Tout est enregistré dans votre navigateur, sans compte serveur. Vous pouvez exp
 
 ## Licence
 
-MIT — voir [LICENSE](./LICENSE).
+Tous droits réservés. Le code peut être consulté, mais sa copie, sa modification et sa redistribution ne sont pas autorisées.
