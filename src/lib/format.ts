@@ -1,3 +1,4 @@
+import { parseLocalDate } from './date';
 /**
  * format — Shared date/number formatting utilities.
  *
@@ -22,7 +23,7 @@ export function currentUnit(): WeightUnit {
 
 /** "lundi 12 août 2025" — full date + weekday. */
 export function formatDateLong(iso: string): string {
-  const d = new Date(iso);
+  const d = parseLocalDate(iso);
   if (isNaN(d.getTime())) return iso;
   const loc = DATE_LOCALE();
   const date = d.toLocaleDateString(loc, {
@@ -36,7 +37,7 @@ export function formatDateLong(iso: string): string {
 
 /** "lundi 12 août 2025 · 14:30" — full date + time. */
 export function formatDateTime(iso: string): string {
-  const d = new Date(iso);
+  const d = parseLocalDate(iso);
   if (isNaN(d.getTime())) return iso;
   const loc = DATE_LOCALE();
   const date = d.toLocaleDateString(loc, {
@@ -54,7 +55,7 @@ export function formatDateTime(iso: string): string {
 
 /** "12 août 2025" — date without time. */
 export function formatDateMedium(iso: string): string {
-  const d = new Date(iso);
+  const d = parseLocalDate(iso);
   if (isNaN(d.getTime())) return iso;
   return d.toLocaleDateString(DATE_LOCALE(), {
     day: 'numeric',
@@ -65,7 +66,7 @@ export function formatDateMedium(iso: string): string {
 
 /** "12 août 2025" — date with short month, always includes the year. */
 export function formatDateShort(iso: string): string {
-  const d = new Date(iso);
+  const d = parseLocalDate(iso);
   if (isNaN(d.getTime())) return iso;
   return d.toLocaleDateString(DATE_LOCALE(), {
     day: 'numeric',
@@ -76,7 +77,7 @@ export function formatDateShort(iso: string): string {
 
 /** "12 août" — day + month only. */
 export function formatDateDayMonth(iso: string): string {
-  const d = new Date(iso);
+  const d = parseLocalDate(iso);
   if (isNaN(d.getTime())) return iso;
   return d.toLocaleDateString(DATE_LOCALE(), {
     day: 'numeric',
@@ -86,7 +87,7 @@ export function formatDateDayMonth(iso: string): string {
 
 /** Time-only "14:30". */
 export function formatTime(iso: string): string {
-  const d = new Date(iso);
+  const d = parseLocalDate(iso);
   if (isNaN(d.getTime())) return iso;
   return d.toLocaleTimeString(DATE_LOCALE(), {
     hour: '2-digit',
@@ -186,7 +187,7 @@ export function formatDurationShort(seconds?: number): string {
 
 /** "12 août 2025 · 14:30" — date with short month + time. */
 export function formatDateCompact(iso: string): string {
-  const d = new Date(iso);
+  const d = parseLocalDate(iso);
   if (isNaN(d.getTime())) return iso;
   const time = d.toLocaleTimeString(DATE_LOCALE(), {
     hour: '2-digit',
