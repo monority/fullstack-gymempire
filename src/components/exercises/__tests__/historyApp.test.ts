@@ -91,6 +91,23 @@ describe('createHistoryApp', () => {
     expect(app.historyDesc[0].date).toBe('2026-11-16T10:00:00Z');
   });
 
+  it('regroupe les séries par séance (du plus récent au plus ancien)', () => {
+    mocks.getSessions.mockReturnValue([
+      session('2026-11-01T10:00:00Z', 80, 8),
+      session('2026-11-01T10:00:00Z', 85, 7),
+      session('2026-11-16T10:00:00Z', 100, 5),
+    ]);
+    const app = create();
+    app.init();
+
+    expect(app.historyGroups.map((g) => [g.date, g.rows.length])).toEqual([
+      ['2026-11-16T10:00:00Z', 1],
+      ['2026-11-01T10:00:00Z', 2],
+    ]);
+    expect(app.historyGroups[0].key).toBe('2026-11-16T10:00:00Z|Séance A');
+    expect(app.historyGroups[1].sessionName).toBe('Séance A');
+  });
+
   it('keeps the chart geometry deterministic', () => {
     mocks.getSessions.mockReturnValue([session('2026-11-16T10:00:00Z')]);
     const app = create();

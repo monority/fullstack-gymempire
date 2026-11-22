@@ -1,0 +1,65 @@
+---
+import type { Dictionary } from '../../i18n/types';
+
+interface Props {
+  labels: Dictionary['historique'];
+}
+const { labels: L } = Astro.props;
+---
+
+<template x-if="history.length > 0">
+  <div class="hist__table-wrap">
+    <table class="hist__table">
+      <thead>
+        <tr>
+          <th scope="col" class="hist__col-idx">
+            #
+          </th>
+          <th scope="col">{L.colWeight}</th>
+          <th scope="col">{L.colReps}</th>
+          <th scope="col">{L.col1RM}</th>
+          <th scope="col">{L.colRpe}</th>
+          <th scope="col">{L.colType}</th>
+        </tr>
+      </thead>
+      <template x-for="group in historyGroups" :key="group.key">
+        <tbody class="hist__group">
+          <tr class="hist__group-head">
+            <th colspan="6" scope="colgroup">
+              <span class="hist__group-dot" aria-hidden="true"></span>
+              <span class="hist__group-date" x-text="formatDate(group.date)"></span>
+              <span class="hist__group-name" x-text="group.sessionName"></span>
+              <span class="hist__group-count">
+                <span x-text="group.rows.length"></span> {L.sets}
+              </span>
+            </th>
+          </tr>
+          <template x-for="(row, idx) in group.rows" :key="idx">
+            <tr class="hist__tr">
+              <td class="hist__col-idx" x-text="idx + 1"></td>
+              <td
+                class="hist__col-num"
+                data-label={L.colWeight}
+                x-text="formatNumber(row.weight) + ' kg'"
+              ></td>
+              <td class="hist__col-num" data-label={L.colReps} x-text="row.reps"></td>
+              <td
+                class="hist__col-num hist__col-1rm"
+                data-label={L.col1RM}
+                x-text="formatNumber(row.estimated1RM) + ' kg'"
+              ></td>
+              <td class="hist__col-num" data-label={L.colRpe} x-text="formatRpe(row)"></td>
+              <td data-label={L.colType}>
+                <span
+                  class="type-pill"
+                  :class="'type-pill--' + row.type"
+                  x-text="typeLabel(row.type)"
+                ></span>
+              </td>
+            </tr>
+          </template>
+        </tbody>
+      </template>
+    </table>
+  </div>
+</template>

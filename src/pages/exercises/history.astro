@@ -15,6 +15,7 @@ import { buildHistoryMetrics } from '../../components/progression/metric-definit
 const locale = resolveLocale(Astro.url.pathname);
 const L = t(locale);
 import Icon from '../../components/ui/Icon.astro';
+import HistoryTable from '../../components/exercises/HistoryTable.astro';
 ---
 
 <AppLayout title={L.historique.title}>
@@ -162,68 +163,7 @@ import Icon from '../../components/ui/Icon.astro';
             </Card>
           </template>
 
-          <template x-if="history.length > 0">
-            <div class="hist__table-wrap">
-              <table class="hist__table">
-                <thead>
-                  <tr>
-                    <th scope="col">{L.historique.colDate}</th>
-                    <th scope="col">{L.historique.colWeight}</th>
-                    <th scope="col">{L.historique.colReps}</th>
-                    <th scope="col" class="text-right!">
-                      {L.historique.col1RM}
-                    </th>
-                    <th scope="col" class="text-right!">
-                      {L.historique.colRpe}
-                    </th>
-                    <th scope="col">{L.historique.colType}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <template x-for="(row, idx) in historyDesc" :key="idx">
-                    <tr class="hist__tr">
-                      <td data-label={L.historique.colDate}>
-                        <div class="hist__date">
-                          <span
-                            class="hist__date-main font-semibold text-text"
-                            x-text="formatDate(row.date)"
-                          ></span>
-                          <span class="hist__session-name" x-text="row.sessionName"></span>
-                        </div>
-                      </td>
-                      <td
-                        class="hist__num font-display tabular-nums font-semibold text-right"
-                        data-label={L.historique.colWeight}
-                        x-text="formatNumber(row.weight) + ' kg'"
-                      ></td>
-                      <td
-                        class="hist__num font-display tabular-nums font-semibold text-right"
-                        data-label={L.historique.colReps}
-                        x-text="row.reps"
-                      ></td>
-                      <td
-                        class="hist__num font-display tabular-nums font-semibold text-right text-accent"
-                        data-label={L.historique.col1RM}
-                        x-text="formatNumber(row.estimated1RM) + ' kg'"
-                      ></td>
-                      <td
-                        class="hist__num font-display tabular-nums font-semibold text-right"
-                        data-label={L.historique.colRpe}
-                        x-text="formatRpe(row)"
-                      ></td>
-                      <td data-label={L.historique.colType}>
-                        <span
-                          class="type-pill"
-                          :class="'type-pill--' + row.type"
-                          x-text="typeLabel(row.type)"
-                        ></span>
-                      </td>
-                    </tr>
-                  </template>
-                </tbody>
-              </table>
-            </div>
-          </template>
+          <HistoryTable labels={L.historique} />
         </section>
       </div>
     </template>

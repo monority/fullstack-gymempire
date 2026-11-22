@@ -28,6 +28,14 @@ export interface ChartPoint {
   rm: number;
 }
 
+/** Séries d'une même séance, regroupées pour l'affichage du tableau. */
+export interface HistoryGroup {
+  key: string;
+  date: string;
+  sessionName: string;
+  rows: HistoryRow[];
+}
+
 export const CHART_W = 800;
 export const CHART_H = 300;
 
@@ -56,6 +64,7 @@ export interface HistoryApp {
   tableMeta: string;
   sessionCountLabel: string;
   historyDesc: HistoryRow[];
+  historyGroups: HistoryGroup[];
   chartMax: number;
   chartX(i: number): number;
   chartY(rm: number): number;
@@ -228,6 +237,19 @@ export function createHistoryApp(deps: HistoryAppDeps): HistoryApp {
     },
     get historyDesc() {
       return this.history.slice().reverse();
+    },
+    get historyGroups(): HistoryGroup[] {
+      const groups: HistoryGroup[] = [];
+      for (const row of this.historyDesc) {
+        const key = row.date + '|' + row.sessionName;
+        let group = groups[groups.length - 1];
+        if (!group || group.key !== key) {
+          group = { key, date: row.date, sessionName: row.sessionName, rows: [] };
+          groups.push(group);
+        }
+        group.rows.push(row);
+      }
+      return groups;
     },
     get chartMax() {
       const peak = this.chartData.reduce((m, d) => (d.rm > m ? d.rm : m), 0);
