@@ -108,6 +108,17 @@
     max-width: 36rem;
   }
 
+  /* Le CTA principal absorbe l'espace restant ; les boutons secondaires
+     gardent leur largeur de contenu au lieu d'être réduits à min-width. */
+  .timer__hero-actions .button {
+    flex: 0 0 auto;
+  }
+
+  .timer__hero-actions .button--full {
+    width: auto;
+    flex: 1 1 auto;
+  }
+
   /* ── Presets section ── */
   .timer__presets-section {
     display: flex;
