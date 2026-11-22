@@ -1,33 +1,20 @@
-# Gym Empire — Training Log
+# Gym Empire
 
-Gym Empire est un carnet d'entraînement qui vous suit au quotidien : notes de séances, charges soulevées, répétitions et progression. Tout se passe dans votre navigateur, en français ou en anglais.
+Un carnet d'entraînement personnel, directement dans votre navigateur.
 
-## Ce que vous pouvez faire
+Notez vos séances, suivez vos charges et vos records, et regardez votre progression semaine après semaine. L'application est disponible en français et en anglais, avec un thème clair ou sombre.
 
-- **Construire vos séances** — choisissez vos exercices, vos séries, vos charges, vos répétitions et votre niveau d'effort (RPE).
-- **Voir votre progression** — courbes de 1RM estimé, volume et fréquence d'entraînement, records personnels et historique détaillé de chaque exercice.
-- **Rester organisé** — calendrier des séances, comparaison entre deux séances et calculatrice de disques.
-- **Garder le rythme** — minuteur de repos entre les séries, chronomètre et rappel d'entraînement.
-- **Personnaliser votre espace** — bibliothèque d'exercices, thème clair ou sombre, langue française ou anglaise.
+## L'essentiel
 
-## Vos données vous appartiennent
+- Préparez vos séances et enregistrez vos séries : exercice, poids, répétitions, effort.
+- Suivez vos statistiques, vos records personnels et l'historique de chaque exercice.
+- Utilisez le minuteur de repos, le chronomètre et la calculatrice de disques.
+- Retrouvez vos séances dans le calendrier.
 
-Aucun compte serveur n'est nécessaire : vos séances sont enregistrées dans le stockage local de votre navigateur. Rien n'est envoyé à un service externe, sauf si vous choisissez de configurer une synchronisation WebDAV (Nextcloud, ownCloud, Syncthing…).
+## Vos données restent chez vous
 
-Un mode démonstration vous permet de découvrir l'application avec des données fictives, sans toucher aux vôtres.
-
-À tout moment, vous pouvez :
-
-- exporter l'ensemble de vos données au format JSON, ou vos séances au format CSV ;
-- importer une sauvegarde JSON pour les restaurer ;
-- sauvegarder et restaurer vos données sur un serveur WebDAV de votre choix.
-
-L'application reste accessible même sans connexion : vos données locales sont toujours disponibles.
-
-## Pour commencer
-
-Ouvrez Gym Empire dans un navigateur récent. Connectez-vous avec votre adresse e-mail pour créer votre espace, ou choisissez le **compte de démonstration** pour explorer toutes les fonctionnalités immédiatement.
+Tout est enregistré dans votre navigateur, sans compte serveur. Vous pouvez exporter vos données, les importer, ou les synchroniser avec un serveur WebDAV si vous le souhaitez. Un mode démonstration permet de découvrir l'application avec des données fictives.
 
 ## Licence
 
-Gym Empire est distribué sous licence MIT. Vous pouvez l'utiliser, le modifier et le redistribuer librement, à condition de conserver l'avis de copyright. Voir le fichier [LICENSE](./LICENSE).
+MIT — voir [LICENSE](./LICENSE).
