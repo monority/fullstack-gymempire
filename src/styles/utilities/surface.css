@@ -9,21 +9,4 @@
     border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
   }
-
-  /* Surface surélevée (popovers, menus). */
-  .u-surface-raised {
-    background-color: var(--color-surface-3);
-    border: 1px solid var(--color-border-strong);
-    border-radius: var(--radius-md);
-  }
-
-  /* Séparateur horizontal hairline. */
-  .u-hairline {
-    border-bottom: 1px solid var(--color-border);
-  }
-
-  /* Séparateur vertical hairline (grilles multi-colonnes). */
-  .u-hairline-x {
-    border-left: 1px solid var(--color-border);
-  }
 }

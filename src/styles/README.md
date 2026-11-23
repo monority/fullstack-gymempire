@@ -15,7 +15,7 @@
 | `tokens`     | valeurs primitives  | `--color-*`, `--text-*`, `--space-*`, `--radius-*`, `--ease-*`        | sélecteurs, `var()`   |
 | `base`       | defaults d'éléments | `html`, `body`, `a`, `button`, `:focus-visible`                       | classes `u-*` / `c-*` |
 | `components` | objets visuels      | `.c-btn`, `.c-card`, `.c-field`, `.c-dialog`, `.c-table`, `.c-metric` | valeurs littérales    |
-| `utilities`  | atomes immuables    | `.u-surface`, `.u-label`, `.u-metric`, `.u-focus`, `.u-grid-*`        | logique métier        |
+| `utilities`  | atomes immuables    | `.u-surface`, `.u-label`, `.u-uppercase`, `.u-tabular`                | logique métier        |
 | `overrides`  | exceptions `x-html` | `:global()` commenté                                                  | tout le reste         |
 
 **Contrat** : les blocs `<style>` Astro sont **non layerés** et gagnent donc sur toutes les couches.
@@ -29,7 +29,7 @@ styles/
   tokens/             colors, spacing, typography, radii, motion, layout
   base/               reset, root, elements, typography, fonts, a11y
   components/         button, badge, card, avatar, field, dialog, table, metric, panel, stepper
-  utilities/          surface, typography, layout, focus + utilities.css (type-pill)
+  utilities/          surface, typography + utilities.css (type-pill)
   overrides.css       exceptions documentées
   calculator.css      page autonome
 ```

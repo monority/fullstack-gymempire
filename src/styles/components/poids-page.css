@@ -320,10 +320,4 @@
   .poids > .surface:last-child {
     border-bottom: 1px solid var(--color-border);
   }
-
-  .poids > .surface > .p-4,
-  .poids > .surface > .p-6 {
-    padding-left: 0;
-    padding-right: 0;
-  }
 }

@@ -60,8 +60,6 @@
 /* 5. Utilitaires — classes atomiques */
 @import './utilities/surface.css';
 @import './utilities/typography.css';
-@import './utilities/layout.css';
-@import './utilities/focus.css';
 @import './utilities.css';
 
 /* 6. Overrides — exceptions documentées (doit rester quasi vide) */

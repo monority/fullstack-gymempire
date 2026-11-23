@@ -151,11 +151,6 @@
     color: var(--ses-super-color, var(--color-muted));
   }
 
-  .create__superset-bar-chain {
-    font-size: 0.75rem;
-    color: var(--color-muted);
-  }
-
   .create__ex-header {
     display: flex;
     align-items: center;
