@@ -56,7 +56,7 @@ const L = t(locale);
                 <button
                   type="button"
                   class="nav-item nav-item--toggle"
-                  :class={`{ 'is-open': isExpanded('${navId(item.href)}'), 'nav-item--parent-active': ${item.parentActive ?? false} }`}
+                  :class={`{ 'is-open': isExpanded('${navId(item.href)}') }`}
                   :aria-expanded={`isExpanded('${navId(item.href)}')`}
                   aria-controls={`nav-children-${navId(item.href)}`}
                   @click={`toggleNav('${navId(item.href)}')`}

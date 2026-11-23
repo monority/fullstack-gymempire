@@ -239,9 +239,13 @@ const drawerItems = groups.map((group) => ({
   // active-link styling after a page swap without touching accordion state.
   const syncSidebarActiveState = () => {
     const currentPath = window.location.pathname;
-    const isCurrent = (href: string) => {
-      const path = new URL(href, window.location.origin).pathname;
-      return currentPath === path;
+    const pathOf = (href: string) => new URL(href, window.location.origin).pathname;
+    // Les feuilles d'un menu (ex. « Historique ») ne sont actives que sur
+    // leur URL exacte ; un lien parent sans enfants couvre aussi ses sous-routes.
+    const isCurrent = (href: string) => currentPath === pathOf(href);
+    const isWithin = (href: string) => {
+      const path = pathOf(href);
+      return isCurrent(href) || (path !== '/' && currentPath.startsWith(path + '/'));
     };
 
     document.querySelectorAll<HTMLElement>('.sidebar .nav-item-wrap').forEach((wrap) => {
@@ -262,7 +266,7 @@ const drawerItems = groups.map((group) => ({
 
       const link = wrap.querySelector<HTMLAnchorElement>('.nav-item:not(.nav-item--toggle)');
       if (!link) return;
-      const active = isCurrent(link.href);
+      const active = isWithin(link.href);
       link.classList.toggle('is-active', active);
       if (active) link.setAttribute('aria-current', 'page');
       else link.removeAttribute('aria-current');
@@ -271,6 +275,9 @@ const drawerItems = groups.map((group) => ({
 
   syncSidebarActiveState();
   document.addEventListener('astro:after-swap', syncSidebarActiveState);
+  // page-load couvre le cas où l'état Alpine du composant persisté serait
+  // réévalué après le swap : on réapplique toujours l'état courant en dernier.
+  document.addEventListener('astro:page-load', syncSidebarActiveState);
 
   // Theme + nav accordion Alpine data factory
   const ACCORDION_KEY = 'muscu:nav:collapsed';
