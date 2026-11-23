@@ -249,7 +249,9 @@ export function createSessionDetailApp(deps: SessionDetailDeps): SessionDetailAp
     },
     formatRpe(rpe) {
       if (!Number.isFinite(rpe)) return '-';
-      return rpe.toString();
+      // Les RPE saisis vont par pas de 0,5 : une moyenne est affichée avec
+      // un seul décimal, pas 8.055555555555555.
+      return (Math.round(rpe * 10) / 10).toString();
     },
     formatSetRpe(set) {
       return formatSetRpeValue(set.rpe, set.rpeType);

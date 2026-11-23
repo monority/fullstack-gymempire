@@ -177,4 +177,11 @@ describe('createSessionDetailApp', () => {
     expect(app.editHref()).toContain('edit=s1');
     expect(app.printHref()).toBe('/sessions/print?id=s1');
   });
+
+  it('arrondit le RPE moyen à un décimal', () => {
+    const { app } = create();
+    expect(app.formatRpe(8.055555555555555)).toBe('8.1');
+    expect(app.formatRpe(9)).toBe('9');
+    expect(app.formatRpe(Number.NaN)).toBe('-');
+  });
 });
