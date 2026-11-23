@@ -60,5 +60,6 @@ describe('createStatsApp', () => {
     expect(app.formatDuration(65)).toBe('1:05');
     expect(app.formatDuration(3600)).toBe('1:00:00');
     expect(app.formatDuration(5700)).toBe('1:35:00');
+    expect(app.frequencySummary).toContain(dictionaries.fr.stats.freqPerWeekOne);
   });
 });

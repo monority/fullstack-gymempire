@@ -63,7 +63,11 @@ const L = t(locale);
         <Card>
           <PanelHeader title={L.stats.freqChart} meta={L.stats.last8w} />
           <CardContent>
-            <div class="stats__chart-wrap" x-html="renderFrequencyChart()"></div>
+            <div
+              class="stats__chart-wrap stats__chart-wrap--freq"
+              x-html="renderFrequencyChart()"
+            ></div>
+            <p class="stats__freq-summary" x-show="frequencySummary" x-text="frequencySummary"></p>
           </CardContent>
         </Card>
       </div>

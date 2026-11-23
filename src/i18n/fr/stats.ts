@@ -29,6 +29,8 @@ export default {
   activeWeek: 'semaine active',
   activeWeeks: 'semaines actives',
   last8w: '8 dernières semaines',
+  freqPerWeekOne: 'séance / semaine en moyenne',
+  freqPerWeekMany: 'séances / semaine en moyenne',
   // ── Benchmarks (roadmap P2 « Communauté / benchmarks », V1 locale) ──
   benchmarksTitle: 'Benchmarks',
   benchmarksDesc: 'Comparez votre meilleur 1RM (Epley) à des repères de force, par exercice.',

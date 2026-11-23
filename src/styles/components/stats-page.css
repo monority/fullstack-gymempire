@@ -61,6 +61,30 @@
     overflow-x: auto;
   }
 
+  /* Bloc distinct pour la fréquence : le graphe ne se fond plus dans la page. */
+  .stats__chart-wrap--freq {
+    padding: 1.4rem 1.2rem 0.6rem;
+    background-color: var(--color-surface-2);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+
+  .stats__chart--freq {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 22rem;
+  }
+
+  .stats__freq-summary {
+    margin: 1.2rem 0 0;
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-border);
+    color: var(--color-muted);
+    font-size: var(--text-small);
+  }
+
   .stats__grid {
     display: grid;
     grid-template-columns: 1fr;

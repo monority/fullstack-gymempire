@@ -28,6 +28,8 @@ export default {
   activeWeek: 'active week',
   activeWeeks: 'active weeks',
   last8w: 'last 8 weeks',
+  freqPerWeekOne: 'session / week on average',
+  freqPerWeekMany: 'sessions / week on average',
   // ── Benchmarks (roadmap P2 « Community / benchmarks », local V1) ──
   benchmarksTitle: 'Benchmarks',
   benchmarksDesc: 'Compare your best 1RM (Epley) against strength benchmarks, per exercise.',

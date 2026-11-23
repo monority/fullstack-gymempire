@@ -166,6 +166,15 @@ describe('renderFrequencyChart', () => {
     expect((svg.match(/<rect/g) ?? []).length).toBe(8);
     expect(svg).toContain(labels.freqChart);
   });
+
+  it('espace les dates et aligne les extrémités du graphe', () => {
+    const weeks = Array.from({ length: 8 }, (_, i) => week(`2026-11-${i + 1}`, 0, 1));
+    const svg = renderFrequencyChart(weeks, labels, deps);
+    const dates = svg.match(/<text[^>]*text-anchor="[^"]+"[^>]*>2026-/g) ?? [];
+    expect(dates).toHaveLength(4);
+    expect(dates[0]).toContain('text-anchor="start"');
+    expect(dates[dates.length - 1]).toContain('text-anchor="end"');
+  });
 });
 
 describe('renderTopExercises', () => {

@@ -211,62 +211,55 @@ export function renderMuscleChart(
 </div>`.trim();
 }
 
-/** 8-week training frequency bar chart. */
+/** 8-week training frequency: bars on a subtle rail, readable date ticks. */
 export function renderFrequencyChart(
   weeks: WeekBucket[],
   labels: StatsChartLabels,
   deps: StatsChartDeps
 ): string {
-  const W = 480;
-  const H = 280;
-  const area = plotArea(W, H, { left: 40, right: 16, top: 16, bottom: 48 });
-  const { width: plotW, height: plotH, left: PAD_L, top: PAD_T } = area;
-
-  const accent = deps.cssVar('--color-accent');
-  const muted = deps.cssVar('--color-muted');
-  const grid = deps.cssVar('--color-border');
-
   if (weeks.length === 0) {
     return `<p class="stats__empty" role="status">${labels.noData}</p>`;
   }
 
-  const maxCount = weeks.reduce((m, b) => (b.sessionCount > m ? b.sessionCount : m), 0);
-  const peak = Math.max(1, maxCount);
+  const W = 480;
+  const H = 260;
+  const area = plotArea(W, H, { left: 12, right: 12, top: 26, bottom: 36 });
+  const { width: plotW, height: plotH, left: PAD_L, top: PAD_T, baselineY } = area;
+  const muted = deps.cssVar('--color-muted');
+  const grid = deps.cssVar('--color-border');
+  const rail = deps.cssVar('--color-surface-3');
 
-  const ticks = Math.min(4, peak);
-  const tickPositions: { y: number; value: number }[] = [];
-  for (let i = 0; i <= ticks; i++) {
-    tickPositions.push({
-      value: (peak * i) / ticks,
-      y: PAD_T + (1 - i / ticks) * plotH,
-    });
-  }
-
+  const peak = Math.max(1, ...weeks.map((w) => w.sessionCount));
   const slotW = plotW / weeks.length;
-  const barW = Math.max(10, slotW * 0.55);
-  const barGap = (slotW - barW) / 2;
+  const barW = Math.min(30, Math.max(10, slotW * 0.5));
+  const last = weeks.length - 1;
 
-  let svg = svgRoot(W, H, 'stats__chart', labels.freqChart);
+  let svg = svgRoot(W, H, 'stats__chart stats__chart--freq', labels.freqChart);
+  svg += gridLine(area, baselineY, grid);
 
-  for (const t of tickPositions) {
-    svg += gridLine(area, t.y, grid);
-    svg += `<text x="${PAD_L - 8}" y="${(t.y + 4).toFixed(1)}" font-size="12" fill="${muted}" text-anchor="end" font-family="var(--font-body, sans-serif)">${Math.round(t.value)}</text>`;
-  }
-
-  const accentSoft = deps.cssVarAlpha('--color-accent', 0.55);
-  weeks.forEach((b, i) => {
-    const x = PAD_L + i * slotW + barGap;
-    const h = peak > 0 ? (b.sessionCount / peak) * plotH : 0;
-    const y = PAD_T + plotH - h;
-    const fill = i === weeks.length - 1 ? accent : accentSoft;
-    svg += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${barW.toFixed(1)}" height="${Math.max(0, h).toFixed(1)}" rx="2" fill="${fill}"><title>${deps.formatDate(b.key)} · ${b.sessionCount} ${labels.sessionSingular}${b.sessionCount > 1 ? 's' : ''}</title></rect>`;
+  weeks.forEach((bucket, i) => {
+    const cx = PAD_L + i * slotW + slotW / 2;
+    const h = (bucket.sessionCount / peak) * plotH;
+    const y = baselineY - h;
+    // Dégradé de récence : les vieilles semaines s'estompent, la dernière ressort.
+    const alpha = 0.32 + 0.68 * (i / Math.max(1, last));
+    svg += `<line x1="${cx.toFixed(1)}" y1="${PAD_T}" x2="${cx.toFixed(1)}" y2="${baselineY.toFixed(1)}" stroke="${rail}" stroke-width="${barW.toFixed(1)}" stroke-linecap="round" opacity="0.55"/>`;
+    svg += `<rect x="${(cx - barW / 2).toFixed(1)}" y="${y.toFixed(1)}" width="${barW.toFixed(1)}" height="${h.toFixed(1)}" rx="${(barW / 2).toFixed(1)}" fill="${deps.cssVarAlpha('--color-accent', alpha)}"><title>${deps.formatDate(bucket.key)} · ${bucket.sessionCount} ${labels.sessionSingular}${bucket.sessionCount > 1 ? 's' : ''}</title></rect>`;
+    if (bucket.sessionCount > 0) {
+      svg += `<text x="${cx.toFixed(1)}" y="${(y - 8).toFixed(1)}" font-size="12" font-weight="700" fill="${muted}" text-anchor="middle" font-family="var(--font-display, sans-serif)">${bucket.sessionCount}</text>`;
+    }
   });
 
-  svg += gridLine(area, area.baselineY, grid);
-
-  weeks.forEach((b, i) => {
+  // Peu de libellés : les extrêmes sont alignés sur les bords, les autres
+  // espacés d'une semaine sur deux, avec un trou avant le dernier.
+  weeks.forEach((bucket, i) => {
+    if (i !== 0 && i !== last && (i % 2 !== 0 || i >= last - 1)) return;
+    const isFirst = i === 0;
+    const isLast = i === last;
     const cx = PAD_L + i * slotW + slotW / 2;
-    svg += `<text x="${cx.toFixed(1)}" y="${(PAD_T + plotH + 24).toFixed(1)}" font-size="11" fill="${muted}" text-anchor="middle" font-family="var(--font-body, sans-serif)">${deps.formatDate(b.key)}</text>`;
+    const x = isFirst ? PAD_L : isLast ? area.right : cx;
+    const anchor = isFirst ? 'start' : isLast ? 'end' : 'middle';
+    svg += `<text x="${x.toFixed(1)}" y="${(area.bottom + 18).toFixed(1)}" font-size="11" fill="${muted}" text-anchor="${anchor}" font-family="var(--font-body, sans-serif)">${deps.formatDate(bucket.key)}</text>`;
   });
 
   return svg + '</svg>';

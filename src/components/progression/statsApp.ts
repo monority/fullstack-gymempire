@@ -35,6 +35,8 @@ export interface StatsAppDeps {
     activeWeeks: string;
     volumeLast7d: string;
     volumeLast30d: string;
+    freqPerWeekOne: string;
+    freqPerWeekMany: string;
   };
   chartLabels: StatsChartLabels;
   chartDeps: StatsChartDeps;
@@ -52,6 +54,8 @@ export function buildStatsDeps(L: Dictionary): StatsAppDeps {
       activeWeeks: L.stats.activeWeeks,
       volumeLast7d: L.stats.volumeLast7d,
       volumeLast30d: L.stats.volumeLast30d,
+      freqPerWeekOne: L.stats.freqPerWeekOne,
+      freqPerWeekMany: L.stats.freqPerWeekMany,
     },
     chartLabels: {
       kg: L.common.kg,
@@ -111,6 +115,7 @@ export interface StatsApp {
   init(): void;
   readonly slices: MuscleVolumeSlice[];
   readonly periodMeta: string;
+  readonly frequencySummary: string;
   formatNumber(n: number): string;
   formatDate(iso: string): string;
   formatDuration(seconds: number): string;
@@ -173,6 +178,13 @@ export function createStatsApp(deps: StatsAppDeps): StatsApp {
 
     get periodMeta() {
       return this.period === 'week' ? deps.labels.volumeLast7d : deps.labels.volumeLast30d;
+    },
+    get frequencySummary() {
+      if (this.weeks8.length === 0) return '';
+      const total = this.weeks8.reduce((sum, w) => sum + w.sessionCount, 0);
+      const average = total / this.weeks8.length;
+      const unit = average <= 1 ? deps.labels.freqPerWeekOne : deps.labels.freqPerWeekMany;
+      return `${formatNumber(average)} ${unit}`;
     },
 
     formatNumber(n) {
