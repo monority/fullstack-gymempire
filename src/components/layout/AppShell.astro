@@ -131,51 +131,64 @@ const drawerItems = groups.map((group) => ({
 <script>
   import { registerAlpine } from '../../lib/alpine';
   import { getFocusable } from '../../lib/focus';
-  // Mobile drawer toggle
+  // Mobile drawer — délégation sur `document` : le shell est recréé à chaque
+  // navigation ClientRouter, les listeners posés sur les nœuds du premier
+  // chargement étaient donc perdus et le hamburger devenait inerte.
   (() => {
-    const toggle = document.querySelector<HTMLButtonElement>('[data-mobile-toggle]');
-    const panel = document.querySelector<HTMLElement>('[data-mobile-panel]');
-    const closeBtn = document.querySelector<HTMLButtonElement>('[data-mobile-close]');
-    const backdrop = document.querySelector<HTMLElement>('[data-mobile-backdrop]');
-
-    if (!toggle || !panel) return;
-
+    const panelNow = () => document.querySelector<HTMLElement>('[data-mobile-panel]');
+    const toggleNow = () => document.querySelector<HTMLButtonElement>('[data-mobile-toggle]');
     let previouslyFocused: HTMLElement | null = null;
 
     const open = () => {
+      const panel = panelNow();
+      if (!panel) return;
       previouslyFocused =
         document.activeElement instanceof HTMLElement ? document.activeElement : null;
       panel.hidden = false;
       panel.setAttribute('aria-hidden', 'false');
       requestAnimationFrame(() => {
-        panel.classList.add('is-open');
-        closeBtn?.focus();
+        const current = panelNow();
+        if (!current) return;
+        current.classList.add('is-open');
+        current.querySelector<HTMLButtonElement>('[data-mobile-close]')?.focus();
       });
-      toggle.setAttribute('aria-expanded', 'true');
+      toggleNow()?.setAttribute('aria-expanded', 'true');
       document.body.style.overflow = 'hidden';
     };
 
     const close = () => {
-      if (panel.hidden) return;
+      const panel = panelNow();
+      if (!panel || panel.hidden) return;
       panel.classList.remove('is-open');
       panel.setAttribute('aria-hidden', 'true');
-      toggle.setAttribute('aria-expanded', 'false');
+      toggleNow()?.setAttribute('aria-expanded', 'false');
       document.body.style.overflow = '';
       window.setTimeout(() => {
-        if (panel && !panel.classList.contains('is-open')) {
-          panel.hidden = true;
+        const current = panelNow();
+        if (current && !current.classList.contains('is-open')) {
+          current.hidden = true;
           previouslyFocused?.focus();
           previouslyFocused = null;
         }
       }, 240);
     };
 
-    toggle.addEventListener('click', open);
-    closeBtn?.addEventListener('click', close);
-    backdrop?.addEventListener('click', close);
+    document.addEventListener('click', (e) => {
+      const el = e.target as HTMLElement;
+      if (el.closest('[data-mobile-toggle]')) {
+        open();
+        return;
+      }
+      if (el.closest('[data-mobile-close], [data-mobile-backdrop]')) {
+        close();
+        return;
+      }
+      if (el.closest('.drawer__nav a[href]')) close();
+    });
 
     document.addEventListener('keydown', (e) => {
-      if (panel.hidden) return;
+      const panel = panelNow();
+      if (!panel || panel.hidden) return;
       if (e.key === 'Escape') {
         close();
         return;
@@ -195,10 +208,6 @@ const drawerItems = groups.map((group) => ({
         e.preventDefault();
         first.focus();
       }
-    });
-
-    panel.querySelectorAll<HTMLAnchorElement>('a[href]').forEach((a) => {
-      a.addEventListener('click', () => close());
     });
   })();
 
