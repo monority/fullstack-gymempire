@@ -46,3 +46,18 @@ test('sidebar active state follows the route inside dropdown menus', async ({ pa
       parent: [],
     });
 });
+
+test('accordion state survives route changes without a persisted sidebar', async ({ page }) => {
+  await page.addInitScript(seed);
+  await page.goto('/');
+
+  const firstGroup = page.locator('.nav-children').first();
+  await expect(firstGroup).toHaveClass(/is-open/);
+  await page.locator('.nav-item--toggle').first().click();
+  await expect(firstGroup).not.toHaveClass(/is-open/);
+
+  await page.locator('.sidebar a[href="/exercises"]').first().click();
+  await expect(page).toHaveURL(/\/exercises$/);
+  await expect(page.locator('.nav-children').first()).not.toHaveClass(/is-open/);
+  await expect(page.locator('.sidebar')).toBeVisible();
+});

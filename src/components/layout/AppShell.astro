@@ -235,8 +235,8 @@ const drawerItems = groups.map((group) => ({
     window.location.replace('/login');
   }
 
-  // The sidebar is persisted by Astro's client router, so refresh its
-  // active-link styling after a page swap without touching accordion state.
+  // Filet de sécurité : l'état actif est rendu par le serveur à chaque page,
+  // mais on le réapplique après le swap pour couvrir tout retard d'Alpine.
   const syncSidebarActiveState = () => {
     const currentPath = window.location.pathname;
     const pathOf = (href: string) => new URL(href, window.location.origin).pathname;
