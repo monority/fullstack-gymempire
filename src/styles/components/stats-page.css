@@ -163,15 +163,11 @@
     line-height: 1.4;
   }
 
-  .stats__content > .surface,
-  .stats__grid > .surface {
-    background: transparent;
-    border: 0;
-    border-top: 1px solid var(--color-border);
-    border-radius: 0;
-  }
-  .stats__content > .surface:last-child {
-    border-bottom: 1px solid var(--color-border);
+  .stats__content > .card,
+  .stats__grid > .card {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
   }
   .badge--category {
     background-color: var(--alpha-bg-soft);

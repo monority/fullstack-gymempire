@@ -374,7 +374,19 @@
   .exo__grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 1.6rem;
+    gap: 1.2rem;
+  }
+
+  .exo__grid > .card {
+    padding: 1.6rem;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+  }
+
+  .exo__grid > .card:hover {
+    background-color: var(--color-surface-2);
+    border-color: var(--color-border-strong);
   }
 
   @media (min-width: 640px) {
