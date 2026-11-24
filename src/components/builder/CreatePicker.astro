@@ -31,6 +31,16 @@ const L = t(locale);
         @keydown.escape="closeDialogById('ses-picker-dialog')"
         autocomplete="off"
       />
+      <button
+        type="button"
+        class="create__picker-clear"
+        x-show="exerciseSearch.trim() !== '' || exerciseMuscleFilter !== ''"
+        @click="exerciseSearch = ''; exerciseMuscleFilter = ''; $refs.pickerSearch.focus()"
+        aria-label={L.common.clear}
+        title={L.common.clear}
+      >
+        <Icon name="closeX" size={16} />
+      </button>
     </div>
 
     <div class="create__picker-filters" role="group" aria-label={L.builder.allMuscles}>
@@ -150,6 +160,11 @@ const L = t(locale);
   </div>
 
   <div slot="footer">
+    <span class="create__picker-count" aria-live="polite">
+      <span x-text="exercises.length"></span>{' '}
+      <span x-text="exercises.length > 1 ? labels.exercisesWord : labels.exerciseWord"></span>{' '}
+      {L.builder.addedWord}
+    </span>
     <Button variant="secondary" data-dialog-close>
       {' '}
       {L.builder.close}{' '}

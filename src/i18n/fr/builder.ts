@@ -118,4 +118,6 @@ export default {
   pickerTitle: 'Choisir un exercice',
   tipTitle: 'Conseils',
   videoTitle: 'Voir la technique sur YouTube',
+  addedWord: 'ajoutés',
+  exerciseWord: 'exercice',
 };

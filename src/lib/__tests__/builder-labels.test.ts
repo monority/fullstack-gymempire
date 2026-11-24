@@ -103,9 +103,9 @@ describe('pickBuilderLabels', () => {
     expect(labels.pickerTitle).toBe('Choisir un exercice');
   });
 
-  it('returns exactly 61 keys', () => {
+  it('returns exactly 63 keys', () => {
     const labels = pickBuilderLabels(LABELS);
-    expect(Object.keys(labels)).toHaveLength(61);
+    expect(Object.keys(labels)).toHaveLength(63);
   });
 
   it('does not include non-label keys', () => {

@@ -40,4 +40,5 @@ export default {
   pageAria: 'Page {page}',
   increase: 'Increase',
   decrease: 'Decrease',
+  clear: 'Clear',
 };

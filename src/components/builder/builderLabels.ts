@@ -13,6 +13,8 @@ export function pickBuilderLabels(L: { builder: Record<string, string> }) {
     expandAll: b.expandAll,
     noExoAdded: b.noExoAdded,
     noExoDesc: b.noExoDesc,
+    exercisesWord: b.exercisesWord,
+    exerciseWord: b.exerciseWord,
     needName: b.needName,
     needExo: b.needExo,
     needSets: b.needSets,

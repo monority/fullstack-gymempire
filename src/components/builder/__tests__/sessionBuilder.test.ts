@@ -15,6 +15,11 @@ const mocks = vi.hoisted(() => ({
   focusPickerSearch: vi.fn(),
 }));
 
+vi.mock('../builderDraft', () => ({
+  saveBuilderDraft: vi.fn(),
+  loadBuilderDraft: vi.fn(() => null),
+  clearBuilderDraft: vi.fn(),
+}));
 vi.mock('../../../lib/storage/exercises', () => ({ getExercises: mocks.getExercises }));
 vi.mock('../../../lib/storage/sessions', () => ({ getSessions: mocks.getSessions }));
 vi.mock('../sessionSave', () => ({

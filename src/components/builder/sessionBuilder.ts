@@ -7,6 +7,7 @@
  */
 
 import { currentUnit } from '../../lib/format';
+import { saveBuilderDraft, loadBuilderDraft, clearBuilderDraft } from './builderDraft';
 import { getExercises } from '../../lib/storage/exercises';
 import { getSessions } from '../../lib/storage/sessions';
 import type { Exercise, Session, SessionMood } from '../../lib/storage/types';
@@ -104,6 +105,16 @@ export interface SessionBuilderApp {
 }
 
 export function createSessionBuilderApp(deps: SessionBuilderDeps): SessionBuilderApp {
+  const persistDraft = (app: SessionBuilderApp) =>
+    saveBuilderDraft({
+      name: app.sessionName,
+      date: app.sessionDate,
+      exercises: app.exercises,
+      rpe: app.sessionRpe,
+      fatigue: app.sessionFatigue,
+      mood: app.sessionMood,
+      notes: app.sessionNotes,
+    });
   const { labels, rpeLabels, search, locale, host, localizedPath: path } = deps;
 
   return {
@@ -136,18 +147,32 @@ export function createSessionBuilderApp(deps: SessionBuilderDeps): SessionBuilde
       });
 
       const requestedId = new URLSearchParams(search).get('edit');
-      if (!requestedId) return;
-      const data = loadEditSession(requestedId);
-      if (!data) return;
-      this.editSessionId = data.sessionId;
-      this.sessionName = data.name;
-      this.sessionDate = data.date;
-      this.sessionRpe = data.rpe ?? null;
-      this.sessionFatigue = data.fatigue;
-      this.sessionMood = data.mood as SessionMood | '';
-      this.sessionNotes = data.notes;
-      this.exercises = data.exercises;
-      this.expandAll();
+      if (requestedId) {
+        const data = loadEditSession(requestedId);
+        if (!data) return;
+        this.editSessionId = data.sessionId;
+        this.sessionName = data.name;
+        this.sessionDate = data.date;
+        this.sessionRpe = data.rpe ?? null;
+        this.sessionFatigue = data.fatigue;
+        this.sessionMood = data.mood as SessionMood | '';
+        this.sessionNotes = data.notes;
+        this.exercises = data.exercises;
+        this.expandAll();
+        return;
+      }
+
+      // Pas d'édition : on restaure un éventuel brouillon local.
+      const draft = loadBuilderDraft();
+      if (!draft) return;
+      this.sessionName = draft.name;
+      this.sessionDate = draft.date;
+      this.exercises = draft.exercises;
+      this.sessionRpe = draft.rpe ?? null;
+      this.sessionFatigue = draft.fatigue;
+      this.sessionMood = draft.mood;
+      this.sessionNotes = draft.notes;
+      this.expandedExercises = draft.exercises.map((ex) => ex.exerciseId);
     },
 
     get filteredExercises() {
@@ -200,8 +225,7 @@ export function createSessionBuilderApp(deps: SessionBuilderDeps): SessionBuilde
     },
 
     openPicker() {
-      this.exerciseSearch = '';
-      this.exerciseMuscleFilter = '';
+      // Recherche et filtre sont conservés d'une ouverture à l'autre.
       host.openDialog('ses-picker-dialog');
       host.focusPickerSearch();
     },
@@ -209,8 +233,8 @@ export function createSessionBuilderApp(deps: SessionBuilderDeps): SessionBuilde
       const newEx = buildNewExercise(exercise);
       this.exercises.push(newEx);
       this.expandedExercises = [...this.expandedExercises, newEx.exerciseId];
-      this.exerciseSearch = '';
-      host.closeDialog('ses-picker-dialog');
+      persistDraft(this);
+      // Le dialogue reste ouvert : on peut enchaîner les ajouts.
     },
     loadTemplate(templateId) {
       const result = loadPickerTemplate(templateId, this.availableExercises);
@@ -224,7 +248,7 @@ export function createSessionBuilderApp(deps: SessionBuilderDeps): SessionBuilde
       if (added.length > 0) {
         this.expandedExercises = [...this.expandedExercises, ...added];
       }
-      this.exerciseSearch = '';
+      // Un template ajoute toute une séance : on referme pour passer à la suite.
       host.closeDialog('ses-picker-dialog');
     },
     findExerciseByName(name) {
@@ -271,17 +295,21 @@ export function createSessionBuilderApp(deps: SessionBuilderDeps): SessionBuilde
         this.expandedExercises = this.expandedExercises.filter((id) => id !== ex.exerciseId);
       }
       this.exercises.splice(exerciseIndex, 1);
+      persistDraft(this);
     },
     setFatigue(level) {
       this.sessionFatigue = toggleFatigue(this.sessionFatigue, level);
+      persistDraft(this);
     },
     setMood(mood) {
       this.sessionMood = toggleMood(this.sessionMood, mood);
+      persistDraft(this);
     },
     discard() {
       if (shouldConfirmDiscard(this.exercises.length, this.sessionName)) {
         if (!host.confirm(labels.discardConfirm)) return;
       }
+      clearBuilderDraft();
       host.navigate(path('/sessions'));
     },
     save() {
@@ -296,6 +324,7 @@ export function createSessionBuilderApp(deps: SessionBuilderDeps): SessionBuilde
         notes: this.sessionNotes,
         editSessionId: this.editSessionId,
       });
+      clearBuilderDraft();
       host.navigate(path('/sessions'));
     },
     openDialogById(id) {

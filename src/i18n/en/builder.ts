@@ -117,4 +117,6 @@ export default {
   pickerTitle: 'Pick an exercise',
   tipTitle: 'Tips',
   videoTitle: 'Watch technique on YouTube',
+  addedWord: 'added',
+  exerciseWord: 'exercise',
 };
