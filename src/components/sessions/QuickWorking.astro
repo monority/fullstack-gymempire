@@ -36,14 +36,32 @@ const L = t(locale);
 
       <div class="quick__values">
         <div class="quick__value-col">
-          <span class="quick__value-number" x-text="formatWeightValue(currentSet.weight)"></span>
+          <input
+            class="quick__value-number quick__value-input"
+            type="number"
+            min="0"
+            step="0.5"
+            inputmode="decimal"
+            :value="formatWeightValue(currentSet.weight)"
+            @change="currentWeight = $event.target.value"
+            aria-label={L.rapide.weight}
+          />
           <span class="quick__value-unit" x-text="weightUnit()"></span>
         </div>
         <div class="quick__x-separator" aria-hidden="true">
           ×
         </div>
         <div class="quick__value-col">
-          <span class="quick__value-number" x-text="currentSet.reps"></span>
+          <input
+            class="quick__value-number quick__value-input"
+            type="number"
+            min="0"
+            step="1"
+            inputmode="numeric"
+            :value="currentSet.reps"
+            @change="currentReps = $event.target.value"
+            aria-label={L.rapide.reps}
+          />
           <span class="quick__value-unit">{L.rapide.repsUnit}</span>
         </div>
       </div>

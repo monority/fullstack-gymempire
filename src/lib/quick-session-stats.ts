@@ -16,6 +16,7 @@ export interface QuickSessionInfo {
   totalSets: number;
   totalVolume: number;
   status: Session['status'];
+  date: string;
 }
 
 export interface SessionStats {
@@ -67,27 +68,31 @@ export function todayISO(): string {
 
 /** Filter and compute info for available quick-session candidates. */
 export function computeAvailableSessions(sessions: Session[]): QuickSessionInfo[] {
-  return sessions
-    .filter(
-      (s) =>
-        (s.status === 'planned' || s.status === 'in-progress') &&
-        s.exercises.some((e) => e.sets.length > 0)
-    )
-    .map((s) => {
-      const totalSets = s.exercises.reduce((sum, ex) => sum + ex.sets.length, 0);
-      const totalVolume = s.exercises.reduce(
-        (sum, ex) => sum + ex.sets.reduce((v, set) => v + set.weight * set.reps, 0),
-        0
-      );
-      return {
-        id: s.id,
-        label: s.name,
-        totalSets,
-        totalVolume,
-        status: s.status,
-      };
-    })
-    .sort((a, b) => (a.label < b.label ? 1 : -1));
+  return (
+    sessions
+      .filter(
+        (s) =>
+          (s.status === 'planned' || s.status === 'in-progress') &&
+          s.exercises.some((e) => e.sets.length > 0)
+      )
+      .map((s) => {
+        const totalSets = s.exercises.reduce((sum, ex) => sum + ex.sets.length, 0);
+        const totalVolume = s.exercises.reduce(
+          (sum, ex) => sum + ex.sets.reduce((v, set) => v + set.weight * set.reps, 0),
+          0
+        );
+        return {
+          id: s.id,
+          label: s.name,
+          totalSets,
+          totalVolume,
+          status: s.status,
+          date: s.date,
+        };
+      })
+      // Les séances les plus récentes d'abord, puis le nom en cas d'égalité.
+      .sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : a.label.localeCompare(b.label)))
+  );
 }
 
 /** Compute aggregate stats for a session. */

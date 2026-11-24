@@ -10,6 +10,7 @@
 import type { Dictionary } from '../../i18n';
 import type { Session, SessionSet, SetType } from '../../lib/storage/types';
 import { RPE_OPTIONS } from '../../lib/storage/types';
+import { weightFromInput } from '../../lib/format';
 import { undoLastCompletedSet } from '../../lib/session-utils';
 import { createRestTimer, type RestTimer } from './quickRest';
 import {
@@ -51,7 +52,10 @@ export interface QuickSessionDeps {
 export function createQuickSession(deps: QuickSessionDeps) {
   const labels = deps.labels;
   return {
-    state: 'selecting' as 'selecting' | 'working' | 'resting' | 'completed',
+    state: 'selecting' as 'selecting' | 'working' | 'completed',
+
+    /** Le repos est un bandeau dans l'écran de travail, pas un écran séparé. */
+    isResting: false,
 
     availableSessions: [] as Array<{
       id: string;
@@ -91,7 +95,7 @@ export function createQuickSession(deps: QuickSessionDeps) {
           ),
         getRemaining: () => this.restRemaining,
         setRemaining: (s) => (this.restRemaining = s),
-        onEnd: () => (this.state = 'working'),
+        onEnd: () => (this.isResting = false),
       });
       this.loadSessions();
       const requestedSessionId = new URLSearchParams(window.location.search).get('session');
@@ -170,6 +174,17 @@ export function createQuickSession(deps: QuickSessionDeps) {
       const ex = this.currentExercise;
       if (!ex) return null;
       return ex.sets[this.currentSetIndex] ?? null;
+    },
+
+    set currentWeight(value: number | string) {
+      if (!this.currentSet) return;
+      this.currentSet.weight = weightFromInput(Number(value), deps.unit());
+      deps.storage.updateSession(this.session!.id, { exercises: this.session!.exercises });
+    },
+    set currentReps(value: number | string) {
+      if (!this.currentSet) return;
+      this.currentSet.reps = Math.max(0, Math.round(Number(value) || 0));
+      deps.storage.updateSession(this.session!.id, { exercises: this.session!.exercises });
     },
 
     get currentRpe(): number | null {
@@ -252,6 +267,7 @@ export function createQuickSession(deps: QuickSessionDeps) {
 
     prevSet() {
       if (!this.canGoPrev()) return;
+      this.skipRest();
       if (this.currentSetIndex > 0) {
         this.currentSetIndex -= 1;
         return;
@@ -265,6 +281,7 @@ export function createQuickSession(deps: QuickSessionDeps) {
 
     nextSet() {
       if (!this.canGoNext()) return;
+      this.skipRest();
       const ex = this.currentExercise;
       if (!ex) return;
       if (this.currentSetIndex < ex.sets.length - 1) {
@@ -310,7 +327,9 @@ export function createQuickSession(deps: QuickSessionDeps) {
       this.completedSets = Math.max(0, this.completedSets - 1);
       this._rest?.halt();
       this.restRemaining = 0;
-      this.state = 'working';
+      this.isResting = false;
+      // Depuis l'écran de fin, l'annulation ramène à la séance en cours.
+      if (this.state === 'completed') this.state = 'working';
       this.currentExerciseIndex = res.exerciseIndex;
       this.currentSetIndex = res.setIndex;
       if (this.session.status === 'completed') {
@@ -327,12 +346,12 @@ export function createQuickSession(deps: QuickSessionDeps) {
 
     _startRest() {
       this._rest?.start();
-      this.state = 'resting';
+      this.isResting = true;
     },
 
     skipRest() {
       this._rest?.stop();
-      this.state = 'working';
+      this.isResting = false;
     },
 
     addRestTime(delta: number) {
@@ -341,6 +360,7 @@ export function createQuickSession(deps: QuickSessionDeps) {
 
     stopSession() {
       if (!deps.confirm(labels.exitConfirm)) return;
+      this.isResting = false;
       this._rest?.stop();
       if (this.session) {
         deps.storage.updateSession(this.session.id, this.session);
@@ -380,6 +400,7 @@ export function createQuickSession(deps: QuickSessionDeps) {
       this.startTime = 0;
       this.endTime = 0;
       this.restRemaining = 0;
+      this.isResting = false;
       this.loadSessions();
       this.state = 'selecting';
     },
@@ -416,7 +437,10 @@ export function createQuickSession(deps: QuickSessionDeps) {
           return;
         }
         if (this.state === 'working') {
-          if (e.key === ' ' || e.key === 'Enter') {
+          if (this.isResting && (e.key === ' ' || e.key === 'Enter')) {
+            e.preventDefault();
+            this.skipRest();
+          } else if (e.key === ' ' || e.key === 'Enter') {
             e.preventDefault();
             this.completeSet();
           } else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
@@ -425,11 +449,6 @@ export function createQuickSession(deps: QuickSessionDeps) {
           } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
             e.preventDefault();
             this.prevSet();
-          }
-        } else if (this.state === 'resting') {
-          if (e.key === ' ' || e.key === 'Enter') {
-            e.preventDefault();
-            this.skipRest();
           }
         } else if (this.state === 'selecting' || this.state === 'completed') {
           if (e.key === 'Escape') {

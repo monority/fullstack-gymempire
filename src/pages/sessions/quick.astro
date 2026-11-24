@@ -1,5 +1,6 @@
 ---
 import '../../styles/components/quick-page.css';
+import '../../styles/components/quick-rest.css';
 
 import { resolveLocale } from '../../i18n';
 
@@ -19,8 +20,8 @@ const L = t(locale);
   <div class="quick" x-data="quickSessionApp()" x-init="init()" x-cloak>
     <QuickHeader />
     <QuickSelecting />
-    <QuickWorking />
     <QuickResting />
+    <QuickWorking />
     <QuickCompleted />
   </div>
 </AppLayout>

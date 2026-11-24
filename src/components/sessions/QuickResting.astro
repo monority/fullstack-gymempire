@@ -1,7 +1,7 @@
 ---
 import { resolveLocale } from '../../i18n';
 
-/** Composant sans props — contrat explicite (ratchet CSS). */
+/** Bandeau de repos — affiché au-dessus de la série en cours, sans écran dédié. */
 interface Props {}
 import { t } from '../../i18n';
 import Button from '../ui/Button.astro';
@@ -9,121 +9,37 @@ const locale = resolveLocale(Astro.url.pathname);
 const L = t(locale);
 ---
 
-{/* --- STATE 3 — Resting --- */}
-<template x-if="state === 'resting'">
-  <section class="quick__resting">
-    <div class="quick__resting-inner">
-      <div class="quick__recorded-label" role="status" aria-live="polite">
-        {L.rapide.setRecorded}
-      </div>
-      <div class="quick__resting-title">{L.rapide.resting}</div>
-      <div
-        class="quick__resting-timer"
-        role="timer"
-        aria-live="off"
-        :class="{ 'quick__resting-timer--low': restRemaining <= 10 && restRemaining > 0 }"
-        x-text="formatRestTime()"
-      ></div>
-      <div
-        class="quick__rest-next"
-        x-text="restNextLabel()"
-        aria-live="polite"
-        aria-atomic="true"
-      ></div>
-
-      <div class="quick__resting-grid">
-        <Button variant="ghost" @click="addRestTime(-15)" aria-label={L.rapide.restMinusAria}>
-          -15s
-        </Button>
-        <Button variant="ghost" active={true} @click="skipRest()" aria-label={L.rapide.skipRest}>
-          {L.common.skip}
-        </Button>
-        <Button variant="ghost" @click="addRestTime(15)" aria-label={L.rapide.restPlusAria}>
-          +15s
-        </Button>
-        <Button variant="ghost" class="quick__undo" :disabled="!canUndo" @click="undoLastSet()">
-          {L.rapide.undoLast}
-        </Button>
-      </div>
+<template x-if="state === 'working' && isResting">
+  <section class="quick__rest-banner" role="status" aria-live="off">
+    <div class="quick__rest-label">
+      <span class="quick__rest-title">{L.rapide.resting}</span>
+      <span class="quick__rest-next" x-text="restNextLabel()"></span>
+    </div>
+    <div
+      class="quick__rest-timer"
+      :class="{ 'quick__rest-timer--low': restRemaining <= 10 && restRemaining > 0 }"
+      x-text="formatRestTime()"
+    ></div>
+    <div class="quick__rest-actions">
+      <button
+        type="button"
+        class="quick__rest-step"
+        @click="addRestTime(-15)"
+        aria-label={L.rapide.restMinusAria}
+      >
+        −15s
+      </button>
+      <Button variant="secondary" size="sm" @click="skipRest()">
+        {L.common.skip}
+      </Button>
+      <button
+        type="button"
+        class="quick__rest-step"
+        @click="addRestTime(15)"
+        aria-label={L.rapide.restPlusAria}
+      >
+        +15s
+      </button>
     </div>
   </section>
 </template>
-
-<style>
-  .quick__resting {
-    flex: 1 1 0%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1.5rem;
-  }
-
-  .quick__resting-inner {
-    width: 100%;
-    max-width: 60rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1.5rem;
-    text-align: center;
-  }
-
-  .quick__recorded-label {
-    color: var(--color-success);
-    font-family: var(--font-display);
-    font-size: 1.3rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-
-  .quick__resting-title {
-    font-family: var(--font-display);
-    font-size: 2rem;
-    color: var(--color-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.16em;
-    font-weight: 700;
-  }
-
-  .quick__resting-timer {
-    font-family: var(--font-display);
-    font-size: clamp(12rem, 30vw, 24rem);
-    font-weight: 700;
-    line-height: 1;
-    color: var(--color-text);
-    letter-spacing: -0.04em;
-    font-variant-numeric: tabular-nums;
-    transition: color 200ms ease;
-  }
-
-  .quick__resting-timer--low {
-    color: var(--color-warning);
-    animation: quick-pulse 1s ease-in-out infinite;
-  }
-
-  .quick__rest-next {
-    font-size: 1.6rem;
-    color: var(--color-muted);
-    line-height: 1.4;
-  }
-
-  .quick__resting-grid {
-    display: grid;
-    grid-template-columns: 1fr 1.6fr 1fr;
-    gap: 0.75rem;
-    width: 100%;
-    max-width: 50rem;
-  }
-
-  .quick__resting-grid :global(.button) {
-    min-height: 4.8rem;
-    font-size: 1.4rem;
-  }
-
-  .quick__resting-grid :global(.quick__undo) {
-    grid-column: 1 / -1;
-    min-height: 4.4rem;
-    font-size: 1.3rem;
-  }
-</style>

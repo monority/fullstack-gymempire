@@ -322,6 +322,34 @@
     letter-spacing: -0.02em;
   }
 
+  .quick__value-input {
+    width: 100%;
+    max-width: 18rem;
+    padding: 0.4rem;
+    background-color: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    appearance: textfield;
+  }
+
+  .quick__value-input::-webkit-outer-spin-button,
+  .quick__value-input::-webkit-inner-spin-button {
+    appearance: none;
+    margin: 0;
+  }
+
+  .quick__value-input:hover {
+    border-color: var(--color-border);
+  }
+
+  .quick__value-input:focus {
+    border-color: var(--color-accent);
+    background-color: var(--color-surface-2);
+    outline: none;
+  }
+
   .quick__value-unit {
     font-family: var(--font-body);
     font-size: 1.6rem;

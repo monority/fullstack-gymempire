@@ -11,7 +11,10 @@
     font-family: var(--font-body);
     max-width: 96rem;
     margin: 0 auto;
-    padding-bottom: 6rem;
+    /* La barre de navigation mobile est fixe : on garde le contenu au-dessus. */
+    padding-bottom: calc(
+      var(--bottom-nav-height) + var(--page-padding-mobile) + env(safe-area-inset-bottom, 0px)
+    );
   }
 
   .quick__separator {

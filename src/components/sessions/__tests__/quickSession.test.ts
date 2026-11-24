@@ -135,7 +135,8 @@ describe('createQuickSession', () => {
     app.selectedSessionId = 'tpl-1';
     app.startSession();
     app.completeSet();
-    expect(app.state).toBe('resting');
+    expect(app.isResting).toBe(true);
+    expect(app.state).toBe('working');
     app.skipRest();
     app.completeSet();
     app.skipRest();
