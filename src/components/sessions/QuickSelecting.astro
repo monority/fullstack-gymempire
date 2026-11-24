@@ -6,6 +6,7 @@ interface Props {}
 import { t, localizedPath } from '../../i18n';
 import Button from '../ui/Button.astro';
 import Icon from '../ui/Icon.astro';
+import Select from '../ui/Select.astro';
 const locale = resolveLocale(Astro.url.pathname);
 const L = t(locale);
 ---
@@ -21,18 +22,19 @@ const L = t(locale);
       <p class="quick__intro">{L.rapide.introText}</p>
 
       <div class="quick__form">
-        <label class="quick__label" for="qs-session">
-          {L.rapide.session}
-        </label>
-        <select id="qs-session" class="quick__select" x-model="selectedSessionId">
-          <option value="">{L.rapide.selectSession}</option>
+        <Select
+          id="qs-session"
+          label={L.rapide.session}
+          placeholder={L.rapide.selectSession}
+          x-model="selectedSessionId"
+        >
           <template x-for="s in availableSessions" :key="s.id">
             <option
               :value="s.id"
               x-text="`${s.label} (${s.totalSets} ${setsShortLabel} · ${formatWeightValue(s.totalVolume)})`"
             ></option>
           </template>
-        </select>
+        </Select>
       </div>
 
       <div class="quick__selecting-actions">
@@ -100,9 +102,6 @@ const L = t(locale);
   .quick__form {
     width: 100%;
     max-width: 44rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
     margin-top: 0.5rem;
     text-align: left;
   }

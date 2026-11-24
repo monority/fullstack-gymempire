@@ -215,7 +215,6 @@
 
   @media (prefers-reduced-motion: reduce) {
     .quick__header .icon-btn,
-    .quick__select,
     .quick__done-btn,
     .quick__nav-btn {
       transition: none;
