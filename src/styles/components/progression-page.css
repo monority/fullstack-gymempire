@@ -136,7 +136,7 @@
 
   .prog__stat-value--hero {
     font-size: 2.8rem;
-    color: var(--color-accent);
+    color: var(--color-accent-text);
   }
 
   .prog__stat-trend {

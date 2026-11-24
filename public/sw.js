@@ -43,7 +43,7 @@ const OFFLINE_HTML = `<!doctype html>
       :root { color-scheme: dark; }
       html, body { height: 100%; margin: 0; }
       body {
-        background: #050505;
+        background: #0f172a;
         color: #F6F6F6;
         font-family: 'Barlow', system-ui, sans-serif;
         display: grid;

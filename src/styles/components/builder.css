@@ -72,7 +72,7 @@
 
   .ses-chevron.is-open {
     transform: rotate(180deg);
-    color: var(--color-accent);
+    color: var(--color-accent-text);
   }
 
   .ses-tip-video svg {

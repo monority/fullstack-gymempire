@@ -43,7 +43,7 @@
     height: 2.8rem;
     border-radius: 999px;
     background: color-mix(in srgb, var(--color-accent) 12%, transparent);
-    color: var(--color-accent);
+    color: var(--color-accent-text);
     flex-shrink: 0;
   }
 
@@ -68,7 +68,7 @@
   .timer__hero-mode-status {
     font-family: var(--font-display);
     font-size: 1.1rem;
-    color: var(--color-accent);
+    color: var(--color-accent-text);
     text-transform: uppercase;
     letter-spacing: 0.1em;
     font-weight: 700;
@@ -235,7 +235,7 @@
 
   .timer__laps-row--latest {
     background-color: color-mix(in srgb, var(--color-accent) 10%, transparent);
-    color: var(--color-accent);
+    color: var(--color-accent-text);
   }
 
   .timer__laps-num {
@@ -243,7 +243,7 @@
     font-weight: 600;
   }
   .timer__laps-row--latest .timer__laps-num {
-    color: var(--color-accent);
+    color: var(--color-accent-text);
     font-weight: 700;
   }
 
@@ -253,7 +253,7 @@
 
   .timer__laps-time--accent {
     text-align: right;
-    color: var(--color-accent);
+    color: var(--color-accent-text);
   }
 
   /* ── Shortcuts ── */
@@ -317,7 +317,7 @@
   /* ── Popout button ── */
   .timer__popout.is-active,
   .timer__popout--open {
-    color: var(--color-accent);
+    color: var(--color-accent-text);
     border-color: var(--color-accent);
     background: color-mix(in srgb, var(--color-accent) 10%, transparent);
   }
@@ -372,7 +372,7 @@
   }
 
   .timer__hero-clock--running {
-    color: var(--color-accent);
+    color: var(--color-accent-text);
   }
   .timer__hero-clock--warning {
     color: var(--color-warning);
@@ -428,7 +428,7 @@
 
   .timer__laps-row--latest {
     background-color: color-mix(in srgb, var(--color-accent) 10%, transparent);
-    color: var(--color-accent);
+    color: var(--color-accent-text);
   }
 
   .timer__laps-num {
@@ -436,7 +436,7 @@
     font-weight: 600;
   }
   .timer__laps-row--latest .timer__laps-num {
-    color: var(--color-accent);
+    color: var(--color-accent-text);
     font-weight: 700;
   }
 

@@ -142,7 +142,7 @@
     width: 3.4rem;
     height: 3.4rem;
 
-    color: var(--color-accent);
+    color: var(--color-accent-text);
     flex-shrink: 0;
   }
 
@@ -406,7 +406,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--color-accent);
+    color: var(--color-accent-text);
     flex-shrink: 0;
   }
 
@@ -479,14 +479,14 @@
 
   .nav-item.is-active {
     background-color: color-mix(in srgb, var(--color-accent) 12%, transparent);
-    color: var(--color-accent);
+    color: var(--color-accent-text);
     box-shadow: 0 1px 3px color-mix(in srgb, var(--color-accent) 15%, transparent);
   }
 
   /* Parent with the deepest active child: accent text, no filled pill
      (only the deepest active leaf carries the pill). */
   .nav-item--parent-active {
-    color: var(--color-accent);
+    color: var(--color-accent-text);
   }
 
   .nav-item__icon {
@@ -564,7 +564,7 @@
 
   .nav-child.is-active {
     background-color: color-mix(in srgb, var(--color-accent) 12%, transparent);
-    color: var(--color-accent);
+    color: var(--color-accent-text);
     box-shadow: 0 1px 3px color-mix(in srgb, var(--color-accent) 15%, transparent);
   }
 
@@ -645,7 +645,7 @@
     font-size: 1.8rem;
   }
   .sidebar__logo-subtitle {
-    color: var(--color-accent);
+    color: var(--color-accent-text);
     font-size: 0.8rem;
   }
   .sidebar__nav {
@@ -684,7 +684,7 @@
     border-radius: 0 1px 1px 0;
   }
   .nav-item--parent-active {
-    color: var(--color-accent);
+    color: var(--color-accent-text);
   }
   .nav-child {
     min-height: 3.8rem;

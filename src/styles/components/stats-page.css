@@ -433,7 +433,7 @@
     background-color: color-mix(in srgb, var(--color-accent) 14%, transparent);
     border: 1px solid color-mix(in srgb, var(--color-accent) 40%, transparent);
     border-radius: var(--radius-pill);
-    color: var(--color-accent);
+    color: var(--color-accent-text);
     font-size: var(--text-caption);
     font-weight: 700;
     letter-spacing: 0.02em;

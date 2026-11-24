@@ -143,7 +143,7 @@
 
   .poids__stat--hero .poids__stat-value {
     font-size: 3rem;
-    color: var(--color-accent);
+    color: var(--color-accent-text);
   }
 
   .poids__stat-label {
@@ -176,7 +176,7 @@
   }
 
   .poids__stat-delta.is-up {
-    color: var(--color-accent);
+    color: var(--color-accent-text);
   }
 
   .poids__stat-delta.is-down {
@@ -185,12 +185,12 @@
 
   .poids__stat-info {
     font-size: 1.1rem;
-    color: var(--color-accent);
+    color: var(--color-accent-text);
     font-weight: 500;
   }
 
   .poids__stat-volume {
-    color: var(--color-accent);
+    color: var(--color-accent-text);
   }
 
   .poids__chart-header {

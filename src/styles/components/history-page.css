@@ -43,7 +43,7 @@
     width: 5.2rem;
     height: 5.2rem;
     flex-shrink: 0;
-    color: var(--color-accent);
+    color: var(--color-accent-text);
     background-color: color-mix(in srgb, var(--color-accent) 12%, transparent);
     border: 1px solid color-mix(in srgb, var(--color-accent) 28%, transparent);
     border-radius: var(--radius-lg);
@@ -263,7 +263,7 @@
   }
 
   .hist__table td.hist__col-1rm {
-    color: var(--color-accent);
+    color: var(--color-accent-text);
   }
 
   /* Sur mobile : chaque série devient une petite carte lisible. */

@@ -46,13 +46,15 @@ Faits vérifiés dans le code :
 
 Produit : **outil de suivi d'entraînement**, usage fréquent, souvent en salle (mobile, une main), parfois au bureau (desktop, vision d'ensemble). Mots-clés : **énergique, net, dense mais calme, orienté données**.
 
-La donnée `colors.csv` du skill contient une entrée **« Fitness/Gym App »** (ligne 35) : orange d'énergie `#F97316`, vert de réussite `#22C55E`, surfaces sombres ardoise `#0F172A` / `#1F2937`. **C'est déjà approximativement la palette actuelle** (accent `hsl(30 100% 66%)`, succès `#22c55e`, fond `#080b0f`). La refonte ne change donc pas la couleur : elle change la **hiérarchie, la densité et la structure**.
+La donnée `colors.csv` du skill contient une entrée **« Running & Cycling GPS »** (ligne 140) : orange profond `#EA580C`, émeraude `#059669`, fond ardoise `#0F172A`, surface `#192134`, texte `#F8FAFC`, gris `#94A3B8`. **Cette palette est retenue et déjà appliquée** (commit de palette) : elle remplace l'ancien accent clair `hsl(30 100% 66%)` et l'ancien vert `#22c55e`. Le thème clair utilise un accent assombri `#C2410C` et un émeraude `#047857` pour respecter le contraste 4.5:1.
+
+La refonte ne se limite donc pas à la couleur : elle change surtout la **hiérarchie, la densité et la structure**.
 
 ### 2.2 Décisions de design
 
 | Axe             | Décision                                                                                                               | Raison / source skill                                                                                                                          |
 | --------------- | ---------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| Couleurs        | Conserver orange + vert + surfaces sombres ; un seul accent, jamais décoratif                                          | Palette « Fitness/Gym App », `data/colors.csv`                                                                                                 |
+| Couleurs        | Orange profond `#EA580C` + émeraude `#059669`, fond `#0F172A` ; variantes claires `#C2410C` / `#047857`                | Palette « Running & Cycling GPS », `data/colors.csv:140`                                                                                       |
 | Typographie     | Conserver **Archivo** (display) et **Inter** (texte), déjà embarqués localement                                        | Le skill propose Barlow Condensed pour le sport, mais le projet est **offline-first** : garder les polices locales évite une dépendance réseau |
 | Échelle de type | 5 niveaux seulement : page / section / carte / corps / légende ; corps ≥ 16 px mobile                                  | `readable-font-size`, `line-length-control` (§5)                                                                                               |
 | Espacement      | Échelle 4/8 pt : 4, 8, 12, 16, 24, 32, 48 — un seul token par intention                                                | `spacing-scale` (§5)                                                                                                                           |
@@ -208,7 +210,7 @@ _Objectif : cohérence et zéro dette._
 
 - Aucun compte serveur, backend ou synchronisation automatique : le modèle local-first reste.
 - Aucune migration de données : les séances existantes restent lisibles.
-- Aucun changement de palette (déjà alignée sur la référence « Fitness/Gym App ») et aucun téléchargement de police (offline-first).
+- Aucun téléchargement de police (offline-first) : Archivo et Inter restent embarqués localement. La palette, elle, est déjà migrée vers « Running & Cycling GPS ».
 - Aucun changement de licence ou de structure du dépôt.
 
 ---

@@ -80,7 +80,7 @@
 
   .input-stepper__btn:hover {
     background-color: var(--alpha-bg-subtle);
-    color: var(--color-accent);
+    color: var(--color-accent-text);
   }
 
   .input-stepper__btn:active {

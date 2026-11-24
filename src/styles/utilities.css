@@ -30,7 +30,7 @@
 
   .type-pill--top {
     background-color: color-mix(in srgb, var(--color-accent) 14%, transparent);
-    color: var(--color-accent);
+    color: var(--color-accent-text);
   }
 
   .type-pill--drop {
@@ -60,7 +60,7 @@
 
   .tone--top {
     background-color: color-mix(in srgb, var(--color-accent) 14%, transparent);
-    color: var(--color-accent);
+    color: var(--color-accent-text);
     border-color: color-mix(in srgb, var(--color-accent) 30%, transparent);
   }
 
@@ -90,7 +90,7 @@
 
   .tone--hard {
     background-color: color-mix(in srgb, var(--color-accent) 14%, transparent);
-    color: var(--color-accent);
+    color: var(--color-accent-text);
     border-color: color-mix(in srgb, var(--color-accent) 34%, transparent);
   }
 
@@ -164,7 +164,7 @@
   }
 
   .rpe-value.tone--hard {
-    color: var(--color-accent);
+    color: var(--color-accent-text);
   }
 
   .rpe-value.tone--max {

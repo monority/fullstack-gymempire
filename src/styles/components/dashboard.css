@@ -91,7 +91,7 @@
     padding: 0;
     border: 0;
     background: transparent;
-    color: var(--color-accent);
+    color: var(--color-accent-text);
     font: inherit;
     font-weight: 700;
     cursor: pointer;
@@ -208,7 +208,7 @@
     font-family: var(--font-body);
     font-size: 1.2rem;
     font-weight: 600;
-    color: var(--color-accent);
+    color: var(--color-accent-text);
     text-decoration: none;
     border-radius: var(--radius-sm);
     transition: color var(--transition-base);
@@ -485,7 +485,7 @@
   }
 
   .dash__goal-done {
-    color: var(--color-accent);
+    color: var(--color-accent-text);
   }
 
   .dash__goal-sep {

@@ -117,7 +117,7 @@
     width: 2rem;
     height: 2rem;
     background-color: transparent;
-    color: var(--color-accent);
+    color: var(--color-accent-text);
     border-right-width: 1px;
     border-right-style: solid;
     border-right-color: var(--color-border);
@@ -264,12 +264,12 @@
   }
 
   .rec__card:hover .rec__card-cta {
-    color: var(--color-accent);
+    color: var(--color-accent-text);
     transform: translateX(2px);
   }
 
   .rec__card-stat--hero .rec__card-stat-value {
-    color: var(--color-accent);
+    color: var(--color-accent-text);
   }
 
   @media (max-width: 640px) {

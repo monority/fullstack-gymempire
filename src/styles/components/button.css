@@ -91,7 +91,7 @@
 
   /* ── Active — selected/pressed state ── */
   .button.is-active {
-    color: var(--color-accent);
+    color: var(--color-accent-text);
     border-color: var(--color-accent);
     background: color-mix(in srgb, var(--color-accent) 10%, transparent);
   }
@@ -189,7 +189,7 @@
     padding: 0;
     background: transparent;
     border-color: transparent;
-    color: var(--color-accent);
+    color: var(--color-accent-text);
     text-decoration: underline;
     text-underline-offset: 0.25em;
   }

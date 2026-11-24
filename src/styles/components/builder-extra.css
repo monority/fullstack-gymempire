@@ -65,7 +65,7 @@
 
   .create__picker-filter:hover,
   .create__picker-filter.is-active {
-    color: var(--color-accent);
+    color: var(--color-accent-text);
   }
 
   .create__picker-filter.is-active {
@@ -178,7 +178,7 @@
   }
 
   .create__picker-empty-link {
-    color: var(--color-accent);
+    color: var(--color-accent-text);
     text-decoration: underline;
   }
 
@@ -265,7 +265,7 @@
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
-    color: var(--color-accent);
+    color: var(--color-accent-text);
     font-size: 1.1rem;
     margin-top: 0.6rem;
   }
@@ -433,7 +433,7 @@
   }
 
   .create__fatigue-btn:hover {
-    color: var(--color-accent);
+    color: var(--color-accent-text);
     border-color: var(--color-accent);
   }
 
@@ -460,7 +460,7 @@
   }
 
   .create__mood-btn:hover {
-    color: var(--color-accent);
+    color: var(--color-accent-text);
     border-color: var(--color-accent);
   }
 

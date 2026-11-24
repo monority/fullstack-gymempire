@@ -45,7 +45,7 @@
   .seg__btn.is-active {
     background-color: color-mix(in srgb, var(--color-accent) 14%, transparent);
     border-color: var(--color-accent);
-    color: var(--color-accent);
+    color: var(--color-accent-text);
   }
 
   .seg__btn:active:not(:disabled) {
@@ -164,7 +164,7 @@
     background: color-mix(in srgb, var(--color-destructive) 10%, transparent);
   }
   .icon-btn--accent {
-    color: var(--color-accent);
+    color: var(--color-accent-text);
   }
   .icon-btn--accent:hover {
     background: color-mix(in srgb, var(--color-accent) 10%, transparent);

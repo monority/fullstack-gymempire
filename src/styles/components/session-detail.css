@@ -206,7 +206,7 @@
   }
 
   .exo-row__rpe--hard {
-    color: var(--color-accent);
+    color: var(--color-accent-text);
   }
 
   .exo-row__rpe--max {

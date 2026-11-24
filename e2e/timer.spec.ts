@@ -45,10 +45,10 @@ test('timer: the pop-out window inherits the host theme', async ({ page, context
         getComputedStyle(document.documentElement).getPropertyValue('--color-bg').trim()
       )
     )
-    .toBe('#080b0f');
+    .toBe('#0f172a');
   const bg = await pip.evaluate(
     () => getComputedStyle(document.querySelector('.tw') as HTMLElement).backgroundColor
   );
-  expect(bg).toBe('rgb(8, 11, 15)');
+  expect(bg).toBe('rgb(15, 23, 42)');
   await pip.close();
 });

@@ -43,7 +43,7 @@
 
 .calc__tab--active {
   background: var(--color-surface-3);
-  color: var(--color-accent);
+  color: var(--color-accent-text);
 }
 
 /* ── Input grid ── */
@@ -97,7 +97,7 @@
 .calc__shortcut:hover {
   background: var(--color-surface-3);
   border-color: var(--color-accent);
-  color: var(--color-accent);
+  color: var(--color-accent-text);
 }
 
 .calc__shortcut:active {
@@ -161,7 +161,7 @@
 }
 
 .calc__stat-value--accent {
-  color: var(--color-accent);
+  color: var(--color-accent-text);
 }
 
 .calc__stat-value--warning {

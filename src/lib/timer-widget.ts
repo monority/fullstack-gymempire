@@ -262,7 +262,7 @@ const WIDGET_CSS = `
   color: var(--color-text);
   transition: color var(--transition-base);
 }
-.tw__clock.is-running { color: var(--color-accent); }
+.tw__clock.is-running { color: var(--color-accent-text); }
 .tw__clock.is-warning { color: var(--color-warning); }
 .tw__clock.is-done { color: var(--color-success); }
 .tw__status {
@@ -309,7 +309,7 @@ const WIDGET_CSS = `
 }
 .tw__preset:active { transform: translateY(0) scale(0.97); }
 .tw__preset.is-active {
-  color: var(--color-accent);
+  color: var(--color-accent-text);
   border-color: var(--color-accent);
   background: color-mix(in srgb, var(--color-accent) 10%, transparent);
 }
@@ -355,7 +355,7 @@ const WIDGET_CSS = `
   background: transparent;
   border: 1px solid color-mix(in srgb, var(--color-accent) 55%, transparent);
   border-radius: var(--radius-pill);
-  color: var(--color-accent);
+  color: var(--color-accent-text);
   font-family: var(--font-display);
   font-size: 1.2rem;
   font-weight: 700;
@@ -472,11 +472,11 @@ const WIDGET_CSS = `
 .tw__laps-row:first-child { border-top: 0; }
 .tw__laps-row.is-latest {
   background: color-mix(in srgb, var(--color-accent) 10%, transparent);
-  color: var(--color-accent);
+  color: var(--color-accent-text);
 }
 .tw__laps-num { color: var(--color-muted); font-weight: 600; }
-.tw__laps-row.is-latest .tw__laps-num { color: var(--color-accent); font-weight: 700; }
-.tw__laps-total { text-align: right; color: var(--color-accent); font-weight: 600; }
+.tw__laps-row.is-latest .tw__laps-num { color: var(--color-accent-text); font-weight: 700; }
+.tw__laps-total { text-align: right; color: var(--color-accent-text); font-weight: 600; }
 
 /* ── Reduced motion ── */
 @media (prefers-reduced-motion: reduce) {

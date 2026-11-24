@@ -21,7 +21,7 @@
     width: 3.6rem;
     height: 3.6rem;
     flex-shrink: 0;
-    color: var(--color-accent);
+    color: var(--color-accent-text);
     border-radius: var(--radius-md);
     border: 1px solid color-mix(in srgb, var(--color-accent) 28%, transparent);
     background: color-mix(in srgb, var(--color-accent) 12%, transparent);
@@ -180,7 +180,7 @@
   }
 
   .rem__time:focus {
-    color: var(--color-accent);
+    color: var(--color-accent-text);
   }
 
   .rem__time:disabled {
@@ -340,7 +340,7 @@
   }
 
   .workout-record__ex-detail {
-    color: var(--color-accent);
+    color: var(--color-accent-text);
     font-size: 1rem;
   }
 
@@ -349,7 +349,7 @@
   }
 
   .workout-record__arrow {
-    color: var(--color-accent);
+    color: var(--color-accent-text);
     font-size: 1.8rem;
   }
 
@@ -425,7 +425,7 @@
   }
 
   .exercise-card__sep {
-    color: var(--color-accent);
+    color: var(--color-accent-text);
   }
 
   .exercise-card__sets {
