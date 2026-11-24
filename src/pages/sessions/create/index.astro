@@ -1,5 +1,6 @@
 ---
 import '../../../styles/components/builder-page.css';
+import '../../../styles/components/builder-library.css';
 
 import { resolveLocale } from '../../../i18n';
 
@@ -15,6 +16,7 @@ import Input from '../../../components/ui/Input.astro';
 import { t } from '../../../i18n';
 
 import CreateActionBar from '../../../components/builder/CreateActionBar.astro';
+import CreateLibraryPanel from '../../../components/builder/CreateLibraryPanel.astro';
 import CreateExerciseList from '../../../components/builder/CreateExerciseList.astro';
 import CreateNotes from '../../../components/builder/CreateNotes.astro';
 import CreatePicker from '../../../components/builder/CreatePicker.astro';
@@ -41,29 +43,43 @@ const isEditMode = Boolean(editId);
     @builder:add-superset.window="addToSuperset($event.detail.index)"
   >
     <CreateActionBar />
-    <Card>
-      <CardHeader>
-        <CardTitle>{L.builder.infoTitle}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div class="create__info-grid">
-          <Input
-            label={L.builder.name}
-            id="ses-name"
-            type="text"
-            required
-            placeholder={L.builder.namePlaceholder}
-            x-model="sessionName"
-            autocomplete="off"
-            maxlength={80}
-          />
-          <Input label={L.builder.date} id="ses-date" type="date" required x-model="sessionDate" />
-        </div>
-      </CardContent>
-    </Card>
 
-    <CreateExerciseList />
-    <CreateNotes />
+    <div class="create__layout">
+      <CreateLibraryPanel />
+
+      <div class="create__draft">
+        <Card>
+          <CardHeader>
+            <CardTitle>{L.builder.infoTitle}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div class="create__info-grid">
+              <Input
+                label={L.builder.name}
+                id="ses-name"
+                type="text"
+                required
+                placeholder={L.builder.namePlaceholder}
+                x-model="sessionName"
+                autocomplete="off"
+                maxlength={80}
+              />
+              <Input
+                label={L.builder.date}
+                id="ses-date"
+                type="date"
+                required
+                x-model="sessionDate"
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        <CreateExerciseList />
+        <CreateNotes />
+      </div>
+    </div>
+
     <CreatePicker />
   </div>
 </AppLayout>

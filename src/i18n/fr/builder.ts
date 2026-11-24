@@ -120,4 +120,5 @@ export default {
   videoTitle: 'Voir la technique sur YouTube',
   addedWord: 'ajoutés',
   exerciseWord: 'exercice',
+  templateHintShort: 'Templates',
 };

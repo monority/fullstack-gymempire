@@ -1,0 +1,99 @@
+@layer components {
+  .create__library {
+    display: none;
+  }
+
+  @media (min-width: 1024px) {
+    .create__library {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+      min-width: 0;
+      max-height: calc(100vh - var(--topbar-height) - 4rem);
+      position: sticky;
+      top: calc(var(--topbar-height) + 1.6rem);
+      padding: 1.6rem;
+      background-color: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+    }
+
+    .create__library-head,
+    .create__library .create__picker-search,
+    .create__library .create__picker-filters {
+      flex-shrink: 0;
+    }
+
+    .create__library-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .create__library-title {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--color-text);
+    }
+
+    .create__library-templates {
+      padding: 0;
+      background: none;
+      border: 0;
+      color: var(--color-accent-text);
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+
+    .create__library-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      min-height: 0;
+      overflow-y: auto;
+      padding-right: 0.4rem;
+    }
+
+    .create__library-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.8rem;
+      width: 100%;
+      min-height: 4.4rem;
+      padding: 0.6rem 1rem;
+      background-color: var(--color-surface-2);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      color: var(--color-text);
+      text-align: left;
+      cursor: pointer;
+      transition:
+        border-color var(--transition-fast),
+        background-color var(--transition-fast);
+    }
+
+    .create__library-item:hover {
+      border-color: var(--color-accent);
+      background-color: var(--alpha-bg-soft);
+    }
+
+    .create__library-name {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 1.3rem;
+      font-weight: 600;
+    }
+
+    .create__library-empty {
+      color: var(--color-muted);
+      font-size: 1.3rem;
+    }
+  }
+}

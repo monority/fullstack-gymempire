@@ -14,6 +14,26 @@
     padding-bottom: 6rem;
   }
 
+  .create__layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.6rem;
+    align-items: start;
+  }
+
+  .create__draft {
+    display: flex;
+    flex-direction: column;
+    gap: 1.6rem;
+    min-width: 0;
+  }
+
+  @media (min-width: 1024px) {
+    .create__layout {
+      grid-template-columns: 32rem minmax(0, 1fr);
+    }
+  }
+
   .create__info-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -49,5 +69,18 @@
     font-weight: 500;
     text-align: center;
     padding: 0.5rem 0;
+  }
+}
+
+/* Sur desktop, la bibliothèque latérale remplace le bouton d'ajout redondant. */
+@media (min-width: 1024px) {
+  .create__add-wrap {
+    display: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .create__info-grid {
+    grid-template-columns: 1fr;
   }
 }

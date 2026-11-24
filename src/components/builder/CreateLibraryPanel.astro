@@ -1,0 +1,82 @@
+---
+/** Bibliothèque permanente (desktop) — mêmes données que le dialogue picker. */
+import { resolveLocale } from '../../i18n';
+interface Props {
+  class?: string;
+}
+import { t } from '../../i18n';
+import Icon from '../ui/Icon.astro';
+import Badge from '../ui/Badge.astro';
+import Input from '../ui/Input.astro';
+const locale = resolveLocale(Astro.url.pathname);
+const L = t(locale);
+const { class: className = '' } = Astro.props;
+---
+
+<aside class:list={['create__library', className]} aria-label={L.builder.pickerTitle}>
+  <div class="create__library-head">
+    <h2 class="create__library-title">{L.builder.pickerTitle}</h2>
+    <button type="button" class="create__library-templates" @click="openPicker()">
+      {L.builder.templateHintShort} →
+    </button>
+  </div>
+
+  <div class="create__picker-search">
+    <span class="create__picker-search-icon">
+      <Icon name="searchLine" size={18} />
+    </span>
+    <Input
+      type="search"
+      class="create__picker-input ses-search-input"
+      placeholder={L.builder.searchPlaceholder}
+      x-model="exerciseSearch"
+      aria-label={L.builder.searchAria}
+      autocomplete="off"
+    />
+  </div>
+
+  <div class="create__picker-filters" role="group" aria-label={L.builder.allMuscles}>
+    <button
+      type="button"
+      class="create__picker-filter"
+      :class="{ 'is-active': exerciseMuscleFilter === '' }"
+      :aria-pressed="(exerciseMuscleFilter === '').toString()"
+      @click="exerciseMuscleFilter = ''"
+    >
+      {L.builder.allMuscles}
+    </button>
+    <template x-for="muscle in muscleFilters" :key="muscle">
+      <button
+        type="button"
+        class="create__picker-filter"
+        :class="{ 'is-active': exerciseMuscleFilter === muscle }"
+        :aria-pressed="(exerciseMuscleFilter === muscle).toString()"
+        @click="exerciseMuscleFilter = muscle"
+        x-text="$store.i18n.trMuscle(muscle)"
+      ></button>
+    </template>
+  </div>
+
+  <div class="create__library-list" role="list">
+    <template x-for="ex in filteredExercises" :key="ex.id">
+      <button
+        type="button"
+        class="create__library-item"
+        role="listitem"
+        @click="addExercise(ex)"
+        :aria-label="labels.addExoAria + ' ' + ex.name + ' ' + labels.toSession"
+      >
+        <span class="create__library-name" x-text="$store.i18n.trExercise(ex.name)"></span>
+        <Badge
+          variant="category"
+          size="sm"
+          :class="'badge--cat-' + $store.i18n.muscleHue(ex.muscle)"
+          x-text="$store.i18n.trMuscle(ex.muscle)"
+        />
+      </button>
+    </template>
+    <template x-if="filteredExercises.length === 0">
+      <p class="create__library-empty" x-text="labels.noSearchMatch ?? ''"></p>
+    </template>
+  </div>
+</aside>
