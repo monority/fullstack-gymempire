@@ -11,8 +11,17 @@ import Badge from '../ui/Badge.astro';
 import { icons } from '../../lib/icons';
 import DialogFooter from '../ui/DialogFooter.astro';
 import Icon from '../ui/Icon.astro';
+
 const locale = resolveLocale(Astro.url.pathname);
 const L = t(locale);
+
+const SET_TYPE_OPTIONS = [
+  { value: 'warmup', label: L.builder.types.warmup },
+  { value: 'work', label: L.builder.types.work },
+  { value: 'top', label: L.builder.types.top },
+  { value: 'drop', label: L.builder.types.drop },
+  { value: 'failure', label: L.builder.types.failure },
+];
 ---
 
 <Dialog id="exo-add-to-session-dialog" class="exo__add-dialog-host">
@@ -74,16 +83,11 @@ const L = t(locale);
           <span class="exo__add-sets-num u-tabular" x-text="i + 1"></span>
           <div class="exo__add-sets-type">
             <span class="exo__add-sets-label">{L.builder.type}</span>
-            <div class="exo__select-wrap">
-              <select class="exo__select exo__select--compact" x-model="set.type">
-                <option value="warmup">{L.builder.types.warmup}</option>
-                <option value="work">{L.builder.types.work}</option>
-                <option value="top">{L.builder.types.top}</option>
-                <option value="drop">{L.builder.types.drop}</option>
-                <option value="failure">{L.builder.types.failure}</option>
-              </select>
-              <Icon name="chevronDown" size={16} class="exo__select-icon" />
-            </div>
+            <Select
+              class="exo__select exo__select--compact"
+              options={SET_TYPE_OPTIONS}
+              x-model="set.type"
+            />
           </div>
           <div class="exo__add-sets-weight">
             <span class="exo__add-sets-label">
