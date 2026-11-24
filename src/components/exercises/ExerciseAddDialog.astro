@@ -97,6 +97,7 @@ const SET_TYPE_OPTIONS = [
               type="number"
               class="exo__input exo__input--compact"
               :value="displayWeight(set.weight)"
+              :aria-label="labels.weightAria + ' ' + (i + 1)"
               @change="storeWeight($event.target, set)"
               min="0"
               step="0.5"
@@ -109,6 +110,7 @@ const SET_TYPE_OPTIONS = [
               type="number"
               class="exo__input exo__input--compact"
               x-model.number="set.reps"
+              :aria-label="labels.repsAria + ' ' + (i + 1)"
               min="0"
               inputmode="numeric"
             />

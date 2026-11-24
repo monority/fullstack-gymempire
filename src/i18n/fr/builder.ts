@@ -110,7 +110,7 @@ export default {
   restAria: 'Minuteur de repos',
   removeExerciseTitle: "Retirer l'exercice",
   setTypeHeader: 'Type',
-  weightHeader: 'Poids (kg)',
+  weightHeader: 'Charge',
   fatigueTitle: 'Fatigue',
   fatigueAria: 'Niveau de fatigue',
   moodTitle: 'Humeur',

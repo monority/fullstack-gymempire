@@ -13,7 +13,7 @@ const locale = resolveLocale(Astro.url.pathname);
 const L = t(locale);
 ---
 
-<template x-if="exercises.length > 0">
+<div>
   <Card>
     <CardHeader>
       <CardTitle>{L.builder.notesTitle}</CardTitle>
@@ -25,7 +25,7 @@ const L = t(locale);
             <label for="ses-rpe" class="create__label">
               {L.builder.rpe}
             </label>
-            <span class="rpe-value" :class="'tone--' + rpeTone" x-text="sessionRpe"></span>
+            <span class="rpe-value" :class="'tone--' + rpeTone" x-text="sessionRpe ?? '—'"></span>
           </div>
           <div class="create__rpe-slider">
             <input
@@ -36,7 +36,8 @@ const L = t(locale);
               step="1"
               class="ses-rpe-input create__rpe-input"
               :class="'ses-rpe-input--' + rpeTone"
-              x-model.number="sessionRpe"
+              :value="sessionRpe ?? 5"
+              @input="sessionRpe = Number($event.target.value)"
               aria-label={L.builder.rpeAria}
             />
             <div class="create__rpe-label">
@@ -135,4 +136,4 @@ const L = t(locale);
       </div>
     </CardContent>
   </Card>
-</template>
+</div>

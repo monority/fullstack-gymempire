@@ -70,7 +70,6 @@ export function createQuickSession(deps: QuickSessionDeps) {
     endTime: 0,
 
     restRemaining: 0,
-    restPaused: false,
 
     wakeLock: null as any,
 
@@ -92,7 +91,6 @@ export function createQuickSession(deps: QuickSessionDeps) {
           ),
         getRemaining: () => this.restRemaining,
         setRemaining: (s) => (this.restRemaining = s),
-        setPaused: (p) => (this.restPaused = p),
         onEnd: () => (this.state = 'working'),
       });
       this.loadSessions();

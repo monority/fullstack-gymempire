@@ -6,6 +6,7 @@
  * qu'assembler l'état Alpine ; la page garde le template et le câblage DOM.
  */
 
+import { currentUnit } from '../../lib/format';
 import { getExercises } from '../../lib/storage/exercises';
 import { getSessions } from '../../lib/storage/sessions';
 import type { Exercise, Session, SessionMood } from '../../lib/storage/types';
@@ -59,7 +60,8 @@ export interface SessionBuilderApp {
   allSessions: Session[];
   exerciseSearch: string;
   exerciseMuscleFilter: string;
-  sessionRpe: number;
+  sessionRpe: number | null;
+  unit: ReturnType<typeof currentUnit>;
   sessionFatigue: number;
   sessionMood: SessionMood | '';
   sessionNotes: string;
@@ -112,7 +114,8 @@ export function createSessionBuilderApp(deps: SessionBuilderDeps): SessionBuilde
     allSessions: [],
     exerciseSearch: '',
     exerciseMuscleFilter: '',
-    sessionRpe: 5,
+    sessionRpe: null,
+    unit: currentUnit(),
     sessionFatigue: 0,
     sessionMood: '',
     sessionNotes: '',
@@ -139,7 +142,7 @@ export function createSessionBuilderApp(deps: SessionBuilderDeps): SessionBuilde
       this.editSessionId = data.sessionId;
       this.sessionName = data.name;
       this.sessionDate = data.date;
-      this.sessionRpe = data.rpe;
+      this.sessionRpe = data.rpe ?? null;
       this.sessionFatigue = data.fatigue;
       this.sessionMood = data.mood as SessionMood | '';
       this.sessionNotes = data.notes;
@@ -169,7 +172,7 @@ export function createSessionBuilderApp(deps: SessionBuilderDeps): SessionBuilde
       );
     },
     get rpeTone() {
-      return rpeTone(this.sessionRpe);
+      return rpeTone(this.sessionRpe ?? 0);
     },
     get rpeLabel() {
       return rpeLabel(this.sessionRpe, rpeLabels);

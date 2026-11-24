@@ -29,7 +29,6 @@ function setup(duration = 90) {
       getDuration: () => duration,
       getRemaining: () => remaining,
       setRemaining: (s) => (remaining = s),
-      setPaused: () => {},
       onEnd: () => ended++,
     },
     clock

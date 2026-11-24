@@ -76,7 +76,7 @@ export function buildPayload(opts: {
   name: string;
   date: string;
   exercises: BuilderExercise[];
-  rpe: number;
+  rpe: number | null;
   fatigue: number;
   mood: SessionMood | '';
   notes: string;
@@ -92,7 +92,7 @@ export function buildPayload(opts: {
     exercises: clean,
     status: (opts.editSessionId ? getSessionById(opts.editSessionId)?.status : null) ?? 'planned',
   };
-  if (opts.rpe) payload.rpe = opts.rpe;
+  if (opts.rpe != null) payload.rpe = opts.rpe;
   if (opts.fatigue > 0) payload.fatigue = opts.fatigue;
   if (opts.mood !== '') payload.mood = opts.mood;
   if (opts.notes.trim() !== '') payload.notes = opts.notes.trim();
@@ -110,7 +110,7 @@ export function saveSessionBuilder(opts: {
   name: string;
   date: string;
   exercises: BuilderExercise[];
-  rpe: number;
+  rpe: number | null;
   fatigue: number;
   mood: SessionMood | '';
   notes: string;

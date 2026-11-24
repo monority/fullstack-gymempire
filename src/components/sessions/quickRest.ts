@@ -2,8 +2,8 @@
  * rest timer state machine for the quick session.
  *
  * Pure state transitions with an injectable clock: no DOM, no Alpine.
- * The Alpine component owns the reactive fields (`restRemaining`,
- * `restPaused`) and wires them through the callbacks.
+ * The Alpine component owns the reactive field `restRemaining`
+ * and wires it through the callbacks.
  */
 
 export interface RestTimerClock {
@@ -17,7 +17,6 @@ export interface RestTimerCallbacks {
   getDuration(): number;
   getRemaining(): number;
   setRemaining(seconds: number): void;
-  setPaused(paused: boolean): void;
   /** Fired when the countdown reaches zero. */
   onEnd(): void;
 }
@@ -74,7 +73,6 @@ export function createRestTimer(
   return {
     start() {
       cb.setRemaining(Math.max(0, cb.getDuration()));
-      cb.setPaused(false);
       clear();
       interval = clock.setInterval(tick, 1000);
     },

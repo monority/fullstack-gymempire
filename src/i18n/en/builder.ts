@@ -109,7 +109,7 @@ export default {
   restAria: 'Rest timer',
   removeExerciseTitle: 'Remove exercise',
   setTypeHeader: 'Type',
-  weightHeader: 'Weight (kg)',
+  weightHeader: 'Weight',
   fatigueTitle: 'Fatigue',
   fatigueAria: 'Fatigue level',
   moodTitle: 'Mood',

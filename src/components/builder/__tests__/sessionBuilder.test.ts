@@ -93,6 +93,9 @@ describe('createSessionBuilderApp', () => {
     app.init();
     expect(app.availableExercises).toHaveLength(2);
     expect(app.sessionDate).toBe('2026-11-17');
+    // Un RPE non renseigné n'est pas un RPE de 5.
+    expect(app.sessionRpe).toBeNull();
+    expect(app.rpeLabel).toBe('—');
     expect(mocks.expose).toHaveBeenCalledWith([], labels);
     expect(mocks.onToggle).toHaveBeenCalledOnce();
   });

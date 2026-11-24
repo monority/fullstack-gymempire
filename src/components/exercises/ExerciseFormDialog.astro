@@ -21,7 +21,6 @@ const categories = [
 ] as const;
 ---
 
-ADD / EDIT DIALOG
 <Dialog id="exo-form-dialog" :title="editingId ? labels.editTitle : labels.addTitle">
   <form class="exo__form" @submit.prevent="save()">
     <Input
@@ -50,7 +49,7 @@ ADD / EDIT DIALOG
         id="exo-muscle-custom"
         label={L.exercices.customMuscleLabel}
         required
-        placeholder="Ex. Mollets"
+        placeholder={L.exercices.customMusclePlaceholder}
         x-model="form.customMuscle"
         autocomplete="off"
       />
@@ -86,7 +85,6 @@ ADD / EDIT DIALOG
     </div>
   </form>
 </Dialog>
-DELETE CONFIRMATION DIALOG
 <Dialog id="exo-delete-dialog" title={L.exercices.deleteTitle}>
   <p class="exo__confirm-text">
     <strong x-text="deletingName || 'cet exercice'"></strong>
@@ -101,7 +99,6 @@ DELETE CONFIRMATION DIALOG
     />
   </div>
 </Dialog>
-ADD TO SESSION DIALOG
 <style>
   .exo__form {
     display: flex;

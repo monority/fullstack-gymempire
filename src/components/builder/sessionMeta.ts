@@ -14,7 +14,8 @@ export interface SessionMetaLabels {
   rpeMax: string;
 }
 
-export function rpeLabel(rpe: number, labels: SessionMetaLabels): string {
+export function rpeLabel(rpe: number | null, labels: SessionMetaLabels): string {
+  if (rpe == null) return '—';
   const tone = rpeToneFn(rpe);
   if (tone === 'easy') return labels.rpeEasy;
   if (tone === 'moderate') return labels.rpeModerate;
