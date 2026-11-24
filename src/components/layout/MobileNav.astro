@@ -1,0 +1,59 @@
+---
+/**
+ * MobileNav — navigation principale mobile (barre inférieure, 5 entrées max).
+ * Complète la sidebar desktop : mêmes données NavTree, mêmes libellés i18n.
+ * La navigation secondaire reste dans le tiroir ouvert par le bouton du header.
+ */
+import { renderIcon } from '../../lib/nav';
+import type { NavGroup, NavItem } from '../../lib/types';
+
+interface Props {
+  groups: NavGroup[];
+}
+const { groups } = Astro.props;
+
+const allItems: NavItem[] = groups.flatMap((g) => g.items);
+const find = (suffix: string) => allItems.find((i) => i.href === suffix || i.href.endsWith(suffix));
+
+const dashboard = find('/');
+const sessions = find('/sessions');
+const create = sessions?.children?.find((c) => c.href.endsWith('/sessions/create'));
+const progression = find('/progression');
+const exercises = find('/exercises');
+
+// Sur /sessions/create, l'enfant est actif : le parent ne doit pas l'être aussi.
+const createActive = !!create?.active;
+const entries = [
+  dashboard && { ...dashboard, key: 'dashboard', active: !!dashboard.active },
+  sessions && {
+    ...sessions,
+    key: 'sessions',
+    active: !createActive && !!(sessions.active || sessions.parentActive),
+  },
+  create && { ...create, key: 'create', primary: true, active: createActive },
+  progression && {
+    ...progression,
+    key: 'progression',
+    active: !!(progression.active || progression.parentActive),
+  },
+  exercises && { ...exercises, key: 'exercises', active: !!exercises.active },
+].filter(Boolean) as Array<NavItem & { key: string; primary?: boolean; active: boolean }>;
+---
+
+<nav class="mobile-nav" aria-label="Navigation principale">
+  {entries.map((item) => (
+    <a
+      href={item.href}
+      class:list={[
+        'mobile-nav__item',
+        item.primary && 'mobile-nav__item--primary',
+        item.active && 'is-active',
+      ]}
+      aria-current={item.active ? 'page' : undefined}
+      data-nav-key={item.key}
+    >
+      <span class="mobile-nav__icon" aria-hidden="true" set:html={renderIcon(item.icon)} />
+      <span class="mobile-nav__label">{item.label}</span>
+    </a>
+  ))}
+</nav>

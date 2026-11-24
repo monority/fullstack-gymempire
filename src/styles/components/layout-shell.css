@@ -284,6 +284,111 @@
   @media (max-width: 640px) {
     .page-content {
       padding: var(--page-padding-mobile);
+      /* La barre inférieure est fixe : on réserve sa hauteur + safe area. */
+      padding-bottom: calc(
+        var(--bottom-nav-height) + var(--page-padding-mobile) + env(safe-area-inset-bottom, 0px)
+      );
+    }
+  }
+
+  /* ── Navigation principale mobile (barre inférieure) ── */
+  .mobile-nav {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    align-items: stretch;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: var(--z-header);
+    height: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom, 0px));
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    background-color: var(--surface-panel);
+    border-top: 1px solid var(--color-border);
+    backdrop-filter: blur(12px);
+  }
+
+  .mobile-nav__item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+    min-width: 0;
+    min-height: 4.4rem;
+    color: var(--color-muted);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+
+  .mobile-nav__item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 22%;
+    right: 22%;
+    height: 2px;
+    border-radius: var(--radius-pill);
+    background-color: transparent;
+    transition: background-color var(--transition-fast);
+  }
+
+  .mobile-nav__item.is-active {
+    color: var(--color-accent-text);
+  }
+
+  .mobile-nav__item.is-active::before {
+    background-color: var(--color-accent);
+  }
+
+  .mobile-nav__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.4rem;
+    height: 2.4rem;
+  }
+
+  .mobile-nav__icon svg {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .mobile-nav__label {
+    max-width: 100%;
+    font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 1.1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* L'action principale est un disque accentué, centré. */
+  .mobile-nav__item--primary .mobile-nav__icon {
+    width: 3.6rem;
+    height: 3.6rem;
+    margin-top: -1.6rem;
+    background-color: var(--color-accent);
+    border: 3px solid var(--color-bg);
+    border-radius: var(--radius-pill);
+    color: var(--color-accent-foreground);
+    box-shadow: var(--shadow-2);
+  }
+
+  .mobile-nav__item--primary .mobile-nav__icon svg {
+    width: 1.8rem;
+    height: 1.8rem;
+  }
+
+  .mobile-nav__item:active {
+    opacity: 0.7;
+  }
+
+  @media (min-width: 1024px) {
+    .mobile-nav {
+      display: none;
     }
   }
 
@@ -1209,5 +1314,26 @@
     display: inline-flex;
     align-items: center;
     gap: 0.3rem;
+  }
+
+  /* Mobile : on garde l'essentiel dans le header étroit.
+     Le profil et la déconnexion restent accessibles dans le tiroir. */
+  @media (max-width: 640px) {
+    .topbar__inner {
+      gap: 0.8rem;
+      padding-inline: var(--page-padding-mobile);
+    }
+
+    .topbar__search-hint,
+    .topbar__search kbd,
+    .topbar__user,
+    .topbar__logout,
+    .topbar__control-label {
+      display: none;
+    }
+
+    .topbar__context {
+      flex: 1 1 auto;
+    }
   }
 }

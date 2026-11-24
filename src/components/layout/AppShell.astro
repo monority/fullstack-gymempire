@@ -10,6 +10,7 @@ import { resolveLocale } from '../../i18n';
  */
 import Sidebar from './Sidebar.astro';
 import Header from './Header.astro';
+import MobileNav from './MobileNav.astro';
 import Icon from '../ui/Icon.astro';
 import { t } from '../../i18n';
 import { renderIcon } from '../../lib/nav';
@@ -58,6 +59,8 @@ const drawerItems = groups.map((group) => ({
       <slot />
     </main>
   </div>
+
+  <MobileNav groups={groups} />
 
   {/* Mobile drawer (hidden on desktop via CSS) */}
   <div class="drawer" id="primary-drawer" data-mobile-panel hidden aria-hidden="true">
@@ -282,11 +285,31 @@ const drawerItems = groups.map((group) => ({
     });
   };
 
+  // La barre inférieure mobile n'est pas persistée : on synchronise aussi son
+  // état actif après chaque navigation (le SSR peut avoir un slash final).
+  const syncMobileNavActiveState = () => {
+    const current = window.location.pathname.replace(/\/+$/, '') || '/';
+    document.querySelectorAll<HTMLAnchorElement>('.mobile-nav__item').forEach((link) => {
+      const path = new URL(link.href, window.location.origin).pathname.replace(/\/+$/, '') || '/';
+      const active = current === path;
+      link.classList.toggle('is-active', active);
+      if (active) link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+  };
+
   syncSidebarActiveState();
-  document.addEventListener('astro:after-swap', syncSidebarActiveState);
+  syncMobileNavActiveState();
+  document.addEventListener('astro:after-swap', () => {
+    syncSidebarActiveState();
+    syncMobileNavActiveState();
+  });
   // page-load couvre le cas où l'état Alpine du composant persisté serait
   // réévalué après le swap : on réapplique toujours l'état courant en dernier.
-  document.addEventListener('astro:page-load', syncSidebarActiveState);
+  document.addEventListener('astro:page-load', () => {
+    syncSidebarActiveState();
+    syncMobileNavActiveState();
+  });
 
   // Theme + nav accordion Alpine data factory
   const ACCORDION_KEY = 'muscu:nav:collapsed';

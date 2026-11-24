@@ -62,6 +62,37 @@ test('accordion state survives route changes without a persisted sidebar', async
   await expect(page.locator('.sidebar')).toBeVisible();
 });
 
+test.describe('mobile bottom navigation', () => {
+  test.use({ viewport: { width: 390, height: 844 } });
+
+  test('tracks the active route and never scrolls horizontally', async ({ page }) => {
+    await page.addInitScript(seed);
+    await page.goto('/');
+
+    const nav = page.locator('.mobile-nav');
+    await expect(nav).toBeVisible();
+    await expect(nav.locator('.mobile-nav__item')).toHaveCount(5);
+    await expect(nav.locator('.mobile-nav__item.is-active')).toHaveAttribute('href', '/');
+
+    await nav.locator('a[href="/progression"]').click();
+    await expect(page).toHaveURL(/\/progression$/);
+    await expect(nav.locator('.mobile-nav__item.is-active')).toHaveAttribute(
+      'href',
+      '/progression'
+    );
+
+    // Sur la création, l'action centrale est active, pas le parent « Séances ».
+    await nav.locator('a[href="/sessions/create"]').click();
+    await expect(page).toHaveURL(/\/sessions\/create$/);
+    await expect(nav.locator('.mobile-nav__item.is-active')).toHaveAttribute(
+      'href',
+      '/sessions/create'
+    );
+
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(390);
+  });
+});
+
 test.describe('mobile drawer', () => {
   test.use({ viewport: { width: 390, height: 844 } });
 
