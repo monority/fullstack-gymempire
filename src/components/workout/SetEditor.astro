@@ -1,0 +1,118 @@
+---
+/**
+ * SetEditor — une ligne de série partagée par le builder et le dialogue
+ * d'ajout. Le markup et les styles sont uniques ; les expressions Alpine sont
+ * passées en props car chaque contexte a son propre scope de données.
+ */
+import Icon from '../ui/Icon.astro';
+
+interface Option {
+  value: string;
+  label: string;
+}
+
+interface Props {
+  options: Option[];
+  labels: {
+    type: string;
+    weight: string;
+    reps: string;
+    deleteSet: string;
+    typeLabel: string;
+    weightLabel: string;
+    repsLabel: string;
+  };
+  /** Expressions Alpine évaluées dans le scope de l'appelant. */
+  numberExpr: string;
+  typeModel: string;
+  weightValue: string;
+  weightChange: string;
+  repsModel: string;
+  indexExpr: string;
+  deleteAction?: string;
+  cantDeleteExpr?: string;
+  /** Structure compacte (dialogue) ou table (builder). */
+  variant?: 'table' | 'card';
+  unitExpr?: string;
+}
+const {
+  options,
+  labels,
+  numberExpr,
+  typeModel,
+  weightValue,
+  weightChange,
+  repsModel,
+  indexExpr,
+  deleteAction,
+  cantDeleteExpr,
+  variant = 'table',
+  unitExpr,
+}: Props = Astro.props;
+---
+
+<div class:list={['set-editor__row', `set-editor__row--${variant}`]} role="row">
+  <div class="set-editor__num u-tabular" role="cell" x-text={numberExpr}></div>
+
+  <div class="set-editor__type" role="cell">
+    <span class="set-editor__label">{labels.type}</span>
+    <select
+      class="set-editor__select"
+      x-model={typeModel}
+      :aria-label={`'${labels.typeLabel} ' + (${indexExpr})`}
+    >
+      {options.map((opt) => (
+        <option value={opt.value}>{opt.label}</option>
+      ))}
+    </select>
+  </div>
+
+  <div class="set-editor__weight" role="cell">
+    <span class="set-editor__label">
+      {labels.weight}
+      {unitExpr ? ' (' : ''}
+      {unitExpr && <span x-text={unitExpr}></span>}
+      {unitExpr ? ')' : ''}
+    </span>
+    <input
+      type="number"
+      class="set-editor__input"
+      min="0"
+      step="0.5"
+      inputmode="decimal"
+      :value={weightValue}
+      @change={weightChange}
+      :aria-label={`'${labels.weightLabel} ' + (${indexExpr})`}
+    />
+  </div>
+
+  <div class="set-editor__reps" role="cell">
+    <span class="set-editor__label">{labels.reps}</span>
+    <input
+      type="number"
+      class="set-editor__input"
+      min="0"
+      step="1"
+      inputmode="numeric"
+      x-model.number={repsModel}
+      :aria-label={`'${labels.repsLabel} ' + (${indexExpr})`}
+    />
+  </div>
+
+  <div class="set-editor__action" role="cell">
+    {deleteAction ? (
+      <button
+        type="button"
+        class="set-editor__remove"
+        @click={deleteAction}
+        :disabled={cantDeleteExpr}
+        :aria-label={`'${labels.deleteSet} ' + (${indexExpr})`}
+        title={labels.deleteSet}
+      >
+        <Icon name="closeX" size={16} />
+      </button>
+    ) : (
+      <span aria-hidden="true"></span>
+    )}
+  </div>
+</div>

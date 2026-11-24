@@ -216,4 +216,44 @@ describe('createExercisesApp', () => {
     );
     expect(mocks.notify).toHaveBeenCalledWith('Exercice ajouté');
   });
+
+  it('pré-remplit une seule série depuis la dernière séance de l’exercice', () => {
+    mocks.getSessions.mockImplementation(() => [
+      session({
+        id: 'old',
+        date: '2026-11-01',
+        exercises: [
+          {
+            exerciseId: 'e1',
+            name: 'Squat',
+            muscle: 'Quadriceps',
+            sets: [
+              {
+                exerciseId: 'e1',
+                setNumber: 1,
+                type: 'work',
+                weight: 80,
+                reps: 6,
+                completed: true,
+              },
+            ],
+          },
+        ],
+      }),
+    ]);
+
+    const { app } = create();
+    app.init();
+    app.openAddToSession(exercise());
+
+    expect(app.addSets).toEqual([{ type: 'work', weight: 80, reps: 6 }]);
+  });
+
+  it('crée une série vide quand l’exercice n’a pas d’historique', () => {
+    mocks.getSessions.mockReturnValue([]);
+    const { app } = create();
+    app.init();
+    app.openAddToSession(exercise());
+    expect(app.addSets).toEqual([{ type: 'work', weight: 0, reps: 0 }]);
+  });
 });

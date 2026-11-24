@@ -38,6 +38,8 @@ export interface ExercisesLabels {
   save: string;
   add: string;
   deleteSet: string;
+  weightAria: string;
+  repsAria: string;
   warmupTitle: string;
   warmupHint: string;
   showTipAria: string;
@@ -66,6 +68,8 @@ export function buildExercisesLabels(L: Dictionary): ExercisesLabels {
     save: L.common.save,
     add: L.common.add,
     deleteSet: L.builder.deleteSet,
+    weightAria: L.builder.weightForSet,
+    repsAria: L.builder.repsForSet,
     warmupTitle: L.builder.warmupTitle,
     warmupHint: L.builder.warmupHint,
     showTipAria: L.exercices.showTipAria,
@@ -162,11 +166,25 @@ const emptyForm = (): FormState => ({
   category: '',
 });
 
-const defaultAddSets = (): AddSetRow[] => [
-  { type: 'work', weight: 0, reps: 0 },
-  { type: 'work', weight: 0, reps: 0 },
-  { type: 'work', weight: 0, reps: 0 },
-];
+/** Une seule série, pré-remplie depuis la dernière séance de l'exercice. */
+const defaultAddSetsFor = (exerciseId: string, sessions: Session[]): AddSetRow[] => {
+  let last: { weight: number; reps: number } | undefined;
+  let lastDate = '';
+  for (const session of sessions) {
+    if (session.date < lastDate) continue;
+    for (const ex of session.exercises) {
+      if (ex.exerciseId !== exerciseId) continue;
+      for (const set of ex.sets) {
+        if (!set.completed || set.type !== 'work' || set.weight <= 0) continue;
+        if (session.date >= lastDate) {
+          lastDate = session.date;
+          last = { weight: set.weight, reps: set.reps };
+        }
+      }
+    }
+  }
+  return [{ type: 'work', weight: last?.weight ?? 0, reps: last?.reps ?? 0 }];
+};
 
 export function createExercisesApp(deps: ExercisesDeps): ExercisesApp {
   const { labels, localizedPath: path, clock, ui } = deps;
@@ -194,7 +212,7 @@ export function createExercisesApp(deps: ExercisesDeps): ExercisesApp {
     addingExercise: null,
     addToSessionId: '',
     newSessionName: '',
-    addSets: defaultAddSets(),
+    addSets: [{ type: 'work', weight: 0, reps: 0 }],
     labels,
     openTips: [],
 
@@ -300,7 +318,7 @@ export function createExercisesApp(deps: ExercisesDeps): ExercisesApp {
       this.addingExercise = exercise;
       this.addToSessionId = '';
       this.newSessionName = '';
-      this.addSets = defaultAddSets();
+      this.addSets = defaultAddSetsFor(exercise.id, getSessions());
       this.sessions = getSessions();
       ui.openDialog('exo-add-to-session-dialog');
     },

@@ -53,6 +53,7 @@
 @import './components/builder-extra.css';
 @import './components/sessions-extra.css';
 @import './components/workout-extra.css';
+@import './components/set-editor.css';
 @import './components/dashboard.css';
 @import './components/stepper.css';
 @import './components/patterns.css';

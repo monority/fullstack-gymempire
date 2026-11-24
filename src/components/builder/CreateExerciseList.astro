@@ -10,6 +10,8 @@ import Button from '../ui/Button.astro';
 import Icon from '../ui/Icon.astro';
 import IconButton from '../ui/IconButton.astro';
 import Badge from '../ui/Badge.astro';
+import SetEditor from '../workout/SetEditor.astro';
+import SetEditorHeader from '../workout/SetEditorHeader.astro';
 import { icons } from '../../lib/icons';
 
 const locale = resolveLocale(Astro.url.pathname);
@@ -105,71 +107,38 @@ const setTypes = [
             role="table"
             :aria-label="labels.setsFor + ' ' + exercise.name"
           >
-            <div class="ses-table-head" role="row">
-              <div class="ses-cell ses-cell-num" role="columnheader">
-                #
-              </div>
-              <div class="ses-cell ses-cell-type" role="columnheader">
-                {L.builder.setTypeHeader}
-              </div>
-              <div class="ses-cell ses-cell-num" role="columnheader">
-                {L.builder.weightHeader} (<span x-text="unit"></span>)
-              </div>
-              <div class="ses-cell ses-cell-num" role="columnheader">
-                Reps
-              </div>
-              <div class="ses-cell ses-cell-action" role="columnheader" aria-label="Actions"></div>
-            </div>
+            <SetEditorHeader
+              labels={{
+                type: L.builder.setTypeHeader,
+                weight: L.builder.weightHeader,
+                reps: L.common.reps,
+              }}
+              unitExpr="unit"
+              variant="table"
+            />
             <template x-for="(set, setIdx) in exercise.sets" :key="setIdx">
-              <div class="ses-table-row" role="row">
-                <div class="ses-cell ses-cell-num" role="cell" x-text="set.setNumber"></div>
-                <div class="ses-cell ses-cell-type" role="cell">
-                  <select
-                    class="create__select"
-                    x-model="set.type"
-                    :aria-label="labels.setTypeLabel + ' ' + (setIdx + 1)"
-                  >
-                    {setTypes.map((t) => (
-                      <option value={t.value}>{t.label}</option>
-                    ))}
-                  </select>
-                </div>
-                <div class="ses-cell ses-cell-num" role="cell">
-                  <input
-                    type="number"
-                    class="create__input ses-input-inline"
-                    min="0"
-                    step="0.5"
-                    :value="displayWeight(set.weight)"
-                    @change="storeWeight($event.target, set)"
-                    inputmode="decimal"
-                    :aria-label="labels.weightForSet + ' ' + (setIdx + 1)"
-                  />
-                </div>
-                <div class="ses-cell ses-cell-num" role="cell">
-                  <input
-                    type="number"
-                    class="create__input ses-input-inline"
-                    min="0"
-                    step="1"
-                    x-model.number="set.reps"
-                    inputmode="numeric"
-                    :aria-label="labels.repsForSet + ' ' + (setIdx + 1)"
-                  />
-                </div>
-                <div class="ses-cell ses-cell-action" role="cell">
-                  <IconButton
-                    variant="danger"
-                    size="sm"
-                    icon={icons.closeX(18, 18)}
-                    label={L.builder.deleteSet}
-                    :aria-label="labels.deleteSet + ' ' + (setIdx + 1)"
-                    title={L.builder.deleteSet}
-                    :disabled="exercise.sets.length <= 1"
-                    @click="removeSet(setIdx)"
-                  />
-                </div>
-              </div>
+              <SetEditor
+                options={setTypes.map((t) => ({ value: t.value, label: t.label }))}
+                labels={{
+                  type: L.builder.setTypeHeader,
+                  weight: L.builder.weight,
+                  reps: L.common.reps,
+                  deleteSet: L.builder.deleteSet,
+                  typeLabel: L.builder.setTypeLabel,
+                  weightLabel: L.builder.weightForSet,
+                  repsLabel: L.builder.repsForSet,
+                }}
+                numberExpr="set.setNumber"
+                indexExpr="setIdx + 1"
+                typeModel="set.type"
+                weightValue="displayWeight(set.weight)"
+                weightChange="storeWeight($event.target, set)"
+                repsModel="set.reps"
+                deleteAction="removeSet(setIdx)"
+                cantDeleteExpr="exercise.sets.length <= 1"
+                unitExpr="unit"
+                variant="table"
+              />
             </template>
           </div>
 

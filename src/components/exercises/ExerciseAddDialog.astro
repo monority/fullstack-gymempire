@@ -11,6 +11,8 @@ import Badge from '../ui/Badge.astro';
 import { icons } from '../../lib/icons';
 import DialogFooter from '../ui/DialogFooter.astro';
 import Icon from '../ui/Icon.astro';
+import SetEditor from '../workout/SetEditor.astro';
+import SetEditorHeader from '../workout/SetEditorHeader.astro';
 
 const locale = resolveLocale(Astro.url.pathname);
 const L = t(locale);
@@ -71,61 +73,34 @@ const SET_TYPE_OPTIONS = [
 
     {/* ── Sets table ── */}
     <div class="exo__add-sets">
-      <div class="exo__add-sets-header" aria-hidden="true">
-        <span>#</span>
-        <span>{L.builder.type}</span>
-        <span>{L.builder.weight} (kg)</span>
-        <span>{L.common.reps}</span>
-        <span></span>
-      </div>
+      <SetEditorHeader
+        labels={{ type: L.builder.type, weight: L.builder.weight, reps: L.common.reps }}
+        unitExpr="unit"
+        variant="card"
+      />
       <template x-for="(set, i) in addSets" :key="i">
-        <div class="exo__add-sets-row">
-          <span class="exo__add-sets-num u-tabular" x-text="i + 1"></span>
-          <div class="exo__add-sets-type">
-            <span class="exo__add-sets-label">{L.builder.type}</span>
-            <Select
-              class="exo__select exo__select--compact"
-              options={SET_TYPE_OPTIONS}
-              x-model="set.type"
-            />
-          </div>
-          <div class="exo__add-sets-weight">
-            <span class="exo__add-sets-label">
-              {L.builder.weight} (<span x-text="unit"></span>)
-            </span>
-            <input
-              type="number"
-              class="exo__input exo__input--compact"
-              :value="displayWeight(set.weight)"
-              :aria-label="labels.weightAria + ' ' + (i + 1)"
-              @change="storeWeight($event.target, set)"
-              min="0"
-              step="0.5"
-              inputmode="decimal"
-            />
-          </div>
-          <div class="exo__add-sets-reps">
-            <span class="exo__add-sets-label">{L.common.reps}</span>
-            <input
-              type="number"
-              class="exo__input exo__input--compact"
-              x-model.number="set.reps"
-              :aria-label="labels.repsAria + ' ' + (i + 1)"
-              min="0"
-              inputmode="numeric"
-            />
-          </div>
-          <button
-            type="button"
-            class="exo__add-sets-remove"
-            @click="removeSetFromConfig(i)"
-            :disabled="addSets.length <= 1"
-            :aria-label="labels.deleteSet + ' ' + (i + 1)"
-            title={L.builder.deleteSet}
-          >
-            <Icon name="closeX" size={16} />
-          </button>
-        </div>
+        <SetEditor
+          options={SET_TYPE_OPTIONS}
+          labels={{
+            type: L.builder.type,
+            weight: L.builder.weight,
+            reps: L.common.reps,
+            deleteSet: L.builder.deleteSet,
+            typeLabel: L.builder.setTypeLabel,
+            weightLabel: L.builder.weightForSet,
+            repsLabel: L.builder.repsForSet,
+          }}
+          numberExpr="i + 1"
+          indexExpr="i + 1"
+          typeModel="set.type"
+          weightValue="displayWeight(set.weight)"
+          weightChange="storeWeight($event.target, set)"
+          repsModel="set.reps"
+          deleteAction="removeSetFromConfig(i)"
+          cantDeleteExpr="addSets.length <= 1"
+          unitExpr="unit"
+          variant="card"
+        />
       </template>
       <div class="exo__add-sets-actions">
         <button
