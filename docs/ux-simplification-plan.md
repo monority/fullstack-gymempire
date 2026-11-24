@@ -1,167 +1,222 @@
-# Plan de simplification UX — Gym Empire
+# Plan de simplification UX & refonte visuelle — Gym Empire
 
-> Objectif : rendre l'application **simple et rapide à utiliser au quotidien**, sur mobile comme sur desktop, en réduisant le nombre de champs, d'étapes et d'allers-retours. Ce plan est un plan d'exécution, pas une refonte technique : le modèle de données reste compatible.
+> Objectif : une application **simple, rapide et désirable**, sur mobile comme sur desktop.
+> Deux chantiers indissociables : **moins de saisie** (parcours) et **une direction visuelle assumée** (design).
+> Le modèle de données reste compatible : aucune migration, aucun backend.
 
 ---
 
-## 1. Constat
+## 0. Méthode et outillage
 
-L'application est fonctionnelle mais le parcours d'enregistrement est éclaté en **trois façons différentes** de saisir une série, avec des champs et des comportements divergents :
+- Audit des parcours réalisé sur le code courant (voir §1).
+- Skill **`ui-ux-pro-max`** installé dans `.opencode/skills/ui-ux-pro-max/` (données : styles, palettes, typographies, guidelines UX, stack Astro).
+- ⚠️ **Python n'est pas disponible dans ce container** : l'outil de recherche du skill n'a donc **pas pu être exécuté**. Les recommandations ci-dessous proviennent de la lecture directe de `references/quick-reference.md`, `references/pro-rules.md` et de `data/colors.csv`, `data/typography.csv`, `data/stacks/astro.csv`. Aucun résultat de recherche n'a été simulé.
+- Stack détectée : **Astro 7 + Alpine**, CSS en couches, composants `.astro`, données locales (`localStorage`).
 
-| Parcours                | Point d'entrée    | Séries créées                 | Champs par série   | Friction principale                             |
-| ----------------------- | ----------------- | ----------------------------- | ------------------ | ----------------------------------------------- |
-| Builder                 | `sessions/create` | 1 par exercice                | type, charge, reps | picker qui se referme à chaque ajout            |
-| Dialogue « + » exercice | page Exercices    | **3 vides**                   | type, charge, reps | 3 lignes à remplir/supprimer, unité figée en kg |
-| Séance rapide           | `/sessions/quick` | issues d'une séance `planned` | **RPE en plus**    | charge/reps non modifiables pendant la séance   |
+---
 
-Mesures relevées dans le code :
+## 1. Constat (audit factuel)
+
+L'application est fonctionnelle mais la saisie est éclatée en **trois parcours divergents** :
+
+| Parcours                | Point d'entrée    | Séries créées                  | Champs par série    | Friction principale                                    |
+| ----------------------- | ----------------- | ------------------------------ | ------------------- | ------------------------------------------------------ |
+| Builder                 | `sessions/create` | 1 par exercice                 | type, charge, reps  | picker refermé à chaque ajout, recherche réinitialisée |
+| Dialogue « + » exercice | page Exercices    | **3 vides**                    | type, charge, reps  | 3 lignes à remplir/supprimer, unité figée en kg        |
+| Séance rapide           | `/sessions/quick` | copiées d'une séance `planned` | + RPE (2 contrôles) | charge/reps non modifiables pendant la séance          |
+
+Faits vérifiés dans le code :
 
 - `defaultAddSets()` crée 3 séries vides (`exercisesApp.ts:165`), contre 1 dans le builder (`exercisePicker.ts:38`).
-- Le pré-remplissage « dernière charge / dernières reps » existe (`createNextSet`, `session-builder-stats.ts:122`) mais n'est utilisé que par le builder.
-- Le RPE de séance vaut **5 par défaut** et est toujours sauvegardé (`sessionBuilder.ts:115`, `sessionSave.ts:95`) : une séance non touchée dit « Effort modéré ».
-- La date est sans validation ni `required` (`create/index.astro:59`).
-- La carte « Notes / ressenti » est masquée tant qu'aucun exercice n'est ajouté (`CreateNotes.astro:16`).
-- Trois libellés techniques (`ADD / EDIT DIALOG`, `DELETE CONFIRMATION DIALOG`, `ADD TO SESSION DIALOG`) sont rendus dans l'UI (`ExerciseFormDialog.astro:24,89,104`).
-- `restPaused` est un état jamais lu (`quickSession.ts`, `quickRest.ts`).
-- Le builder reste en 2 colonnes nom/date et en tableau sans libellés jusqu'à 640 px ; la séance rapide a un trou de responsive entre 481 et 539 px.
+- Le pré-remplissage « dernière charge / dernières reps » existe (`createNextSet`, `session-builder-stats.ts:122`) mais n'est utilisé **que** par le builder.
+- RPE de séance = **5 par défaut**, toujours sauvegardé (`sessionBuilder.ts:115`, `sessionSave.ts:95`) : une séance non touchée affiche « Effort modéré ».
+- Date sans `required` ni validation (`create/index.astro:59`).
+- Carte « ressenti » masquée tant qu'aucun exercice n'est ajouté (`CreateNotes.astro:16`).
+- Trois textes techniques rendus dans l'UI (`ExerciseFormDialog.astro:24,89,104`).
+- Unité « Poids (kg) » codée en dur alors que le réglage lbs existe.
+- `restPaused` : état écrit mais jamais lu (`quickSession.ts`, `quickRest.ts`).
+- Responsive éclaté : 320 / 360 / 480 / 540 / 640 / 767 / 768 / 1024 selon les fichiers, avec un trou à 481–539 px.
+- Supersets, échauffement automatique et suggestion MRV sont implémentés mais **sans contrôle** dans la page de création.
 
 ---
 
-## 2. Expérience cible
+## 2. Direction visuelle (design system)
 
-**Une seule façon de saisir une série**, réutilisée partout, avec des valeurs par défaut intelligentes.
+### 2.1 Identité
 
-- **Mobile** : tout en une colonne, libellés visibles au-dessus de chaque champ, une main, pas de défilement horizontal, bouton d'action principal fixe en bas.
-- **Desktop** : deux panneaux (bibliothèque d'exercices à gauche, brouillon de séance à droite), mais **les mêmes composants** que sur mobile.
-- **Valeurs par défaut** : date = aujourd'hui, type = travail, charge et reps = dernières valeurs de cet exercice, une seule série créée à l'ajout.
-- **Options masquées par défaut** : RPE, fatigue, humeur, notes, échauffement, supersets — accessibles via un unique bouton « Détails ».
-- **Zéro aller-retour** : le sélecteur d'exercice reste ouvert, la recherche et le filtre sont conservés.
+Produit : **outil de suivi d'entraînement**, usage fréquent, souvent en salle (mobile, une main), parfois au bureau (desktop, vision d'ensemble). Mots-clés : **énergique, net, dense mais calme, orienté données**.
+
+La donnée `colors.csv` du skill contient une entrée **« Fitness/Gym App »** (ligne 35) : orange d'énergie `#F97316`, vert de réussite `#22C55E`, surfaces sombres ardoise `#0F172A` / `#1F2937`. **C'est déjà approximativement la palette actuelle** (accent `hsl(30 100% 66%)`, succès `#22c55e`, fond `#080b0f`). La refonte ne change donc pas la couleur : elle change la **hiérarchie, la densité et la structure**.
+
+### 2.2 Décisions de design
+
+| Axe             | Décision                                                                                                               | Raison / source skill                                                                                                                          |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| Couleurs        | Conserver orange + vert + surfaces sombres ; un seul accent, jamais décoratif                                          | Palette « Fitness/Gym App », `data/colors.csv`                                                                                                 |
+| Typographie     | Conserver **Archivo** (display) et **Inter** (texte), déjà embarqués localement                                        | Le skill propose Barlow Condensed pour le sport, mais le projet est **offline-first** : garder les polices locales évite une dépendance réseau |
+| Échelle de type | 5 niveaux seulement : page / section / carte / corps / légende ; corps ≥ 16 px mobile                                  | `readable-font-size`, `line-length-control` (§5)                                                                                               |
+| Espacement      | Échelle 4/8 pt : 4, 8, 12, 16, 24, 32, 48 — un seul token par intention                                                | `spacing-scale` (§5)                                                                                                                           |
+| Breakpoints     | **375 / 768 / 1024 / 1440**, définis une seule fois dans `tokens/layout.css`                                           | `breakpoint-consistency` (§5)                                                                                                                  |
+| Cibles tactiles | ≥ 44 × 44 px, ≥ 8 px entre cibles, `touch-action: manipulation`                                                        | `touch-target-size`, `touch-spacing`, `tap-delay` (§2)                                                                                         |
+| Navigation      | Mobile : barre inférieure ≤ 5 entrées + icône **et** libellé. Desktop ≥ 1024 : sidebar. Jamais les deux au même niveau | `adaptive-navigation`, `bottom-nav-limit`, `avoid-mixed-patterns`, `nav-label-icon` (§9)                                                       |
+| Formulaires     | Libellé visible au-dessus du champ, erreur sous le champ, validation au blur, options avancées repliées                | `input-labels`, `inline-validation`, `progressive-disclosure` (§8)                                                                             |
+| Feedback        | État pressé en 80–150 ms, confirmation brève, bouton désactivé pendant l'action, `aria-live="polite"`                  | `press-feedback`, `loading-buttons`, `toast-accessibility` (§2, §8)                                                                            |
+| Mouvement       | Durées par intention (rapide = 100 ms, entrée = 180 ms) ; `prefers-reduced-motion` respecté                            | `animation` (§7), `prefers-reduced-motion`                                                                                                     |
+| Contraste       | Vérifier clair **et** sombre séparément ; texte 4.5:1, contrôles 3:1                                                   | §1 + checklist `pro-rules.md`                                                                                                                  |
+| Icônes          | SVG uniquement, une seule épaisseur de trait, taille tokenisée, libellé accessible si isolée                           | `pro-rules.md` « Icons & Visual Elements »                                                                                                     |
+
+### 2.3 Cibles visuelles par écran
+
+**Création de séance**
+
+- Desktop : deux panneaux — bibliothèque d'exercices à gauche, brouillon à droite ; en-tête compact avec nom, date, compteur.
+- Mobile : une colonne, carte d'exercice par bloc, champ « Charge » et « Reps » côte à côte mais avec libellés visibles, CTA principal fixe en bas (« Enregistrer »).
+- Les métadonnées (RPE, fatigue, humeur, notes) sont **dans un panneau « Ressenti » replié**, accessible dès l'ouverture.
+
+**Séance rapide**
+
+- Un grand chiffre de charge, un grand chiffre de reps, un seul bouton « Série terminée ».
+- Le repos devient une bandeau discret avec compte à rebours et « Passer », pas un écran.
+- En-tête minimal : progression + « Terminer ».
+
+**Statistiques**
+
+- Une hiérarchie claire : 4 KPI en bandeau, puis un graphique principal pleine largeur, puis des cartes secondaires.
+- Valeurs grandes, libellés petits et espacés, axes épurés (déjà amorcé).
+
+**Bibliothèque d'exercices**
+
+- Recherche en premier, filtres en puces qui reviennent à la ligne au lieu de se réduire (`chip-collection-reflow`).
+- Cartes compactes avec actions dans un menu « … » sur mobile (`overflow-menu`).
 
 ---
 
 ## 3. Principes directeurs
 
-1. **Un seul composant d'édition de série** utilisé par les trois parcours.
-2. **Les bonnes valeurs par défaut plutôt qu'un champ de plus** (historique local, pas de devinette serveur).
+1. **Un seul composant d'édition de série**, réutilisé par les trois parcours.
+2. **Les valeurs par défaut font le travail** : historique local, une seule série, type = travail, date = aujourd'hui.
 3. **Progressive disclosure** : l'essentiel visible, l'optionnel replié.
-4. **Mobile first** : un seul jeu de composants, deux mises en page.
-5. **Aucun contrôle mort** : ce qui n'a pas d'effet est supprimé ou câblé.
+4. **Mobile first, desktop adapté** : un seul jeu de composants, deux mises en page.
+5. **Zéro contrôle mort** : ce qui n'a pas d'effet est câblé ou supprimé.
+6. **Design tokenisé** : aucune valeur littérale dans les composants, tout passe par `tokens/`.
 
 ---
 
 ## 4. Phases d'exécution
 
-### Phase 0 — Corrections rapides et fiabilité
+### Phase 0 — Fondations visuelles
 
-_Objectif : retirer les irritants et les incohérences sans toucher à la structure._
+_Objectif : poser le design system avant de toucher aux parcours._
 
-- Supprimer les trois textes techniques dans `ExerciseFormDialog.astro`.
-- Distinguer « RPE non renseigné » de `RPE = 5` : `null` par défaut, ne sauvegarder que si l'utilisateur a touché au contrôle (`sessionBuilder.ts`, `sessionSave.ts`, slider dans `CreateNotes.astro`).
-- Valider la date : `required` + valeur par défaut explicite au chargement (`create/index.astro`).
-- Rendre la carte « ressenti » accessible dès l'ouverture, sans condition `exercises.length > 0` (`CreateNotes.astro`).
-- Supprimer l'unité figée « Poids (kg) » ; utiliser le réglage kg/lbs partout (`builder.ts`, `CreateExerciseList.astro`, `ExerciseAddDialog.astro`).
-- Ajouter les `aria-label` manquants sur les champs numériques du dialogue « ajouter une série ».
-- Supprimer l'état mort `restPaused` (`quickSession.ts`, `quickRest.ts`).
-- `flex-wrap` / grille sur les groupes fatigue et humeur pour éviter le débordement sous 360 px (`builder-extra.css`).
+- Créer `tokens/layout.css` : breakpoints 375/768/1024/1440, z-index (0/10/20/40/100), échelle d'espacement 4→48.
+- Harmoniser les hauteurs de champs à 44 px minimum et les cibles tactiles à 44 × 44 px.
+- Remplacer les media queries dispersées par les tokens (supprimer les paliers 360/480/540/640 contradictoires).
+- Navigation : barre inférieure mobile (5 entrées max, icône + libellé), sidebar desktop ≥ 1024, une seule source de vérité `NavTree`.
+- Vérifier le contraste clair et sombre séparément (axe + `check:contrast`).
 
-**Acceptation** : aucun texte parasite, RPE vide si non renseigné, date toujours valide, unité cohérente, aucun débordement à 320 px.
+**Acceptation** : aucun défilement horizontal de 320 à 1440 px ; une seule définition des breakpoints ; cibles tactiles conformes.
 
 ---
 
-### Phase 1 — Un seul éditeur de série
+### Phase 1 — Corrections rapides
 
-_Objectif : harmoniser les trois parcours sur un composant unique._
+_Objectif : retirer les irritants sans toucher à la structure._
 
-- Créer `src/components/workout/SetEditor.astro` + `setEditor.ts` : une ligne de série avec type / charge / reps, libellés visibles sur mobile, `aria-label` systématiques.
-- L'utiliser dans `CreateExerciseList.astro`, `ExerciseAddDialog.astro` et `QuickWorking.astro`.
-- Uniformiser le nombre de séries créées à l'ajout : **1** partout (`defaultAddSets`).
-- Pré-remplir charge et reps depuis la dernière séance de l'exercice via `createNextSet()` (`session-builder-stats.ts`) dans les trois parcours.
-- Harmoniser l'échelle RPE : un seul contrôle (le slider 1–10 entier du builder), supprimer le double contrôle RPE/uRPE du parcours rapide ou l'aligner.
+- Supprimer les trois textes techniques de `ExerciseFormDialog.astro`.
+- RPE `null` par défaut ; ne sauvegarder que si l'utilisateur a interagi (`sessionBuilder.ts`, `sessionSave.ts`).
+- Date `required` + valeur par défaut explicite.
+- Carte « ressenti » accessible dès l'ouverture.
+- Supprimer « Poids (kg) » figé ; utiliser le réglage d'unité partout.
+- Ajouter les libellés/aria-label manquants dans le dialogue d'ajout.
+- Supprimer `restPaused`.
+- Remplacer le placeholder codé en dur par `customMusclePlaceholder`.
 
-**Acceptation** : ajouter un exercice connu crée 1 série déjà remplie avec les dernières valeurs ; les trois parcours affichent les mêmes libellés et la même unité.
-
----
-
-### Phase 2 — Picker sans aller-retour
-
-_Objectif : ajouter plusieurs exercices sans rouvrir le dialogue._
-
-- Garder le dialogue ouvert après ajout (`sessionBuilder.ts:205`).
-- Conserver recherche et filtre muscle entre les ajouts (supprimer le reset à l'ouverture, `:199`).
-- Afficher un compteur « N exercices ajoutés » dans le pied du dialogue.
-- Mettre les templates en avant (section déjà présente `CreatePicker.astro:58`) et ajouter « tout effacer la recherche ».
-
-**Acceptation** : ajouter 3 exercices depuis une recherche ne demande qu'une saisie.
+**Acceptation** : aucun texte parasite, RPE vide si non renseigné, unité cohérente, aucun débordement à 320 px.
 
 ---
 
-### Phase 3 — Séance rapide directe
+### Phase 2 — Éditeur de série unique
 
-_Objectif : exécuter une séance sans quitter l'écran._
+_Objectif : harmoniser les trois parcours._
 
-- Rendre charge et reps modifiables dans `QuickWorking.astro` (réutiliser `SetEditor`) avec sauvegarde immédiate.
-- Remplacer les 4 états par 3 : `selecting` → `working` → `completed` ; le repos devient un simple bandeau au-dessus de la série suivante, pas un écran (`QuickResting.astro`).
-- Une seule commande de sortie dans l'en-tête : « Terminer » ; « Quitter » déplacé dans le menu de confirmation.
-- Undo unique avec le même raccourci partout.
-- Trier la sélection par récence plutôt que par nom (`quick-session-stats.ts:90`).
+- Créer `src/components/workout/SetEditor.astro` + `setEditor.ts` : type / charge / reps, libellés visibles sur mobile, aria-label systématiques, cibles 44 px.
+- L'utiliser dans `CreateExerciseList.astro`, `ExerciseAddDialog.astro`, `QuickWorking.astro`.
+- Une seule série créée à l'ajout, pré-remplie via `createNextSet()` (dernière charge / dernières reps de l'exercice).
+- Un seul contrôle RPE (slider entier 1–10 de `CreateNotes.astro`).
 
-**Acceptation** : corriger une charge pendant la séance ne provoque aucun retour au builder ; le repos ne bloque pas l'écran.
-
----
-
-### Phase 4 — Responsive unifié
-
-_Objectif : une seule grille, deux présentations._
-
-- Définir des tokens de breakpoints uniques (par exemple 480 / 768) dans `tokens/layout.css` et les utiliser dans `builder-page.css`, `builder.css`, `sessions-extra.css`, `exercises-extra.css`, `dialog.css`.
-- Mobile : cartes avec libellés visibles pour **toutes** les listes de séries ; bouton d'action principal fixe en bas du dialogue.
-- Desktop : deux panneaux dans `sessions/create` (bibliothèque + brouillon) en réutilisant les mêmes composants.
-- Combler le trou 481–539 px et retirer les media queries contradictoires.
-
-**Acceptation** : aucune page ne défile horizontalement entre 320 et 1440 px ; mêmes composants, aucun doublon de markup.
+**Acceptation** : ajouter un exercice connu = 1 série déjà remplie ; mêmes libellés et unités partout.
 
 ---
 
-### Phase 5 — Nettoyage fonctionnel
+### Phase 3 — Création allégée
 
-_Objectif : câbler ou supprimer ce qui n'existe que dans le code._
+_Objectif : créer une séance sans allers-retours._
 
-- Supersets : ajouter le contrôle de création dans `CreateExerciseList.astro` **ou** retirer l'état et les libellés (`builder.ts:53-62`).
-- Échauffement automatique : rendre le bouton accessible dans le builder (`exerciseCard.ts:88` déjà implémenté).
-- Suggestion MRV : câbler `suggestLoadSuggestion()` dans le builder ou masquer les libellés associés.
-- Harmoniser le vocabulaire : une seule expression pour `weight` (« Charge »), supprimer `weightHeader` / `weightForSet`.
-- Remplacer le placeholder codé en dur « Ex. Mollets » par `customMusclePlaceholder` (`exercices.ts:37`).
+- Picker : rester ouvert après ajout, conserver recherche et filtre muscle, compteur « N ajoutés », templates mis en avant.
+- Déplacer « Ressenti » avant les exercices, dans un panneau replié.
+- Supprimer le double dépliage automatique / bouton « Tout développer » redondant.
+- Câbler l'échauffement automatique (`exerciseCard.ts:88`) dans la page de création.
+- Brouillon auto-sauvegardé localement (`form-autosave`) pour éviter la perte sur fermeture.
 
-**Acceptation** : aucun libellé i18n sans contrôle correspondant, aucun contrôle sans effet.
+**Acceptation** : ajouter 3 exercices depuis une recherche = 1 seule saisie ; le bouton d'échauffement est utilisable.
+
+---
+
+### Phase 4 — Séance rapide en 3 écrans
+
+_Objectif : exécuter sans quitter l'écran._
+
+- `selecting` → `working` → `completed` ; le repos devient un bandeau dans `working`.
+- Charge et reps modifiables via `SetEditor`, sauvegarde immédiate.
+- Une seule commande de sortie ; undo unique avec le même raccourci.
+- Liste des séances triée par récence, pas par nom.
+
+**Acceptation** : corriger une charge pendant la séance ne renvoie pas au builder ; 3 écrans au lieu de 4.
+
+---
+
+### Phase 5 — Finition et nettoyage
+
+_Objectif : cohérence et zéro dette._
+
+- Supersets : câbler le contrôle ou supprimer état + libellés.
+- Suggestion MRV : câbler ou masquer les libellés.
+- Vocabulaire unique pour `weight` (« Charge ») ; supprimer `weightHeader` / `weightForSet`.
+- Passer la checklist `pro-rules.md` : feedback de pression, reduced-motion, focus, dark mode, safe areas.
+- Revue visuelle complète `pnpm screens` (clair + sombre, 375 px + paysage).
+
+**Acceptation** : aucun libellé sans contrôle, aucun contrôle sans effet, checklist validée.
 
 ---
 
 ## 5. Indicateurs de réussite
 
-| Mesure                                    | Aujourd'hui                         | Cible                                    |
-| ----------------------------------------- | ----------------------------------- | ---------------------------------------- |
-| Champs pour ajouter un exercice connu     | 3 lignes vides (charge, reps, type) | 1 ligne pré-remplie, 0 champ obligatoire |
-| Allers-retours pour ajouter 3 exercices   | 3 ouvertures de dialogue            | 1 ouverture                              |
-| Contrôles RPE par série en séance rapide  | 2 (type d'échelle + valeur)         | 1                                        |
-| Écrans du parcours rapide                 | 4                                   | 3                                        |
-| Pages sans défilement horizontal à 320 px | à mesurer                           | 100 %                                    |
-| Contrôles morts / libellés orphelins      | ~4                                  | 0                                        |
+| Mesure                                       | Aujourd'hui              | Cible                              |
+| -------------------------------------------- | ------------------------ | ---------------------------------- |
+| Champs pour ajouter un exercice connu        | 3 lignes vides           | 1 ligne pré-remplie, 0 obligatoire |
+| Allers-retours pour ajouter 3 exercices      | 3 ouvertures de dialogue | 1                                  |
+| Contrôles RPE par série en séance rapide     | 2                        | 1                                  |
+| Écrans du parcours rapide                    | 4                        | 3                                  |
+| Paliers de breakpoints distincts             | 8                        | 4                                  |
+| Cibles tactiles < 44 px                      | à mesurer                | 0                                  |
+| Pages avec défilement horizontal 320–1440 px | à mesurer                | 0                                  |
+| Contrôles morts / libellés orphelins         | ~4                       | 0                                  |
 
 ---
 
 ## 6. Hors périmètre
 
-- Aucun compte serveur, aucun backend, aucune synchronisation automatique (le modèle local-first reste).
-- Aucune migration de données : les séances existantes restent lisibles (les nouveaux champs optionnels ont des valeurs par défaut).
-- Aucune refonte du design system (couleurs, typographie, tokens existants conservés).
-- Aucune modification de la licence ou de la structure du dépôt.
+- Aucun compte serveur, backend ou synchronisation automatique : le modèle local-first reste.
+- Aucune migration de données : les séances existantes restent lisibles.
+- Aucun changement de palette (déjà alignée sur la référence « Fitness/Gym App ») et aucun téléchargement de police (offline-first).
+- Aucun changement de licence ou de structure du dépôt.
 
 ---
 
-## 7. Ordre d'exécution recommandé
+## 7. Ordre d'exécution
 
-**Phase 0 → Phase 1 → Phase 4 → Phase 2 → Phase 3 → Phase 5.**
+**Phase 0 → 1 → 2 → 3 → 4 → 5.**
 
-Rationale : les corrections rapides et l'éditeur de série débloquent le gros du gain perçu ; le responsive est ensuite appliqué à un composant unique au lieu de trois ; le picker et la séance rapide viennent après ; le nettoyage fonctionnel clôture.
+Le design system d'abord, pour éviter de refaire deux fois le responsive ; ensuite les corrections rapides ; puis l'éditeur de série unique, qui débloque le gros du gain perçu ; enfin les parcours et la finition.
 
-Chaque phase se termine par la chaîne de vérification complète : `test`, `test:coverage`, `test:e2e` (dont axe-core), `check:strict`, `lint`, `format`, `build`, `check:budget`, `test:smoke`, `check:i18n-build`, ratchets CSS/composants, et revue des captures `pnpm screens` en clair et sombre.
+Chaque phase se termine par : `test`, `test:coverage`, `test:e2e` (dont axe-core), `check:strict`, `lint`, `format`, `build`, `check:budget`, `test:smoke`, `check:i18n-build`, ratchets CSS/composants, et revue des captures `pnpm screens` en clair et sombre à 375 px et en paysage.
