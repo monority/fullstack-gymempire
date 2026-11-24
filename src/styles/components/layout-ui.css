@@ -145,4 +145,11 @@
       height: 3.2rem;
     }
   }
+
+  /* Sections de réglages : panneaux. */
+  .settings-section > .card {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+  }
 }

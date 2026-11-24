@@ -455,4 +455,12 @@
   .timer__sound-label:hover {
     color: var(--color-text);
   }
+
+  /* Héro du minuteur dans un panneau. */
+  .timer__hero {
+    padding: 2.4rem 1.6rem 3.2rem;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+  }
 }

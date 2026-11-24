@@ -24,7 +24,7 @@
     --color-border-strong: hsl(215 25% 65% / 0.22);
     --color-success: #059669;
     --color-success-foreground: #000000;
-    --color-destructive: #ef4444;
+    --color-destructive: #fca5a5;
     --color-warning: #eab308;
     --color-info: #3b82f6;
     --color-border: hsl(215 25% 65% / 0.14);
@@ -91,6 +91,7 @@
     --color-text: #172018;
     --color-text-secondary: #4c5a4e;
     --color-muted: #647266;
+    --color-destructive: #dc2626;
     /* Accent plus sombre en clair : #EA580C n'atteint pas 4.5:1 sur fond clair. */
     --color-accent: #c2410c;
     --color-accent-text: #c2410c;

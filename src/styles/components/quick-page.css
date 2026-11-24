@@ -13,7 +13,8 @@
     margin: 0 auto;
     /* La barre de navigation mobile est fixe : on garde le contenu au-dessus. */
     padding-bottom: calc(
-      var(--bottom-nav-height) + var(--page-padding-mobile) + env(safe-area-inset-bottom, 0px)
+      var(--bottom-nav-height) + 3rem + var(--page-padding-mobile) +
+        env(safe-area-inset-bottom, 0px)
     );
   }
 
