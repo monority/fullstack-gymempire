@@ -92,6 +92,13 @@ const setTypes = [
           </span>
         </button>
         <IconButton
+          variant="ghost"
+          icon={icons.link(18, 18)}
+          label={L.builder.supersetGroupBtn}
+          title={L.builder.supersetHint}
+          @click="$dispatch('builder:add-superset', { index: exerciseIndex })"
+        />
+        <IconButton
           variant="danger"
           icon={icons.trash(18, 18)}
           label={L.builder.removeExerciseAria}
@@ -138,6 +145,10 @@ const setTypes = [
                 cantDeleteExpr="exercise.sets.length <= 1"
                 unitExpr="unit"
                 variant="table"
+                mrvAction="applyMrv(setIdx)"
+                mrvTitleExpr="mrvTitle(setIdx)"
+                mrvEnabledExpr="mrvEnabled(setIdx)"
+                mrvLabel="MRV"
               />
             </template>
           </div>

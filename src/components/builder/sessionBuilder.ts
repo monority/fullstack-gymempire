@@ -95,6 +95,7 @@ export interface SessionBuilderApp {
   onSupersetChange(exIdx: number): void;
   removeFromSuperset(exIdx: number): void;
   supersetChainFor(gid: number | null): string[];
+  addToSuperset(exIdx: number): void;
   removeExercise(exerciseIndex: number): void;
   setFatigue(level: number): void;
   setMood(mood: SessionMood): void;
@@ -280,6 +281,13 @@ export function createSessionBuilderApp(deps: SessionBuilderDeps): SessionBuilde
       const ex = this.exercises[exIdx];
       if (!ex) return;
       ex.supersetId = normalizeSupersetId(ex.supersetId);
+    },
+    addToSuperset(exIdx) {
+      const ex = this.exercises[exIdx];
+      if (!ex) return;
+      ex.supersetId = this.nextSupersetId();
+      this.onSupersetChange(exIdx);
+      persistDraft(this);
     },
     removeFromSuperset(exIdx) {
       const ex = this.exercises[exIdx];

@@ -63,7 +63,7 @@ export default {
   removeExerciseAria: "Retirer l'exercice de la séance",
   setsFor: 'Séries pour',
   setTypeLabel: 'Type de la série',
-  weightForSet: 'Poids de la série',
+  weightForSet: 'Charge de la série',
   repsForSet: 'Reps de la série',
   deleteSet: 'Supprimer la série',
   noSets: 'Aucune série',
