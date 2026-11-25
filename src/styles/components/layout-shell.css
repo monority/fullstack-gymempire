@@ -1449,4 +1449,111 @@
   .nav-child.is-active {
     box-shadow: inset 3px 0 0 var(--color-accent);
   }
+
+  /* ── Rail compact (desktop) : icônes seules, libellés au survol ── */
+  @media (min-width: 1024px) {
+    .sidebar {
+      width: 7.2rem;
+      align-items: center;
+    }
+
+    .sidebar__logo {
+      justify-content: center;
+      padding: 2rem 0;
+    }
+
+    .sidebar__logo-text,
+    .nav-group__label,
+    .sidebar__footer {
+      display: none;
+    }
+
+    .sidebar__logo-icon {
+      width: 4.4rem;
+      height: 4.4rem;
+      border-radius: 1.4rem;
+    }
+
+    .sidebar__nav {
+      width: 100%;
+      padding: 0 0.8rem;
+    }
+
+    .nav-group {
+      margin-bottom: 1.2rem;
+    }
+
+    .nav-item-wrap {
+      align-items: center;
+    }
+
+    .nav-item,
+    .nav-child {
+      position: relative;
+      justify-content: center;
+      padding: 0.6rem;
+      min-height: 5rem;
+    }
+
+    .nav-child {
+      min-height: 4.2rem;
+    }
+
+    .nav-item__label,
+    .nav-child__label,
+    .nav-item__chevron {
+      display: none;
+    }
+
+    .nav-item__icon {
+      width: 3.6rem;
+      height: 3.6rem;
+    }
+
+    .nav-children > .nav-children-inner {
+      margin-left: 0;
+      padding-left: 0;
+      border-left: 0;
+    }
+
+    .nav-item::after,
+    .nav-child::after {
+      content: attr(title);
+      position: absolute;
+      left: calc(100% + 1.2rem);
+      top: 50%;
+      transform: translateY(-50%) translateX(-0.4rem);
+      padding: 0.6rem 1rem;
+      background-color: var(--color-surface-2);
+      border: 1px solid var(--color-border-strong);
+      border-radius: var(--radius-sm);
+      box-shadow: var(--shadow-2);
+      color: var(--color-text);
+      font-size: 1.3rem;
+      font-weight: 600;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition:
+        opacity var(--transition-fast),
+        transform var(--transition-fast);
+      z-index: 20;
+    }
+
+    .nav-item:hover::after,
+    .nav-child:hover::after,
+    .nav-item:focus-visible::after,
+    .nav-child:focus-visible::after {
+      opacity: 1;
+      transform: translateY(-50%) translateX(0);
+    }
+
+    .main-area {
+      margin-left: 7.2rem;
+    }
+
+    .topbar {
+      left: 7.2rem;
+    }
+  }
 }
