@@ -165,4 +165,6 @@ export default {
       'sync-http': 'The server responded with an error.',
     },
   },
+  advancedMode: 'Advanced mode',
+  advancedModeDesc: 'Shows advanced options in session building and statistics.',
 };

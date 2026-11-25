@@ -1489,4 +1489,97 @@
     margin: 0 1.2rem 0.4rem;
     padding: 1.2rem 0 0.6rem;
   }
+
+  /* ── Mini-menu central ── */
+  .quick-sheet {
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 0 1.2rem calc(10rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  .quick-sheet[hidden] {
+    display: none;
+  }
+
+  .quick-sheet__backdrop {
+    position: absolute;
+    inset: 0;
+    background-color: color-mix(in srgb, var(--color-scrim) 60%, transparent);
+    opacity: 0;
+    transition: opacity 180ms ease;
+  }
+
+  .quick-sheet.is-open .quick-sheet__backdrop {
+    opacity: 1;
+  }
+
+  .quick-sheet__panel {
+    position: relative;
+    width: 100%;
+    max-width: 38rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 0.8rem;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border-strong);
+    border-radius: 2rem;
+    box-shadow: var(--shadow-overlay);
+    transform: translateY(1.2rem) scale(0.97);
+    opacity: 0;
+    transition:
+      transform 180ms ease,
+      opacity 180ms ease;
+  }
+
+  .quick-sheet.is-open .quick-sheet__panel {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+
+  .quick-sheet__action {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-height: 5.2rem;
+    padding: 0 1.2rem;
+    background-color: var(--color-surface-2);
+    border: 1px solid var(--color-border);
+    border-radius: 1.2rem;
+    color: var(--color-text);
+    font-size: var(--text-body);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .quick-sheet__action--primary {
+    background-color: var(--color-accent);
+    border-color: var(--color-accent);
+    color: var(--color-accent-foreground);
+  }
+
+  .quick-sheet__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.2rem;
+    height: 3.2rem;
+    border-radius: 0.9rem;
+    background-color: var(--alpha-bg-soft);
+  }
+
+  .quick-sheet__action > :last-child {
+    margin-left: auto;
+    opacity: 0.7;
+  }
+
+  @media (min-width: 1024px) {
+    .quick-sheet {
+      display: none;
+    }
+  }
 }

@@ -8,5 +8,8 @@
  * ADR-006 — docs/adr/006-css-layers.md
  */
 @layer overrides {
-  /* Aucune exception pour l'instant. */
+  /* Mode simple (défaut) : on masque les options avancées avant tout rendu. */
+  :root:not([data-advanced='true']) [data-advanced-only] {
+    display: none;
+  }
 }

@@ -4,6 +4,8 @@ test('the WebDAV password never reaches localStorage', async ({ page }) => {
   await page.addInitScript(() => {
     localStorage.clear();
     localStorage.setItem('muscu-auth', JSON.stringify({ email: 'e2e@test.fr', name: 'E2E' }));
+    // La synchronisation WebDAV est une option avancée.
+    localStorage.setItem('muscu-settings', JSON.stringify({ advancedMode: true }));
   });
 
   await page.goto('/settings');

@@ -50,6 +50,7 @@ const setTypes = [
     <Card>
       <div
         class="ses-ex-superset-bar create__superset-bar"
+        data-advanced-only
         x-show="exercise.supersetId != null"
         x-cloak
         :class="'ses-superset-bar--g' + exercise.supersetId"
@@ -96,6 +97,7 @@ const setTypes = [
           icon={icons.link(18, 18)}
           label={L.builder.supersetGroupBtn}
           title={L.builder.supersetHint}
+          data-advanced-only
           @click="$dispatch('builder:add-superset', { index: exerciseIndex })"
         />
         <IconButton

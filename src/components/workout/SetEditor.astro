@@ -97,6 +97,7 @@ const {
         <button
           type="button"
           class="set-editor__mrv"
+          data-advanced-only
           @click={mrvAction}
           :title={mrvTitleExpr}
           :disabled={mrvEnabledExpr ? `!${mrvEnabledExpr}` : undefined}

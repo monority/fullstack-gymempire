@@ -81,13 +81,12 @@ test.describe('mobile bottom navigation', () => {
       '/progression'
     );
 
-    // Sur la création, l'action centrale est active, pas le parent « Séances ».
-    await nav.locator('a[href="/sessions/create"]').click();
-    await expect(page).toHaveURL(/\/sessions\/create$/);
-    await expect(nav.locator('.mobile-nav__item.is-active')).toHaveAttribute(
-      'href',
-      '/sessions/create'
-    );
+    // Le bouton central ouvre le mini-menu d'actions.
+    await nav.locator('[data-quick-action]').click();
+    await expect(page.locator('[data-quick-sheet]')).toBeVisible();
+    await expect(page.locator('.quick-sheet__action')).toHaveCount(4);
+    await page.locator('.quick-sheet__action').first().click();
+    await expect(page).toHaveURL(/\/sessions\/quick$/);
 
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(390);
   });

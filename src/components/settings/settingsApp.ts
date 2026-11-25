@@ -108,6 +108,7 @@ export interface SettingsApp {
   setRepsFormat(format: 'simple' | 'range'): void;
   saveRestTime(value: string): void;
   saveSoundAlerts(checked: boolean): void;
+  saveAdvancedMode(checked: boolean): void;
   setWeeklyGoal(value: number): void;
   exportData(): void;
   exportCSV(): void;
@@ -209,6 +210,13 @@ export function createSettingsApp(deps: SettingsAppDeps): SettingsApp {
     saveSoundAlerts(checked) {
       if (this.display.soundAlerts === checked) return;
       this.display = updateSettings({ soundAlerts: checked });
+      this.toastSaved();
+    },
+
+    saveAdvancedMode(checked) {
+      if (this.display.advancedMode === checked) return;
+      this.display = updateSettings({ advancedMode: checked });
+      document.documentElement.setAttribute('data-advanced', checked ? 'true' : 'false');
       this.toastSaved();
     },
 

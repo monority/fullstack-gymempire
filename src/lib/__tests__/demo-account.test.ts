@@ -6,7 +6,7 @@
  */
 
 import { afterEach, describe, expect, it } from 'vitest';
-import { getAuth, isDemoAccount, setAuth } from '../auth';
+import { clearAuth, getAuth, isDemoAccount, setAuth } from '../auth';
 import {
   DEMO_BACKUP_KEY,
   DEMO_EMAIL,
@@ -19,6 +19,7 @@ import { STORAGE_KEYS } from '../storage/defaults';
 import { getStore, setStore, withUnlockedWrites } from '../storage/store';
 
 afterEach(() => {
+  clearAuth();
   window.localStorage.clear();
 });
 

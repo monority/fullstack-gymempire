@@ -52,4 +52,5 @@ export default {
   rpeTypeLabel: 'Perceived effort type',
   rpeUnset: '— Not set —',
   partialFinishConfirm: 'Finish session before all sets? Progress will be saved.',
+  previousLabel: 'Previous',
 };

@@ -124,6 +124,15 @@ const groupsWithActive = groups.map((g) => ({
       content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https: http://localhost:* http://127.0.0.1:* ws: wss:; object-src 'none'; base-uri 'none'; form-action 'self'"
     />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <script is:inline>
+      // Applique le mode avancé avant le premier rendu pour éviter un flash.
+      try {
+        const s = JSON.parse(localStorage.getItem('muscu-settings') || '{}');
+        document.documentElement.setAttribute('data-advanced', s.advancedMode ? 'true' : 'false');
+      } catch {
+        document.documentElement.setAttribute('data-advanced', 'false');
+      }
+    </script>
     <title>{title} — Gym Empire</title>
     <meta name="description" content={description || L.layout.appTagline} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />

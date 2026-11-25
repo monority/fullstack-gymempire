@@ -80,6 +80,20 @@ const restOptions = (await import('../../lib/settings-stats')).formatRestOptions
         </span>
       </div>
     </div>
+    <div class="set__row set__row--start">
+      <div class="set__label">
+        <span class="set__label-title">{L.settings.advancedMode}</span>
+        <span class="set__label-desc">{L.settings.advancedModeDesc}</span>
+      </div>
+      <div class="set__control set__control--right">
+        <Toggle
+          :checked="display.advancedMode"
+          aria-label={L.settings.advancedMode}
+          :aria-checked="display.advancedMode ? 'true' : 'false'"
+          @change="saveAdvancedMode($event.target.checked)"
+        />
+      </div>
+    </div>
   </div>
 </SettingsSection>
 4. {L.settings.timerSettings}

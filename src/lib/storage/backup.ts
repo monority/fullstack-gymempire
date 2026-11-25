@@ -120,6 +120,7 @@ export function importAllData(snapshot: unknown): void {
       'weeklyGoal',
       'bodyWeight',
       'benchmarksOptIn',
+      'advancedMode',
       'reminders',
       'webdav',
       'lastSyncAt',

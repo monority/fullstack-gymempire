@@ -34,6 +34,11 @@ const L = t(locale);
         ></span>
       </div>
 
+      <div class="quick__previous" x-show="previousLabel">
+        <span>{L.rapide.previousLabel}</span>
+        <strong x-text="previousLabel"></strong>
+      </div>
+
       <div class="quick__values">
         <div class="quick__value-col">
           <input
@@ -64,9 +69,17 @@ const L = t(locale);
           />
           <span class="quick__value-unit">{L.rapide.repsUnit}</span>
         </div>
+        <button
+          type="button"
+          class="quick__check"
+          @click="completeSet()"
+          aria-label={L.rapide.completeSetAria}
+        >
+          <Icon name="check" size={24} />
+        </button>
       </div>
 
-      <div class="quick__rpe-control">
+      <div class="quick__rpe-control" data-advanced-only>
         <span class="quick__label">{L.rapide.rpeLabel}</span>
         <Segmented
           items={[

@@ -41,19 +41,27 @@ const entries = [
 ---
 
 <nav class="mobile-nav" aria-label="Navigation principale">
-  {entries.map((item) => (
-    <a
-      href={item.href}
-      class:list={[
-        'mobile-nav__item',
-        item.primary && 'mobile-nav__item--primary',
-        item.active && 'is-active',
-      ]}
-      aria-current={item.active ? 'page' : undefined}
-      data-nav-key={item.key}
-    >
-      <span class="mobile-nav__icon" aria-hidden="true" set:html={renderIcon(item.icon)} />
-      <span class="mobile-nav__label">{item.label}</span>
-    </a>
-  ))}
+  {entries.map((item) =>
+    item.primary ? (
+      <button
+        type="button"
+        class="mobile-nav__item mobile-nav__item--primary"
+        data-quick-action
+        aria-label={item.label}
+      >
+        <span class="mobile-nav__icon" aria-hidden="true" set:html={renderIcon('plus')} />
+        <span class="mobile-nav__label">{item.label}</span>
+      </button>
+    ) : (
+      <a
+        href={item.href}
+        class:list={['mobile-nav__item', item.active && 'is-active']}
+        aria-current={item.active ? 'page' : undefined}
+        data-nav-key={item.key}
+      >
+        <span class="mobile-nav__icon" aria-hidden="true" set:html={renderIcon(item.icon)} />
+        <span class="mobile-nav__label">{item.label}</span>
+      </a>
+    )
+  )}
 </nav>

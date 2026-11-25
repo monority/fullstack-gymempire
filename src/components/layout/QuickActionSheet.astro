@@ -1,0 +1,83 @@
+---
+/** Mini-menu central : une seule action principale, quelques raccourcis. */
+import { resolveLocale } from '../../i18n';
+interface Props {}
+import { t, localizedPath } from '../../i18n';
+import Icon from '../ui/Icon.astro';
+const locale = resolveLocale(Astro.url.pathname);
+const L = t(locale);
+
+const actions = [
+  {
+    href: localizedPath('/sessions/quick', locale),
+    icon: 'play',
+    label: L.common.startSession,
+    primary: true,
+  },
+  { href: localizedPath('/exercises', locale), icon: 'dumbbell', label: L.nav.exercices },
+  {
+    href: localizedPath('/progression/stats', locale),
+    icon: 'chartBar',
+    label: L.nav.statistiques,
+  },
+  { href: localizedPath('/calendar', locale), icon: 'calendar', label: L.nav.calendrier },
+];
+---
+
+<div class="quick-sheet" data-quick-sheet hidden>
+  <div class="quick-sheet__backdrop" data-quick-sheet-close></div>
+  <div
+    class="quick-sheet__panel"
+    role="dialog"
+    aria-modal="true"
+    aria-label={L.common.startSession}
+  >
+    {actions.map((a) => (
+      <a
+        href={a.href}
+        class:list={['quick-sheet__action', a.primary && 'quick-sheet__action--primary']}
+      >
+        <span class="quick-sheet__icon" aria-hidden="true">
+          <Icon name={a.icon} size={20} />
+        </span>
+        <span>{a.label}</span>
+        <Icon name="chevronRight" size={16} />
+      </a>
+    ))}
+  </div>
+</div>
+
+<script>
+  (() => {
+    // Le shell est recréé à chaque navigation SPA : on résout le panneau au
+    // moment de l'action, pas une fois pour toutes au chargement du module.
+    const current = () => document.querySelector<HTMLElement>('[data-quick-sheet]');
+    const open = () => {
+      const sheet = current();
+      if (!sheet) return;
+      sheet.hidden = false;
+      requestAnimationFrame(() => sheet.classList.add('is-open'));
+    };
+    const close = () => {
+      const sheet = current();
+      if (!sheet) return;
+      sheet.classList.remove('is-open');
+      window.setTimeout(() => {
+        const live = current();
+        if (live && !live.classList.contains('is-open')) live.hidden = true;
+      }, 180);
+    };
+    document.addEventListener('click', (e) => {
+      const el = e.target as HTMLElement;
+      if (el.closest('[data-quick-action]')) {
+        e.preventDefault();
+        open();
+      } else if (el.closest('[data-quick-sheet-close]') || el.closest('.quick-sheet__action')) {
+        close();
+      }
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') close();
+    });
+  })();
+</script>

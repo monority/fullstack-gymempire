@@ -167,4 +167,6 @@ export default {
       'sync-http': 'Le serveur a répondu avec une erreur.',
     },
   },
+  advancedMode: 'Mode avancé',
+  advancedModeDesc: 'Affiche les options avancées dans la création de séance et les statistiques.',
 };

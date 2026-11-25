@@ -39,6 +39,7 @@ function snapshot(): AppDataSnapshot {
       reminders: { enabled: false, days: [1, 3, 5], time: '18:00' },
       webdav: { url: '', username: '', password: '' },
       benchmarksOptIn: false,
+      advancedMode: false,
     },
   };
 }

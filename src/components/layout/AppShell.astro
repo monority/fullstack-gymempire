@@ -11,6 +11,7 @@ import { resolveLocale } from '../../i18n';
 import Sidebar from './Sidebar.astro';
 import Header from './Header.astro';
 import MobileNav from './MobileNav.astro';
+import QuickActionSheet from './QuickActionSheet.astro';
 import Icon from '../ui/Icon.astro';
 import { t } from '../../i18n';
 import { renderIcon } from '../../lib/nav';
@@ -61,6 +62,7 @@ const drawerItems = groups.map((group) => ({
   </div>
 
   <MobileNav groups={groups} />
+  <QuickActionSheet />
 
   {/* Mobile drawer (hidden on desktop via CSS) */}
   <div class="drawer" id="primary-drawer" data-mobile-panel hidden aria-hidden="true">

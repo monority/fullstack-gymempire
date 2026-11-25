@@ -138,6 +138,8 @@ export interface Settings {
   // triggers a network request. It is the flag a future anonymized
   // cohort upload will read once Supabase sync ships.
   benchmarksOptIn: boolean;
+  /** Mode avancé : affiche supersets, MRV, RPE, notes, WebDAV, benchmarks. */
+  advancedMode: boolean;
 }
 
 /**

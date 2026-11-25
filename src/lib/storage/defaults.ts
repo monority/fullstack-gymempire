@@ -39,6 +39,7 @@ export const DEFAULT_SETTINGS: Settings = {
   reminders: DEFAULT_REMINDERS,
   webdav: DEFAULT_WEBDAV,
   benchmarksOptIn: false,
+  advancedMode: false,
 };
 
 export const DEFAULT_EXERCISES: ReadonlyArray<{

@@ -202,6 +202,27 @@ export function createQuickSession(deps: QuickSessionDeps) {
       if (this.currentSet) this.currentSet.rpeType = value;
     },
 
+    /** Dernières valeurs de cet exercice, pour une saisie en un tap. */
+    get previousLabel(): string {
+      const ex = this.currentExercise;
+      if (!ex || !this.session) return '';
+      const currentId = this.session.id;
+      const ordered = deps.storage
+        .getSessions()
+        .filter((s) => s.id !== currentId)
+        .sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
+      for (const s of ordered) {
+        for (const e of s.exercises) {
+          if (e.exerciseId !== ex.exerciseId) continue;
+          const set = e.sets.find((st) => st.completed && st.type === 'work' && st.weight > 0);
+          if (set) {
+            return formatWeightValue(set.weight, deps.unit()) + ' × ' + set.reps;
+          }
+        }
+      }
+      return '';
+    },
+
     get totalExercises(): number {
       return this.session?.exercises.length ?? 0;
     },

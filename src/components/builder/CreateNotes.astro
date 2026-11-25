@@ -13,7 +13,7 @@ const locale = resolveLocale(Astro.url.pathname);
 const L = t(locale);
 ---
 
-<div>
+<div data-advanced-only>
   <Card>
     <CardHeader>
       <CardTitle>{L.builder.notesTitle}</CardTitle>

@@ -336,6 +336,7 @@ describe('getSettings', () => {
       reminders: DEFAULT_REMINDERS,
       webdav: DEFAULT_WEBDAV,
       benchmarksOptIn: false,
+      advancedMode: false,
     });
   });
 
