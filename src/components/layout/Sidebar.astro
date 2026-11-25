@@ -10,7 +10,7 @@ import { resolveLocale } from '../../i18n';
  *   [logo + brand]
  *   [footer]
  */
-import { t } from '../../i18n';
+import { t, localizedPath } from '../../i18n';
 import { navId, renderIcon, chevronDown } from '../../lib/nav';
 import Icon from '../ui/Icon.astro';
 import type { NavGroup } from '../../lib/types';
@@ -42,6 +42,11 @@ const L = t(locale);
       <span class="sidebar__logo-subtitle">{L.layout.brandSubtitle}</span>
     </div>
   </div>
+
+  <a href={localizedPath('/sessions/create', locale)} class="sidebar__cta">
+    <Icon name="plus" size={18} />
+    <span>{L.nav.creer}</span>
+  </a>
 
   {/* Nav */}
   <nav class="sidebar__nav">
