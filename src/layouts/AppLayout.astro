@@ -180,7 +180,7 @@ const groupsWithActive = groups.map((g) => ({
       // Deferred until the load event so it doesn't compete with first paint.
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js').catch((err) => {
+          navigator.serviceWorker.register('/sw.js', { updateViaCache: 'none' }).catch((err) => {
             console.warn('[muscu] service worker registration failed:', err);
           });
         });
