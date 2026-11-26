@@ -1,5 +1,26 @@
 import { expect, test } from '@playwright/test';
 
+test('demo account: advanced-mode toggle is not persisted', async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem('muscu-settings', JSON.stringify({ advancedMode: true }));
+  });
+  await page.goto('/login');
+  await page.getByRole('button', { name: /Demo account|Compte démo/i }).click();
+  await page.waitForURL('**/');
+
+  await expect(page.locator('html')).toHaveAttribute('data-advanced', 'true');
+  await page.goto('/settings');
+  const toggle = page.getByRole('switch', { name: /Mode avancé|Advanced mode/i });
+  await expect(toggle).toBeChecked();
+  await toggle.dispatchEvent('click');
+
+  // Le compte démo neutralise l'écriture : ni le réglage ni l'attribut HTML
+  // ne doivent survivre au rechargement.
+  await page.reload();
+  await expect(page.locator('html')).toHaveAttribute('data-advanced', 'true');
+  await expect(page.getByRole('switch', { name: /Mode avancé|Advanced mode/i })).toBeChecked();
+});
+
 test('demo account: seeded data, banner, read-only and real data restored on logout', async ({
   page,
 }) => {

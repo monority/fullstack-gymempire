@@ -39,6 +39,7 @@ export interface TrendsApp {
   notFound: boolean;
   metric: Metric;
   period: Period;
+  _pointsCache: { key: string; value: TrendPoint[] } | null;
   init(): void;
   onExerciseChange(value: string): void;
   points: TrendPoint[];
@@ -67,6 +68,7 @@ export function createTrendsApp(deps: TrendsAppDeps): TrendsApp {
     notFound: false,
     metric: 'volume',
     period: 'all',
+    _pointsCache: null,
 
     init() {
       this.exercises = getExercises();
@@ -98,7 +100,14 @@ export function createTrendsApp(deps: TrendsAppDeps): TrendsApp {
 
     get points() {
       if (!this.exercise) return [];
-      return computeTrendPoints(getSessions(), this.exercise.id, this.metric, this.period);
+      // Le template lit `points` à plusieurs reprises : sans cache, chaque
+      // lecture re-joue un getItem/JSON.parse complet de tout l'historique.
+      const key = `${this.exercise.id}|${this.metric}|${this.period}`;
+      const cached = this._pointsCache;
+      if (cached && cached.key === key) return cached.value;
+      const value = computeTrendPoints(getSessions(), this.exercise.id, this.metric, this.period);
+      this._pointsCache = { key, value };
+      return value;
     },
     get chartTitle() {
       if (!this.exercise) return '';

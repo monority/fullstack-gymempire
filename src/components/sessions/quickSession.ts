@@ -82,6 +82,7 @@ export function createQuickSession(deps: QuickSessionDeps) {
 
     _keyHandler: null as ((e: KeyboardEvent) => void) | null,
     _visibilityHandler: null as (() => void) | null,
+    _previousCache: null as null | { key: string; value: string },
 
     rpeValues: RPE_OPTIONS,
 
@@ -215,6 +216,11 @@ export function createQuickSession(deps: QuickSessionDeps) {
       const ex = this.currentExercise;
       if (!ex || !this.session) return '';
       const currentId = this.session.id;
+      // Ce getter est lu à chaque frappe (charge/reps) : on ne trie
+      // l'historique qu'une fois par exercice, séance et unité.
+      const key = `${currentId}|${ex.exerciseId}|${deps.unit()}`;
+      const cached = this._previousCache;
+      if (cached && cached.key === key) return cached.value;
       const ordered = deps.storage
         .getSessions()
         .filter((s) => s.id !== currentId)
@@ -224,10 +230,15 @@ export function createQuickSession(deps: QuickSessionDeps) {
           if (e.exerciseId !== ex.exerciseId) continue;
           const set = e.sets.find((st) => st.completed && st.type === 'work' && st.weight > 0);
           if (set) {
-            return formatWeightValue(set.weight, deps.unit()) + ' × ' + set.reps;
+            this._previousCache = {
+              key,
+              value: formatWeightValue(set.weight, deps.unit()) + ' × ' + set.reps,
+            };
+            return this._previousCache.value;
           }
         }
       }
+      this._previousCache = { key, value: '' };
       return '';
     },
 
