@@ -9,8 +9,9 @@ import type { NavGroup, NavItem } from '../../lib/types';
 
 interface Props {
   groups: NavGroup[];
+  actionLabel?: string;
 }
-const { groups } = Astro.props;
+const { groups, actionLabel } = Astro.props;
 
 const allItems: NavItem[] = groups.flatMap((g) => g.items);
 const find = (suffix: string) => allItems.find((i) => i.href === suffix || i.href.endsWith(suffix));
@@ -47,10 +48,10 @@ const entries = [
         type="button"
         class="mobile-nav__item mobile-nav__item--primary"
         data-quick-action
-        aria-label={item.label}
+        aria-label={actionLabel ?? item.label}
       >
         <span class="mobile-nav__icon" aria-hidden="true" set:html={renderIcon('plus')} />
-        <span class="mobile-nav__label">{item.label}</span>
+        <span class="mobile-nav__label">{actionLabel ?? item.label}</span>
       </button>
     ) : (
       <a

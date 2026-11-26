@@ -45,24 +45,6 @@
     min-width: 0;
   }
 
-  .create__input {
-    background-color: var(--color-surface-2);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    min-height: 4.4rem;
-    padding: 0.8rem 1rem;
-    color: var(--color-text);
-    font-size: 1.3rem;
-    font-family: var(--font-body);
-    width: 100%;
-    outline: none;
-  }
-
-  .create__input:focus {
-    border-color: var(--color-accent);
-    box-shadow: 0 0 0 2px var(--color-accent);
-  }
-
   .create__validation {
     color: var(--color-destructive);
     font-size: 1.3rem;
@@ -70,17 +52,17 @@
     text-align: center;
     padding: 0.5rem 0;
   }
-}
 
-/* Sur desktop, la bibliothèque latérale remplace le bouton d'ajout redondant. */
-@media (min-width: 1024px) {
-  .create__add-wrap {
-    display: none;
+  /* Sur desktop, la bibliothèque latérale remplace le bouton d'ajout redondant. */
+  @media (min-width: 1024px) {
+    .create__add-wrap {
+      display: none;
+    }
   }
-}
 
-@media (max-width: 520px) {
-  .create__info-grid {
-    grid-template-columns: 1fr;
+  @media (max-width: 520px) {
+    .create__info-grid {
+      grid-template-columns: 1fr;
+    }
   }
 }

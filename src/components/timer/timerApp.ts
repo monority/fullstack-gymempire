@@ -74,6 +74,7 @@ export interface TimerApp {
   ringCircumference: number;
   labels: TimerAppDeps['labels'];
   _cleanupKeyboard: (() => void) | null;
+  _onVisibility: (() => void) | null;
   init(): void;
   snapshot(): TimerSnapshot;
   broadcast(): void;
@@ -146,6 +147,7 @@ export function createTimerApp(deps: TimerAppDeps): TimerApp {
     ringCircumference: RING_CIRCUMFERENCE,
     labels,
     _cleanupKeyboard: null,
+    _onVisibility: null,
 
     init() {
       this.display = this.totalTime;
@@ -164,12 +166,13 @@ export function createTimerApp(deps: TimerAppDeps): TimerApp {
         bridge.channel = new BroadcastChannel(TIMER_CHANNEL);
         bridge.channel.onmessage = (ev: MessageEvent) => this.handleRemote(ev.data);
       }
-      document.addEventListener('visibilitychange', () => {
+      this._onVisibility = () => {
         if (document.hidden && !this.popupOpen) {
           if (this.running) this.pause();
           if (this.sw.running) this.swPause();
         }
-      });
+      };
+      document.addEventListener('visibilitychange', this._onVisibility);
     },
 
     snapshot() {
@@ -452,6 +455,22 @@ export function createTimerApp(deps: TimerAppDeps): TimerApp {
       playBeep();
     },
     destroy() {
+      if (this._onVisibility) {
+        document.removeEventListener('visibilitychange', this._onVisibility);
+        this._onVisibility = null;
+      }
+      if (bridge.channel) {
+        bridge.channel.close();
+        bridge.channel = null;
+      }
+      if (bridge.popWatcher) {
+        clearInterval(bridge.popWatcher);
+        bridge.popWatcher = 0;
+      }
+      if (bridge.connWatchdog) {
+        clearTimeout(bridge.connWatchdog);
+        bridge.connWatchdog = 0;
+      }
       if (this._cleanupKeyboard) {
         this._cleanupKeyboard();
         this._cleanupKeyboard = null;

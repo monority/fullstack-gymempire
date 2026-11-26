@@ -6,6 +6,8 @@
  * le garde disponible, ce qui préserve l'usage courant.
  */
 
+import { isDemoAccount } from '../auth';
+
 const PASSWORD_KEY = 'muscu:webdav-password';
 
 /** Repli quand sessionStorage est indisponible (SSR, mode privé, quota). */
@@ -30,6 +32,7 @@ export function getWebdavPassword(): string {
 }
 
 export function setWebdavPassword(password: string): void {
+  if (isDemoAccount()) return;
   memoryPassword = password;
   const s = store();
   if (!s) return;

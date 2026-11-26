@@ -305,6 +305,7 @@ export function createSettingsApp(deps: SettingsAppDeps): SettingsApp {
     },
 
     persistSyncConfig() {
+      if (readOnly()) return;
       const url = this.syncForm.url.trim();
       setWebdavPassword(this.syncForm.password);
       this.display = updateSettings({
@@ -344,6 +345,7 @@ export function createSettingsApp(deps: SettingsAppDeps): SettingsApp {
     },
 
     async testSync() {
+      if (readOnly()) return;
       if (!this.syncForm.url.trim()) {
         ui.notify(labels.syncNotConfigured, 'error');
         return;
@@ -365,15 +367,17 @@ export function createSettingsApp(deps: SettingsAppDeps): SettingsApp {
     },
 
     askPush() {
-      if (!this.syncForm.url.trim()) {
+      if (readOnly() || !this.syncForm.url.trim()) {
         ui.notify(labels.syncNotConfigured, 'error');
         return;
       }
-      if (this.syncHasBackup) ui.openDialog('set-push-dialog');
-      else void this.doPushSync();
+      // On confirme toujours : un backup distant peut exister même si le test
+      // de connexion n'a pas été lancé manuellement.
+      ui.openDialog('set-push-dialog');
     },
 
     async doPushSync() {
+      if (readOnly()) return;
       this.syncBusy = 'push';
       try {
         const snapshot = exportAllData();

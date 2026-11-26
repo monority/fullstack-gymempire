@@ -61,7 +61,7 @@ const drawerItems = groups.map((group) => ({
     </main>
   </div>
 
-  <MobileNav groups={groups} />
+  <MobileNav groups={groups} actionLabel={L.nav.actions} />
   <QuickActionSheet />
 
   {/* Mobile drawer (hidden on desktop via CSS) */}
@@ -227,15 +227,18 @@ const drawerItems = groups.map((group) => ({
     window.location.href = localizedPath('/login', getLocale());
   };
 
-  document.querySelectorAll<HTMLButtonElement>('[data-logout]').forEach((btn) => {
-    btn.addEventListener('click', logout);
+  // Délégation : le shell est recréé à chaque navigation SPA, les listeners
+  // posés directement sur les boutons deviennent inertes après le swap.
+  document.addEventListener('click', (e) => {
+    if ((e.target as HTMLElement).closest('[data-logout]')) logout();
   });
 
-  const auth = getAuth();
-  if (auth?.demo) {
-    document.querySelector<HTMLElement>('[data-demo-banner]')?.removeAttribute('hidden');
-  }
-  if (auth) {
+  const syncAuthUi = () => {
+    const auth = getAuth();
+    if (auth?.demo) {
+      document.querySelector<HTMLElement>('[data-demo-banner]')?.removeAttribute('hidden');
+    }
+    if (!auth) return;
     document.querySelectorAll<HTMLElement>('[data-user-name]').forEach((el) => {
       el.textContent = auth.name;
     });
@@ -245,9 +248,8 @@ const drawerItems = groups.map((group) => ({
     document.querySelectorAll<HTMLElement>('[data-user-zone]').forEach((el) => {
       el.removeAttribute('hidden');
     });
-  } else {
-    window.location.replace('/login');
-  }
+  };
+  syncAuthUi();
 
   // Filet de sécurité : l'état actif est rendu par le serveur à chaque page,
   // mais on le réapplique après le swap pour couvrir tout retard d'Alpine.
@@ -309,6 +311,7 @@ const drawerItems = groups.map((group) => ({
   // page-load couvre le cas où l'état Alpine du composant persisté serait
   // réévalué après le swap : on réapplique toujours l'état courant en dernier.
   document.addEventListener('astro:page-load', () => {
+    syncAuthUi();
     syncSidebarActiveState();
     syncMobileNavActiveState();
   });

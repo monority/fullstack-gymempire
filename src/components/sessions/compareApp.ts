@@ -266,7 +266,9 @@ export function createComparisonApp(deps: ComparisonAppDeps): ComparisonApp {
     syncUrl() {
       const params = new URLSearchParams();
       if (this.session1Id) params.set('id1', this.session1Id);
+      else if (this.session1?.id) params.set('id1', this.session1.id);
       if (this.session2Id) params.set('id2', this.session2Id);
+      else if (this.session2?.id) params.set('id2', this.session2.id);
       const qs = params.toString();
       ui.replaceUrl(qs ? deps.pathname + '?' + qs : deps.pathname);
     },

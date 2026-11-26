@@ -375,21 +375,6 @@
     box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-accent) 18%, transparent);
   }
 
-  .create__select {
-    min-height: 4.4rem;
-    padding: 0.8rem 1rem;
-    color: var(--color-text);
-    font-size: 1.3rem;
-    font-family: var(--font-body);
-    width: 100%;
-    outline: none;
-  }
-
-  .create__select:focus {
-    border-color: var(--color-accent);
-    box-shadow: 0 0 0 2px var(--color-accent);
-  }
-
   .create__notes {
     display: flex;
     flex-direction: column;

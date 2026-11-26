@@ -1,3 +1,4 @@
+import { parseLocalDate, localDateKey } from '../date';
 /**
  * Runtime validators — guard against corrupted localStorage / bad imports.
  */
@@ -49,6 +50,7 @@ export function isProgressRecord(v: unknown): v is ProgressRecord {
 export function normalizeSession(session: Session): Session {
   return {
     ...session,
+    date: localDateKey(parseLocalDate(session.date)),
     exercises: Array.isArray(session.exercises)
       ? session.exercises.map((exercise) => ({
           ...exercise,

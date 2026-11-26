@@ -1,3 +1,4 @@
+import { localDateKey } from './date';
 /**
  * week-aggregation — Pure week-bucket aggregation for stats.
  *
@@ -114,7 +115,11 @@ export function topExercisesByVolume(
 ): TopExercise[] {
   const buckets = buildWeeks(weekCount, now);
   const minKey = buckets[0].key;
-  const maxKey = buckets[buckets.length - 1].key;
+  // `key` est le dimanche de début de bucket : la borne haute doit être le
+  // samedi de la dernière semaine, sinon la semaine en cours est exclue.
+  const lastStart = new Date(buckets[buckets.length - 1].start);
+  lastStart.setDate(lastStart.getDate() + 6);
+  const maxKey = localDateKey(lastStart);
   const totals = new Map<string, TopExercise>();
 
   for (const session of sessions) {

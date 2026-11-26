@@ -417,7 +417,22 @@ const L = t(locale);
     if (input) requestAnimationFrame(() => input.focus());
   }
 
+  function bindTriggers(): void {
+    document.querySelectorAll<HTMLElement>('[data-quick-search-trigger]').forEach((el) => {
+      if (el.dataset.qsBound === 'true') return;
+      el.dataset.qsBound = 'true';
+      el.addEventListener('click', (e) => {
+        e.preventDefault();
+        openCmd();
+      });
+    });
+  }
+
   function bindQuickSearch(): void {
+    // Les triggers sont recréés à chaque navigation : on les relie à chaque
+    // passage, en gardant le garde global uniquement pour les listeners du
+    // document et du dialogue.
+    bindTriggers();
     if (qsBound) return;
     const dlg = document.getElementById('quick-search-dialog') as HTMLDialogElement | null;
     if (!dlg) return;
@@ -433,16 +448,6 @@ const L = t(locale);
         e.clientY >= rect.top &&
         e.clientY <= rect.bottom;
       if (!inside) dlg.close();
-    });
-
-    // Sidebar (and any future) trigger buttons.
-    document.querySelectorAll<HTMLElement>('[data-quick-search-trigger]').forEach((el) => {
-      if (el.dataset.qsBound === 'true') return;
-      el.dataset.qsBound = 'true';
-      el.addEventListener('click', (e) => {
-        e.preventDefault();
-        openCmd();
-      });
     });
 
     // "/" opens (unless typing), Ctrl/Cmd+K always opens.

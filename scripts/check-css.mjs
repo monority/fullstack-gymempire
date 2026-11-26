@@ -91,7 +91,7 @@ for (const { rel, text } of files) {
   // :where() interdit dans components/ et utilities/
   if (
     /\.where\(|:where\(/.test(css) &&
-    (rel.startsWith('components/') || rel.startsWith('utilities/'))
+    (rel.startsWith('styles/components/') || rel.startsWith('styles/utilities/'))
   ) {
     add(':where()', rel, 'interdit dans components/ et utilities/', true);
   }

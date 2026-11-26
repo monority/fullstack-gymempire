@@ -51,12 +51,6 @@
     }
   }
 
-  .quick__undo {
-    grid-column: 1 / -1;
-    min-height: 4.4rem;
-    font-size: 1.3rem;
-  }
-
   .quick__stats {
     width: 100%;
     display: grid;

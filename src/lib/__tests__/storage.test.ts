@@ -677,7 +677,7 @@ describe('getSessionsByDate', () => {
     clearLocalStorage();
   });
 
-  it('returns only sessions matching the exact YYYY-MM-DD prefix', () => {
+  it('normalise les dates ISO complètes en jour local YYYY-MM-DD', () => {
     saveSession({
       name: 'A',
       date: '2026-08-04',
@@ -698,8 +698,8 @@ describe('getSessionsByDate', () => {
     });
 
     const matches = getSessionsByDate('2026-08-04');
-    expect(matches).toHaveLength(1);
-    expect(matches.map((s) => s.name)).toEqual(['A']);
+    expect(matches).toHaveLength(2);
+    expect(matches.map((s) => s.name)).toEqual(['A', 'B']);
   });
 
   it('returns an empty array when no session matches', () => {

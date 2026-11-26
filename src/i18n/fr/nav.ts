@@ -7,6 +7,7 @@ export default {
   dashboard: 'Dashboard',
   seances: 'Séances',
   creer: 'Nouvelle séance',
+  actions: 'Actions',
   historique: 'Historique',
   rapide: 'Séance rapide',
   timer: 'Timer',

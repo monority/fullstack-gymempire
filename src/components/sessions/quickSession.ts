@@ -81,6 +81,7 @@ export function createQuickSession(deps: QuickSessionDeps) {
     _touchStartY: 0,
 
     _keyHandler: null as ((e: KeyboardEvent) => void) | null,
+    _visibilityHandler: null as (() => void) | null,
 
     rpeValues: RPE_OPTIONS,
 
@@ -104,14 +105,19 @@ export function createQuickSession(deps: QuickSessionDeps) {
       }
       this._installKeyboard();
       this._requestWakeLock();
-      document.addEventListener('visibilitychange', () => {
+      this._visibilityHandler = () => {
         if (document.visibilityState === 'visible' && this.state === 'working') {
           this._requestWakeLock();
         }
-      });
+      };
+      document.addEventListener('visibilitychange', this._visibilityHandler);
     },
 
     destroy() {
+      if (this._visibilityHandler) {
+        document.removeEventListener('visibilitychange', this._visibilityHandler);
+        this._visibilityHandler = null;
+      }
       this._rest?.stop();
       if (this._keyHandler) {
         window.removeEventListener('keydown', this._keyHandler);
@@ -191,15 +197,17 @@ export function createQuickSession(deps: QuickSessionDeps) {
       return this.currentSet?.rpe ?? null;
     },
     set currentRpe(value: number | string | null) {
-      if (this.currentSet) {
-        this.currentSet.rpe = value === '' || value == null ? null : Number(value);
-      }
+      if (!this.currentSet || !this.session) return;
+      this.currentSet.rpe = value === '' || value == null ? null : Number(value);
+      deps.storage.updateSession(this.session.id, { exercises: this.session.exercises });
     },
     get currentRpeType(): 'rpe' | 'urpe' {
       return this.currentSet?.rpeType === 'urpe' ? 'urpe' : 'rpe';
     },
     set currentRpeType(value: 'rpe' | 'urpe') {
-      if (this.currentSet) this.currentSet.rpeType = value;
+      if (!this.currentSet || !this.session) return;
+      this.currentSet.rpeType = value;
+      deps.storage.updateSession(this.session.id, { exercises: this.session.exercises });
     },
 
     /** Dernières valeurs de cet exercice, pour une saisie en un tap. */

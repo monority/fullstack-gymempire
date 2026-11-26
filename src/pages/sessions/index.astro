@@ -208,7 +208,7 @@ const L = t(locale);
     <template x-if="hasSessions && filtered.length === 0">
       <EmptyFilterState
         titleExpr="labels.noResult"
-        textExpr="labels.noMatchPrefix + ' &laquo; ' + search + ' &raquo;.'"
+        textExpr="labels.noMatchPrefix + ' « ' + search + ' ».'"
         resetLabel={L.sessions.resetSearch}
       />
     </template>

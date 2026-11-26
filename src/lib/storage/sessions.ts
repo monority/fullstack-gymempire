@@ -73,10 +73,12 @@ export function getSessionsByMonth(year: number, month: number): Session[] {
  */
 export function getSessionsThisWeek(): Session[] {
   const startOfWeek = sundayOfWeek(new Date());
+  const endOfWeek = new Date(startOfWeek);
+  endOfWeek.setDate(endOfWeek.getDate() + 7);
 
   return getSessions().filter((s) => {
     if (s.status !== 'completed') return false;
     const d = parseLocalDate(s.date);
-    return d >= startOfWeek;
+    return d >= startOfWeek && d < endOfWeek;
   });
 }

@@ -10,6 +10,7 @@ import {
   supersetChain,
   type BuilderExercise,
 } from '../../lib/session-builder-stats';
+import { trExercise } from '../../i18n';
 
 export function availableSupersetIds(exercises: BuilderExercise[]): number[] {
   return getSupersetIds(exercises);
@@ -36,6 +37,5 @@ export function buildSupersetChain(
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function trName(ex: BuilderExercise): string {
-  const fn = (window as Window & { trExercise?: (n: string) => string }).trExercise;
-  return fn ? fn(ex.name) : ex.name;
+  return trExercise(ex.name);
 }

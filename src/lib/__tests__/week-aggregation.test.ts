@@ -148,4 +148,31 @@ describe('topExercisesByVolume', () => {
     expect(top).toHaveLength(1);
     expect(top[0].exerciseId).toBe('b'); // 500 > 300
   });
+
+  it('inclut toute la semaine courante, pas seulement son dimanche', () => {
+    // 24 août 2026 = lundi : la semaine commence le dimanche 23 août.
+    // Une séance du lundi doit compter dans la fenêtre « semaine courante ».
+    const session = {
+      ...completedSession('2026-08-24', 0),
+      exercises: [
+        {
+          exerciseId: 'monday',
+          name: 'Monday',
+          muscle: 'Pectoraux',
+          sets: [
+            {
+              exerciseId: 'monday',
+              setNumber: 1,
+              weight: 100,
+              reps: 3,
+              type: 'work',
+              completed: true,
+            },
+          ],
+        },
+      ],
+    } as Session;
+    const top = topExercisesByVolume([session], 5, 1, new Date(2026, 7, 24));
+    expect(top.map((t) => t.exerciseId)).toContain('monday');
+  });
 });

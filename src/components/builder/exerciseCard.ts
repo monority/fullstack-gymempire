@@ -34,14 +34,22 @@ export function exerciseCard(exercise: BuilderExercise, exerciseIndex: number) {
     expanded: false,
     _mrvCache: new Map<string, ReturnType<typeof suggestLoadSuggestion>>(),
 
+    _listeners: null as null | { expand: () => void; collapse: () => void },
+
     init() {
       this.expanded = true;
-      window.addEventListener('builder:expand-all', () => {
-        this.expanded = true;
-      });
-      window.addEventListener('builder:collapse-all', () => {
-        this.expanded = false;
-      });
+      const expand = () => (this.expanded = true);
+      const collapse = () => (this.expanded = false);
+      this._listeners = { expand, collapse };
+      window.addEventListener('builder:expand-all', expand);
+      window.addEventListener('builder:collapse-all', collapse);
+    },
+
+    destroy() {
+      if (!this._listeners) return;
+      window.removeEventListener('builder:expand-all', this._listeners.expand);
+      window.removeEventListener('builder:collapse-all', this._listeners.collapse);
+      this._listeners = null;
     },
 
     toggle() {

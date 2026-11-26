@@ -26,6 +26,12 @@
     display: none !important;
   }
 
+  /* L'attribut hidden doit rester autoritatif même quand un composant
+   * applique display:flex (ex. .demo-banner). */
+  [hidden] {
+    display: none !important;
+  }
+
   /* Toucher : suppression du délai de 300 ms sur mobile. */
   button,
   [role='button'],

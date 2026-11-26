@@ -8,14 +8,13 @@
 
 @layer components {
   /* Empilement compact (libellé + valeur). */
-  :where(
-    .cal__session-info,
-    .comp__summary-col,
-    .comp__stat,
-    .drawer__user-info,
-    .topbar__context,
-    .sidebar__logo-text
-  ) {
+
+  .cal__session-info,
+  .comp__summary-col,
+  .comp__stat,
+  .drawer__user-info,
+  .topbar__context,
+  .sidebar__logo-text {
     display: flex;
     flex-direction: column;
     gap: 0.2rem;
@@ -23,7 +22,10 @@
   }
 
   /* Ligne d'outils : icône + texte, alignés. */
-  :where(.prog__item-title, .sess__card-title-row, .sess__card-title-wrap, .dash__session-title) {
+  .prog__item-title,
+  .sess__card-title-row,
+  .sess__card-title-wrap,
+  .dash__session-title {
     display: flex;
     align-items: center;
     gap: 0.8rem;
@@ -32,7 +34,9 @@
   }
 
   /* Badges empilés en colonne, alignés à droite. */
-  :where(.detail__badges, .sess__card-badges, .dash__session-badge) {
+  .detail__badges,
+  .sess__card-badges,
+  .dash__session-badge {
     display: inline-flex;
     flex-direction: column;
     align-items: flex-end;
@@ -41,27 +45,31 @@
   }
 
   /* Survol discret des boutons secondaires / éléments de liste. */
-  :where(
-    .rec__sort-btn:hover,
-    .set__seg-btn:hover:not(.is-active),
-    .drawer__item:hover,
-    .nav-item:hover,
-    .pagination__page--inactive:hover,
-    .rem__day:hover:not(:disabled):not(.rem__day--active)
-  ) {
+
+  .rec__sort-btn:hover,
+  .set__seg-btn:hover:not(.is-active),
+  .drawer__item:hover,
+  .nav-item:hover,
+  .pagination__page--inactive:hover,
+  .rem__day:hover:not(:disabled):not(.rem__day--active) {
     background-color: var(--alpha-bg-subtle);
     color: var(--color-text);
   }
 
   /* Métadonnées discrètes. */
-  :where(.hist__table-meta, .trend__chart-meta, .kpi-item__unit, .panel-header__meta) {
+  .hist__table-meta,
+  .trend__chart-meta,
+  .panel-header__meta {
     color: var(--color-muted);
     font-size: var(--text-small);
     font-weight: 500;
   }
 
   /* Sur-titre en majuscules. */
-  :where(.poids__record-count, .rec__sort-label, .stats__chart-meta, .quick__stat-label) {
+  .poids__record-count,
+  .rec__sort-label,
+  .stats__chart-meta,
+  .quick__stat-label {
     color: var(--color-muted);
     font-size: var(--text-caption);
     font-weight: 700;
@@ -70,7 +78,7 @@
   }
 
   /* Unités et suffixes. */
-  :where(.poids__stat-unit, .rec__stat-unit, .stats__sum-unit) {
+  .poids__stat-unit {
     color: var(--color-muted);
     font-family: var(--font-body);
     font-size: 1.3rem;
@@ -78,14 +86,18 @@
   }
 
   /* Textes d'aide sous un libellé. */
-  :where(.stats__bench-optin-hint, .set__label-desc, .rem__row-desc) {
+  .stats__bench-optin-hint,
+  .set__label-desc,
+  .rem__row-desc {
     color: var(--color-muted);
     font-size: var(--text-caption);
     line-height: 1.3;
   }
 
   /* Titres de rangée. */
-  :where(.stats__bench-optin-title, .set__label-title, .rem__row-title) {
+  .stats__bench-optin-title,
+  .set__label-title,
+  .rem__row-title {
     color: var(--color-text);
     font-family: var(--font-display);
     font-size: var(--text-body);
@@ -94,14 +106,17 @@
   }
 
   /* Conteneur de tableau avec défilement horizontal. */
-  :where(.hist__table-wrap, .poids__table-wrap, .exo-row__table-wrap) {
+  .hist__table-wrap,
+  .poids__table-wrap,
+  .exo-row__table-wrap {
     border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
     overflow-x: auto;
   }
 
   /* Panneau de graphique. */
-  :where(.hist__chart, .trend__chart) {
+  .hist__chart,
+  .trend__chart {
     background-color: var(--color-surface-2);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-md);

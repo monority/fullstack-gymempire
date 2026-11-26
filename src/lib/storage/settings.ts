@@ -43,5 +43,7 @@ export function updateSettings(updates: Partial<Settings>): Settings {
   const next = { ...getSettings(), ...updates };
   if (updates.webdav) next.webdav = persistedWebdav(next);
   setStore(STORAGE_KEYS.settings, next);
-  return next;
+  // En compte démo l'écriture est neutralisée : on relit le stockage pour ne
+  // jamais renvoyer un état modifié que l'UI afficherait comme « enregistré ».
+  return getSettings();
 }

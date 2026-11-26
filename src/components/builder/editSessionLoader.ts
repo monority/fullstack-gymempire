@@ -12,7 +12,7 @@ export interface EditSessionData {
   sessionId: string;
   name: string;
   date: string;
-  rpe: number;
+  rpe: number | null;
   fatigue: number;
   mood: string;
   notes: string;
@@ -32,7 +32,7 @@ export function loadEditSession(sessionId: string): EditSessionData | null {
     sessionId: session.id,
     name: session.name,
     date: session.date.slice(0, 10),
-    rpe: session.rpe ?? 5,
+    rpe: session.rpe ?? null,
     fatigue: session.fatigue ?? 0,
     mood: session.mood ?? '',
     notes: session.notes ?? '',

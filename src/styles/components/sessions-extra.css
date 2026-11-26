@@ -159,25 +159,6 @@
     .quick__rpe-control .select-wrapper {
       grid-column: 1 / -1;
     }
-    .quick__resting {
-      align-items: flex-start;
-      padding: 2rem 1rem;
-      overflow-y: auto;
-    }
-    .quick__resting-inner {
-      gap: 0.75rem;
-    }
-    .quick__resting-timer {
-      font-size: clamp(8rem, 32vw, 12rem);
-    }
-    .quick__resting-grid {
-      grid-template-columns: 1fr;
-      gap: 0.5rem;
-    }
-    .quick__resting-grid .quick__undo {
-      grid-column: auto;
-      order: 3;
-    }
     .quick__selecting-actions .button {
       width: 100%;
     }

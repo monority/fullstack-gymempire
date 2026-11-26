@@ -153,7 +153,9 @@ export function createCalendarApp(deps: CalendarAppDeps): CalendarApp {
     },
     get currentStreak() {
       if (this.allSessions.length === 0) return 0;
-      const sessionDates = new Set(this.allSessions.map((s) => s.date.substring(0, 10)));
+      const sessionDates = new Set(
+        this.allSessions.filter((s) => s.status === 'completed').map((s) => s.date.substring(0, 10))
+      );
       let streak = 0;
       const cursor = today();
       if (!sessionDates.has(formatISO(cursor))) {

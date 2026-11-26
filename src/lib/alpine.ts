@@ -17,8 +17,10 @@ export function registerAlpine<T, A extends unknown[]>(
   factory: (...args: A) => T
 ): void {
   const register = () => getAlpine()?.data(name, factory);
-  document.addEventListener('alpine:init', register);
+  // Le lifecycle rejoue `alpine:init` à chaque navigation SPA : un listener
+  // permanent ré-enregistrerait toutes les factories à chaque swap.
   if (getAlpine()) register();
+  else document.addEventListener('alpine:init', register, { once: true });
 }
 
 /** Enregistre un store une seule fois (contrairement aux data factories). */

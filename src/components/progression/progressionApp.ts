@@ -53,15 +53,18 @@ export function createProgressionApp(): ProgressionApp {
 
     historyDelta(stat) {
       if (stat.history.length < 2) return null;
-      const current = stat.history[stat.history.length - 1]?.estimated1RM;
-      const previous = stat.history[stat.history.length - 2]?.estimated1RM;
+      const ordered = [...stat.history].sort((a, b) =>
+        String(a.date).localeCompare(String(b.date))
+      );
+      const current = ordered[ordered.length - 1]?.estimated1RM;
+      const previous = ordered[ordered.length - 2]?.estimated1RM;
       if (typeof current !== 'number' || typeof previous !== 'number') return null;
       return current - previous;
     },
 
     formatDelta(delta) {
       if (delta === null) return '';
-      return `${delta > 0 ? '+' : ''}${formatNumPositive(delta)} kg`;
+      return `${delta > 0 ? '+' : delta < 0 ? '−' : ''}${formatNumPositive(Math.abs(delta))} kg`;
     },
 
     historyBarHeight(history, value) {

@@ -1,7 +1,7 @@
 /** Enregistrement Alpine extrait d'une page (ratchet script). */
 import { registerAlpine } from '../../lib/alpine';
 import { createDashboardApp } from './dashboardApp';
-import { t, getLocale, localizedPath } from '../../i18n';
+import { t, getLocale, localizedPath, trMuscle } from '../../i18n';
 
 export function registerDashboard(): void {
   const LABELS = t();
@@ -22,8 +22,7 @@ export function registerDashboard(): void {
         locale: () => (getLocale() === 'en' ? 'en' : 'fr'),
         today: () => new Date(),
         onError: (error) => console.error('[dashboard] failed to load', error),
-        translateMuscle: (name) =>
-          (window as { trMuscle?: (m: string) => string }).trMuscle?.(name) ?? name,
+        translateMuscle: (name) => trMuscle(name),
       }
     )
   );

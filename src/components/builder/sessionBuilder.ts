@@ -7,6 +7,7 @@
  */
 
 import { currentUnit } from '../../lib/format';
+import { isDemoAccount } from '../../lib/auth';
 import { saveBuilderDraft, loadBuilderDraft, clearBuilderDraft } from './builderDraft';
 import { getExercises } from '../../lib/storage/exercises';
 import { getSessions } from '../../lib/storage/sessions';
@@ -164,7 +165,7 @@ export function createSessionBuilderApp(deps: SessionBuilderDeps): SessionBuilde
       }
 
       // Pas d'édition : on restaure un éventuel brouillon local.
-      const draft = loadBuilderDraft();
+      const draft = isDemoAccount() ? null : loadBuilderDraft();
       if (!draft) return;
       this.sessionName = draft.name;
       this.sessionDate = draft.date;
@@ -317,7 +318,7 @@ export function createSessionBuilderApp(deps: SessionBuilderDeps): SessionBuilde
       if (shouldConfirmDiscard(this.exercises.length, this.sessionName)) {
         if (!host.confirm(labels.discardConfirm)) return;
       }
-      clearBuilderDraft();
+      if (!isDemoAccount()) clearBuilderDraft();
       host.navigate(path('/sessions'));
     },
     save() {
@@ -332,7 +333,7 @@ export function createSessionBuilderApp(deps: SessionBuilderDeps): SessionBuilde
         notes: this.sessionNotes,
         editSessionId: this.editSessionId,
       });
-      clearBuilderDraft();
+      if (!isDemoAccount()) clearBuilderDraft();
       host.navigate(path('/sessions'));
     },
     openDialogById(id) {

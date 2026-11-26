@@ -38,7 +38,7 @@ const {
       <h3 class="empty-filter__title">{title}</h3>
     )}
     {textExpr ? (
-      <p class="empty-filter__text" x-html={textExpr}></p>
+      <p class="empty-filter__text" x-text={textExpr}></p>
     ) : text ? (
       <p class="empty-filter__text">{text}</p>
     ) : null}

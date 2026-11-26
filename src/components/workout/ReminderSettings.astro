@@ -261,6 +261,13 @@ import Icon from '../ui/Icon.astro';
       return getSessions().some((s) => s.status === 'completed' && s.date === today);
     },
 
+    destroy() {
+      if (this._timer) {
+        clearInterval(this._timer);
+        this._timer = 0;
+      }
+    },
+
     fire() {
       if (this.supported && this.permission === 'granted') {
         try {

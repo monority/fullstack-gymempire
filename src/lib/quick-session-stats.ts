@@ -1,3 +1,4 @@
+import { localDateKey } from './date';
 /**
  * quick-session-stats — Pure computation functions for quick session page.
  *
@@ -63,7 +64,7 @@ export function typeLabel(t: SetType, labels: Record<string, string>): string {
 
 /** Today's date as ISO string YYYY-MM-DD. */
 export function todayISO(): string {
-  return new Date().toISOString().split('T')[0];
+  return localDateKey(new Date());
 }
 
 /** Filter and compute info for available quick-session candidates. */
