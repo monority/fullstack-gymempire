@@ -74,6 +74,7 @@
     --alpha-border: hsl(0 0% 100% / 0.18);
     --alpha-text-faint: hsl(0 0% 100% / 0.25);
     --alpha-highlight: hsl(0 0% 100% / 0.22);
+    --alpha-inset-shadow: hsl(30 90% 20% / 0.35);
     --shadow-1: 0 1px 2px hsl(220 30% 2% / 0.28);
     --shadow-2: 0 12px 28px hsl(220 30% 2% / 0.22);
     --shadow-overlay: 0 24px 48px hsl(220 30% 2% / 0.45);

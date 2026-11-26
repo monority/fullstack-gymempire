@@ -1,4 +1,5 @@
 // @vitest-environment jsdom
+import { readFileSync } from 'node:fs';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mocks = vi.hoisted(() => ({
@@ -112,9 +113,21 @@ describe('timer widget', () => {
     expect(channels).toHaveLength(1);
     expect(channels[0].name).toBe(TIMER_CHANNEL);
     expect(root.querySelector('style')).not.toBeNull();
+    // La feuille extraite reste gouvernée : ni !important, ni couleur
+    // littérale, et l'état réduit du mouvement est bien présent.
+    const css = readFileSync(
+      'src/styles/components/timer-widget.css'.replace(/^/, process.cwd() + '/'),
+      'utf8'
+    );
+    expect(css).toContain('.tw__ring-progress');
+    expect(css).toContain('prefers-reduced-motion');
+    expect(css).not.toContain('!important');
+    expect(css).not.toMatch(/hsl\(|rgb\(|#[\da-fA-F]{3,8}\b/);
+
     widget.destroy();
     expect(mocks.closed).toHaveBeenCalledOnce();
     expect(document.body.querySelector('.tw')).toBeNull();
+    expect(root.querySelector('style')).toBeNull();
   });
 
   it('affiche un snapshot et envoie les commandes au bon propriétaire', () => {
