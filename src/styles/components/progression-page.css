@@ -220,7 +220,7 @@
   .prog__history-tick {
     flex: 1;
     min-width: 0.4rem;
-    border-radius: 2px;
+    border-radius: var(--radius-xs);
     background-color: color-mix(in srgb, var(--color-accent) 55%, transparent);
     transition: background-color var(--transition-base);
   }

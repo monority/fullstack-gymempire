@@ -903,7 +903,7 @@
     display: block;
     height: 2px;
     background-color: currentColor;
-    border-radius: 2px;
+    border-radius: var(--radius-xs);
     transition:
       transform var(--transition-fast),
       opacity var(--transition-fast);

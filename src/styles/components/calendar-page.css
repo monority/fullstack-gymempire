@@ -99,7 +99,7 @@
   .cal__dot {
     width: 6px;
     height: 6px;
-    border-radius: 999px;
+    border-radius: var(--radius-pill);
     display: inline-block;
   }
 
@@ -187,7 +187,7 @@
   .cal__legend-dot {
     width: 6px;
     height: 6px;
-    border-radius: 999px;
+    border-radius: var(--radius-pill);
     display: inline-block;
   }
 

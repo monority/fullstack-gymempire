@@ -41,7 +41,7 @@
     justify-content: center;
     width: 2.8rem;
     height: 2.8rem;
-    border-radius: 999px;
+    border-radius: var(--radius-pill);
     background: color-mix(in srgb, var(--color-accent) 12%, transparent);
     color: var(--color-accent-text);
     flex-shrink: 0;
