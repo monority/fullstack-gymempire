@@ -5,13 +5,14 @@ type Variant =
 type Tone = 'chest' | 'back' | 'shoulders' | 'arms' | 'legs' | 'core' | 'other';
 type Group = 'g1' | 'g2' | 'g3' | 'g4' | 'g5' | 'none';
 
-interface Props {
+import type { HTMLAttributes } from 'astro/types';
+
+interface Props extends HTMLAttributes<'span'> {
   variant?: Variant;
   size?: 'sm' | 'md';
   tone?: Tone;
   group?: Group;
   class?: string;
-  [key: string]: unknown;
 }
 
 const {

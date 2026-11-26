@@ -146,8 +146,10 @@ export function importAllData(snapshot: unknown): void {
       ) {
         throw new Error('Jours de rappel invalides.');
       }
-      if (r.time !== undefined && (typeof r.time !== 'string' || !/^\d{2}:\d{2}$/.test(r.time))) {
-        throw new Error('Heure de rappel invalide.');
+      if (r.time !== undefined) {
+        const match = typeof r.time === 'string' ? /^(\d{2}):(\d{2})$/.exec(r.time) : null;
+        if (!match || Number(match[1]) > 23 || Number(match[2]) > 59)
+          throw new Error('Heure de rappel invalide.');
       }
     }
     if (s.webdav !== undefined) {

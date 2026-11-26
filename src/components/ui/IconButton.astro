@@ -1,5 +1,7 @@
 ---
-interface Props {
+import type { HTMLAttributes } from 'astro/types';
+
+interface Props extends HTMLAttributes<'button'> {
   variant?: 'default' | 'danger' | 'accent' | 'ghost';
   size?: 'sm' | 'md';
   icon?: string;
@@ -8,7 +10,6 @@ interface Props {
   class?: string;
   disabled?: boolean;
   loading?: boolean;
-  [key: string]: unknown;
 }
 
 const {

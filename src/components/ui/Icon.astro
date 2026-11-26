@@ -1,10 +1,11 @@
 ---
 import { icons } from '../../lib/icons';
-interface Props {
+import type { HTMLAttributes } from 'astro/types';
+
+interface Props extends HTMLAttributes<'span'> {
   name: string;
   size?: number;
   class?: string;
-  [key: string]: unknown;
 }
 const { name, size = 20, class: className = '' } = Astro.props;
 const raw = (icons as Record<string, (w?: number, h?: number) => string>)[name]?.(size, size) ?? '';

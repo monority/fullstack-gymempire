@@ -18,6 +18,8 @@ const WHITELIST = {
   style: new Set(['pages/ui.astro', 'pages/debug.astro', 'pages/sessions/print.astro']),
   script: new Set(['pages/ui.astro', 'pages/debug.astro']),
   global: new Set(['pages/sessions/print.astro', 'pages/ui.astro']),
+  // Toast : enregistrement trivial (2 lignes), aucune logique à extraire.
+  inline: new Set(['components/ui/Toast.astro']),
 };
 
 const findings = [];
@@ -34,6 +36,8 @@ function isWhitelisted(rule, file) {
       return WHITELIST.script.has(file);
     case 'is:global':
       return WHITELIST.global.has(file);
+    case 'inline alpine factory':
+      return WHITELIST.inline.has(file);
     default:
       return false;
   }
@@ -78,6 +82,17 @@ for (const { rel, text } of files) {
     if (style > LIMITS.style) add('style', rel, `bloc <style> de ${style} lignes`, 1);
     const script = blockLen(text, 'script');
     if (script > LIMITS.script) add('script', rel, `bloc <script> de ${script} lignes`, 1);
+  }
+
+  // Une factory Alpine dans un composant .astro n'est pas testable : elle
+  // doit vivre dans xApp.ts + xRegistration.ts (règle §5).
+  if (rel.startsWith('components/') && rel.endsWith('.astro') && text.includes('registerAlpine(')) {
+    add(
+      'inline alpine factory',
+      rel,
+      'registerAlpine dans un composant',
+      lineOf(text, 'registerAlpine(')
+    );
   }
 
   for (const needle of ['is:global', '(window as any)']) {

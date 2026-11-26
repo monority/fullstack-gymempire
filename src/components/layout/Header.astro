@@ -122,35 +122,7 @@ const { title, class: className = '' } = Astro.props as Props;
 </header>
 
 <script>
-  import { registerAlpine } from '../../lib/alpine';
-  import { t, getLocale } from '../../i18n';
+  import { registerLocale } from './localeRegistration';
 
-  const L = t(getLocale());
-
-  registerAlpine('localeApp', () => ({
-    get locale(): string {
-      return document.documentElement.getAttribute('lang') === 'en' ? 'en' : 'fr';
-    },
-    switchToLight: L.layout.switchToLight,
-    switchToDark: L.layout.switchToDark,
-    switchLocaleAria: L.layout.switchLocale,
-
-    get localeLabel(): string {
-      return this.locale === 'en' ? L.layout.langEn : L.layout.langFr;
-    },
-
-    switchLocale() {
-      const path = window.location.pathname;
-      const search = window.location.search;
-      const hash = window.location.hash;
-      let target: string;
-      if (this.locale === 'en') {
-        target = path.startsWith('/en') ? path.slice(3) : path;
-        if (!target) target = '/';
-      } else {
-        target = '/en' + (path === '/' ? '' : path);
-      }
-      window.location.href = target + search + hash;
-    },
-  }));
+  registerLocale();
 </script>

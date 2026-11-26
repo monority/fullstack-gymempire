@@ -134,7 +134,7 @@ const drawerItems = groups.map((group) => ({
 </div>
 
 <script>
-  import { registerAlpine } from '../../lib/alpine';
+  import { registerTheme } from './themeRegistration';
   import { getFocusable } from '../../lib/focus';
   // Mobile drawer — délégation sur `document` : le shell est recréé à chaque
   // navigation ClientRouter, les listeners posés sur les nœuds du premier
@@ -316,58 +316,5 @@ const drawerItems = groups.map((group) => ({
     syncMobileNavActiveState();
   });
 
-  // Theme + nav accordion Alpine data factory
-  const ACCORDION_KEY = 'muscu:nav:collapsed';
-
-  function readCollapsed(): string[] {
-    try {
-      const raw = window.localStorage.getItem(ACCORDION_KEY);
-      const saved = raw ? JSON.parse(raw) : [];
-      return Array.isArray(saved) ? saved : [];
-    } catch {
-      return [];
-    }
-  }
-
-  registerAlpine('themeApp', () => ({
-    theme: 'dark' as 'dark' | 'light',
-    collapsed: [] as string[],
-    navReady: false,
-
-    init() {
-      const current = document.documentElement.getAttribute('data-theme') || 'dark';
-      this.theme = current === 'light' ? 'light' : 'dark';
-      this.collapsed = readCollapsed();
-
-      // Alpine est la seule source de vérité de l'état des accordéons : on
-      // applique l'état restauré puis on affiche la sidebar en une seule
-      // passe. Un rAF masquait toute la sidebar à chaque changement de route.
-      this.navReady = true;
-    },
-
-    toggleTheme() {
-      this.theme = this.theme === 'dark' ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', this.theme);
-      try {
-        window.localStorage.setItem('muscu-theme', this.theme);
-      } catch {}
-    },
-
-    isDark(): boolean {
-      return this.theme === 'dark';
-    },
-
-    isExpanded(id: string): boolean {
-      return !this.collapsed.includes(id);
-    },
-
-    toggleNav(id: string) {
-      const i = this.collapsed.indexOf(id);
-      if (i >= 0) this.collapsed.splice(i, 1);
-      else this.collapsed.push(id);
-      try {
-        window.localStorage.setItem(ACCORDION_KEY, JSON.stringify(this.collapsed));
-      } catch {}
-    },
-  }));
+  registerTheme();
 </script>

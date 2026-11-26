@@ -1,5 +1,7 @@
 ---
-interface Props {
+import type { HTMLAttributes } from 'astro/types';
+
+interface Props extends HTMLAttributes<'button' | 'a'> {
   variant?: 'primary' | 'secondary' | 'destructive' | 'ghost' | 'link';
   size?: 'sm' | 'md' | 'lg';
   active?: boolean;
@@ -8,13 +10,16 @@ interface Props {
   loading?: boolean;
   fullWidth?: boolean;
   href?: string;
+  /** Attributs de lien quand `href` est fourni (le rendu bascule en <a>). */
+  target?: string;
+  rel?: string;
+  download?: string;
   type?: 'button' | 'submit' | 'reset';
   class?: string;
   /** Accessible label for icon-only mode (use with slot name="icon" only). */
   iconLabel?: string;
   /** Override default min-height. */
   minHeight?: string;
-  [key: string]: unknown;
 }
 
 const {

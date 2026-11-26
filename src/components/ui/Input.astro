@@ -25,7 +25,9 @@ type InputType =
   | 'url'
   | 'week';
 
-interface Props {
+import type { HTMLAttributes } from 'astro/types';
+
+interface Props extends HTMLAttributes<'input'> {
   label?: string;
   hint?: string;
   error?: string;
@@ -42,7 +44,6 @@ interface Props {
   bare?: boolean;
   size?: 'sm' | 'md' | 'lg';
   class?: string;
-  [key: string]: unknown;
 }
 
 const {
