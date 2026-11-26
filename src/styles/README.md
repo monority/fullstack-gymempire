@@ -34,6 +34,29 @@ styles/
   calculator.css      page autonome
 ```
 
+## Breakpoints
+
+Une seule largeur par palier, **en px** (jamais de `rem` : `html` est à 62,5 %,
+donc `1rem = 10px`). Les bornes `max` et `min` sont complémentaires (767/768,
+1023/1024) pour éviter qu'une règle s'applique deux fois à la même largeur.
+
+| Palier        | Largeur | Usage typique              |
+| ------------- | ------- | -------------------------- |
+| `xs`          | 360px   | très petits téléphones     |
+| `sm`          | 400px   | petits téléphones          |
+| `md`          | 480px   | téléphones                 |
+| `lg`          | 520px   | formulaires empilés        |
+| `xl`          | 640px   | mobile / tablette          |
+| `wide`        | 720px   | comparateur côte à côte    |
+| `xl-max`      | 767px   | borne haute tablette       |
+| `xl-min`      | 768px   | borne basse tablette       |
+| `desktop-md`  | 960px   | grilles 2 / 5 colonnes     |
+| `desktop-max` | 1023px  | borne haute desktop        |
+| `desktop`     | 1024px  | sidebar, navigation pleine |
+| `wide-min`    | 1100px  | grilles 4 colonnes         |
+
+Toute nouvelle valeur est refusée par `check-css` (règle `breakpoint`).
+
 ## Catalogue des utilities
 
 | Classe                                  | Rôle                                |

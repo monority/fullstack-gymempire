@@ -97,7 +97,7 @@
     }
   }
 
-  @media (max-width: 520px) {
+  @media (max-width: 480px) {
     .hist-stats > .stat-card {
       padding: 1.4rem 1.6rem;
     }

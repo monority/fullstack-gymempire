@@ -63,7 +63,7 @@
     box-shadow: var(--focus-ring);
   }
 
-  @media (max-width: 38rem) {
+  @media (max-width: 400px) {
     .seg__btn {
       padding: 0 1.2rem;
     }

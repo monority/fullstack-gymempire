@@ -11,6 +11,11 @@ const AS_JSON = process.argv.includes('--json');
 
 const LAYER_ORDER = ['reset', 'tokens', 'base', 'components', 'utilities', 'overrides'];
 const COLOR_LITERAL = /(#[0-9a-fA-F]{3,8}\b|hsl?\(|rgb?\()/;
+// Largeurs de rupture canoniques, documentées dans src/styles/README.md.
+// Les paires 767/768 et 1023/1024 sont les bornes complémentaires des paliers.
+const CANONICAL_BREAKPOINTS = new Set([
+  360, 400, 480, 520, 640, 720, 767, 768, 960, 1023, 1024, 1100,
+]);
 const WHITELIST_COLOR = new Set([
   'styles/tokens/colors.css',
   'styles/base/elements.css', // ::selection
@@ -111,6 +116,13 @@ for (const { rel, text } of files) {
       .split(/\s+/)
       .filter((p) => /^[.#]/.test(p));
     if (parts.length > 2) add('specificity depth', rel, m[2].trim().slice(0, 70));
+  }
+
+  // Breakpoints : une seule largeur par palier, exprimée en px.
+  // `html { font-size: 62.5% }` ⇒ 1rem = 10px (pas 16px).
+  for (const m of css.matchAll(/@media[^{]*?\b(min|max)-width:\s*([\d.]+)(px|rem)/g)) {
+    const px = m[3] === 'rem' ? Number(m[2]) * 10 : Number(m[2]);
+    if (!CANONICAL_BREAKPOINTS.has(px)) add('breakpoint', rel, `${m[2]}${m[3]} → ${px}px`);
   }
 
   // Tokens inconnus (les variables définies localement sont valides)

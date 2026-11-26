@@ -242,7 +242,7 @@
     }
   }
 
-  @media (max-width: 900px) {
+  @media (max-width: 960px) {
     .prog__item {
       grid-template-columns: minmax(18rem, 0.8fr) minmax(0, 1.2fr);
     }
