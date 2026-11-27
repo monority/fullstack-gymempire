@@ -82,32 +82,5 @@ const L = t(locale);
         ariaLabel={L.settings.weightUnit}
       />
     </div>
-
-    <div class="set__row">
-      <div class="set__label">
-        <span class="set__label-title">{L.settings.repsFormat}</span>
-        <span class="set__label-desc">{L.settings.repsDesc}</span>
-      </div>
-      <div class="set__seg-group" role="group" aria-label={L.settings.repsFormat}>
-        <button
-          type="button"
-          class="set__seg-btn"
-          :class="{ 'is-active': display.repsFormat === 'simple' }"
-          :aria-pressed="display.repsFormat === 'simple'"
-          @click="setRepsFormat('simple')"
-        >
-          {L.settings.simple}
-        </button>
-        <button
-          type="button"
-          class="set__seg-btn"
-          :class="{ 'is-active': display.repsFormat === 'range' }"
-          :aria-pressed="display.repsFormat === 'range'"
-          @click="setRepsFormat('range')"
-        >
-          {L.settings.range}
-        </button>
-      </div>
-    </div>
   </div>
 </SettingsSection>

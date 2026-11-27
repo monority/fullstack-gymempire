@@ -92,6 +92,7 @@ const dictionary = {
       },
     },
     resetConfirm: 'SUPPRIMER',
+    resetConfirmWord: 'SUPPRIMER',
   },
 } as unknown as Dictionary;
 

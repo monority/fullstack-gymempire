@@ -236,7 +236,7 @@ pnpm test:smoke`, puis comparer les captures `pnpm screens` avant/après.
 | ------------------------------------- | --------------------------------- | ------------------------------------------------------------- |
 | `pages/ui.astro`, `pages/debug.astro` | taille, styles et couleurs libres | outils de revue visuelle / générateur de données, 404 en prod |
 | `pages/sessions/print.astro`          | `is:inline`, palette locale       | feuille autonome/imprimable, sans le shell ni les tokens      |
-| `pages/en/[...slug].astro`            | 1 catch-all                       | route locale unique (20 stubs supprimés)                      |
+| `pages/en/**/*.astro`                 | 21 routes fines                   | une feuille CSS par route EN (catch-all abandonné)            |
 | `styles/global.css`                   | `is:global`, `@layer`             | point d'entrée des tokens et des rules globales               |
 | `components/ui/Table.astro`           | `:global()` ciblé                 | (cellules rendues via slots) — à réduire au minimum           |
 

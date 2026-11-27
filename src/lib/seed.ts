@@ -1,3 +1,4 @@
+import { localDateKey } from './date';
 /**
  * Demo data generator.
  *
@@ -44,13 +45,8 @@ export interface SeedSummary {
 const DAY_MS = 86_400_000;
 const START_WEEKS = 12;
 
-/** UTC ISO date (YYYY-MM-DD), matching the app's session-date convention. */
-function isoUTC(d: Date): string {
-  return d.toISOString().split('T')[0];
-}
-
 function daysFromToday(days: number): string {
-  return new Date(Date.now() + days * DAY_MS).toISOString().split('T')[0];
+  return localDateKey(new Date(Date.now() + days * DAY_MS));
 }
 
 function round1(v: number): number {
@@ -245,7 +241,7 @@ export function generateDemoData(): SeedSummary {
           const session: Session = {
             id: generateId(),
             name: template.name,
-            date: isoUTC(cursor),
+            date: localDateKey(cursor),
             duration: Math.round((42 + Math.random() * 22) * 60),
             exercises: ses,
             status: 'completed',

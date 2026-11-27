@@ -149,7 +149,7 @@ describe('createSessionsApp', () => {
     app.duplicateSession('s1');
     const saved = mocks.saveSession.mock.calls[0][0];
     expect(saved.name).toBe('Séance A (copie)');
-    expect(saved.date).toBe('2026-11-17T12:00:00.000Z');
+    expect(saved.date).toBe('2026-11-17');
     expect(saved.exercises[0].sets[0].completed).toBe(false);
   });
 

@@ -1,3 +1,4 @@
+import { localDateKey } from './date';
 /**
  * settings-stats — Pure computation functions for settings page.
  *
@@ -67,6 +68,6 @@ export function clampWeeklyGoal(value: number): number | null {
 
 /** Build export filename with date. */
 export function exportFilename(prefix: string, ext: string): string {
-  const date = new Date().toISOString().slice(0, 10);
+  const date = localDateKey(new Date());
   return `${prefix}-${date}.${ext}`;
 }

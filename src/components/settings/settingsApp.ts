@@ -64,6 +64,7 @@ export function buildSettingsLabels(L: Dictionary) {
     syncNever: s.sync.never,
     syncError: s.sync.error,
     resetConfirm: s.resetConfirm,
+    resetConfirmWord: s.resetConfirmWord,
   };
 }
 
@@ -105,7 +106,6 @@ export interface SettingsApp {
   savePseudo(): void;
   saveEmail(): void;
   setUnit(unit: 'kg' | 'lbs'): void;
-  setRepsFormat(format: 'simple' | 'range'): void;
   saveRestTime(value: string): void;
   saveSoundAlerts(checked: boolean): void;
   saveAdvancedMode(checked: boolean): void;
@@ -117,7 +117,7 @@ export interface SettingsApp {
   askReset(): void;
   confirmReset(): void;
   saveSyncFields(): void;
-  persistSyncConfig(): void;
+  persistSyncConfig(): boolean;
   persistSyncConfigWithNow(): void;
   lastSyncLabel(lastSyncAt?: string): string;
   syncErrorLabel(err: unknown): string;
@@ -197,13 +197,6 @@ export function createSettingsApp(deps: SettingsAppDeps): SettingsApp {
       if (readOnly(this)) return;
       if (this.display.unit === unit) return;
       this.display = updateSettings({ unit });
-      this.toastSaved();
-    },
-
-    setRepsFormat(format) {
-      if (readOnly(this)) return;
-      if (this.display.repsFormat === format) return;
-      this.display = updateSettings({ repsFormat: format });
       this.toastSaved();
     },
 
@@ -302,7 +295,7 @@ export function createSettingsApp(deps: SettingsAppDeps): SettingsApp {
 
     confirmReset() {
       if (readOnly(this)) return;
-      if (this.resetConfirmText !== 'SUPPRIMER') return;
+      if (this.resetConfirmText !== labels.resetConfirmWord) return;
       resetAllData();
       this.display = getSettings();
       this.resetConfirmText = '';
@@ -311,12 +304,11 @@ export function createSettingsApp(deps: SettingsAppDeps): SettingsApp {
     },
 
     saveSyncFields() {
-      this.persistSyncConfig();
-      this.toastSaved();
+      if (this.persistSyncConfig()) this.toastSaved();
     },
 
-    persistSyncConfig() {
-      if (readOnly(this)) return;
+    persistSyncConfig(): boolean {
+      if (readOnly(this)) return false;
       const url = this.syncForm.url.trim();
       setWebdavPassword(this.syncForm.password);
       this.display = updateSettings({
@@ -331,6 +323,7 @@ export function createSettingsApp(deps: SettingsAppDeps): SettingsApp {
       this.syncLastLabel = this.lastSyncLabel(
         this.syncConfigured ? this.display.webdav?.lastSyncAt : undefined
       );
+      return true;
     },
 
     persistSyncConfigWithNow() {

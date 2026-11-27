@@ -18,7 +18,6 @@ import {
   formatDuration,
   formatRestTime,
   typeLabel,
-  todayISO,
   computeAvailableSessions,
   computeSessionStats,
   computeProgressPercent,
@@ -138,10 +137,10 @@ export function createQuickSession(deps: QuickSessionDeps) {
       if (found.status === 'in-progress' && found.sourceSessionId) {
         this.session = found;
       } else {
-        this.session = deps.storage.saveSession({
+        // On exécute la séance planifiée en place : une copie `in-progress`
+        // laissait l'originale `planned` et créait un doublon dans l'historique.
+        const started: Session = {
           ...found,
-          sourceSessionId: found.id,
-          date: todayISO(),
           status: 'in-progress',
           duration: undefined,
           exercises: found.exercises.map((exercise) => ({
@@ -153,7 +152,9 @@ export function createQuickSession(deps: QuickSessionDeps) {
               rpeType: 'rpe' as const,
             })),
           })),
-        });
+        };
+        deps.storage.updateSession(found.id, started);
+        this.session = deps.storage.getSessions().find((s) => s.id === found.id) ?? started;
       }
       const firstPending = this.session.exercises.findIndex((exercise) =>
         exercise.sets.some((set) => !set.completed)

@@ -1,3 +1,4 @@
+import { localDateKey } from '../../lib/date';
 /**
  * logique Alpine de la page Exercices.
  *
@@ -377,7 +378,7 @@ export function createExercisesApp(deps: ExercisesDeps): ExercisesApp {
           `${labels.seanceSingular} ${clock.now().toLocaleDateString(clock.locale())}`;
         const created = saveSession({
           name,
-          date: clock.now().toISOString().split('T')[0],
+          date: localDateKey(clock.now()),
           exercises: [],
           status: 'planned',
         });

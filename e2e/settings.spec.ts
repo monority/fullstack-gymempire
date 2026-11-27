@@ -24,6 +24,22 @@ test('settings page has no mock labels and a single reminder section', async ({ 
   expect(new Set(ids).size).toBe(ids.length);
 });
 
+test('reset confirmation word is localized and no mock labels remain', async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem('muscu-auth', JSON.stringify({ email: 'e2e@test.fr', name: 'E2E' }));
+  });
+
+  await page.goto('/en/settings');
+  const body = await page.locator('body').innerText();
+  expect(body).not.toContain('RESET CONFIRMATION DIALOG');
+  expect(body).not.toContain('WEBDAV PUSH OVERWRITE CONFIRMATION DIALOG');
+  expect(body).not.toContain('WEBDAV RESTORE CONFIRMATION DIALOG');
+
+  await page.locator('.set__danger-btn').click();
+  await page.locator('.set__confirm-input').fill('DELETE');
+  await expect(page.getByRole('button', { name: /reset permanently/i })).toBeEnabled();
+});
+
 test('the WebDAV password never reaches localStorage', async ({ page }) => {
   await page.addInitScript(() => {
     localStorage.clear();

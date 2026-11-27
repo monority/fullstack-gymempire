@@ -51,6 +51,7 @@ export default {
   close: 'Fermer',
   skip: 'Passer',
   supersetLabel: 'Superset',
+  supersetNone: 'Aucun superset',
   supersetFor: 'Superset pour',
   newSuperset: '+ Nouveau superset',
   moveToSuperset: 'Déplacer dans un superset',

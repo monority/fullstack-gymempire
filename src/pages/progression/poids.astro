@@ -2,7 +2,6 @@
 import '../../styles/components/poids-page.css';
 
 import { resolveLocale } from '../../i18n';
-
 import { t } from '../../i18n';
 import PoidsForm from '../../components/progression/PoidsForm.astro';
 import PoidsStats from '../../components/progression/PoidsStats.astro';
@@ -30,13 +29,14 @@ const L = t(locale);
   import { registerAlpine } from '../../lib/alpine';
   import { createPoidsApp } from '../../components/progression/poidsApp';
   import { t } from '../../i18n';
+  import { localDateKey } from '../../lib/date';
 
   const LABELS = t();
 
   registerAlpine('poidsApp', () =>
     createPoidsApp({
       labels: { ...LABELS.poids, kg: LABELS.common.kg },
-      today: () => new Date().toISOString().split('T')[0],
+      today: () => localDateKey(new Date()),
       ui: {
         confirm: (message) => window.confirm(message),
         schedule: (fn, ms) => window.setTimeout(fn, ms),

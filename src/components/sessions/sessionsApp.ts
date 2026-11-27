@@ -1,3 +1,4 @@
+import { localDateKey } from '../../lib/date';
 /**
  * logique Alpine de la liste des séances.
  * Le markup `x-for` reste dans `src/pages/sessions/index.astro`.
@@ -117,7 +118,7 @@ export function createSessionsApp(deps: SessionsAppDeps): SessionsApp {
     labels,
 
     get todayIso() {
-      return deps.today().toISOString().slice(0, 10);
+      return localDateKey(deps.today());
     },
 
     init() {
@@ -180,7 +181,7 @@ export function createSessionsApp(deps: SessionsAppDeps): SessionsApp {
       if (!src) return;
       const copy: Omit<Session, 'id'> = {
         name: src.name + ' ' + labels.copySuffix,
-        date: deps.today().toISOString(),
+        date: localDateKey(deps.today()),
         status: 'planned',
         exercises: src.exercises.map((ex) => ({
           ...ex,

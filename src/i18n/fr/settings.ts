@@ -27,6 +27,7 @@ export default {
   resetAll: 'Réinitialiser toutes les données',
   resetDesc: 'Supprime définitivement toutes les séances, exercices et paramètres.',
   resetConfirm: 'Tapez SUPPRIMER pour confirmer',
+  resetConfirmWord: 'SUPPRIMER',
   about: 'À propos',
   version: 'Version',
   storage: 'Stockage',

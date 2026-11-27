@@ -36,7 +36,7 @@ Faits vérifiés dans le code :
 - Unité « Poids (kg) » codée en dur alors que le réglage lbs existe.
 - `restPaused` : état écrit mais jamais lu (`quickSession.ts`, `quickRest.ts`).
 - Responsive éclaté : 320 / 360 / 480 / 540 / 640 / 767 / 768 / 1024 selon les fichiers, avec un trou à 481–539 px.
-- Supersets, échauffement automatique et suggestion MRV sont implémentés mais **sans contrôle** dans la page de création.
+- Supersets et échauffement automatique sont désormais câblés dans la page de création (contrôles dédiés). La suggestion MRV reste accessible via chaque série.
 
 ---
 
@@ -58,7 +58,7 @@ La refonte ne se limite donc pas à la couleur : elle change surtout la **hiéra
 | Typographie     | Conserver **Archivo** (display) et **Inter** (texte), déjà embarqués localement                                        | Le skill propose Barlow Condensed pour le sport, mais le projet est **offline-first** : garder les polices locales évite une dépendance réseau |
 | Échelle de type | 5 niveaux seulement : page / section / carte / corps / légende ; corps ≥ 16 px mobile                                  | `readable-font-size`, `line-length-control` (§5)                                                                                               |
 | Espacement      | Échelle 4/8 pt : 4, 8, 12, 16, 24, 32, 48 — un seul token par intention                                                | `spacing-scale` (§5)                                                                                                                           |
-| Breakpoints     | **375 / 768 / 1024 / 1440**, définis une seule fois dans `tokens/layout.css`                                           | `breakpoint-consistency` (§5)                                                                                                                  |
+| Breakpoints     | 12 paliers canoniques (360→1100 px), enforcement par `check-css` (voir `src/styles/README.md`)                         | `breakpoint-consistency` (§5) — cible initiale non atteinte                                                                                    |
 | Cibles tactiles | ≥ 44 × 44 px, ≥ 8 px entre cibles, `touch-action: manipulation`                                                        | `touch-target-size`, `touch-spacing`, `tap-delay` (§2)                                                                                         |
 | Navigation      | Mobile : barre inférieure ≤ 5 entrées + icône **et** libellé. Desktop ≥ 1024 : sidebar. Jamais les deux au même niveau | `adaptive-navigation`, `bottom-nav-limit`, `avoid-mixed-patterns`, `nav-label-icon` (§9)                                                       |
 | Formulaires     | Libellé visible au-dessus du champ, erreur sous le champ, validation au blur, options avancées repliées                | `input-labels`, `inline-validation`, `progressive-disclosure` (§8)                                                                             |
@@ -112,7 +112,7 @@ _Objectif : poser le design system avant de toucher aux parcours._
 
 - Créer `tokens/layout.css` : breakpoints 375/768/1024/1440, z-index (0/10/20/40/100), échelle d'espacement 4→48.
 - Harmoniser les hauteurs de champs à 44 px minimum et les cibles tactiles à 44 × 44 px.
-- Remplacer les media queries dispersées par les tokens (supprimer les paliers 360/480/540/640 contradictoires).
+- Harmoniser les media queries sur 12 paliers canoniques et interdire toute nouvelle valeur (`check-css`, règle `breakpoint`).
 - Navigation : barre inférieure mobile (5 entrées max, icône + libellé), sidebar desktop ≥ 1024, une seule source de vérité `NavTree`.
 - Vérifier le contraste clair et sombre séparément (axe + `check:contrast`).
 
@@ -157,7 +157,7 @@ _Objectif : créer une séance sans allers-retours._
 - Picker : rester ouvert après ajout, conserver recherche et filtre muscle, compteur « N ajoutés », templates mis en avant.
 - Déplacer « Ressenti » avant les exercices, dans un panneau replié.
 - Supprimer le double dépliage automatique / bouton « Tout développer » redondant.
-- Câbler l'échauffement automatique (`exerciseCard.ts:88`) dans la page de création.
+- Câbler l'échauffement automatique dans la page de création (**fait** : bouton dans `CreateExerciseList.astro`).
 - Brouillon auto-sauvegardé localement (`form-autosave`) pour éviter la perte sur fermeture.
 
 **Acceptation** : ajouter 3 exercices depuis une recherche = 1 seule saisie ; le bouton d'échauffement est utilisable.

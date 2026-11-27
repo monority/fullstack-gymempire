@@ -96,7 +96,7 @@ describe('createQuickSession', () => {
     app.selectedSessionId = 'tpl-1';
     app.startSession();
     expect(app.state).toBe('working');
-    expect(app.session?.sourceSessionId).toBe('tpl-1');
+    expect(app.session?.id).toBe('tpl-1');
     expect(app.currentExerciseIndex).toBe(0);
     expect(app.currentSetIndex).toBe(0);
     expect(app.totalSets).toBe(3);

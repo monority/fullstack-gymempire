@@ -30,7 +30,14 @@
       transform var(--transition-fast);
   }
 
-  .button svg svg {
+  .button:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+    box-shadow: none;
+    transform: none;
+  }
+
+  .button svg {
     width: 1.6rem;
     height: 1.6rem;
     flex-shrink: 0;
@@ -103,12 +110,12 @@
       inset 0 1px 0 var(--alpha-highlight);
   }
 
-  .button--primary:hover:hover {
+  .button--primary:hover {
     background: var(--color-accent-hover);
     border-color: var(--color-accent-hover);
   }
 
-  .button--primary:active:not(:disabled):active:not(:disabled) {
+  .button--primary:active:not(:disabled) {
     box-shadow: inset 0 1px 2px color-mix(in srgb, var(--color-accent-foreground) 25%, transparent);
     transform: translateY(1px);
   }
@@ -120,12 +127,12 @@
     color: var(--color-text);
   }
 
-  .button--secondary:hover:hover {
+  .button--secondary:hover {
     background: var(--color-surface-3);
     border-color: var(--alpha-border);
   }
 
-  .button--secondary:active:not(:disabled):active:not(:disabled) {
+  .button--secondary:active:not(:disabled) {
     background: var(--color-surface-3);
     transform: translateY(1px);
   }
@@ -137,12 +144,12 @@
     color: var(--color-muted);
   }
 
-  .button--ghost:hover:hover {
+  .button--ghost:hover {
     background: var(--alpha-bg-subtle);
     color: var(--color-text);
   }
 
-  .button--ghost:active:not(:disabled):active:not(:disabled) {
+  .button--ghost:active:not(:disabled) {
     background: var(--alpha-bg-soft);
     transform: translateY(1px);
   }
@@ -154,12 +161,12 @@
     color: var(--color-destructive);
   }
 
-  .button--destructive:hover:hover {
+  .button--destructive:hover {
     background: color-mix(in srgb, var(--color-destructive) 10%, transparent);
     border-color: color-mix(in srgb, var(--color-destructive) 65%, transparent);
   }
 
-  .button--destructive:active:not(:disabled):active:not(:disabled) {
+  .button--destructive:active:not(:disabled) {
     background: color-mix(in srgb, var(--color-destructive) 16%, transparent);
     transform: translateY(1px);
   }
@@ -174,7 +181,7 @@
     text-underline-offset: 0.25em;
   }
 
-  .button--link:hover:hover {
+  .button--link:hover {
     color: var(--color-accent-hover);
   }
 
@@ -186,7 +193,7 @@
 
   /* ── Disabled ── */
   .button.is-inactive,
-  .button:disabled:disabled.is-inactive {
+  .button:disabled.is-inactive {
     opacity: 0.5;
     cursor: not-allowed;
     box-shadow: none;

@@ -20,8 +20,9 @@ rafraîchi sur `ClientRouter`.
    `Exact<typeof en, Dictionary>` pour une symétrie bidirectionnelle à la compilation.
 4. **Données** : les noms d'exercices restent des clés FR canoniques (compatibilité localStorage) ;
    seules les chaînes affichées sont traduites, via des maps typées et des tips localisés.
-5. **Routage** : un seul catch-all `src/pages/en/[...slug].astro` remplace les 20 stubs ; les pages
-   racines restent l'unique implémentation. `/en/timer/pop` est servi par un composant partagé.
+5. **Routage** : 21 routes fines `src/pages/en/**/*.astro` importent chacune une seule page racine.
+   Le catch-all chargeait toutes les feuilles CSS sur chaque route EN ; le découpage (commit `1ea18a9`)
+   réduit chaque page EN à sa propre feuille. `/en/timer/pop` reste servi par un composant partagé.
 6. **Formatage** : `dateLocale(locale)` est l'unique source (`en-GB` / `fr-FR`).
 
 ## Conséquences

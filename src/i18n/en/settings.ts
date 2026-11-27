@@ -27,6 +27,7 @@ export default {
   resetAll: 'Reset all data',
   resetDesc: 'Permanently deletes all sessions, exercises and settings.',
   resetConfirm: 'Type DELETE to confirm',
+  resetConfirmWord: 'DELETE',
   about: 'About',
   version: 'Version',
   storage: 'Storage',

@@ -1,3 +1,4 @@
+import { localDateKey } from '../../lib/date';
 /** Enregistrement Alpine extrait d'une page (ratchet script). */
 import { singleton as uiStore } from '../../lib/ui-store';
 import { registerAlpine, getAlpine } from '../../lib/alpine';
@@ -29,7 +30,7 @@ export function registerBuilder(): void {
       labels: BUILDER_LABELS,
       rpeLabels: LABELS.builder as unknown as import('./sessionMeta').SessionMetaLabels,
       search: window.location.search,
-      today: () => new Date().toISOString().split('T')[0],
+      today: () => localDateKey(new Date()),
       locale: DATE_LOCALE(),
       localizedPath,
       host: {

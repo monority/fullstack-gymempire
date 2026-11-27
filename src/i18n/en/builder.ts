@@ -50,6 +50,7 @@ export default {
   close: 'Close',
   skip: 'Skip',
   supersetLabel: 'Superset',
+  supersetNone: 'No superset',
   supersetFor: 'Superset for',
   newSuperset: '+ New superset',
   moveToSuperset: 'Move to a superset',

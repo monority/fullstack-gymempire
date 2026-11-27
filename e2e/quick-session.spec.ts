@@ -82,20 +82,26 @@ test('quick session: previous values are prefilled and one tap completes a set',
       page.evaluate(() => {
         type StoredSet = { completed: boolean };
         type StoredSession = {
-          sourceSessionId?: string;
+          id: string;
           status: string;
           exercises: Array<{ sets: StoredSet[] }>;
         };
         const sessions = JSON.parse(
           localStorage.getItem('muscu:sessions') || '[]'
         ) as StoredSession[];
-        const s = sessions.find(
-          (x) => x.sourceSessionId === 'quick-e2e' && x.status === 'in-progress'
-        );
+        const s = sessions.find((x) => x.id === 'quick-e2e' && x.status === 'in-progress');
         return s ? s.exercises[0].sets.filter((set) => set.completed).length : -1;
       })
     )
     .toBe(1);
+
+  // La séance planifiée est exécutée en place : aucun doublon dans l'historique.
+  const ids = await page.evaluate(() =>
+    JSON.parse(localStorage.getItem('muscu:sessions') || '[]')
+      .filter((s: { id: string }) => s.id === 'quick-e2e')
+      .map((s: { id: string }) => s.id)
+  );
+  expect(ids).toEqual(['quick-e2e']);
 });
 
 test('quick session: RPE control is hidden in simple mode', async ({ page }) => {
