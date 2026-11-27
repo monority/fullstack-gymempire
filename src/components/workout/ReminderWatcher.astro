@@ -1,0 +1,15 @@
+---
+/**
+ * ReminderWatcher — minuteur global des rappels, monté une seule fois dans
+ * AppLayout. La page Réglages ne fait que configurer ; ceci tourne partout.
+ */
+interface Props {}
+---
+
+<div class="reminder-watcher" x-data="reminderWatcher()" x-init="init()" hidden></div>
+
+<script>
+  import { registerReminderWatcher } from './reminderWatcherRegistration';
+
+  registerReminderWatcher();
+</script>

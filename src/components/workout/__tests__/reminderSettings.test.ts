@@ -50,12 +50,17 @@ function create(
     settings = { ...settings, reminders: { ...settings.reminders, enabled: false } };
   let notified = opts.notified ?? '';
   const fired: unknown[][] = [];
+  const toasts: string[] = [];
+  const requested: string[] = [];
   const intervals: Array<() => void> = [];
   const cleared: number[] = [];
   const notifications: NotificationApi = {
     supported: true,
     permission: opts.permission ?? 'granted',
-    requestPermission: () => Promise.resolve('granted'),
+    requestPermission: () => {
+      requested.push('called');
+      return Promise.resolve('granted');
+    },
     notify: (title, options) => fired.push([title, options]),
   };
   const app = createReminderSettings({
@@ -72,8 +77,18 @@ function create(
     },
     clearInterval: (id) => cleared.push(id),
     notifications,
+    notify: (message) => toasts.push(message),
   });
-  return { app, fired, intervals, cleared, notified: () => notified, settings: () => settings };
+  return {
+    app,
+    fired,
+    toasts,
+    requested,
+    intervals,
+    cleared,
+    notified: () => notified,
+    settings: () => settings,
+  };
 }
 
 describe('createReminderSettings', () => {
@@ -128,5 +143,46 @@ describe('createReminderSettings', () => {
     expect(settings().reminders.time).toBe('08:30');
     app.setTime('09:15');
     expect(settings().reminders.time).toBe('09:15');
+  });
+  it('affiche un toast visible quand la permission n’est pas accordée', () => {
+    const { app, fired, toasts } = create({ permission: 'denied' });
+    app.check();
+    expect(fired).toHaveLength(0);
+    expect(toasts).toEqual(['Rappel']);
+  });
+
+  it('ne démarre aucun minuteur dans la carte réglages', () => {
+    const { app, intervals } = create();
+    const noWatch = createReminderSettings({
+      labels,
+      getSettings: () => baseSettings(),
+      updateSettings: (u) => ({ ...baseSettings(), ...u }),
+      getSessions: () => [],
+      getNotified: () => '',
+      setNotified: () => {},
+      now: () => new Date(2026, 10, 23, 8, 30),
+      interval: (fn) => {
+        intervals.push(fn);
+        return 9;
+      },
+      clearInterval: () => {},
+      notifications: {
+        supported: true,
+        permission: 'granted',
+        requestPermission: () => Promise.resolve('granted'),
+        notify: () => {},
+      },
+      notify: () => {},
+      watch: false,
+    });
+    noWatch.init();
+    expect(intervals).toHaveLength(0);
+    expect(app._timer).toBe(0);
+  });
+  it('demande la permission des que le rappel est active', () => {
+    const { app, requested, settings } = create({ permission: 'default' });
+    app.setEnabled(true);
+    expect(requested).toEqual(['called']);
+    expect(settings().reminders.enabled).toBe(true);
   });
 });

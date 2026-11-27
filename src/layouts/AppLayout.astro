@@ -4,6 +4,7 @@ import { resolveLocale } from '../i18n';
 import '../styles/global.css';
 import AppShell from '../components/layout/AppShell.astro';
 import QuickSearch from '../components/layout/QuickSearch.astro';
+import ReminderWatcher from '../components/workout/ReminderWatcher.astro';
 import Toast from '../components/ui/Toast.astro';
 import { ClientRouter } from 'astro:transitions';
 import { t, localizedPath } from '../i18n';
@@ -181,6 +182,9 @@ const groupsWithActive = groups.map((g) => ({
     {/* Global command palette — searches pages/exercises/sessions.
         Opened by the sidebar search field, "/", or Ctrl/Cmd+K. */}
     <QuickSearch />
+
+    {/* Global reminder watcher — runs on every route, not only /settings. */}
+    <ReminderWatcher />
 
     {/* Global toast — persists across page navigations. */}
     <Toast />

@@ -38,6 +38,9 @@ export interface ReminderDeps {
   interval(fn: () => void, ms: number): number;
   clearInterval(id: number): void;
   notifications: NotificationApi;
+  notify(message: string, variant: 'info' | 'success' | 'warning' | 'error'): void;
+  /** Le watcher global tourne sur toutes les pages ; la carte réglages ne fait que configurer. */
+  watch?: boolean;
 }
 
 const DAY_LABELS = [
@@ -72,6 +75,7 @@ export function createReminderSettings(deps: ReminderDeps) {
     init() {
       this.settings = deps.getSettings();
       this.syncPermission();
+      if (deps.watch === false) return;
       this.check();
       this._timer = deps.interval(() => this.check(), 30000);
     },
@@ -101,6 +105,11 @@ export function createReminderSettings(deps: ReminderDeps) {
       this.settings = deps.updateSettings({
         reminders: { ...this.settings.reminders, enabled: checked },
       });
+      // La bascule est un geste utilisateur : c'est le bon moment pour
+      // demander la permission, sinon le rappel resterait silencieux.
+      if (checked && deps.notifications.permission === 'default') {
+        void this.requestPermission();
+      }
     },
 
     toggleDay(v: number) {
@@ -121,7 +130,9 @@ export function createReminderSettings(deps: ReminderDeps) {
     },
 
     check() {
-      const r = this.settings?.reminders;
+      // Lecture fraîche : le watcher global doit voir les changements faits
+      // depuis la page réglages sans partager son état Alpine.
+      const r = deps.getSettings()?.reminders;
       if (!r || !r.enabled) return;
 
       const now = deps.now();
@@ -162,7 +173,9 @@ export function createReminderSettings(deps: ReminderDeps) {
     },
 
     fire() {
-      if (this.supported && this.permission === 'granted') {
+      // La permission est relue à l'instant T : elle peut avoir été accordée
+      // depuis la page réglages alors que ce watcher tourne ailleurs.
+      if (deps.notifications.supported && deps.notifications.permission === 'granted') {
         try {
           deps.notifications.notify(this.labels.notifTitle, {
             body: this.labels.notifBody,
@@ -170,10 +183,12 @@ export function createReminderSettings(deps: ReminderDeps) {
           });
           return;
         } catch {
-          // repli ci-dessous
+          // repli visible ci-dessous
         }
       }
-      // Ancien repli supprimé du shell : plus aucun global showToast.
+      // Permission refusée ou notifications indisponibles : on ne reste
+      // jamais muet, un toast signale l'heure du rappel dans l'application.
+      deps.notify(this.labels.notifTitle, this.permission === 'granted' ? 'warning' : 'info');
     },
   };
 }
