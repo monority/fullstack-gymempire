@@ -52,7 +52,8 @@ const drawerItems = groups.map((group) => ({
     <Header title={title}>
       <slot name="actions" slot="actions" />
     </Header>
-    <main class="page-content">
+    {/* Région défilante : doit être atteignable au clavier (axe scrollable-region-focusable). */}
+    <main class="page-content" tabindex="0" aria-label={title}>
       <div class="demo-banner" data-demo-banner hidden role="status">
         <span class="demo-banner__dot" aria-hidden="true"></span>
         {L.layout.demoBanner}

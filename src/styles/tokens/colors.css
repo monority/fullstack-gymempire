@@ -22,7 +22,7 @@
     --color-accent-hover: hsl(24 95% 53%);
     --color-accent-foreground: #1b1005;
     --color-border-strong: hsl(215 25% 65% / 0.22);
-    --color-success: #059669;
+    --color-success: #10b981;
     --color-success-foreground: #000000;
     --color-destructive: #fca5a5;
     --color-warning: #eab308;
@@ -30,8 +30,8 @@
     --color-border: hsl(215 25% 65% / 0.14);
 
     /* Teintes des KPI */
-    --color-stat-volume: hsl(160 84% 34%);
-    --color-stat-volume-bg: hsl(160 84% 34% / 0.12);
+    --color-stat-volume: hsl(158 80% 48%);
+    --color-stat-volume-bg: hsl(158 80% 48% / 0.12);
     --color-stat-pr: hsl(270 60% 55%);
     --color-stat-pr-bg: hsl(270 60% 55% / 0.1);
     --color-stat-streak: hsl(38 90% 50%);
@@ -50,8 +50,8 @@
     --color-cat-arms-bg: hsl(175 60% 60% / 0.1);
     --color-cat-legs: hsl(170 60% 58%);
     --color-cat-legs-bg: hsl(170 60% 58% / 0.1);
-    --color-cat-core: hsl(265 60% 72%);
-    --color-cat-core-bg: hsl(265 60% 72% / 0.1);
+    --color-cat-core: hsl(265 80% 82%);
+    --color-cat-core-bg: hsl(265 80% 82% / 0.1);
 
     /* Groupes de superséries */
     --color-superset-g1: hsl(38 95% 45%);
