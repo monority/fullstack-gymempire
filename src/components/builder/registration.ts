@@ -5,10 +5,10 @@ import { registerAlpine, getAlpine } from '../../lib/alpine';
 import { createSessionBuilderApp } from './sessionBuilder';
 import { pickBuilderLabels } from './builderLabels';
 import { exerciseCard } from './exerciseCard';
-import { t, localizedPath, DATE_LOCALE } from '../../i18n';
+import { t, getLocale, localizedPath, DATE_LOCALE } from '../../i18n';
 
 export function registerBuilder(): void {
-  const LABELS = t();
+  const LABELS = t(getLocale());
   const BUILDER_LABELS = pickBuilderLabels(
     LABELS as unknown as { builder: Record<string, string> }
   );

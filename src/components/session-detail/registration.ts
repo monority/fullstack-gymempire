@@ -2,10 +2,10 @@
 import { singleton as uiStore } from '../../lib/ui-store';
 import { registerAlpine } from '../../lib/alpine';
 import { createSessionDetailApp, buildSessionDetailLabels } from './sessionDetailApp';
-import { t, localizedPath, trExercise } from '../../i18n';
+import { t, getLocale, localizedPath, trExercise } from '../../i18n';
 
 export function registerSessionDetail(): void {
-  const LABELS = t();
+  const LABELS = t(getLocale());
   const labels = buildSessionDetailLabels(LABELS);
   labels.printHref = localizedPath('/sessions/print');
   registerAlpine('sessionDetailApp', () =>

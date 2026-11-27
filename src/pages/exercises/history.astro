@@ -173,9 +173,9 @@ import HistoryTable from '../../components/exercises/HistoryTable.astro';
 <script>
   import { registerAlpine } from '../../lib/alpine';
   import { createHistoryApp } from '../../components/exercises/historyApp';
-  import { t } from '../../i18n';
+  import { t, getLocale } from '../../i18n';
 
-  const LABELS = t();
+  const LABELS = t(getLocale());
 
   registerAlpine('exerciseHistoryApp', () =>
     createHistoryApp({

@@ -202,14 +202,14 @@ const groupsWithActive = groups.map((g) => ({
     </script>
 
     <script>
-      import { t } from '../i18n';
+      import { t, getLocale } from '../i18n';
 
       // Native number spinners are hidden in src/styles/components/stepper.css (they
       // can't be themed reliably cross-browser). Here we inject designed
       // chevron buttons inside the right edge of every standalone
       // number input. Inputs that already ship their own +/- steppers
       // opt out via the `.no-spinner` class.
-      const L = t();
+      const L = t(getLocale());
 
       const CHEVRON_UP = '<polyline points="6 14 12 8 18 14"/>';
       const CHEVRON_DOWN = '<polyline points="6 10 12 16 18 10"/>';

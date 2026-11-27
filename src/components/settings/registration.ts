@@ -2,12 +2,12 @@
 import { singleton as uiStore } from '../../lib/ui-store';
 import { registerAlpine } from '../../lib/alpine';
 import { createSettingsApp, buildSettingsLabels } from './settingsApp';
-import { t, DATE_LOCALE } from '../../i18n';
+import { t, getLocale, DATE_LOCALE } from '../../i18n';
 import { isDemoAccount } from '../../lib/auth';
 import { downloadBlob } from '../../lib/csv-export';
 
 export function registerSettings(): void {
-  const LABELS = t();
+  const LABELS = t(getLocale());
 
   function readFile(file: File): Promise<string> {
     return new Promise((resolve, reject) => {

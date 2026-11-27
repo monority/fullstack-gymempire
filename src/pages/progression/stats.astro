@@ -113,9 +113,9 @@ const L = t(locale);
 </AppLayout>
 
 <script>
-  import { t } from '../../i18n';
+  import { t, getLocale } from '../../i18n';
   import { buildStatsDeps, createStatsApp } from '../../components/progression/statsApp';
   import { registerAlpine } from '../../lib/alpine';
 
-  registerAlpine('statsApp', () => createStatsApp(buildStatsDeps(t())));
+  registerAlpine('statsApp', () => createStatsApp(buildStatsDeps(t(getLocale()))));
 </script>

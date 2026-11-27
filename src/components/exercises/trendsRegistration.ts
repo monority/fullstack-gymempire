@@ -1,10 +1,10 @@
 /** Enregistrement Alpine extrait d'une page (ratchet script). */
 import { registerAlpine } from '../../lib/alpine';
 import { createTrendsApp } from './trendsApp';
-import { t, trExercise } from '../../i18n';
+import { t, getLocale, trExercise } from '../../i18n';
 
 export function registerTrends(): void {
-  const LABELS = t();
+  const LABELS = t(getLocale());
 
   registerAlpine('exerciseTrendApp', () =>
     createTrendsApp({

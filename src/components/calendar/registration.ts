@@ -1,10 +1,10 @@
 /** Enregistrement Alpine extrait d'une page (ratchet script). */
 import { registerAlpine } from '../../lib/alpine';
 import { createCalendarApp } from './calendarApp';
-import { t, localizedPath } from '../../i18n';
+import { t, getLocale, localizedPath } from '../../i18n';
 
 export function registerCalendar(): void {
-  const LABELS = t();
+  const LABELS = t(getLocale());
 
   registerAlpine('calendarApp', () =>
     createCalendarApp({

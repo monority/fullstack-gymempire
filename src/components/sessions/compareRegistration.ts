@@ -1,10 +1,10 @@
 /** Enregistrement Alpine extrait d'une page (ratchet script). */
 import { registerAlpine } from '../../lib/alpine';
 import { createComparisonApp } from './compareApp';
-import { t } from '../../i18n';
+import { t, getLocale } from '../../i18n';
 
 export function registerCompare(): void {
-  const LABELS = t();
+  const LABELS = t(getLocale());
 
   registerAlpine('comparisonApp', () =>
     createComparisonApp({

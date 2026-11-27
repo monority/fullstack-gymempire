@@ -1,5 +1,5 @@
 /** Enregistrement Alpine extrait d'une page (ratchet script). */
-import { t, localizedPath } from '../../i18n';
+import { t, getLocale, localizedPath } from '../../i18n';
 import { getSessions, saveSession, updateSession } from '../../lib/storage/sessions';
 import { getSettings } from '../../lib/storage/settings';
 import { getRestTime } from '../../lib/rest-times';
@@ -7,7 +7,7 @@ import { createQuickSession } from './quickSession';
 import { registerAlpine } from '../../lib/alpine';
 
 export function registerQuick(): void {
-  const LABELS = t();
+  const LABELS = t(getLocale());
 
   registerAlpine('quickSessionApp', () =>
     createQuickSession({

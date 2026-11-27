@@ -2,11 +2,11 @@
 import { singleton as uiStore } from '../../lib/ui-store';
 import { registerAlpine } from '../../lib/alpine';
 import { createExercisesApp, buildExercisesLabels } from './exercisesApp';
-import { t, localizedPath, DATE_LOCALE } from '../../i18n';
+import { t, getLocale, localizedPath, DATE_LOCALE } from '../../i18n';
 import { icons } from '../../lib/icons';
 
 export function registerExercises(): void {
-  const LABELS = t();
+  const LABELS = t(getLocale());
   (window as Window & { icons?: typeof icons }).icons = icons;
   registerAlpine('exercisesApp', () =>
     createExercisesApp({

@@ -28,10 +28,10 @@ const L = t(locale);
 <script>
   import { registerAlpine } from '../../lib/alpine';
   import { createPoidsApp } from '../../components/progression/poidsApp';
-  import { t } from '../../i18n';
+  import { t, getLocale } from '../../i18n';
   import { localDateKey } from '../../lib/date';
 
-  const LABELS = t();
+  const LABELS = t(getLocale());
 
   registerAlpine('poidsApp', () =>
     createPoidsApp({

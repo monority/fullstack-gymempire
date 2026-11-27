@@ -5,7 +5,7 @@ import { getAuth } from '../../lib/auth';
 import { t, getLocale, localizedPath, trExercise } from '../../i18n';
 
 export function registerPrintSheet(): void {
-  const LABELS = t();
+  const LABELS = t(getLocale());
 
   // Helper de traduction identique aux autres pages (celle-ci est autonome).
   (window as Window & { trExercise?: typeof trExercise }).trExercise = trExercise;

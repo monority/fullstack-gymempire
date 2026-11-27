@@ -18,12 +18,8 @@ export {
 
 export const dictionaries: Record<Locale, Dictionary> = { fr, en };
 
-/**
- * Dictionary pour une locale explicite.
- * Le paramètre reste optionnel le temps que les scripts clients soient migrés
- * (Phase 3) : côté serveur, tous les appels passent désormais la locale.
- */
-export function t(locale: Locale = getLocale()): Dictionary {
+/** Dictionary pour une locale explicite — aucun défaut implicite (ADR-010). */
+export function t(locale: Locale): Dictionary {
   return dictionaries[locale];
 }
 

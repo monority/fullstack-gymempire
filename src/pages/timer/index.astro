@@ -51,9 +51,9 @@ const L = t(locale);
 <script>
   import { createTimerApp } from '../../components/timer/timerApp';
   import { registerAlpine } from '../../lib/alpine';
-  import { t, localizedPath } from '../../i18n';
+  import { t, getLocale, localizedPath } from '../../i18n';
 
-  const LABELS = t();
+  const LABELS = t(getLocale());
 
   registerAlpine('timerApp', () =>
     createTimerApp({

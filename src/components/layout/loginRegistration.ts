@@ -1,10 +1,10 @@
 /** Enregistrement Alpine extrait d'une page (ratchet script). */
 import { registerAlpine } from '../../lib/alpine';
 import { createLoginApp } from './loginApp';
-import { t, localizedPath, getLocale } from '../../i18n';
+import { t, getLocale, localizedPath } from '../../i18n';
 
 export function registerLogin(): void {
-  const LABELS = t();
+  const LABELS = t(getLocale());
 
   registerAlpine('loginApp', () =>
     createLoginApp({
