@@ -10,7 +10,7 @@ const L = t(locale);
 ---
 
 <template x-if="state === 'working' && isResting">
-  <section class="quick__rest-banner" role="status" aria-live="off">
+  <section class="quick__rest-banner" role="status" aria-live="polite">
     <div class="quick__rest-label">
       <span class="quick__rest-title">{L.rapide.resting}</span>
       <span class="quick__rest-next" x-text="restNextLabel()"></span>

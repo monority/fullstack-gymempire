@@ -4,8 +4,9 @@ interface Props {
   labels: { type: string; weight: string; reps: string };
   variant?: 'table' | 'card';
   unitExpr?: string;
+  actionLabel?: string;
 }
-const { labels, variant = 'table', unitExpr } = Astro.props;
+const { labels, variant = 'table', unitExpr, actionLabel } = Astro.props;
 ---
 
 <div class:list={['set-editor__row', 'set-editor__head', `set-editor__row--${variant}`]} role="row">
@@ -24,5 +25,5 @@ const { labels, variant = 'table', unitExpr } = Astro.props;
   <div class="set-editor__reps" role="columnheader">
     {labels.reps}
   </div>
-  <div class="set-editor__action" role="columnheader" aria-label="Actions"></div>
+  <div class="set-editor__action" role="columnheader" aria-label={actionLabel}></div>
 </div>

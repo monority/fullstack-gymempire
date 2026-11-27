@@ -18,9 +18,10 @@
 interface Props {
   /** Auto-dismiss delay in milliseconds (default 3000). */
   duration?: number;
+  closeLabel?: string;
 }
 
-const { duration = 3000 } = Astro.props;
+const { duration = 3000, closeLabel } = Astro.props;
 import Icon from './Icon.astro';
 ---
 
@@ -52,7 +53,7 @@ import Icon from './Icon.astro';
         type="button"
         class="toast__close"
         @click="$store.ui.dismiss(toast.id)"
-        aria-label="Close"
+        aria-label={closeLabel}
       >
         <Icon name="closeX" size={16} />
       </button>

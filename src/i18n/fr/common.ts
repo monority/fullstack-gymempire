@@ -4,6 +4,7 @@ export default {
   delete: 'Supprimer',
   edit: 'Modifier',
   add: 'Ajouter',
+  actions: 'Actions',
   search: 'Rechercher',
   loading: 'Chargement...',
   noData: 'Aucune donnée',

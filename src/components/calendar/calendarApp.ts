@@ -139,6 +139,7 @@ export function createCalendarApp(deps: CalendarAppDeps): CalendarApp {
     get monthVolume() {
       let total = 0;
       for (const s of this.allSessions) {
+        if (s.status !== 'completed') continue;
         const d = parseLocalDate(s.date);
         if (d.getFullYear() !== this.currentYear || d.getMonth() !== this.currentMonth) {
           continue;
@@ -170,7 +171,11 @@ export function createCalendarApp(deps: CalendarAppDeps): CalendarApp {
     get longestStreak() {
       if (this.allSessions.length === 0) return 0;
       const dates = Array.from(
-        new Set(this.allSessions.map((s) => s.date.substring(0, 10)))
+        new Set(
+          this.allSessions
+            .filter((s) => s.status === 'completed')
+            .map((s) => s.date.substring(0, 10))
+        )
       ).sort();
       let longest = 0;
       let run = 0;

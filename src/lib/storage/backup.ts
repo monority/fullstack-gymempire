@@ -85,6 +85,9 @@ export function importAllData(snapshot: unknown): void {
   if (typeof data.version !== 'number') {
     throw new Error('Version de sauvegarde manquante.');
   }
+  if (data.version < 1 || !Number.isInteger(data.version)) {
+    throw new Error('Version de sauvegarde invalide.');
+  }
   if (data.version > SNAPSHOT_VERSION) {
     throw new Error(`Sauvegarde trop récente (v${data.version}). Mettez l'application à jour.`);
   }
@@ -140,17 +143,31 @@ export function importAllData(snapshot: unknown): void {
       const r = s.reminders as Record<string, unknown>;
       if (r.enabled !== undefined && typeof r.enabled !== 'boolean')
         throw new Error('Rappel invalide.');
-      if (
-        r.days !== undefined &&
-        (!Array.isArray(r.days) || r.days.some((d) => typeof d !== 'number'))
-      ) {
-        throw new Error('Jours de rappel invalides.');
+      if (r.days !== undefined) {
+        if (
+          !Array.isArray(r.days) ||
+          r.days.some((d) => !Number.isInteger(d) || d < 0 || d > 6) ||
+          new Set(r.days).size !== r.days.length
+        ) {
+          throw new Error('Jours de rappel invalides.');
+        }
       }
       if (r.time !== undefined) {
         const match = typeof r.time === 'string' ? /^(\d{2}):(\d{2})$/.exec(r.time) : null;
         if (!match || Number(match[1]) > 23 || Number(match[2]) > 59)
           throw new Error('Heure de rappel invalide.');
       }
+    }
+    for (const key of ['defaultRestTime', 'weeklyGoal', 'bodyWeight'] as const) {
+      if (
+        s[key] !== undefined &&
+        (typeof s[key] !== 'number' || !Number.isFinite(s[key]) || s[key] < 0)
+      ) {
+        throw new Error(`${key} invalide.`);
+      }
+    }
+    for (const key of ['soundAlerts', 'benchmarksOptIn', 'advancedMode'] as const) {
+      if (s[key] !== undefined && typeof s[key] !== 'boolean') throw new Error(`${key} invalide.`);
     }
     if (s.webdav !== undefined) {
       if (!s.webdav || typeof s.webdav !== 'object' || Array.isArray(s.webdav)) {

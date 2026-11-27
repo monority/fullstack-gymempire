@@ -77,6 +77,7 @@ const SET_TYPE_OPTIONS = [
         labels={{ type: L.builder.type, weight: L.builder.weight, reps: L.common.reps }}
         unitExpr="unit"
         variant="card"
+        actionLabel={L.common.actions}
       />
       <template x-for="(set, i) in addSets" :key="i">
         <SetEditor

@@ -4,6 +4,7 @@ export default {
   delete: 'Delete',
   edit: 'Edit',
   add: 'Add',
+  actions: 'Actions',
   search: 'Search',
   loading: 'Loading...',
   noData: 'No data',

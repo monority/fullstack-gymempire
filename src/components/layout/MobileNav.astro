@@ -10,8 +10,9 @@ import type { NavGroup, NavItem } from '../../lib/types';
 interface Props {
   groups: NavGroup[];
   actionLabel?: string;
+  navLabel?: string;
 }
-const { groups, actionLabel } = Astro.props;
+const { groups, actionLabel, navLabel } = Astro.props;
 
 const allItems: NavItem[] = groups.flatMap((g) => g.items);
 const find = (suffix: string) => allItems.find((i) => i.href === suffix || i.href.endsWith(suffix));
@@ -41,7 +42,7 @@ const entries = [
 ].filter(Boolean) as Array<NavItem & { key: string; primary?: boolean; active: boolean }>;
 ---
 
-<nav class="mobile-nav" aria-label="Navigation principale">
+<nav class="mobile-nav" aria-label={navLabel}>
   {entries.map((item) =>
     item.primary ? (
       <button
