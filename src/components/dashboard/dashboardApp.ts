@@ -10,6 +10,7 @@ import { getExercises } from '../../lib/storage/exercises';
 import { getSettings } from '../../lib/storage/settings';
 import type { Session, Settings } from '../../lib/storage/types';
 import { statusLabel, type StatusLabels } from '../../lib/session-utils';
+import { localDateKey } from '../../lib/date';
 import {
   computeSessionVolume,
   computeTodayVolume,
@@ -23,7 +24,7 @@ import {
   computeWeeklyActivityByDay,
   computeSessionPrimaryMuscle,
 } from '../../lib/dashboard-stats';
-import { formatDateShort, formatNumPositive } from '../../lib/format';
+import { formatDateShort, formatNumPositive, formatWeightValue } from '../../lib/format';
 
 export interface DashboardAppDeps {
   locale(): 'fr' | 'en';
@@ -38,6 +39,7 @@ export interface DashboardApp {
   weeklyDone: number;
   labels: Dictionary['dashboard'] & { kg: string; status: StatusLabels };
   localizedPath: (path: string) => string;
+  formatWeightValue(kg: number): string;
   isLoading: boolean;
   loadError: boolean;
   init(): void;
@@ -46,6 +48,7 @@ export interface DashboardApp {
   hasSessions: boolean;
   recentSessions: Session[];
   nextSession: Session | null;
+  todaySession: Session | null;
   weeklyProgress: number;
   todayVolume: number;
   todaySessions: number;
@@ -132,6 +135,16 @@ export function createDashboardApp(
         this.sessions.find((s) => s.status === 'in-progress' || s.status === 'planned') ?? null
       );
     },
+    /** Séance à exécuter aujourd'hui (en cours prioritaire sur planifiée). */
+    get todaySession() {
+      const key = localDateKey(deps.today());
+      const due = (s: Session) => s.date.slice(0, 10) === key;
+      return (
+        this.sessions.find((s) => s.status === 'in-progress' && due(s)) ??
+        this.sessions.find((s) => s.status === 'planned' && due(s)) ??
+        null
+      );
+    },
     get weeklyProgress() {
       const target = this.settings.weeklyGoal;
       if (!Number.isFinite(target) || target <= 0) return 0;
@@ -181,6 +194,10 @@ export function createDashboardApp(
         top1RM: computeTop1RM(this.sessions),
         streak: computeStreak(this.sessions),
       };
+    },
+
+    formatWeightValue(kg: number): string {
+      return formatWeightValue(kg, this.settings.unit);
     },
 
     greeting() {

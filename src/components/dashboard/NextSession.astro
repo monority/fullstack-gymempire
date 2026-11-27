@@ -4,49 +4,60 @@ import { resolveLocale } from '../../i18n';
 /** Composant sans props — contrat explicite (ratchet CSS). */
 interface Props {}
 /**
- * NextSession — the dominant object of the first viewport.
+ * Séance du jour — objet dominant du premier écran.
  * Renders inside the Alpine dashboardApp scope.
  */
-import { t, localizedPath } from '../../i18n';
+import { t } from '../../i18n';
 
 const locale = resolveLocale(Astro.url.pathname);
 const L = t(locale);
 ---
 
-<section class="dash__next" x-show="nextSession" aria-label={L.dashboard.nextSession}>
+<section class="dash__next" aria-label={L.dashboard.todaySession}>
   <div class="dash__next-main">
     <div class="dash__next-copy">
-      <h2 class="dash__next-name" x-text="nextSession?.name"></h2>
-      <p class="dash__next-meta">
-        <span x-text="nextSession ? sessionExercisesCount(nextSession) + ' ' + labels.exercisesUnit : ''"></span>
+      <p class="dash__next-eyebrow" x-text="labels.todaySession">
+        {L.dashboard.todaySession}
+      </p>
+      <h2
+        class="dash__next-name"
+        x-text="(todaySession ?? nextSession)?.name ?? labels.noTodayTitle"
+      ></h2>
+      <p class="dash__next-meta" x-show="todaySession || nextSession">
+        <span x-text="(todaySession ?? nextSession) ? sessionExercisesCount(todaySession ?? nextSession) + ' ' + labels.exercisesUnit : ''"></span>
         <span aria-hidden="true">·</span>
-        <span x-text="nextSession ? sessionSetsCount(nextSession) + ' ' + labels.setsUnit : ''"></span>
+        <span x-text="(todaySession ?? nextSession) ? sessionSetsCount(todaySession ?? nextSession) + ' ' + labels.setsUnit : ''"></span>
         <span aria-hidden="true">·</span>
         <span x-text="nextDurationLabel()" title={L.dashboard.durationHint}></span>
       </p>
+
+      <div class="dash__today-stats">
+        <div class="dash__today-stat">
+          <strong x-text="todaySessions">0</strong>
+          <span x-text="labels.todaySessions">{L.dashboard.todaySessions}</span>
+        </div>
+        <div class="dash__today-stat">
+          <strong x-text="todayExercises">0</strong>
+          <span x-text="labels.todayExercises">{L.dashboard.todayExercises}</span>
+        </div>
+        <div class="dash__today-stat">
+          <strong x-text="formatWeightValue(todayVolume)">0 kg</strong>
+          <span x-text="labels.todayVolume">{L.dashboard.todayVolume}</span>
+        </div>
+      </div>
+
       <p
         class="dash__next-hint"
-        x-text="nextSession?.status === 'in-progress' ? labels.continueWorkout : labels.plannedWorkoutHint"
-      ></p>
+        x-text="todaySession ? (todaySession.status === 'in-progress' ? labels.continueWorkout : labels.plannedWorkoutHint) : (nextSession ? labels.nextSession : labels.noTodayHint)"
+      >
+        {L.dashboard.noTodayHint}
+      </p>
     </div>
     <a
       class="dash__next-action"
-      :href="nextSession ? localizedPath('/sessions/quick?session=' + nextSession.id) : localizedPath('/sessions/quick')"
+      :href="(todaySession ?? nextSession) ? localizedPath('/sessions/quick?session=' + (todaySession ?? nextSession).id) : localizedPath('/sessions/quick')"
     >
-      <span x-text="nextSession?.status === 'in-progress' ? labels.continueWorkout : labels.startWorkout"></span>
-      <span aria-hidden="true">↗</span>
-    </a>
-  </div>
-</section>
-
-<section class="dash__next" x-show="!nextSession" x-cloak aria-label={L.dashboard.noNextTitle}>
-  <div class="dash__next-main">
-    <div class="dash__next-copy">
-      <h2 class="dash__next-name">{L.dashboard.noNextTitle}</h2>
-      <p class="dash__next-hint">{L.dashboard.noNextHint}</p>
-    </div>
-    <a class="dash__next-action" href={localizedPath('/sessions/quick', locale)}>
-      <span>{L.dashboard.quickSession}</span>
+      <span x-text="todaySession ? (todaySession.status === 'in-progress' ? labels.continueWorkout : labels.startToday) : (nextSession ? labels.startWorkout : labels.quickSession)"></span>
       <span aria-hidden="true">↗</span>
     </a>
   </div>

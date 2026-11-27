@@ -4,7 +4,7 @@ import { createDashboardApp } from './dashboardApp';
 import { t, getLocale, localizedPath, trMuscle } from '../../i18n';
 
 export function registerDashboard(): void {
-  const LABELS = t();
+  const LABELS = t(getLocale());
 
   registerAlpine('dashboardApp', () =>
     createDashboardApp(

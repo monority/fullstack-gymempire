@@ -60,3 +60,53 @@ for (const [locale, base, expected] of [
     await expect(page).toHaveURL(expected);
   });
 }
+
+test('dashboard: today session shows counters and a start action', async ({ page }) => {
+  const today = new Date();
+  const p = (n: number) => String(n).padStart(2, '0');
+  const key = `${today.getFullYear()}-${p(today.getMonth() + 1)}-${p(today.getDate())}`;
+
+  await page.addInitScript((date) => {
+    localStorage.clear();
+    localStorage.setItem('muscu-auth', JSON.stringify({ email: 'e2e@test.fr', name: 'E2E' }));
+    localStorage.setItem(
+      'muscu:sessions',
+      JSON.stringify([
+        {
+          id: 'today-1',
+          name: 'Séance du jour',
+          date,
+          status: 'planned',
+          exercises: [
+            {
+              exerciseId: 'e1',
+              name: 'Développé couché',
+              muscle: 'Pectoraux',
+              sets: [
+                {
+                  exerciseId: 'e1',
+                  setNumber: 1,
+                  type: 'work',
+                  weight: 80,
+                  reps: 8,
+                  completed: false,
+                },
+              ],
+            },
+          ],
+        },
+      ])
+    );
+  }, key);
+
+  await page.goto('/');
+  await expect(page.locator('.dash__next-eyebrow')).toHaveText('Séance du jour');
+  await expect(page.locator('.dash__next-name')).toHaveText('Séance du jour');
+  await expect(page.locator('.dash__today-stat').nth(0)).toContainText('1');
+  await expect(page.locator('.dash__today-stat').nth(1)).toContainText('1');
+  await expect(page.locator('.dash__next-action')).toContainText('Démarrer maintenant');
+  await expect(page.locator('.dash__next-action')).toHaveAttribute(
+    'href',
+    /\/sessions\/quick\?session=today-1/
+  );
+});
