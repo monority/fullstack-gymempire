@@ -14,8 +14,10 @@ test('demo account: advanced-mode toggle is not persisted', async ({ page }) => 
   await expect(toggle).toBeChecked();
   await toggle.dispatchEvent('click');
 
-  // Le compte démo neutralise l'écriture : ni le réglage ni l'attribut HTML
-  // ne doivent survivre au rechargement.
+  // Le compte démo neutralise l'écriture : l'état n'est même pas modifié
+  // visuellement, et bien sûr il ne survit pas au rechargement.
+  await expect(page.locator('html')).toHaveAttribute('data-advanced', 'true');
+  await expect(toggle).toBeChecked();
   await page.reload();
   await expect(page.locator('html')).toHaveAttribute('data-advanced', 'true');
   await expect(page.getByRole('switch', { name: /Mode avancé|Advanced mode/i })).toBeChecked();

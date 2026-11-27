@@ -1,5 +1,29 @@
 import { expect, test } from '@playwright/test';
 
+test('settings page has no mock labels and a single reminder section', async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem('muscu-auth', JSON.stringify({ email: 'e2e@test.fr', name: 'E2E' }));
+  });
+
+  await page.goto('/settings');
+  await expect(page.locator('#set-profile')).toBeVisible();
+  await expect(page.locator('#set-units')).toBeVisible();
+  await expect(page.locator('#set-goals')).toBeVisible();
+  await expect(page.locator('#set-timer')).toBeVisible();
+  await expect(page.locator('#set-reminder')).toHaveCount(1);
+  await expect(page.locator('#set-data')).toBeVisible();
+  await expect(page.locator('#set-about')).toBeVisible();
+
+  // Résidus de maquette : numérotation "1." à "8." et libellés en dur.
+  const text = await page.locator('.set').innerText();
+  expect(text).not.toMatch(/^\s*[1-8]\.\s/m);
+  expect(text).not.toContain("RAPPEL D'ENTRAÎNEMENT");
+  expect(text).not.toContain('SYNCHRONISATION WEBDAV');
+
+  const ids = await page.locator('.set [id]').evaluateAll((els) => els.map((e) => e.id));
+  expect(new Set(ids).size).toBe(ids.length);
+});
+
 test('the WebDAV password never reaches localStorage', async ({ page }) => {
   await page.addInitScript(() => {
     localStorage.clear();

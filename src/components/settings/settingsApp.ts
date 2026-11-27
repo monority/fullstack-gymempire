@@ -133,8 +133,13 @@ export interface SettingsApp {
 
 export function createSettingsApp(deps: SettingsAppDeps): SettingsApp {
   const { labels, clock, ui, demo } = deps;
-  const readOnly = (): boolean => {
-    if (demo) ui.notify(labels.demoReadOnly ?? 'Compte démo : lecture seule.', 'warning');
+  const readOnly = (app?: { display: Settings }): boolean => {
+    if (demo) {
+      // Le contrôle natif a déjà basculé visuellement : on demande à Alpine
+      // de réappliquer la valeur du store pour éviter un état fantôme.
+      if (app) app.display = { ...app.display };
+      ui.notify(labels.demoReadOnly ?? 'Compte démo : lecture seule.', 'warning');
+    }
     return demo;
   };
 
@@ -177,30 +182,33 @@ export function createSettingsApp(deps: SettingsAppDeps): SettingsApp {
     },
 
     savePseudo() {
-      if (readOnly()) return;
+      if (readOnly(this)) return;
       this.display = updateSettings({ pseudo: this.display.pseudo.trim() });
       this.toastSaved();
     },
 
     saveEmail() {
-      if (readOnly()) return;
+      if (readOnly(this)) return;
       this.display = updateSettings({ email: this.display.email.trim() });
       this.toastSaved();
     },
 
     setUnit(unit) {
+      if (readOnly(this)) return;
       if (this.display.unit === unit) return;
       this.display = updateSettings({ unit });
       this.toastSaved();
     },
 
     setRepsFormat(format) {
+      if (readOnly(this)) return;
       if (this.display.repsFormat === format) return;
       this.display = updateSettings({ repsFormat: format });
       this.toastSaved();
     },
 
     saveRestTime(value) {
+      if (readOnly(this)) return;
       const rest = parseRestTime(value);
       if (rest === null || this.display.defaultRestTime === rest) return;
       this.display = updateSettings({ defaultRestTime: rest });
@@ -208,12 +216,14 @@ export function createSettingsApp(deps: SettingsAppDeps): SettingsApp {
     },
 
     saveSoundAlerts(checked) {
+      if (readOnly(this)) return;
       if (this.display.soundAlerts === checked) return;
       this.display = updateSettings({ soundAlerts: checked });
       this.toastSaved();
     },
 
     saveAdvancedMode(checked) {
+      if (readOnly(this)) return;
       if (this.display.advancedMode === checked) return;
       this.display = updateSettings({ advancedMode: checked });
       document.documentElement.setAttribute('data-advanced', checked ? 'true' : 'false');
@@ -221,6 +231,7 @@ export function createSettingsApp(deps: SettingsAppDeps): SettingsApp {
     },
 
     setWeeklyGoal(value) {
+      if (readOnly(this)) return;
       const next = clampWeeklyGoal(value);
       if (next === null || this.display.weeklyGoal === next) return;
       this.display = updateSettings({ weeklyGoal: next });
@@ -266,7 +277,7 @@ export function createSettingsApp(deps: SettingsAppDeps): SettingsApp {
     },
 
     async handleImportFile(event) {
-      if (readOnly()) return;
+      if (readOnly(this)) return;
       const input = event.target as HTMLInputElement;
       const file = input.files?.[0];
       if (!file) return;
@@ -290,7 +301,7 @@ export function createSettingsApp(deps: SettingsAppDeps): SettingsApp {
     },
 
     confirmReset() {
-      if (readOnly()) return;
+      if (readOnly(this)) return;
       if (this.resetConfirmText !== 'SUPPRIMER') return;
       resetAllData();
       this.display = getSettings();
@@ -305,7 +316,7 @@ export function createSettingsApp(deps: SettingsAppDeps): SettingsApp {
     },
 
     persistSyncConfig() {
-      if (readOnly()) return;
+      if (readOnly(this)) return;
       const url = this.syncForm.url.trim();
       setWebdavPassword(this.syncForm.password);
       this.display = updateSettings({
@@ -345,7 +356,7 @@ export function createSettingsApp(deps: SettingsAppDeps): SettingsApp {
     },
 
     async testSync() {
-      if (readOnly()) return;
+      if (readOnly(this)) return;
       if (!this.syncForm.url.trim()) {
         ui.notify(labels.syncNotConfigured, 'error');
         return;
@@ -367,7 +378,7 @@ export function createSettingsApp(deps: SettingsAppDeps): SettingsApp {
     },
 
     askPush() {
-      if (readOnly() || !this.syncForm.url.trim()) {
+      if (readOnly(this) || !this.syncForm.url.trim()) {
         ui.notify(labels.syncNotConfigured, 'error');
         return;
       }
@@ -377,7 +388,7 @@ export function createSettingsApp(deps: SettingsAppDeps): SettingsApp {
     },
 
     async doPushSync() {
-      if (readOnly()) return;
+      if (readOnly(this)) return;
       this.syncBusy = 'push';
       try {
         const snapshot = exportAllData();
@@ -410,7 +421,7 @@ export function createSettingsApp(deps: SettingsAppDeps): SettingsApp {
     },
 
     async confirmRestore() {
-      if (readOnly()) return;
+      if (readOnly(this)) return;
       this.syncBusy = 'pull';
       try {
         const snapshot = await syncPull(

@@ -17,7 +17,6 @@ const locale = resolveLocale(Astro.url.pathname);
 const L = t(locale);
 ---
 
-6. {L.settings.data}
 <SettingsSection
   icon="database"
   title={L.settings.data}
@@ -124,7 +123,6 @@ const L = t(locale);
     </Button>
   </div>
 </SettingsSection>
-7. SYNCHRONISATION WEBDAV
 <section class="set__section" id="set-sync" data-advanced-only>
   <Card>
     <CardHeader>
@@ -273,7 +271,6 @@ const L = t(locale);
     </CardContent>
   </Card>
 </section>
-8. {L.settings.about}
 <SettingsSection
   icon="infoCircle"
   title={L.settings.about}
