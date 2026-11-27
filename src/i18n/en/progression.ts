@@ -3,6 +3,8 @@ export default {
   description: 'Track your performance and personal records over time.',
   exerciseCount: 'Exercises',
   max1RM: 'Max 1RM',
+  oneRMHint:
+    '1RM estimated with the Epley formula: an approximation, most reliable up to ~10 reps.',
   totalSessions: 'Total sessions',
   best1RM: 'Best 1RM',
   bestWeight: 'Best weight',

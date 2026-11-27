@@ -97,6 +97,7 @@ export default {
   mrvFromHistory: 'Based on your best recent set (linear progression)',
   mrvCapped: 'Capped at 95% of your estimated 1RM (Epley)',
   mrvToast: 'Suggested load: {weight} kg',
+  mrvHint: 'Suggestion based on your recent best set, capped at 95% of estimated 1RM.',
   notesPlaceholder: 'How did the session go...',
   discardConfirm: 'Discard the current session? Unsaved changes will be lost.',
   discardTitle: 'Discard session?',

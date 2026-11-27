@@ -98,6 +98,8 @@ export default {
   mrvFromHistory: 'Basé sur votre meilleure série récente (progression linéaire)',
   mrvCapped: 'Plafonné à 95 % de votre 1RM estimé (Epley)',
   mrvToast: 'Charge suggérée : {weight} kg',
+  mrvHint:
+    'Suggestion calculée depuis votre meilleure série récente, plafonnée à 95 % du 1RM estimé.',
   notesPlaceholder: "Comment s'est passée la séance…",
   discardConfirm: 'Annuler la séance en cours ? Les modifications non enregistrées seront perdues.',
   discardTitle: 'Annuler la séance ?',

@@ -3,6 +3,8 @@ export default {
   titlePage: 'Personal records',
   description: 'All your personal records, sortable and filterable, to track your performance.',
   best1RMGlobal: 'Best overall 1RM',
+  oneRMHint:
+    '1RM estimated with the Epley formula: an approximation, most reliable up to ~10 reps.',
   totalPRs: 'Records',
   recentPRs: 'New (30 days)',
   since30Days: 'in the last 30 days',

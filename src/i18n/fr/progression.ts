@@ -3,6 +3,8 @@ export default {
   description: "Suivez l'évolution de vos performances et de vos records personnels.",
   exerciseCount: 'Exercices',
   max1RM: '1RM max',
+  oneRMHint:
+    '1RM estimé avec la formule d’Epley : une approximation, fiable surtout jusqu’à ~10 répétitions.',
   totalSessions: 'Total séances',
   best1RM: 'Meilleur 1RM',
   bestWeight: 'Meilleur poids',

@@ -59,16 +59,17 @@ Toute nouvelle valeur est refusée par `check-css` (règle `breakpoint`).
 
 ## Catalogue des utilities
 
-| Classe                                  | Rôle                                |
-| --------------------------------------- | ----------------------------------- |
-| `.u-surface` / `.u-surface-raised`      | fond + hairline + rayon             |
-| `.u-hairline` / `.u-hairline-x`         | séparateur horizontal / vertical    |
-| `.u-label`                              | libellé uppercase, mute, caption    |
-| `.u-metric`                             | valeur Archivo, `tabular-nums`      |
-| `.u-unit` / `.u-muted` / `.u-truncate`  | unité, texte secondaire, troncature |
-| `.u-row` / `.u-stack` / `.u-between`    | layouts flex                        |
-| `.u-grid-2` / `.u-grid-3` / `.u-grid-4` | grilles responsive + séparateurs    |
-| `.u-focus`                              | anneau de focus                     |
+| Classe                                  | Rôle                                  |
+| --------------------------------------- | ------------------------------------- |
+| `.u-surface` / `.u-surface-raised`      | fond + hairline + rayon               |
+| `.u-hairline` / `.u-hairline-x`         | séparateur horizontal / vertical      |
+| `.u-label`                              | libellé uppercase, mute, caption      |
+| `.u-metric`                             | valeur Archivo, `tabular-nums`        |
+| `.u-unit` / `.u-muted` / `.u-truncate`  | unité, texte secondaire, troncature   |
+| `.u-row` / `.u-stack` / `.u-between`    | layouts flex                          |
+| `.u-grid-2` / `.u-grid-3` / `.u-grid-4` | grilles responsive + séparateurs      |
+| `.u-hint`                               | explication courte sous un indicateur |
+| `.u-focus`                              | anneau de focus                       |
 
 ## Règles
 

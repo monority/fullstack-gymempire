@@ -1,5 +1,13 @@
 /** Utilitaires partagés (type-pill, tones, grids). Couche: utilities. */
 @layer utilities {
+  /* Explication courte et discrète sous un indicateur ou un contrôle. */
+  .u-hint {
+    margin: 0.8rem 0 0;
+    color: var(--color-muted);
+    font-size: var(--text-caption);
+    line-height: 1.4;
+  }
+
   /*  Harmonized set-type pill (global)
  * One language for set-type badges across detail / comparer /
  * historique / SetRow. Driven by Alpine `:class="'type-pill--'+t"`.

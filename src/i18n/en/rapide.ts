@@ -51,6 +51,7 @@ export default {
   rpeLabel: 'Perceived effort',
   rpeTypeLabel: 'Perceived effort type',
   rpeUnset: '— Not set —',
+  rpeHint: 'RPE: perceived effort out of 10. uRPE: reps you had left in the tank.',
   partialFinishConfirm: 'Finish session before all sets? Progress will be saved.',
   previousLabel: 'Previous',
 };

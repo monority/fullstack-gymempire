@@ -3,6 +3,8 @@ export default {
   titlePage: 'Records personnels',
   description: 'Tous vos records personnels, triables et filtrables, pour suivre vos performances.',
   best1RMGlobal: 'Meilleur 1RM global',
+  oneRMHint:
+    '1RM estimé avec la formule d’Epley : une approximation, fiable surtout jusqu’à ~10 répétitions.',
   totalPRs: 'Records',
   recentPRs: 'Nouveaux (30 j)',
   since30Days: 'depuis 30 jours',

@@ -51,6 +51,7 @@ export default {
   rpeLabel: 'Effort perçu',
   rpeTypeLabel: 'Type d’effort perçu',
   rpeUnset: '— Non renseigné —',
+  rpeHint: 'RPE : effort perçu sur 10. uRPE : répétitions qu’il vous restait à faire.',
   partialFinishConfirm: 'Terminer séance avant toutes séries ? La progression sera enregistrée.',
   previousLabel: 'Précédent',
 };

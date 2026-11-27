@@ -20,7 +20,10 @@ import Icon from '../../components/ui/Icon.astro';
 
   <div class="rec" x-data="recordsApp()" x-init="init()" x-cloak>
     <template x-if="totalPRs > 0 || hasData">
-      <MetricGrid prefix="records-summary" metrics={buildRecordsMetrics(L)} />
+      <div>
+        <MetricGrid prefix="records-summary" metrics={buildRecordsMetrics(L)} />
+        <p class="u-hint rec__hint">{L.records.oneRMHint}</p>
+      </div>
     </template>
 
     <template x-if="allRecords.length > 0">
