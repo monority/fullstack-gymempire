@@ -1,7 +1,7 @@
 import fr from './fr';
 import en from './en';
 import type { Dictionary } from './types';
-import { defaultLocale, getLocale, resolveLocale, dateLocale, type Locale } from './locale';
+import { defaultLocale, getLocale, type Locale } from './locale';
 
 export type { Dictionary } from './types';
 
@@ -21,16 +21,6 @@ export const dictionaries: Record<Locale, Dictionary> = { fr, en };
 /** Dictionary pour une locale explicite — aucun défaut implicite (ADR-010). */
 export function t(locale: Locale): Dictionary {
   return dictionaries[locale];
-}
-
-/** Construit le contexte i18n d'une page à partir de son URL. */
-export function useI18n(pathname: string): {
-  locale: Locale;
-  dict: Dictionary;
-  dateLocale: string;
-} {
-  const locale = resolveLocale(pathname);
-  return { locale, dict: dictionaries[locale], dateLocale: dateLocale(locale) };
 }
 
 export function localizedPath(path: string, locale?: Locale): string {

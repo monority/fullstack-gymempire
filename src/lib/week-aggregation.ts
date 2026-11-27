@@ -1,4 +1,5 @@
-import { localDateKey } from './date';
+import { localDateKey, localDateKey as isoDate } from './date';
+export { isoDate };
 /**
  * week-aggregation — Pure week-bucket aggregation for stats.
  *
@@ -35,13 +36,6 @@ export function startOfWeek(d: Date): Date {
   out.setDate(d.getDate() - d.getDay()); // getDay(): 0=Sun
   out.setHours(0, 0, 0, 0);
   return out;
-}
-
-export function isoDate(d: Date): string {
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${y}-${m}-${day}`;
 }
 
 /**

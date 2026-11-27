@@ -6,18 +6,11 @@
  * No DOM, no localStorage, no Alpine dependency.
  */
 
-import { parseLocalDate } from './date';
+import { parseLocalDate, localDateKey as dateKey } from './date';
+export { dateKey };
 import { startOfWeek as sundayOfWeek } from './week-aggregation';
 import { calculate1RM } from './storage/store';
 import type { Session } from './storage/types';
-
-/** ISO date key YYYY-MM-DD (local-tz) — day-level comparisons. */
-export function dateKey(d: Date): string {
-  const y = d.getFullYear();
-  const m = (d.getMonth() + 1).toString().padStart(2, '0');
-  const day = d.getDate().toString().padStart(2, '0');
-  return `${y}-${m}-${day}`;
-}
 
 /** Sum of weight × reps over completed sets. */
 export function computeSessionVolume(session: Session): number {

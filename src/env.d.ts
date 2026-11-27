@@ -15,7 +15,6 @@ interface Window {
   Alpine?: AlpineBridge;
   /** Fourni par /theme-bootstrap.js pour les swaps ClientRouter. */
   __applyStoredTheme?: (doc: Document) => void;
-  showToast?: (message: string, variant?: string) => void;
   /** Exposés par la page du builder pour les sous-composants Alpine. */
   __builderSessions?: import('./lib/storage/types').Session[];
 }

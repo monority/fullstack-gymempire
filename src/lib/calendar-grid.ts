@@ -5,6 +5,8 @@
  */
 
 import type { Session } from './storage/types';
+import { localDateKey as formatISO } from './date';
+export { formatISO };
 
 // ============================================================================
 // Types
@@ -23,13 +25,6 @@ export interface CalendarDay {
 // ============================================================================
 
 /** Format a Date as local YYYY-MM-DD (no UTC shift). */
-export function formatISO(d: Date): string {
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${y}-${m}-${day}`;
-}
-
 /**
  * Generate a 42-cell (6 weeks) calendar grid for the given month.
  *

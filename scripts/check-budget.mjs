@@ -65,6 +65,15 @@ for (const [key, limit] of Object.entries(LIMITS)) {
   if (value > limit) failures.push(`${label} dépasse le budget (${value} > ${limit})`);
 }
 
+// Marge minimale : évite d'ajouter une fonctionnalité client alors qu'il ne
+// reste que quelques octets avant la limite.
+const MIN_JS_MARGIN = 1_000;
+const jsMargin = LIMITS.jsGzip - totals.jsGzip;
+console.log(`jsMargin: ${jsMargin} B / min ${MIN_JS_MARGIN} B`);
+if (jsMargin < MIN_JS_MARGIN) {
+  failures.push(`marge JS insuffisante (${jsMargin} < ${MIN_JS_MARGIN})`);
+}
+
 if (failures.length) {
   console.error('\nBudget dépassé :');
   for (const f of failures) console.error(`  ${f}`);
