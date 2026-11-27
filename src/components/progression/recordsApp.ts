@@ -5,9 +5,10 @@
 
 import { parseLocalDate } from '../../lib/date';
 import { getSessions } from '../../lib/storage/sessions';
+import { getSettings } from '../../lib/storage/settings';
 import { calculate1RM } from '../../lib/storage/store';
-import type { ProgressRecord, SessionExercise } from '../../lib/storage/types';
-import { formatDateShort, formatNumber } from '../../lib/format';
+import type { ProgressRecord, SessionExercise, WeightUnit } from '../../lib/storage/types';
+import { formatDateShort, formatNumber, formatWeightValue } from '../../lib/format';
 
 export interface ExerciseRecord {
   exerciseId: string;
@@ -42,6 +43,7 @@ export interface RecordsApp {
   search: string;
   sortBy: SortMode;
   hasData: boolean;
+  unit: WeightUnit;
   init(): void;
   totalPRs: number;
   bestOverall1RM: number;
@@ -51,6 +53,7 @@ export interface RecordsApp {
   recompute(): void;
   accumulate(map: Map<string, ExerciseRecord>, ex: SessionExercise, sessionDate: string): void;
   formatNumber(n: number): string;
+  formatWeight(kg: number): string;
   formatDate(iso: string): string;
   historyHref(id: string): string;
 }
@@ -64,8 +67,10 @@ export function createRecordsApp(deps: RecordsAppDeps): RecordsApp {
     search: '',
     sortBy: 'rm',
     hasData: false,
+    unit: 'kg',
 
     init() {
+      this.unit = getSettings().unit;
       this.recompute();
     },
 
@@ -181,6 +186,9 @@ export function createRecordsApp(deps: RecordsAppDeps): RecordsApp {
     },
 
     formatNumber,
+    formatWeight(kg: number): string {
+      return formatWeightValue(kg, this.unit);
+    },
     formatDate: formatDateShort,
     historyHref(id) {
       return deps.localizedPath('/exercises/history?id=' + encodeURIComponent(id));

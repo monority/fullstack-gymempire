@@ -7,10 +7,16 @@
 import type { Dictionary } from '../../i18n/types';
 import { getExerciseById } from '../../lib/storage/exercises';
 import { getSessions } from '../../lib/storage/sessions';
+import { getSettings } from '../../lib/storage/settings';
 import { calculate1RM } from '../../lib/storage/store';
-import type { Exercise, RpeType, SetType } from '../../lib/storage/types';
+import type { Exercise, RpeType, SetType, WeightUnit } from '../../lib/storage/types';
 import { typeLabel } from '../../lib/workout-helpers';
-import { formatDateMedium, formatDateDayMonth, formatNumber } from '../../lib/format';
+import {
+  formatDateMedium,
+  formatDateDayMonth,
+  formatNumber,
+  formatWeightValue,
+} from '../../lib/format';
 
 export interface HistoryRow {
   date: string;
@@ -57,6 +63,7 @@ export interface HistoryApp {
   maxRepsDate: string;
   totalVolume: number;
   sessionCount: number;
+  unit: WeightUnit;
   init(): void;
   computeHistory(): void;
   computeStats(): void;
@@ -73,6 +80,7 @@ export interface HistoryApp {
   chartGridMarkup: string;
   chartDotsMarkup: string;
   formatNumber(n: number): string;
+  formatWeight(kg: number): string;
   formatDate(iso: string): string;
   formatDateShort(iso: string): string;
   typeLabel(t: SetType): string;
@@ -109,8 +117,10 @@ export function createHistoryApp(deps: HistoryAppDeps): HistoryApp {
     maxRepsDate: '',
     totalVolume: 0,
     sessionCount: 0,
+    unit: 'kg',
 
     init() {
+      this.unit = getSettings().unit;
       const exerciseId = new URLSearchParams(deps.search).get('id');
       if (!exerciseId) {
         this.notFound = true;
@@ -295,6 +305,9 @@ export function createHistoryApp(deps: HistoryAppDeps): HistoryApp {
 
     formatNumber(n) {
       return formatNumber(n);
+    },
+    formatWeight(kg: number): string {
+      return formatWeightValue(kg, this.unit);
     },
     formatDate(iso) {
       return formatDateMedium(iso);

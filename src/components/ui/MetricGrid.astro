@@ -27,7 +27,11 @@ const resolvedFootClass = footClass ?? `${prefix}__foot`;
           x-text={metric.value}
           :title={metric.value}
         />
-        {metric.unit && <span class={`${prefix}__unit`}>{metric.unit}</span>}
+        {metric.unitExpr ? (
+          <span class={`${prefix}__unit`} x-text={metric.unitExpr}></span>
+        ) : metric.unit ? (
+          <span class={`${prefix}__unit`}>{metric.unit}</span>
+        ) : null}
       </div>
       {metric.footStatic ? (
         <span slot="date" class={resolvedFootClass}>

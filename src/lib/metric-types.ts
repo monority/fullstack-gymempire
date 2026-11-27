@@ -4,6 +4,8 @@ export interface MetricDefinition {
   label: string;
   value: string;
   unit?: string;
+  /** Expression Alpine pour une unité dépendant du réglage (ex. `unit`). */
+  unitExpr?: string;
   foot: string;
   /** Texte statique (pas une expression Alpine). */
   footStatic?: boolean;

@@ -1,7 +1,8 @@
 /** Logique Alpine de la page Statistiques — extraite de stats.astro (P3). */
 import type { Dictionary } from '../../i18n/types';
 import { trExercise, trMuscle } from '../../i18n';
-import { formatDateShort, formatNumber } from '../../lib/format';
+import { formatDateShort, formatNumber, formatWeightValue } from '../../lib/format';
+import type { WeightUnit } from '../../lib/storage/types';
 import { cssVar, cssVarAlpha } from '../../lib/css-var';
 import { getSessions } from '../../lib/storage/sessions';
 import { getSettings, updateSettings } from '../../lib/storage/settings';
@@ -110,6 +111,7 @@ export interface StatsApp {
   muscleMonth: MuscleVolumeSlice[];
   top5: TopExercise[];
   settings: ReturnType<typeof getSettings>;
+  readonly unit: WeightUnit;
   hasCompletedSessions: boolean;
   benchmarkRows: BenchmarkRow[];
   init(): void;
@@ -117,6 +119,7 @@ export interface StatsApp {
   readonly periodMeta: string;
   readonly frequencySummary: string;
   formatNumber(n: number): string;
+  formatWeight(kg: number): string;
   formatDate(iso: string): string;
   formatDuration(seconds: number): string;
   renderVolumeChart(): string;
@@ -144,6 +147,9 @@ export function createStatsApp(deps: StatsAppDeps): StatsApp {
     muscleMonth: [],
     top5: [],
     settings: getSettings(),
+    get unit(): WeightUnit {
+      return this.settings.unit;
+    },
     hasCompletedSessions: false,
     benchmarkRows: [],
 
@@ -189,6 +195,9 @@ export function createStatsApp(deps: StatsAppDeps): StatsApp {
 
     formatNumber(n) {
       return deps.chartDeps.formatNumber(n);
+    },
+    formatWeight(kg: number): string {
+      return formatWeightValue(kg, this.unit);
     },
     formatDate(iso) {
       return deps.chartDeps.formatDate(iso);
