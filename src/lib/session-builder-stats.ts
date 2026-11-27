@@ -7,7 +7,28 @@ import { warmupValues, isWorkingSet } from './warmup';
  * No DOM, no localStorage, no Alpine dependency.
  */
 
-import type { SessionExercise, SessionSet, SetType } from './storage/types';
+import type { Session, SessionExercise, SessionSet, SetType } from './storage/types';
+
+/** Dernière série de travail terminée d'un exercice, pour pré-remplir une saisie. */
+export function lastWorkSetFor(
+  exerciseId: string,
+  sessions: Session[]
+): { weight: number; reps: number } | null {
+  let best: { weight: number; reps: number; date: string } | null = null;
+  for (const s of sessions) {
+    if (best && s.date < best.date) continue;
+    for (const ex of s.exercises) {
+      if (ex.exerciseId !== exerciseId) continue;
+      for (const set of ex.sets) {
+        if (!set.completed || set.type !== 'work' || !(set.weight > 0)) continue;
+        if (!best || s.date >= best.date) {
+          best = { weight: set.weight, reps: set.reps, date: s.date };
+        }
+      }
+    }
+  }
+  return best ? { weight: best.weight, reps: best.reps } : null;
+}
 import type { TemplateExercise } from './templates';
 
 export type RpeLevel = 'easy' | 'moderate' | 'hard' | 'max';

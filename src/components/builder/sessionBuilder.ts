@@ -233,7 +233,11 @@ export function createSessionBuilderApp(deps: SessionBuilderDeps): SessionBuilde
       host.focusPickerSearch();
     },
     addExercise(exercise) {
-      const newEx = buildNewExercise(exercise);
+      const sessions =
+        typeof window !== 'undefined'
+          ? ((window.__builderSessions as Parameters<typeof buildNewExercise>[1]) ?? [])
+          : [];
+      const newEx = buildNewExercise(exercise, sessions);
       this.exercises.push(newEx);
       this.expandedExercises = [...this.expandedExercises, newEx.exerciseId];
       persistDraft(this);

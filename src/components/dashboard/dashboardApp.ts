@@ -24,7 +24,11 @@ import {
   computeWeeklyActivityByDay,
   computeSessionPrimaryMuscle,
 } from '../../lib/dashboard-stats';
-import { formatDateShort, formatNumPositive, formatWeightValue } from '../../lib/format';
+import {
+  formatDateShort,
+  formatWeightValue,
+  formatVolume as formatVolumeLib,
+} from '../../lib/format';
 
 export interface DashboardAppDeps {
   locale(): 'fr' | 'en';
@@ -200,6 +204,10 @@ export function createDashboardApp(
       return formatWeightValue(kg, this.settings.unit);
     },
 
+    formatVolume(kg: number): string {
+      return formatVolumeLib(kg, this.settings.unit);
+    },
+
     greeting() {
       const name = getAuth()?.name?.trim();
       return name ? labels.greeting.replace('{name}', name) : labels.greetingFallback;
@@ -236,6 +244,5 @@ export function createDashboardApp(
       return deps.translateMuscle(name);
     },
     formatDate: formatDateShort,
-    formatVolume: formatNumPositive,
   };
 }

@@ -17,7 +17,7 @@ function builderLabels(): I18nStore['builderLabels'] {
 
 import { suggestLoadSuggestion } from '../../lib/mrv';
 import { currentUnit, formatWeightValue, weightFromInput } from '../../lib/format';
-import { getLocale, dateLocale, t } from '../../i18n';
+import { getLocale, t } from '../../i18n';
 import {
   formatExerciseSummary,
   generateWarmupSets,
@@ -146,9 +146,7 @@ export function exerciseCard(exercise: BuilderExercise, exerciseIndex: number) {
         return;
       }
       set.weight = s.weight;
-      const weightLabel = s.weight.toLocaleString(dateLocale(getLocale()), {
-        maximumFractionDigits: 1,
-      });
+      const weightLabel = formatWeightValue(s.weight, currentUnit());
       this.showToast((labels.mrvToast ?? '').replace('{weight}', weightLabel), 'success');
     },
 

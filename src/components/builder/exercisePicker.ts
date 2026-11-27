@@ -8,7 +8,12 @@
 import { getExerciseTip } from '../../lib/exercise-tips';
 import { getTemplateById, type TemplateExercise } from '../../lib/templates';
 import type { Exercise } from '../../lib/storage/types';
-import { buildExerciseFromTemplate, type BuilderExercise } from '../../lib/session-builder-stats';
+import {
+  buildExerciseFromTemplate,
+  lastWorkSetFor,
+  type BuilderExercise,
+} from '../../lib/session-builder-stats';
+import type { Session } from '../../lib/storage/types';
 
 const TEMPLATE_FALLBACK_CATEGORY = 'Autre';
 
@@ -35,7 +40,10 @@ export function filterExercises(
     });
 }
 
-export function buildNewExercise(exercise: Exercise): BuilderExercise {
+export function buildNewExercise(exercise: Exercise, sessions: Session[] = []): BuilderExercise {
+  // Une seule série, déjà remplie depuis la dernière séance de l'exercice :
+  // ajouter un exercice connu ne demande aucune saisie.
+  const previous = lastWorkSetFor(exercise.id, sessions);
   return {
     exerciseId: exercise.id,
     name: exercise.name,
@@ -44,8 +52,8 @@ export function buildNewExercise(exercise: Exercise): BuilderExercise {
       {
         exerciseId: exercise.id,
         setNumber: 1,
-        weight: 0,
-        reps: 0,
+        weight: previous?.weight ?? 0,
+        reps: previous?.reps ?? 0,
         type: 'work',
         completed: false,
       },

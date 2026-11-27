@@ -110,3 +110,42 @@ test('dashboard: today session shows counters and a start action', async ({ page
     /\/sessions\/quick\?session=today-1/
   );
 });
+
+test('dashboard: volumes follow the lbs setting', async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem('muscu-auth', JSON.stringify({ email: 'e2e@test.fr', name: 'E2E' }));
+    localStorage.setItem('muscu-settings', JSON.stringify({ unit: 'lbs' }));
+    localStorage.setItem(
+      'muscu:sessions',
+      JSON.stringify([
+        {
+          id: 'lbs-1',
+          name: 'Historique',
+          date: '2026-11-26',
+          status: 'completed',
+          exercises: [
+            {
+              exerciseId: 'e1',
+              name: 'Développé couché',
+              muscle: 'Pectoraux',
+              sets: [
+                {
+                  exerciseId: 'e1',
+                  setNumber: 1,
+                  type: 'work',
+                  weight: 100,
+                  reps: 10,
+                  completed: true,
+                },
+              ],
+            },
+          ],
+        },
+      ])
+    );
+  });
+
+  await page.goto('/');
+  await expect(page.locator('.dash__today-stat').nth(2)).toContainText('lbs');
+  await expect(page.locator('.week-metric__value').first()).toContainText('lbs');
+});

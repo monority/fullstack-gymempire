@@ -55,3 +55,60 @@ test('create a session from a template and find it in the history', async ({ pag
   );
   expect(count).toBeGreaterThanOrEqual(1);
 });
+
+test('builder prefills a known exercise from the last completed session', async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem('muscu-auth', JSON.stringify({ email: 'e2e@test.fr', name: 'E2E' }));
+    localStorage.setItem(
+      'muscu:exercises',
+      JSON.stringify([
+        {
+          id: 'e1',
+          name: 'Développé couché barre',
+          muscle: 'Pectoraux',
+          category: 'Barre',
+          createdAt: '2026-01-01T00:00:00.000Z',
+        },
+      ])
+    );
+    localStorage.setItem(
+      'muscu:sessions',
+      JSON.stringify([
+        {
+          id: 'history-1',
+          name: 'Historique',
+          date: '2026-11-20',
+          status: 'completed',
+          exercises: [
+            {
+              exerciseId: 'e1',
+              name: 'Développé couché',
+              muscle: 'Pectoraux',
+              sets: [
+                {
+                  exerciseId: 'e1',
+                  setNumber: 1,
+                  type: 'work',
+                  weight: 80,
+                  reps: 8,
+                  completed: true,
+                },
+              ],
+            },
+          ],
+        },
+      ])
+    );
+  });
+
+  await page.goto('/sessions/create');
+  await page.locator('.create__empty-add-btn, .create__add-btn').first().click();
+  await page.locator('.create__picker-input').last().fill('Développé couché barre');
+  await page.locator('.create__picker-item-btn').first().click();
+
+  const table = page.getByRole('table', { name: /Développé couché barre/ }).first();
+  const weight = table.getByLabel('Charge de la série 1');
+  const reps = table.getByLabel('Reps de la série 1');
+  await expect(weight).toHaveValue(/80/);
+  await expect(reps).toHaveValue(/8/);
+});

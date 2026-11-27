@@ -9,13 +9,7 @@ import { getSessions } from '../../lib/storage/sessions';
 import type { BodyRecord, Session } from '../../lib/storage/types';
 import { cssVar } from '../../lib/css-var';
 import { countCompletedSessionsBetween, completedVolumeBetween } from '../../lib/session-utils';
-import {
-  currentUnit,
-  formatDateShort,
-  formatNumber,
-  formatWeightValue,
-  weightFromInput,
-} from '../../lib/format';
+import { currentUnit, formatDateShort, formatWeightValue, weightFromInput } from '../../lib/format';
 import { renderWeightChart } from '../../lib/body-chart';
 
 export interface BodyForm {
@@ -127,7 +121,7 @@ export function createPoidsApp(deps: PoidsAppDeps): PoidsApp {
       input.value = this.displayWeight(this.form.weight);
     },
     formatVolume(volume) {
-      return `${L.volume} ${formatNumber(volume)} kg`;
+      return `${L.volume} ${formatWeightValue(volume, this.unit)}`;
     },
     formatSessionsSince(date) {
       const count = date ? this.sessionsSinceDate(date) : 0;

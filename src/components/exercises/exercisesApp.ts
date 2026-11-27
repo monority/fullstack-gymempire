@@ -18,6 +18,7 @@ import { getSessions, saveSession, updateSession } from '../../lib/storage/sessi
 import type { Exercise, Session, SessionExercise, SessionSet } from '../../lib/storage/types';
 import { currentUnit, formatWeightValue, weightFromInput } from '../../lib/format';
 import { getExerciseTip } from '../../lib/exercise-tips';
+import { lastWorkSetFor } from '../../lib/session-builder-stats';
 import {
   resolveForm,
   computeSetCounts,
@@ -169,21 +170,7 @@ const emptyForm = (): FormState => ({
 
 /** Une seule série, pré-remplie depuis la dernière séance de l'exercice. */
 const defaultAddSetsFor = (exerciseId: string, sessions: Session[]): AddSetRow[] => {
-  let last: { weight: number; reps: number } | undefined;
-  let lastDate = '';
-  for (const session of sessions) {
-    if (session.date < lastDate) continue;
-    for (const ex of session.exercises) {
-      if (ex.exerciseId !== exerciseId) continue;
-      for (const set of ex.sets) {
-        if (!set.completed || set.type !== 'work' || set.weight <= 0) continue;
-        if (session.date >= lastDate) {
-          lastDate = session.date;
-          last = { weight: set.weight, reps: set.reps };
-        }
-      }
-    }
-  }
+  const last = lastWorkSetFor(exerciseId, sessions);
   return [{ type: 'work', weight: last?.weight ?? 0, reps: last?.reps ?? 0 }];
 };
 
