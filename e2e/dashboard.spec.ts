@@ -192,3 +192,55 @@ test('dashboard hero surfaces the current streak and a dominant title', async ({
     .evaluate((el) => Number.parseFloat(getComputedStyle(el).fontSize));
   expect(size).toBeGreaterThan(40);
 });
+
+test('progression: an exercise card opens its history', async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem('muscu-auth', JSON.stringify({ email: 'e2e@test.fr', name: 'E2E' }));
+    localStorage.setItem(
+      'muscu:exercises',
+      JSON.stringify([
+        {
+          id: 'e1',
+          name: 'Développé couché',
+          muscle: 'Pectoraux',
+          category: 'Barre',
+          createdAt: '2026-01-01T00:00:00.000Z',
+        },
+      ])
+    );
+    localStorage.setItem(
+      'muscu:sessions',
+      JSON.stringify([
+        {
+          id: 's1',
+          name: 'Push',
+          date: '2026-11-27',
+          status: 'completed',
+          exercises: [
+            {
+              exerciseId: 'e1',
+              name: 'Développé couché',
+              muscle: 'Pectoraux',
+              sets: [
+                {
+                  exerciseId: 'e1',
+                  setNumber: 1,
+                  type: 'work',
+                  weight: 80,
+                  reps: 8,
+                  completed: true,
+                },
+              ],
+            },
+          ],
+        },
+      ])
+    );
+  });
+
+  await page.goto('/progression');
+  const card = page.locator('.prog__item').first();
+  await expect(card).toHaveAttribute('href', '/exercises/history?id=e1');
+  await card.click();
+  await expect(page).toHaveURL(/\/exercises\/history\?id=e1$/);
+});

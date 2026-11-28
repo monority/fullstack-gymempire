@@ -21,9 +21,12 @@ export interface ProgressionApp {
   formatDelta(delta: number | null): string;
   historyBarHeight(history: ProgressRecord[], value: number): number;
   historyTooltip(history: ProgressRecord[]): string;
+  historyHref(id: string): string;
 }
 
-export function createProgressionApp(): ProgressionApp {
+export function createProgressionApp(
+  localizedPath: (path: string) => string = (path) => path
+): ProgressionApp {
   return {
     exerciseStats: [],
 
@@ -75,6 +78,10 @@ export function createProgressionApp(): ProgressionApp {
       return history
         .map((r) => `${formatNumPositive(r.estimated1RM)} kg · ${formatDateShort(r.date)}`)
         .join('\n');
+    },
+
+    historyHref(id) {
+      return localizedPath('/exercises/history?id=' + encodeURIComponent(id));
     },
   };
 }

@@ -52,7 +52,11 @@ const L = t(locale);
     <template x-if="exerciseStats.length > 0">
       <div class="prog__grid">
         <template x-for="stat in exerciseStats" :key="stat.exerciseId">
-          <article class="prog__item">
+          <a
+            class="prog__item"
+            :href="historyHref(stat.exerciseId)"
+            :aria-label={`${JSON.stringify(L.records.viewHistoryAriaPrefix)} + $store.i18n.trExercise(stat.name)`}
+          >
             <header class="prog__item-header">
               <div class="prog__item-title">
                 <Fragment set:html={icons.dumbbellBox()} />
@@ -135,7 +139,7 @@ const L = t(locale);
                 </div>
               </div>
             </footer>
-          </article>
+          </a>
         </template>
       </div>
     </template>
@@ -158,6 +162,7 @@ const L = t(locale);
 <script>
   import { createProgressionApp } from '../../components/progression/progressionApp';
   import { registerAlpine } from '../../lib/alpine';
+  import { localizedPath } from '../../i18n';
 
-  registerAlpine('progressionApp', () => createProgressionApp());
+  registerAlpine('progressionApp', () => createProgressionApp(localizedPath));
 </script>
