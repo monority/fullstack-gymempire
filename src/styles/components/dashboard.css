@@ -600,11 +600,6 @@
     position: relative;
     padding: 2.8rem 2.4rem;
     border-bottom: 1px solid var(--color-border);
-    background-image: radial-gradient(
-      circle at top left,
-      color-mix(in srgb, var(--color-accent) 10%, transparent),
-      transparent 60%
-    );
     animation: dash-rise 280ms var(--ease-out) both;
   }
 
