@@ -38,6 +38,8 @@ const isEditMode = Boolean(editId);
     x-data="sessionBuilder()"
     x-init="init()"
     x-cloak
+    @input.debounce.400ms="persistDraft()"
+    @change.debounce.400ms="persistDraft()"
     @builder:remove-exercise.window="removeExercise($event.detail.index)"
     @builder:remove-superset.window="removeFromSuperset($event.detail.index)"
     @builder:add-superset.window="addToSuperset($event.detail.index)"

@@ -112,3 +112,37 @@ test('builder prefills a known exercise from the last completed session', async 
   await expect(weight).toHaveValue(/80/);
   await expect(reps).toHaveValue(/8/);
 });
+
+test('builder autosaves name, date, sets and notes', async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem('muscu-auth', JSON.stringify({ email: 'e2e@test.fr', name: 'E2E' }));
+    localStorage.setItem('muscu-settings', JSON.stringify({ advancedMode: true }));
+  });
+
+  await page.goto('/sessions/create');
+  const draft = async () =>
+    page.evaluate(() => JSON.parse(localStorage.getItem('muscu:builder-draft') || '{}'));
+
+  await page.locator('#ses-name').fill('Brouillon auto');
+  await expect.poll(async () => (await draft()).name).toBe('Brouillon auto');
+
+  await page.locator('#ses-date').fill('2026-11-28');
+  await expect.poll(async () => (await draft()).date).toBe('2026-11-28');
+
+  await page.locator('.create__empty-add-btn, .create__add-btn').first().click();
+  await page.locator('.create__picker-item-btn').first().click();
+  const weight = page.locator('input[aria-label^="Charge"]').first();
+  await weight.evaluate((el) => {
+    (el as HTMLInputElement).value = '95';
+    el.dispatchEvent(new Event('change', { bubbles: true }));
+  });
+  await expect.poll(async () => (await draft()).exercises?.[0]?.sets?.[0]?.weight).toBe(95);
+
+  const notes = page.locator('#ses-notes');
+  await notes.evaluate((el) => {
+    (el as HTMLTextAreaElement).value = 'Note sauvegardée';
+    el.dispatchEvent(new Event('input', { bubbles: true }));
+    el.dispatchEvent(new Event('change', { bubbles: true }));
+  });
+  await expect.poll(async () => (await draft()).notes).toBe('Note sauvegardée');
+});

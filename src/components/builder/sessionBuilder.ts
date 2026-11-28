@@ -71,6 +71,7 @@ export interface SessionBuilderApp {
   openTips: string[];
   labels: BuilderLabels;
   editSessionId: string | null;
+  persistDraft(): void;
   init(): void;
   filteredExercises: Exercise[];
   muscleFilters: string[];
@@ -108,16 +109,6 @@ export interface SessionBuilderApp {
 }
 
 export function createSessionBuilderApp(deps: SessionBuilderDeps): SessionBuilderApp {
-  const persistDraft = (app: SessionBuilderApp) =>
-    saveBuilderDraft({
-      name: app.sessionName,
-      date: app.sessionDate,
-      exercises: app.exercises,
-      rpe: app.sessionRpe,
-      fatigue: app.sessionFatigue,
-      mood: app.sessionMood,
-      notes: app.sessionNotes,
-    });
   const { labels, rpeLabels, search, locale, host, localizedPath: path } = deps;
 
   return {
@@ -137,6 +128,18 @@ export function createSessionBuilderApp(deps: SessionBuilderDeps): SessionBuilde
     openTips: [],
     labels,
     editSessionId: null,
+
+    persistDraft(): void {
+      saveBuilderDraft({
+        name: this.sessionName,
+        date: this.sessionDate,
+        exercises: this.exercises,
+        rpe: this.sessionRpe,
+        fatigue: this.sessionFatigue,
+        mood: this.sessionMood,
+        notes: this.sessionNotes,
+      });
+    },
 
     init() {
       this.availableExercises = getExercises();
@@ -240,7 +243,7 @@ export function createSessionBuilderApp(deps: SessionBuilderDeps): SessionBuilde
       const newEx = buildNewExercise(exercise, sessions);
       this.exercises.push(newEx);
       this.expandedExercises = [...this.expandedExercises, newEx.exerciseId];
-      persistDraft(this);
+      this.persistDraft();
       // Le dialogue reste ouvert : on peut enchaîner les ajouts.
     },
     loadTemplate(templateId) {
@@ -293,7 +296,7 @@ export function createSessionBuilderApp(deps: SessionBuilderDeps): SessionBuilde
       if (!ex) return;
       ex.supersetId = this.nextSupersetId();
       this.onSupersetChange(exIdx);
-      persistDraft(this);
+      this.persistDraft();
     },
 
     /** Choix explicite du groupe : '' = aucun, 'new' = nouveau, sinon l'id. */
@@ -303,7 +306,7 @@ export function createSessionBuilderApp(deps: SessionBuilderDeps): SessionBuilde
       ex.supersetId =
         raw === '' || raw === 'none' ? null : raw === 'new' ? this.nextSupersetId() : Number(raw);
       this.onSupersetChange(exIdx);
-      persistDraft(this);
+      this.persistDraft();
     },
     removeFromSuperset(exIdx) {
       const ex = this.exercises[exIdx];
@@ -319,15 +322,15 @@ export function createSessionBuilderApp(deps: SessionBuilderDeps): SessionBuilde
         this.expandedExercises = this.expandedExercises.filter((id) => id !== ex.exerciseId);
       }
       this.exercises.splice(exerciseIndex, 1);
-      persistDraft(this);
+      this.persistDraft();
     },
     setFatigue(level) {
       this.sessionFatigue = toggleFatigue(this.sessionFatigue, level);
-      persistDraft(this);
+      this.persistDraft();
     },
     setMood(mood) {
       this.sessionMood = toggleMood(this.sessionMood, mood);
-      persistDraft(this);
+      this.persistDraft();
     },
     discard() {
       if (shouldConfirmDiscard(this.exercises.length, this.sessionName)) {
