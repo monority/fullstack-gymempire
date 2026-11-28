@@ -16,9 +16,17 @@ const L = t(locale);
 <section class="dash__next" aria-label={L.dashboard.todaySession}>
   <div class="dash__next-main">
     <div class="dash__next-copy">
-      <p class="dash__next-eyebrow" x-text="labels.todaySession">
-        {L.dashboard.todaySession}
-      </p>
+      <div class="dash__next-heading">
+        <p class="dash__next-eyebrow" x-text="labels.todaySession">
+          {L.dashboard.todaySession}
+        </p>
+        <span
+          class="dash__streak"
+          x-show="kpis.streak > 0"
+          x-cloak
+          x-text="labels.streak + ' · ' + kpis.streak + ' ' + (kpis.streak > 1 ? labels.daysPlural : labels.daysSingular)"
+        ></span>
+      </div>
       <h2
         class="dash__next-name"
         x-text="(todaySession ?? nextSession)?.name ?? labels.noTodayTitle"

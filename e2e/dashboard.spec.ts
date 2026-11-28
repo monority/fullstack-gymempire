@@ -149,3 +149,46 @@ test('dashboard: volumes follow the lbs setting', async ({ page }) => {
   await expect(page.locator('.dash__today-stat').nth(2)).toContainText('lbs');
   await expect(page.locator('.week-metric__value').first()).toContainText('lbs');
 });
+
+test('dashboard hero surfaces the current streak and a dominant title', async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem('muscu-auth', JSON.stringify({ email: 'e2e@test.fr', name: 'E2E' }));
+    const ex = [
+      {
+        exerciseId: 'e1',
+        name: 'Développé couché',
+        muscle: 'Pectoraux',
+        sets: [
+          {
+            exerciseId: 'e1',
+            setNumber: 1,
+            type: 'work',
+            weight: 80,
+            reps: 8,
+            completed: true,
+          },
+        ],
+      },
+    ];
+    localStorage.setItem(
+      'muscu:sessions',
+      JSON.stringify(
+        ['2026-11-28', '2026-11-27', '2026-11-26'].map((date, i) => ({
+          id: `s${i}`,
+          name: 'Séance',
+          date,
+          status: 'completed',
+          exercises: ex,
+        }))
+      )
+    );
+  });
+
+  await page.goto('/');
+  await expect(page.locator('.dash__streak')).toBeVisible();
+  await expect(page.locator('.dash__streak')).toContainText('3 jours');
+  const size = await page
+    .locator('.dash__next-name')
+    .evaluate((el) => Number.parseFloat(getComputedStyle(el).fontSize));
+  expect(size).toBeGreaterThan(40);
+});
