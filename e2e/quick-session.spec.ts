@@ -112,3 +112,56 @@ test('quick session: RPE control is hidden in simple mode', async ({ page }) => 
 
   await expect(page.locator('.quick__rpe-control')).toBeHidden();
 });
+
+test('quick session: shell navigation is hidden during the set', async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem('muscu-auth', JSON.stringify({ email: 'e2e@test.fr', name: 'E2E' }));
+    localStorage.setItem(
+      'muscu:sessions',
+      JSON.stringify([
+        {
+          id: 'immersive-1',
+          name: 'Séance',
+          date: '2026-11-28',
+          status: 'planned',
+          exercises: [
+            {
+              exerciseId: 'e1',
+              name: 'Développé couché',
+              muscle: 'Pectoraux',
+              sets: [
+                {
+                  exerciseId: 'e1',
+                  setNumber: 1,
+                  type: 'work',
+                  weight: 80,
+                  reps: 8,
+                  completed: false,
+                },
+              ],
+            },
+          ],
+        },
+      ])
+    );
+  });
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/sessions/quick');
+  await expect(page.locator('.mobile-nav')).toBeVisible();
+  await page.locator('#qs-session').selectOption('immersive-1');
+  await page.getByRole('button', { name: /Commencer|Start/i }).click();
+
+  await expect(page.locator('.quick__working')).toBeVisible();
+  await expect(page.locator('.mobile-nav')).toBeHidden();
+  await expect(page.locator('.topbar')).toBeHidden();
+  const size = await page
+    .locator('input[aria-label="Charge"]')
+    .evaluate((el) => Number.parseFloat(getComputedStyle(el).fontSize));
+  expect(size).toBeGreaterThan(50);
+
+  // Dernière série terminée : on revient à l'état « completed » et le shell réapparaît.
+  await page.locator('.quick__check').click();
+  await expect(page.locator('.quick__completed')).toBeVisible();
+  await expect(page.locator('.mobile-nav')).toBeVisible();
+});

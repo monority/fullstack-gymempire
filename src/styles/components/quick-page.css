@@ -18,6 +18,49 @@
     );
   }
 
+  /* Mode immersif : pendant la séance, le shell (topbar, sidebar, nav)
+     disparaît et la page occupe tout l'écran. `:has()` évite tout JS. */
+  body:has(.quick__working) .topbar,
+  body:has(.quick__working) .mobile-nav,
+  body:has(.quick__working) .sidebar,
+  body:has(.quick__working) .drawer {
+    display: none;
+  }
+
+  body:has(.quick__working) .page-content {
+    padding: 0;
+    max-width: none;
+  }
+
+  body:has(.quick__working) .quick {
+    min-height: 100dvh;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    background-image: radial-gradient(
+      circle at 50% 0%,
+      color-mix(in srgb, var(--color-accent) 12%, transparent),
+      transparent 65%
+    );
+  }
+
+  body:has(.quick__working) .quick__values {
+    width: 100%;
+    gap: 1.2rem;
+  }
+
+  body:has(.quick__working) .quick__value-col {
+    flex: 1 1 0%;
+    max-width: 16rem;
+    min-width: 0;
+  }
+
+  body:has(.quick__working) .quick__value-input {
+    padding-right: 0.4rem;
+  }
+
+  body:has(.quick__working) .input-stepper__btn {
+    display: none;
+  }
+
   .quick__separator {
     margin-left: 0.25rem;
     margin-right: 0.25rem;
